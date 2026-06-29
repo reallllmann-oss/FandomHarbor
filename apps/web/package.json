@@ -1,0 +1,34 @@
+{
+  "name": "@fandom-harbor/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "eslint .",
+    "start": "next start",
+    "test": "vitest run --passWithNoTests src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fandom-harbor/auth": "workspace:*",
+    "@fandom-harbor/config": "workspace:*",
+    "@fandom-harbor/database": "workspace:*",
+    "@fandom-harbor/services": "workspace:*",
+    "@fandom-harbor/ui": "workspace:*",
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-hook-form": "7.80.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.1",
+    "@types/node": "24.13.2",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "tailwindcss": "4.3.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}

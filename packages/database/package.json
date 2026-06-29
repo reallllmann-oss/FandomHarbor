@@ -1,0 +1,25 @@
+{
+  "name": "@fandom-harbor/database",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "vitest run src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fandom-harbor/auth": "workspace:*",
+    "@fandom-harbor/config": "workspace:*",
+    "@fandom-harbor/services": "workspace:*",
+    "@supabase/ssr": "0.12.0",
+    "@supabase/supabase-js": "2.108.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}

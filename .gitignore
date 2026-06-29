@@ -1,0 +1,29 @@
+# Operating system / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated output
+node_modules/
+.pnpm-store/
+.next/
+.turbo/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+.playwright-browsers/
+*.tsbuildinfo
+
+# Logs and local tooling
+*.log
+.vercel/
+supabase/.branches/
+supabase/.temp/

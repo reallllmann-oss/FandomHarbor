@@ -1,0 +1,22 @@
+{
+  "name": "@fandom-harbor/auth",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "vitest run src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fandom-harbor/config": "workspace:*",
+    "@supabase/ssr": "0.12.0",
+    "@supabase/supabase-js": "2.108.2"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}

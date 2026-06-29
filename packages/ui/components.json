@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "css": "src/styles.css",
+    "cssVariables": true,
+    "baseColor": "neutral"
+  },
+  "aliases": {
+    "components": "@fandom-harbor/ui/components",
+    "utils": "@fandom-harbor/ui/lib/utils",
+    "ui": "@fandom-harbor/ui/components",
+    "lib": "@fandom-harbor/ui/lib",
+    "hooks": "@fandom-harbor/ui/hooks"
+  },
+  "iconLibrary": "lucide"
+}

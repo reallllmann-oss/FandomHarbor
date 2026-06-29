@@ -1,0 +1,48 @@
+{
+  "name": "fandom-harbor",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint",
+    "prepare": "husky",
+    "test": "turbo run test",
+    "test:e2e": "playwright test",
+    "typecheck": "turbo run typecheck",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,mdx,css,yaml,yml}": "prettier --write"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "24.13.2",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.2.9",
+    "husky": "9.1.7",
+    "jsdom": "29.1.1",
+    "lint-staged": "17.0.8",
+    "prettier": "3.9.1",
+    "shadcn": "4.12.0",
+    "turbo": "2.10.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.62.0",
+    "vitest": "4.1.9"
+  }
+}
