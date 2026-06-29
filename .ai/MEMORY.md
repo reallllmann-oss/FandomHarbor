@@ -163,12 +163,16 @@ AO3 核心功能：
 - Phase 0.6 Product Freeze Review 已批准并冻结
 - Phase 1 Sprint 1 Project Foundation 已完成
 - Phase 1C Identity Access Core 工程实现完成：平台边界、Auth、Invitation、Membership、Role Grant、Audit、RLS、Web/Admin 壳层与测试已写入
+- Sprint 002A Website Shell 已完成：Landing、Reader List/Detail、Reader Shell、Author Empty State、Admin Dashboard、Mock Data 与 Shared Layout 已交付
+- Milestone v0.1 已发布到 GitHub，当前仓库基线固定为 Phase 1 Foundation + Sprint 002A Website Shell
 - Frozen install、Type、Lint、Test、Build 已通过；当前环境没有 Supabase CLI/psql/Docker，migration rebuild 与 SQL allow/deny 脚本仍待在一次性数据库执行
 - 未创建 Supabase/Resend/Vercel 云资源，未配置生产 SMTP，未建立生产 Super Admin
-- SQL 验证与 Product Owner Phase 1 验收完成前禁止进入 Phase 2
+- 当前进入 Sprint 002B 准备阶段；继续开发前仍需新的 Sprint brief 与验收批准
 
 ## Last updated
 
+- 2026-06-29: Published Milestone v0.1 release baseline to GitHub and archived release documentation for Phase 1 Foundation plus Sprint 002A Website Shell.
+- 2026-06-29: Set the current repository milestone to v0.1 Released and moved the planning focus to Sprint 002B.
 - 2026-06-29: Completed Phase 1C engineering implementation and all locally available gates; database rebuild/SQL role-matrix execution and Product Owner phase acceptance remain.
 - 2026-06-29: Established verified email/password identity, invitation-only membership admission, derived Reader capability, manual elevated role grants and audited RLS workflows under D-033/ADR-018.
 - 2026-06-29: Added RuntimeConfig, Trusted Identity/Session, repository/provider isolation and the provider-neutral ObjectStorage contract; pages do not consume raw environment or Supabase clients.

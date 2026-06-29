@@ -6,6 +6,18 @@ Fandom Harbor is a modern, invitation-only archive for original and fan works, d
 
 **Phase 1 · Sprint 2 / Phase 1C — Identity Access Core** is `Engineering Complete — Awaiting Database Execution and Product Acceptance`. Runtime/auth/repository/storage boundaries, invitation admission, membership/elevated roles, RLS/audit migrations and Web/Admin access shells are implemented. Type, lint, unit/contract tests and production build pass; the SQL migrations still require execution against an approved disposable database before Phase exit. No Supabase project or production deployment was created.
 
+## Current milestone
+
+`v0.1 Released`
+
+## Current Sprint
+
+`Sprint 002B`
+
+## Repository
+
+GitHub: [reallllmann-oss/FandomHarbor](https://github.com/reallllmann-oss/FandomHarbor)
+
 ## Mandatory start
 
 Before any code, read [`.ai/START_HERE.md`](.ai/START_HERE.md) and all seventeen mandatory memory documents in order, including [`.ai/LANGUAGE_POLICY.md`](.ai/LANGUAGE_POLICY.md), [`.ai/ENVIRONMENT_POLICY.md`](.ai/ENVIRONMENT_POLICY.md) and [`.ai/WORKFLOW.md`](.ai/WORKFLOW.md). Development may resume only from the task and approval boundary recorded in [`.ai/PROJECT_STATUS.md`](.ai/PROJECT_STATUS.md), after the mandatory startup checks and [`.ai/ACCEPTANCE_CHECKLIST.md`](.ai/ACCEPTANCE_CHECKLIST.md) gates pass.

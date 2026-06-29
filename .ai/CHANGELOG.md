@@ -219,6 +219,26 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 - Retry remains prohibited before diagnosis and Product Owner approval.
 - No installation, dependency, registry, architecture or business change was executed.
 
+## 2026-06-29 — Milestone v0.1 Release Documentation
+
+### Added
+
+- Added `docs/releases/v0.1.md` as the formal release note for Phase 1 Foundation and Sprint 002A Website Shell.
+- Added `docs/ROADMAP.md` as the milestone-level roadmap index for completed, in-progress and future delivery buckets.
+
+### Changed
+
+- Updated `README.md` with the current milestone, current Sprint and GitHub repository status.
+- Updated `PROJECT_STATUS.md` and `MEMORY.md` to reflect `v0.1 Released` and the transition into Sprint 002B planning.
+
+### Verification
+
+- `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass for the release-documentation state.
+
+### Not changed
+
+- No business code, runtime contract, database schema, Supabase project, deployment configuration, provider, ORM or SDK was modified.
+
 ## 2026-06-29 — Phase 1C: Identity Access Core
 
 ### Added
