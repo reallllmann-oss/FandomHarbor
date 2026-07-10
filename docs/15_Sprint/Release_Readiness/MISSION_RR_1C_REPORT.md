@@ -15,6 +15,9 @@ now engineering complete while RR-1C remains awaiting Product Owner final accept
   Profile and a valid Invitation Redemption relationship.
 - Passwords and the plaintext invitation code are stored only in Git-ignored
   `.local/qa-fixture.json` with mode `0600`; they are not in repository documents.
+- Product Owner can read them locally with `pnpm qa:credentials`; the display
+  command rejects missing, non-local-only or overly broad credential files and
+  performs no database/network operation.
 - Added a local Web launcher that injects local Supabase runtime values without
   overwriting the existing `.env.local`.
 - Reproduced a clean 14-migration rebuild and restored both accounts afterward.
@@ -32,6 +35,7 @@ QA Fixture repair files:
 - `package.json`
 - `scripts/local-qa-fixture.mjs`
 - `scripts/local-qa-web.mjs`
+- `scripts/show-local-qa-credentials.mjs`
 - `scripts/README.md`
 - `docs/13_Test/LOCAL_QA_FIXTURE.md`
 - `docs/13_Test/TESTING_STRATEGY.md`

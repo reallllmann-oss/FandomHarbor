@@ -21,6 +21,27 @@ Passwords and the plaintext invitation code are intentionally absent from this
 document. They are generated into `.local/qa-fixture.json`, which is Git-ignored
 and written with local file mode `0600`.
 
+## View local credentials
+
+Run this command from the project root on the same machine that created the
+fixture:
+
+```bash
+pnpm qa:credentials
+```
+
+The command displays the local Author/Reader registration names, passwords,
+Author profile path and invitation code in the current terminal only. It refuses
+files that are not marked `local-only` or are readable by other system users.
+
+Do not copy the output into issues, commits, screenshots, chat messages or public
+documentation. If the command reports that credentials do not exist, run
+`pnpm qa:fixture` first. If it reports unsafe permissions, run:
+
+```bash
+chmod 600 .local/qa-fixture.json
+```
+
 ## Create or repair
 
 With the local Supabase stack running:
@@ -42,7 +63,26 @@ pnpm qa:web
 ```
 
 Open `http://localhost:3000/auth/sign-in` and use the registration names above.
-Read the matching password only from `.local/qa-fixture.json` on the same machine.
+Read the matching password with `pnpm qa:credentials` on the same machine.
+
+## Acceptance account guide
+
+### Author
+
+1. Start the local Web app with `pnpm qa:web`.
+2. Open `http://localhost:3000/auth/sign-in`.
+3. Use the Author registration name and password shown by
+   `pnpm qa:credentials`.
+4. Verify `/author/harbor-qa-author` and `/studio`.
+
+### Reader
+
+1. Sign out from the Author account.
+2. Use the Reader registration name and password shown by
+   `pnpm qa:credentials`.
+3. Verify `/works` can be opened.
+4. Verify `/studio` redirects the Reader away because the account has no Author
+   grant.
 
 ## Safety contract
 
@@ -54,6 +94,8 @@ Read the matching password only from `.local/qa-fixture.json` on the same machin
   profile and one Reader-to-Author invitation redemption.
 - `qa:web` injects local runtime values only into its child process and does not
   overwrite `.env.local`.
+- `qa:credentials` reads only the Git-ignored local credential file and performs
+  no database or network operation.
 
 ## Verification baseline
 

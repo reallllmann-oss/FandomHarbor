@@ -4,6 +4,9 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
 ## 2026-07-11 — Mission RR-1C Local QA Fixture Repair
 
+- Added `pnpm qa:credentials` so the Product Owner can read local-only acceptance
+  credentials in the current terminal without placing passwords in tracked files
+  or public documentation.
 - Added localhost-guarded `qa:fixture`, `qa:reset` and `qa:web` workflows for
   authenticated local Product Owner acceptance.
 - Added synthetic `Harbor QA Reader` and `Harbor QA Author` identities with active

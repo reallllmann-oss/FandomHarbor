@@ -5,6 +5,8 @@ remote state changes and never embed secrets.
 
 ## Local QA fixture
 
+- `pnpm qa:credentials` displays the Git-ignored local acceptance credentials in
+  the current terminal after verifying the file is local-only and mode `0600`.
 - `pnpm qa:fixture` creates or repairs the synthetic local Reader/Author acceptance
   identities, active memberships, Author grant, Author public profile and invitation
   relationship.

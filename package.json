@@ -14,6 +14,7 @@
     "format:check": "prettier --check .",
     "lint": "turbo run lint",
     "prepare": "husky",
+    "qa:credentials": "node scripts/show-local-qa-credentials.mjs",
     "qa:fixture": "node scripts/local-qa-fixture.mjs",
     "qa:reset": "supabase db reset --local --no-seed && pnpm qa:fixture",
     "qa:web": "node scripts/local-qa-web.mjs",

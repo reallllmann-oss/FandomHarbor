@@ -10,6 +10,8 @@
 - [x] Browser console errors are zero.
 - [x] Repeated fixture execution is idempotent.
 - [x] Credentials stay in Git-ignored `.local/qa-fixture.json` with mode `0600`.
+- [x] Product Owner can read credentials locally with `pnpm qa:credentials`.
+- [x] Credential display performs no database, network or production operation.
 - [x] No production data, Migration, Auth architecture, Permission Model or RLS changed.
 - [ ] Product Owner completes RR-1C final acceptance.
 
