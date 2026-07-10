@@ -11,4 +11,3 @@ Status: Proposed
 - UI uses a language-capable system sans initially; reading offers a language-capable serif/sans choice.
 
 Semantic roles—not page-local font sizes—define display, heading, body, reading body, label, metadata, code and caption. Chinese, Latin, mixed-language, long titles, ruby/footnotes and browser font scaling require validation.
-

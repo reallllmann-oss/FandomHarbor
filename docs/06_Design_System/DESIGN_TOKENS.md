@@ -8,35 +8,35 @@ Status: Proposed starting values; contrast and device validation required before
 
 Colors are semantic variables. Product code must not use raw palette values.
 
-| Token | Light proposal | Purpose |
-|---|---|---|
-| `background` | `#F7F5F1` | Warm archive canvas |
-| `foreground` | `#24211F` | Primary text |
-| `surface` | `#FFFFFF` | Cards, dialogs, reading sheet |
-| `surface-muted` | `#EFECE6` | Secondary regions |
-| `muted-foreground` | `#68615B` | Secondary text, must pass contrast |
-| `border` | `#D8D1C8` | Dividers and controls |
-| `primary` | `#71364D` | Brand/action burgundy |
-| `primary-foreground` | `#FFFFFF` | Text on primary |
-| `accent` | `#2F6262` | Secondary teal accent |
-| `danger` | `#A33131` | Destructive/error |
-| `warning` | `#946200` | Warning state |
-| `success` | `#2F6A45` | Confirmed/success |
-| `focus` | `#356FB6` | High-visibility focus ring |
+| Token                | Light proposal | Purpose                            |
+| -------------------- | -------------- | ---------------------------------- |
+| `background`         | `#F7F5F1`      | Warm archive canvas                |
+| `foreground`         | `#24211F`      | Primary text                       |
+| `surface`            | `#FFFFFF`      | Cards, dialogs, reading sheet      |
+| `surface-muted`      | `#EFECE6`      | Secondary regions                  |
+| `muted-foreground`   | `#68615B`      | Secondary text, must pass contrast |
+| `border`             | `#D8D1C8`      | Dividers and controls              |
+| `primary`            | `#71364D`      | Brand/action burgundy              |
+| `primary-foreground` | `#FFFFFF`      | Text on primary                    |
+| `accent`             | `#2F6262`      | Secondary teal accent              |
+| `danger`             | `#A33131`      | Destructive/error                  |
+| `warning`            | `#946200`      | Warning state                      |
+| `success`            | `#2F6A45`      | Confirmed/success                  |
+| `focus`              | `#356FB6`      | High-visibility focus ring         |
 
 Dark mode uses the same semantic roles with tested dark surfaces; do not mechanically invert. Rating and archive-warning colors require accompanying text/icon and separate contrast validation.
 
 ## Typography
 
-| Role | Proposal |
-|---|---|
-| UI sans | system sans stack initially; brand font requires performance/language review |
-| Reading serif | language-capable system serif initially; user can select sans |
-| Mono | system mono for IDs/diff technical detail only |
-| UI base | 16px / 1.5 |
-| Reading base | 18px / 1.78, user-adjustable |
-| Small metadata | minimum 13–14px with adequate contrast |
-| Reading measure | default 68ch; adjustable range approximately 52–80ch |
+| Role            | Proposal                                                                     |
+| --------------- | ---------------------------------------------------------------------------- |
+| UI sans         | system sans stack initially; brand font requires performance/language review |
+| Reading serif   | language-capable system serif initially; user can select sans                |
+| Mono            | system mono for IDs/diff technical detail only                               |
+| UI base         | 16px / 1.5                                                                   |
+| Reading base    | 18px / 1.78, user-adjustable                                                 |
+| Small metadata  | minimum 13–14px with adequate contrast                                       |
+| Reading measure | default 68ch; adjustable range approximately 52–80ch                         |
 
 Type scale proposal: 12, 14, 16, 18, 20, 24, 30, 36, 48. Use semantic roles rather than choosing sizes ad hoc.
 

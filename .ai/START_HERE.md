@@ -12,9 +12,11 @@ The AI must:
 2. Summarize the current project status.
 3. Check for documentation conflicts.
 4. Confirm the current roadmap position.
-5. Wait for the Product Owner's Sprint Brief.
+5. Wait for the Product Owner's Sprint Brief, or from Phase 3 onward an approved
+   Mission Authorization.
 
-Never begin development automatically.
+Never begin development automatically. An explicitly approved Mission is development
+authorization for its complete recorded scope.
 
 Never assume the current task.
 
@@ -109,6 +111,7 @@ This file is the mandatory entry point for every new conversation and every deve
 - Never assume `3000 == docs`, `3001 == admin` or `3002 == web`.
 - During development, the terminal `Local:` address printed by each app is the only authoritative local URL.
 - If runtime env validation fails, check `.env.local`, `apps/web/.env.local`, `apps/admin/.env.local`, restart the dev server and clear `.next` before suspecting Supabase configuration.
+- If the task involves Git delivery, check `.ai/TROUBLESHOOTING.md` for the validated Codex Git execution chain and prefer the existing SSH remote setup.
 
 ## Mandatory feature workflow
 
@@ -123,6 +126,12 @@ Every Sprint begins with Environment Check → Toolchain Check → Version Check
 After the Product Phase and Sprint brief are approved, Codex may run Environment, Toolchain, Version, Dependency, Type, Lint, Build and Test checks without per-command Product Owner approval. Dependency checks must preserve manifests, dependency versions and the lockfile. Type/Lint/Build/Test failures classified as Level 1 or Level 2 are fixed and rechecked autonomously; Level 3 changes stop before writing.
 
 When an environment issue occurs, diagnose the cause before considering a retry. Never use retry as the first diagnostic action. Environment-issue retries still follow `ENVIRONMENT_POLICY.md`; the Level 1/2 repair authority does not authorize registry, runtime, network or dependency workarounds.
+
+## Phase 3 Mission execution
+
+自 Phase 3 起，以 `.ai/WORKFLOW.md` 的 Mission Authorization v1 为执行事实源。
+Mission 获批后，启动门禁在 Mission 开头统一执行；Mission 内各 Sprint 不再重复
+请求产品授权。只有 Mission 定义的八类升级边界需要暂停。
 
 ## Autonomous Engineering Policy / Codex 自治工程权限
 

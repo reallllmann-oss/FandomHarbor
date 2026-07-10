@@ -15,4 +15,3 @@
 ## Success signal
 
 The Phase outcome is usable, permission-safe, documented and accepted—not merely code-complete.
-

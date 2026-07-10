@@ -31,18 +31,18 @@ One measurable user or operational outcome. Avoid lists of unrelated subsystems.
 
 ## Required workflow evidence
 
-| Stage | Artifact/link | Status |
-|---|---|---|
-| Research | | |
-| Requirement Analysis | | |
-| Architecture Design | | |
-| Database Design | | |
-| API Design | | |
-| UI Design | | |
-| Review | | |
-| Development | | |
-| Testing | | |
-| Documentation Update | | |
+| Stage                | Artifact/link | Status |
+| -------------------- | ------------- | ------ |
+| Research             |               |        |
+| Requirement Analysis |               |        |
+| Architecture Design  |               |        |
+| Database Design      |               |        |
+| API Design           |               |        |
+| UI Design            |               |        |
+| Review               |               |        |
+| Development          |               |        |
+| Testing              |               |        |
+| Documentation Update |               |        |
 
 ## Stories and acceptance
 

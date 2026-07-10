@@ -12,4 +12,3 @@ Dark mode is a semantic theme, not mechanical color inversion.
 - Theme switching must not flash gated content or reset reading position/preferences.
 
 Final dark token values require accessibility and long-session reading review.
-

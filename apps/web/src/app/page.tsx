@@ -6,18 +6,24 @@ export default function HomePage() {
   return (
     <div className="site-stack" id="foundation">
       <section className="hero-panel">
-        <p className="eyebrow">Sprint 002A · 网站雏形优先</p>
+        <p className="eyebrow">Sprint 002B · Reading Experience Foundation</p>
         <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
           Fandom Harbor 是一个以阅读体验为核心、以权限边界为底线的私域作品港口。
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-          第一版先把首页、Reader 书架、阅读页、Admin Dashboard 和 Author
-          空状态全部立起来。真实业务数据稍后接入，当前页面只使用 mock
-          内容，不扩展复杂数据库设计。
+          Reader 路由已开始使用 002A Content Service 合同组织作品、章节和文章。
+          当前由可替换 fixture 提供内容，数据库验证完成后可切换到 Supabase
+          Repository。
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             className="rounded-control bg-primary px-4 py-3 text-primary-foreground"
+            href="/search"
+          >
+            搜索作品与作者
+          </Link>
+          <Link
+            className="rounded-control border border-border px-4 py-3"
             href="/works"
           >
             查看作品骨架
@@ -66,6 +72,15 @@ export default function HomePage() {
                 {work.fandom} · {work.rating} · {work.status}
               </p>
               <h3 className="mt-3 text-xl font-semibold">{work.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                作者：
+                <Link
+                  className="text-primary"
+                  href={`/author/${work.authorSlug}`}
+                >
+                  {work.authorName}
+                </Link>
+              </p>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
                 {work.summary}
               </p>
@@ -79,8 +94,11 @@ export default function HomePage() {
                   </span>
                 ))}
               </div>
-              <Link className="mt-5 inline-flex text-sm text-primary" href={`/works/${work.slug}`}>
-                查看静态阅读页
+              <Link
+                className="mt-5 inline-flex text-sm text-primary"
+                href={`/works/${work.slug}`}
+              >
+                查看作品详情
               </Link>
             </article>
           ))}

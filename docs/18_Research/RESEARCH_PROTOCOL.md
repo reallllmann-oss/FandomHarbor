@@ -26,4 +26,3 @@ Each record includes question, date, decision deadline, sources, tested versions
 ## Time-boxing
 
 Research ends when the decision has enough evidence for its reversibility/risk. High-risk irreversible choices require more evidence; reversible UI details require less. Unknowns become `KNOWN_ISSUES.md`, not invented certainty.
-

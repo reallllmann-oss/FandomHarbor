@@ -26,4 +26,10 @@ Every operation described by `API_SPECIFICATION.md` has one default interface ca
 
 Phase 1C keeps browser pages behind application-owned server actions. Those actions call provider-neutral auth/service/repository contracts; atomic authorization and state transitions are implemented as Supabase PostgreSQL functions behind the database adapter. No new public REST endpoint, webhook, realtime channel or provider-specific business interface was introduced.
 
+Sprint 002D-Step02 implements the first Phase 2 Work mutation in the existing ServerActions category: `createWorkDraft`. It calls a provider-neutral Service/Store boundary and the atomic `create_author_work_draft` PostgreSQL function; Publish remains unimplemented.
+
+Sprint 002E-Step02 keeps Chapter body persistence in the same ServerActions category: `saveDraftBody`. It calls a provider-neutral Service/Store boundary and uses the existing owner-RLS-protected `chapters` table directly through the Repository adapter. No public REST endpoint or new RPC is introduced, and Publish remains unimplemented.
+
+Sprint 002F keeps minimal Work publish in the same ServerActions category through `submitDraftEditor` with `intent = publish`. It persists the current body, promotes the first Chapter plus Work to `published`, redirects to the Reader chapter page and still introduces no public REST endpoint or new RPC.
+
 If an operation changes category, update this file, its category registry, contract, ADR/decision when architectural and all consumers. One operation cannot be simultaneously documented as REST and Server Action without two explicitly different interfaces.

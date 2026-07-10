@@ -14,4 +14,3 @@ Status: Planned
 - [Retrospective](Retrospective.md)
 
 A Phase describes product evolution. Sprints are bounded engineering execution units inside this Phase. No Phase document authorizes code without an approved Sprint brief.
-

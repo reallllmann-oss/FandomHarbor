@@ -4,6 +4,11 @@ import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import type { TrustedIdentity, TrustedSession } from "./identity";
+import {
+  isValidRegistrationName,
+  normalizeRegistrationName,
+  registrationNameEmail,
+} from "./registration-policy";
 
 export interface AuthCookie {
   name: string;
@@ -28,16 +33,16 @@ export interface AuthCookieStore {
 }
 
 export interface PasswordSignUpInput {
-  email: string;
-  emailRedirectTo?: string;
+  invitationCodeHash: string;
   password: string;
+  registrationName: string;
 }
 
 export interface AuthProvider {
   getSession(): Promise<TrustedSession | null>;
   signInWithPassword(input: {
-    email: string;
     password: string;
+    registrationName: string;
   }): Promise<TrustedSession>;
   signOut(): Promise<void>;
   signUpWithPassword(input: PasswordSignUpInput): Promise<{
@@ -49,7 +54,17 @@ export interface AuthProvider {
 export class AuthProviderError extends Error {
   constructor(
     public readonly code:
-      "EMAIL_NOT_VERIFIED" | "INVALID_CREDENTIALS" | "PROVIDER_ERROR",
+      | "INVITATION_EXHAUSTED"
+      | "INVITATION_EXPIRED"
+      | "INVITATION_REVOKED"
+      | "INVALID_INVITATION"
+      | "INVALID_CREDENTIALS"
+      | "PROVIDER_ERROR"
+      | "PROVIDER_CONFIGURATION_ERROR"
+      | "RATE_LIMITED"
+      | "REGISTRATION_NAME_TAKEN"
+      | "SERVICE_UNAVAILABLE"
+      | "WEAK_PASSWORD",
     message: string,
   ) {
     super(message);
@@ -57,19 +72,77 @@ export class AuthProviderError extends Error {
   }
 }
 
-function trustedIdentity(user: User): TrustedIdentity {
-  if (!user.email) {
+type RegistrationInvitationStatus =
+  "exhausted" | "expired" | "invalid" | "revoked" | "valid";
+
+const registrationInvitationStatuses = new Set<RegistrationInvitationStatus>([
+  "exhausted",
+  "expired",
+  "invalid",
+  "revoked",
+  "valid",
+]);
+
+function invitationStatusError(
+  status: RegistrationInvitationStatus,
+): AuthProviderError | null {
+  switch (status) {
+    case "valid":
+      return null;
+    case "expired":
+      return new AuthProviderError(
+        "INVITATION_EXPIRED",
+        "Invitation has expired",
+      );
+    case "exhausted":
+      return new AuthProviderError(
+        "INVITATION_EXHAUSTED",
+        "Invitation has no remaining uses",
+      );
+    case "revoked":
+      return new AuthProviderError(
+        "INVITATION_REVOKED",
+        "Invitation has been revoked",
+      );
+    case "invalid":
+      return new AuthProviderError(
+        "INVALID_INVITATION",
+        "Invitation is invalid",
+      );
+  }
+}
+
+function invitationStatusFromRpc(
+  data: unknown,
+  error: { code?: string; message?: string } | null,
+): RegistrationInvitationStatus {
+  if (error) {
+    const missingFunction =
+      error.code === "PGRST202" ||
+      error.message?.includes("registration_invitation_status");
     throw new AuthProviderError(
-      "PROVIDER_ERROR",
-      "Authenticated identity is missing an email address",
+      missingFunction ? "PROVIDER_CONFIGURATION_ERROR" : "SERVICE_UNAVAILABLE",
+      missingFunction
+        ? "Registration invitation status function is not deployed"
+        : "Invitation validation service is unavailable",
     );
   }
 
-  return {
-    email: user.email,
-    emailVerified: Boolean(user.email_confirmed_at),
-    id: user.id,
-  };
+  if (
+    typeof data !== "string" ||
+    !registrationInvitationStatuses.has(data as RegistrationInvitationStatus)
+  ) {
+    throw new AuthProviderError(
+      "PROVIDER_CONFIGURATION_ERROR",
+      "Registration invitation status response is invalid",
+    );
+  }
+
+  return data as RegistrationInvitationStatus;
+}
+
+function trustedIdentity(user: User): TrustedIdentity {
+  return { id: user.id };
 }
 
 function trustedSession(
@@ -97,12 +170,21 @@ function provider(client: SupabaseClient): AuthProvider {
     },
 
     async signInWithPassword(input) {
-      const { data, error } = await client.auth.signInWithPassword(input);
+      if (!isValidRegistrationName(input.registrationName)) {
+        throw new AuthProviderError(
+          "INVALID_CREDENTIALS",
+          "Registration name or password is invalid",
+        );
+      }
+      const { data, error } = await client.auth.signInWithPassword({
+        email: await registrationNameEmail(input.registrationName),
+        password: input.password,
+      });
 
       if (error || !data.session) {
         throw new AuthProviderError(
           "INVALID_CREDENTIALS",
-          "Email or password is invalid",
+          "Registration name or password is invalid",
         );
       }
 
@@ -110,14 +192,6 @@ function provider(client: SupabaseClient): AuthProvider {
       if (!session) {
         throw new AuthProviderError("PROVIDER_ERROR", "Session is incomplete");
       }
-      if (!session.identity.emailVerified) {
-        await client.auth.signOut();
-        throw new AuthProviderError(
-          "EMAIL_NOT_VERIFIED",
-          "Email verification is required",
-        );
-      }
-
       return session;
     },
 
@@ -128,14 +202,95 @@ function provider(client: SupabaseClient): AuthProvider {
       }
     },
 
-    async signUpWithPassword({ emailRedirectTo, ...credentials }) {
+    async signUpWithPassword(input) {
+      const registrationName = normalizeRegistrationName(
+        input.registrationName,
+      );
+      if (!isValidRegistrationName(registrationName)) {
+        throw new AuthProviderError(
+          "PROVIDER_ERROR",
+          "Registration name is invalid",
+        );
+      }
+      const { data: invitationStatusData, error: invitationError } =
+        await client.rpc("registration_invitation_status", {
+          p_code_hash: input.invitationCodeHash,
+        });
+
+      const invitationErrorBeforeSignup = invitationStatusError(
+        invitationStatusFromRpc(invitationStatusData, invitationError),
+      );
+      if (invitationErrorBeforeSignup) throw invitationErrorBeforeSignup;
+
       const { data, error } = await client.auth.signUp({
-        ...credentials,
-        ...(emailRedirectTo ? { options: { emailRedirectTo } } : {}),
+        email: await registrationNameEmail(registrationName),
+        password: input.password,
+        options: {
+          data: {
+            invitation_code_hash: input.invitationCodeHash,
+            registration_name: registrationName,
+          },
+        },
       });
 
       if (error || !data.user) {
-        throw new AuthProviderError("PROVIDER_ERROR", "Sign up failed");
+        if (error) {
+          const {
+            data: invitationStatusAfterFailureData,
+            error: invitationStatusAfterFailureError,
+          } = await client.rpc("registration_invitation_status", {
+            p_code_hash: input.invitationCodeHash,
+          });
+          const invitationErrorAfterSignup = invitationStatusError(
+            invitationStatusFromRpc(
+              invitationStatusAfterFailureData,
+              invitationStatusAfterFailureError,
+            ),
+          );
+          if (invitationErrorAfterSignup) {
+            throw invitationErrorAfterSignup;
+          }
+
+          const normalizedMessage = error.message.toLowerCase();
+          const duplicateRegistrationName =
+            error.code === "user_already_exists" ||
+            normalizedMessage.includes("already registered");
+          const weakPassword =
+            error.code === "weak_password" ||
+            normalizedMessage.includes("weak password") ||
+            normalizedMessage.includes("password should");
+
+          if (error.status === 429) {
+            throw new AuthProviderError(
+              "RATE_LIMITED",
+              "Auth request rate limit exceeded",
+            );
+          }
+          if (duplicateRegistrationName) {
+            throw new AuthProviderError(
+              "REGISTRATION_NAME_TAKEN",
+              "Registration name is already in use",
+            );
+          }
+          if (weakPassword) {
+            throw new AuthProviderError(
+              "WEAK_PASSWORD",
+              "Password does not meet provider requirements",
+            );
+          }
+        }
+
+        throw new AuthProviderError(
+          "SERVICE_UNAVAILABLE",
+          error?.message ?? "Sign up failed",
+        );
+      }
+
+      if (!data.session) {
+        throw new AuthProviderError(
+          "PROVIDER_CONFIGURATION_ERROR",
+          "Email confirmations must be disabled for registration",
+        );
       }
 
       return {

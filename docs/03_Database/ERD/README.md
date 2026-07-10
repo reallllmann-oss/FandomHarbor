@@ -9,8 +9,8 @@ Authoritative files: `DATA_MODEL.md` and `SUPABASE_SCHEMA.md`.
 | Domain          | Tables owned by ERD-CORE-001                                                                                           |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Identity/access | profiles, memberships, role_grants, pen_names, invitations, invitation_redemptions                                     |
-| Archive         | works, work_authors, chapters, work_revisions, chapter_revisions, series, series_works, assets                         |
-| Metadata        | ratings, warnings, work_warnings, tags, work_tags                                                                      |
+| Archive         | works, chapters, articles; future work_authors, work_revisions, chapter_revisions, series, series_works, assets        |
+| Metadata        | content_categories, content_tags, work_tags, article_tags; future ratings, warnings, work_warnings                     |
 | Interaction     | kudos, bookmarks, comments, reading_progress, reading_events (only if approved)                                        |
 | Trust/admin     | reports, report_evidence, report_events, audit_logs, notifications, analytics_events (only if approved), daily_metrics |
 

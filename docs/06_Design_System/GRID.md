@@ -9,4 +9,3 @@ Status: Proposed
 - Mobile: single-column flow by default; nested grids must preserve reading and form order.
 
 Grid order must match semantic/keyboard order. Desktop sidebars may collapse or move below content, but critical rating/warning and action context cannot disappear.
-

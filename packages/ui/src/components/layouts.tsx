@@ -10,6 +10,7 @@ export interface NavigationItem {
 
 interface SharedLayoutProps extends PropsWithChildren {
   description: string;
+  headerActions?: ReactNode;
   navigation: NavigationItem[];
   sidebar?: ReactNode;
   surface: "reader" | "admin" | "docs";
@@ -19,6 +20,7 @@ interface SharedLayoutProps extends PropsWithChildren {
 export function SharedLayout({
   children,
   description,
+  headerActions,
   navigation,
   sidebar,
   surface,
@@ -59,6 +61,7 @@ export function SharedLayout({
               ))}
             </nav>
             <ThemeToggle />
+            {headerActions}
           </div>
         </div>
       </header>
@@ -78,14 +81,19 @@ export function SharedLayout({
   );
 }
 
-export function ReaderLayout({ children }: PropsWithChildren) {
+export function ReaderLayout({
+  children,
+  headerActions,
+}: PropsWithChildren<{ headerActions?: ReactNode }>) {
   return (
     <SharedLayout
       description="阅读优先的私域作品归档"
+      headerActions={headerActions}
       navigation={[
         { href: "/", label: "首页" },
+        { href: "/search", label: "搜索" },
         { href: "/works", label: "作品" },
-        { href: "/archive", label: "Reader 入口" },
+        { href: "/archive", label: "Archive" },
         { href: "/author", label: "Author 入口" },
       ]}
       surface="reader"

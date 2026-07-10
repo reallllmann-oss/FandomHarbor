@@ -4,7 +4,11 @@ Fandom Harbor is a modern, invitation-only archive for original and fan works, d
 
 ## Current status
 
-**Phase 1 · Sprint 2 / Phase 1C — Identity Access Core** is `Engineering Complete — Awaiting Database Execution and Product Acceptance`. Runtime/auth/repository/storage boundaries, invitation admission, membership/elevated roles, RLS/audit migrations and Web/Admin access shells are implemented. Type, lint, unit/contract tests and production build pass; the SQL migrations still require execution against an approved disposable database before Phase exit. No Supabase project or production deployment was created.
+**Phase 2 · Pass.** The configured remote Supabase has all nine migrations and registration RPCs, Email Confirm is disabled, and Product Owner completed the remote-backed registration → login → manual Author grant → Studio acceptance chain with `Auther001`. The Phase 2 Auth P0 is resolved.
+
+The publish path from Sprint 002F and the hybrid public-read path from Sprint 002G remain unchanged. Sprint 002H adds a client-side Library Hub on top of the existing published-only routes, plus local shelf summaries, continue-reading shortcuts and lightweight library filtering. No new RPC, schema or package change was introduced in Sprint 002H.
+
+Workspace lint, typecheck, full Vitest and all three production builds pass. The latest local Supabase reset applied all nine migrations; the Phase 1C, Phase 2 content and Phase 2 Auth SQL suites pass, and a real local Auth signup/login returns sessions without sending email. Remote Product Owner acceptance independently confirmed the final Auth and Studio path.
 
 ## Current milestone
 
@@ -12,7 +16,7 @@ Fandom Harbor is a modern, invitation-only archive for original and fan works, d
 
 ## Current Sprint
 
-`Sprint 002B`
+`Phase 2 Pass — Auth P0 Resolved`
 
 ## Repository
 
@@ -70,6 +74,22 @@ If a runtime Zod error reports `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` or similar
 当前批准方案是 Vercel + Supabase：Vercel 承载 Next.js 应用，Supabase 提供 Auth、PostgreSQL 和私有 Storage。仓库必须保持标准 Node.js 可运行、应用计算无状态、数据库策略可从 migration 重建，并将平台 SDK 隔离在 `packages/auth`、`packages/database`、`packages/services` 和 `packages/config` 内。
 
 未来如因成本、合规、容量或可用性迁往传统云服务器，默认先迁移 Next.js 计算层并保持 Supabase 不变，再分阶段评审 Storage、PostgreSQL 与 Auth。现阶段不预建第二套生产基础设施。详见 [System Architecture](docs/02_Architecture/SYSTEM_ARCHITECTURE.md)、[Deployment Plan](docs/14_Deploy/DEPLOYMENT_PLAN.md) 和 [ADR-017](docs/17_Architecture_Decisions/ADR-017.md)。
+
+## Content domain foundation
+
+- `works` 保存可分章作品容器，`chapters` 保存作品内有序正文，`articles` 保存独立文章。
+- `content_categories` 由作品/文章单选复用；`content_tags` 通过 `work_tags` / `article_tags` 提供共享治理标签。
+- 全局路由资源使用各自表内唯一 slug；chapter slug 只在所属 work 内唯一。
+- active Membership 可读已发布内容；owning Author 管理自己的内容；Admin/Super Admin 管理全部。Visitor 仍不能读取归档正文。
+- 详见 [ADR-019](docs/17_Architecture_Decisions/ADR-019.md)。
+
+## Registration and login
+
+- 注册仅需要注册名、至少 8 位密码和有效邀请码；登录使用注册名与密码。
+- 注册名大小写不敏感唯一，站内事实源为 `profiles.registration_name`；Auth metadata 不作为角色或 Membership 权限事实源。
+- Supabase Auth 使用不可见的内部账号标识，不向用户索取邮箱，也不发送验证邮件。
+- Auth 用户、Profile、active Membership、Invitation Redemption 与审计记录在同一数据库事务中建立；邀请码无效时不会留下残余账号。
+- Author/Admin/Super Admin 仍只能通过现有手工 `role_grants` 授予。详见 [ADR-020](docs/17_Architecture_Decisions/ADR-020.md)。
 
 ## Documentation
 

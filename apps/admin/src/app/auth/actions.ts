@@ -1,19 +1,28 @@
 "use server";
 
+import {
+  isValidRegistrationName,
+  MAX_PASSWORD_LENGTH,
+  MAX_REGISTRATION_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+} from "@fandom-harbor/auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createAdminIdentityAccess } from "../../lib/identity-access";
 
 const credentialsSchema = z.object({
-  email: z.email(),
-  password: z.string().min(12).max(128),
+  password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH),
+  registrationName: z
+    .string()
+    .max(MAX_REGISTRATION_NAME_LENGTH)
+    .refine(isValidRegistrationName),
 });
 
 export async function signIn(formData: FormData) {
   const credentials = credentialsSchema.safeParse({
-    email: formData.get("email"),
     password: formData.get("password"),
+    registrationName: formData.get("registrationName"),
   });
   if (!credentials.success) redirect("/auth/sign-in?error=invalid");
 

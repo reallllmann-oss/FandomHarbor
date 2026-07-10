@@ -5,3 +5,41 @@ export {
   type AccessContextRepository,
 } from "./access-context-repository";
 export { createSupabaseIdentityAccessStore } from "./identity-access-adapter";
+export { createServerSupabaseClient } from "./server-client";
+export {
+  createAuthorWorkDraftRepository,
+  createContentRepository,
+  createDraftWorkEditorRepository,
+  createSupabaseAuthorWorkDraftRepository,
+  createSupabaseContentRepository,
+  createSupabaseDraftWorkEditorRepository,
+  createSupabaseStudioContentRepository,
+  type AuthorWorkDraftRepositoryDataSource,
+  type ContentRepositoryDataSource,
+  type DraftWorkEditorRepositoryDataSource,
+} from "./content-repository";
+export type {
+  ArticleRow,
+  ArticleTagRow,
+  ChapterRow,
+  ContentCategoryRow,
+  ContentDatabaseTables,
+  ContentTagRow,
+  WorkRow,
+  WorkTagRow,
+} from "./content-schema";
+export {
+  createSocialRelationshipRepository,
+  createSupabaseSocialRelationshipRepository,
+  type SocialRelationshipRepositoryDataSource,
+} from "./social-relationship-repository";
+export {
+  createSearchRepository,
+  createSupabaseSearchRepository,
+  type SearchRepositoryDataSource,
+} from "./search-repository";
+export {
+  createBrowseRepository,
+  createSupabaseBrowseRepository,
+  type BrowseRepositoryDataSource,
+} from "./browse-repository";

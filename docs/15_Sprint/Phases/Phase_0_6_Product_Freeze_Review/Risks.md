@@ -9,4 +9,3 @@
 ## Risk treatment
 
 Each risk receives an owner, mitigation, trigger and acceptance/defer decision during Sprint planning. High security/data-integrity risks block release of the affected capability.
-

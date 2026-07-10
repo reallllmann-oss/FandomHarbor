@@ -21,4 +21,3 @@ This directory is the single source of truth for reusable visual rules. `docs/05
 - `DESIGN_TOKENS.md` — consolidated token overview
 
 Apps and components consume semantic roles rather than raw values. A token change updates its owner file, `DESIGN_TOKENS.md`, `.ai/STYLE_GUIDE.md` when applicable, and visual regression evidence.
-

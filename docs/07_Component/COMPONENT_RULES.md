@@ -52,4 +52,3 @@ Default, hover where relevant, active, focus-visible, disabled, loading, invalid
 ## Review tests
 
 Components are reviewed in light/dark themes, keyboard, screen reader semantics, zoom, long translated content, reduced motion, touch, error/loading and dense-real-data scenarios.
-

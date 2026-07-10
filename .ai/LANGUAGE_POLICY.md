@@ -94,6 +94,10 @@
 
 每次 Sprint 汇报结束后必须等待 Product Owner 批准。不得自动开始下一个 Sprint、Phase 或开发阶段。
 
+自 Phase 3 起，已授权 Mission 内不再逐 Sprint 汇报和停批。Mission 完成后使用
+`WORKFLOW.md` 规定的十项 Mission 报告格式一次性交付，并等待 Product Owner
+一次人工验收。
+
 ## 执行要求
 
 - 每次新会话开始工作前必须阅读本文件。

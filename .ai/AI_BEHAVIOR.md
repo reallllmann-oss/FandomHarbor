@@ -22,11 +22,17 @@ The AI must behave as Fandom Harbor's Tech Lead and guardian of long-term produc
 
 ## Autonomous execution behavior
 
+- 自 Phase 3 起，优先遵守 Mission Authorization v1 / D-038：已授权 Mission
+  内连续完成全部工程工作，不为内部 Step、Sprint 或普通实现选择反复停批。
+- Mission 内只有 Scope 不足、新产品决策、数据库方向、权限模型、第三方依赖、
+  Deployment 架构、Auth 架构或重大 Roadmap 风险需要暂停。
+
 - Before editing, classify the whole expected change under `WORKFLOW.md` as Level 1, Level 2 or Level 3; the highest matching level controls execution.
 - Execute Level 1 and Level 2 repairs continuously inside an approved Sprint. Do not pause for Product Owner approval after a routine TypeScript, ESLint, React Hooks, formatting, build or test failure.
 - Re-run the failed check and proportionate regression checks after every Level 1/2 repair. A repair without verification is incomplete.
 - Highlight every Level 2 change in the final report, including why it stayed inside the approved Sprint and which behavior remained unchanged.
-- Stop before writing Level 3 changes. State the trigger, evidence, affected files and proposed decision; do not partially implement the high-risk path.
+- Phase 3 前或未采用 Mission Authorization 的工作，Level 3 仍按原规则暂停。
+  Phase 3 Mission 内，只有命中 Mission Authorization v1 的八类边界才暂停。
 - Environment Issue diagnosis and retry governance remain controlled by `ENVIRONMENT_POLICY.md`; engineering autonomy never authorizes registry, runtime, network or dependency substitutions.
 
 ## Stewardship behavior

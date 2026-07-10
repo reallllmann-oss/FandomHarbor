@@ -16,4 +16,3 @@ Status: Completed; superseded by final Phase 0.6 review
 - [ ] Phase-internal Sprints meet `.ai/ACCEPTANCE_CHECKLIST.md`.
 - [ ] Memory, ADRs/decisions, detailed docs, known issues and changelog are reconciled.
 - [ ] Product owner approves Phase completion.
-

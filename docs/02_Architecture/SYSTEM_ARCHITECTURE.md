@@ -1,6 +1,6 @@
 # System Architecture
 
-Status: Proposed
+Status: Accepted; Phase 2 content boundary updated 2026-06-30
 
 ## 1. Shape
 
@@ -62,6 +62,14 @@ When implementation begins, a contracts/domain package may be proposed if schema
 - Diff compares normalized structured revisions; restore creates a new revision referencing its source.
 - Embedded assets use stable file records, private storage and authorization-aware delivery.
 
+### 5.1 Phase 2 content domain foundation
+
+- `works` 是可分章小说/作品的稳定容器；`chapters` 通过 `work_id` 和作品内唯一 `position` / `slug` 形成有序正文。
+- `articles` 是无需作品容器的独立文章，不用虚假的单章作品模拟。
+- `content_categories` 为作品/文章提供单选分类，`content_tags` 通过 `work_tags` / `article_tags` 提供共享的多选治理词表。
+- `owner_user_id` 仅用于数据库授权，并通过列级 grant 从普通读取结果中隐藏；公开作者身份仍属于后续 Pen Name/authorship 边界。
+- Phase 2 / Sprint 002A 只建立 JSON 文档与 `schema_version` 存储边界，不开放编辑器或发布后直接修改。不可变 Revision、Diff 与 Restore 在后续 Sprint 实现。
+
 ## 6. Authorization
 
 - Membership state gates all archive access.
@@ -69,6 +77,7 @@ When implementation begins, a contracts/domain package may be proposed if schema
 - Server-side auth uses a validated identity, not cookie presence alone.
 - Public pen name IDs never reveal private account IDs.
 - Elevated server operations use the narrowest credentials and write immutable audit events.
+- 内容策略直接复用 active Membership 与现有 Author/Admin/Super Admin `role_grants`：active member 读取已发布内容，拥有 Author 角色的所有者管理自己的草稿/发布内容，Admin/Super Admin 管理全部内容。Visitor 不读取归档正文。
 
 ## 7. Search and analytics
 
@@ -105,14 +114,14 @@ Browser
 
 迁移准备通过稳定边界完成，不通过现在实现第二套平台。不需要为每个边界创建新 package，但以下责任必须在现有 package 中可替换：
 
-| 边界 | 归属 | 约束 |
-|---|---|---|
-| Runtime configuration | `packages/config` | 统一解析/验证 env；业务模块不直接读取平台环境变量 |
-| Trusted identity/session | `packages/auth` | Supabase session/claims 转换为项目内部身份与 capability；provider 类型不进入领域合同 |
-| Database/transaction | `packages/database` | 客户端构建、查询、transaction 和 RLS context 集中管理；上层不依赖 Supabase response 形状 |
-| Object storage | `packages/services` | 只暴露上传、授权读取/签名、删除和 metadata；不持久化 provider URL 作为唯一文件身份 |
-| Background jobs/schedule | `packages/services` | 业务提交幂等 job 意图；Vercel 调度、Supabase 能力或未来 worker 只是 adapter |
-| Observability | `packages/services` | 结构化日志、metric、trace 和 correlation ID 不绑定 Vercel 仪表盘 |
+| 边界                     | 归属                | 约束                                                                                     |
+| ------------------------ | ------------------- | ---------------------------------------------------------------------------------------- |
+| Runtime configuration    | `packages/config`   | 统一解析/验证 env；业务模块不直接读取平台环境变量                                        |
+| Trusted identity/session | `packages/auth`     | Supabase session/claims 转换为项目内部身份与 capability；provider 类型不进入领域合同     |
+| Database/transaction     | `packages/database` | 客户端构建、查询、transaction 和 RLS context 集中管理；上层不依赖 Supabase response 形状 |
+| Object storage           | `packages/services` | 只暴露上传、授权读取/签名、删除和 metadata；不持久化 provider URL 作为唯一文件身份       |
+| Background jobs/schedule | `packages/services` | 业务提交幂等 job 意图；Vercel 调度、Supabase 能力或未来 worker 只是 adapter              |
+| Observability            | `packages/services` | 结构化日志、metric、trace 和 correlation ID 不绑定 Vercel 仪表盘                         |
 
 以上边界必须保持窄、业务语义化且可测试；禁止创建包含全部平台 API 的“万能 provider 接口”。
 

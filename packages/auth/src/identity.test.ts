@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import { createTrustedAccessContext, type TrustedIdentity } from "./identity";
 
 const identity: TrustedIdentity = {
-  email: "reader@example.com",
-  emailVerified: true,
   id: "00000000-0000-4000-8000-000000000001",
 };
 

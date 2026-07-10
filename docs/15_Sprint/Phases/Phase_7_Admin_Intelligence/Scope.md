@@ -14,4 +14,3 @@
 - 广告画像、公开排行榜和黑箱推荐
 
 Scope changes require written review, affected architecture/data/API/UI updates and revised acceptance/risks before implementation.
-

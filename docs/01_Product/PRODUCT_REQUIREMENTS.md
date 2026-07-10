@@ -20,13 +20,13 @@ Fandom Harbor is a modern, invitation-only archive for original and fan works. I
 
 ## 3. Users and jobs
 
-| Persona | Primary jobs |
-|---|---|
-| Visitor | Understand the archive, sign in or redeem an invitation; never read gated works |
-| Reader | Discover, filter, read, bookmark, recommend, give Kudos, comment and manage private history |
-| Author | Do everything a Reader can; publish through pen names, maintain works/chapters/series and review work interactions |
-| Admin | Govern users, Author grants, invitations, works, canonical tags, reports and operational analytics |
-| Super Admin | Perform all Admin duties plus highest-risk role, system, policy and recovery operations |
+| Persona     | Primary jobs                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| Visitor     | Understand the archive, sign in or redeem an invitation; never read gated works                                    |
+| Reader      | Discover, filter, read, bookmark, recommend, give Kudos, comment and manage private history                        |
+| Author      | Do everything a Reader can; publish through pen names, maintain works/chapters/series and review work interactions |
+| Admin       | Govern users, Author grants, invitations, works, canonical tags, reports and operational analytics                 |
+| Super Admin | Perform all Admin duties plus highest-risk role, system, policy and recovery operations                            |
 
 ## 4. Product surfaces
 
@@ -94,16 +94,16 @@ Fandom Harbor is a modern, invitation-only archive for original and fan works. I
 
 ## 6. Non-functional requirements
 
-| Area | Requirement |
-|---|---|
-| Accessibility | Target WCAG 2.2 AA; keyboard, focus, contrast, semantic structure and reduced motion |
-| Responsive | Reader experience mobile-first; Admin desktop-optimized with safe small-screen fallback |
-| Security | Default deny, database RLS, server checks, audit logs, sanitized rich text and private uploads |
-| Privacy | Data minimization, identity separation, explicit retention and user controls |
-| Performance | Define budgets during implementation; prioritize fast chapter render and stable reading layout |
-| Reliability | Migrations, backups, recovery and rollback tested against approved RPO/RTO |
-| Maintainability | Strict TypeScript, documented boundaries, tests, review gates and no duplicated domain logic |
-| Observability | Structured errors, correlation IDs, security events and privacy-safe operational metrics |
+| Area            | Requirement                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------- |
+| Accessibility   | Target WCAG 2.2 AA; keyboard, focus, contrast, semantic structure and reduced motion           |
+| Responsive      | Reader experience mobile-first; Admin desktop-optimized with safe small-screen fallback        |
+| Security        | Default deny, database RLS, server checks, audit logs, sanitized rich text and private uploads |
+| Privacy         | Data minimization, identity separation, explicit retention and user controls                   |
+| Performance     | Define budgets during implementation; prioritize fast chapter render and stable reading layout |
+| Reliability     | Migrations, backups, recovery and rollback tested against approved RPO/RTO                     |
+| Maintainability | Strict TypeScript, documented boundaries, tests, review gates and no duplicated domain logic   |
+| Observability   | Structured errors, correlation IDs, security events and privacy-safe operational metrics       |
 
 ## 7. MVP recommendation
 

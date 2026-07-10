@@ -45,4 +45,3 @@ These are intentional refusals, not missing backlog items. Adding one requires e
 - No single generic shared/services package used as a dumping ground.
 
 Archive-centered comments, Kudos, bookmarks and recommendations are allowed because they support works and reading; they must not become a route back to social-feed mechanics.
-

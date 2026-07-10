@@ -16,12 +16,12 @@ Technical debt is an intentional or discovered gap that increases future change 
 
 ## Classification
 
-| Class | Examples | Treatment |
-|---|---|---|
-| Critical | Permission bypass, data loss, secret exposure | Block release; remediate immediately |
-| High | Unsupported dependency, broken restore, inaccessible core flow | Planned in current/next Sprint |
-| Medium | Costly duplication, weak test seams, slow operational flow | Assign trigger and review quarterly |
-| Low | Naming or local cleanup with no behavior risk | Fix opportunistically without scope pollution |
+| Class    | Examples                                                       | Treatment                                     |
+| -------- | -------------------------------------------------------------- | --------------------------------------------- |
+| Critical | Permission bypass, data loss, secret exposure                  | Block release; remediate immediately          |
+| High     | Unsupported dependency, broken restore, inaccessible core flow | Planned in current/next Sprint                |
+| Medium   | Costly duplication, weak test seams, slow operational flow     | Assign trigger and review quarterly           |
+| Low      | Naming or local cleanup with no behavior risk                  | Fix opportunistically without scope pollution |
 
 ## Budget and review
 
@@ -33,4 +33,3 @@ Technical debt is an intentional or discovered gap that increases future change 
 ## Prevention
 
 Small vertical slices, migration discipline, permission tests, component governance, dependency direction, observability and the acceptance checklist are the primary prevention mechanisms.
-

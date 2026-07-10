@@ -11,15 +11,15 @@ Status: Proposed. Concrete tools are pinned during approved Phase 1 Sprint plann
 
 ## Test layers
 
-| Layer | Scope |
-|---|---|
-| Static | Strict TypeScript, lint, formatting, dependency boundaries and secret scanning |
-| Unit | Pure domain logic, Zod schemas, content transforms, tag rules, permission helpers |
-| Component | Accessible states and interactions for shared UI/editor controls |
-| Database | Constraints, functions, migrations, RLS grants/policies and concurrency invariants |
-| Integration | Server Actions/Route Handlers with database/storage/auth boundaries |
-| End-to-end | Invite admission, sign-in, role changes, publish/read, interaction, report/Admin and recovery paths |
-| Non-functional | Accessibility, performance budgets, security checks and restore/migration rehearsal |
+| Layer          | Scope                                                                                               |
+| -------------- | --------------------------------------------------------------------------------------------------- |
+| Static         | Strict TypeScript, lint, formatting, dependency boundaries and secret scanning                      |
+| Unit           | Pure domain logic, Zod schemas, content transforms, tag rules, permission helpers                   |
+| Component      | Accessible states and interactions for shared UI/editor controls                                    |
+| Database       | Constraints, functions, migrations, RLS grants/policies and concurrency invariants                  |
+| Integration    | Server Actions/Route Handlers with database/storage/auth boundaries                                 |
+| End-to-end     | Invite admission, sign-in, role changes, publish/read, interaction, report/Admin and recovery paths |
+| Non-functional | Accessibility, performance budgets, security checks and restore/migration rehearsal                 |
 
 ## Permission testing
 

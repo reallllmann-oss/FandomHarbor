@@ -6,7 +6,11 @@ export {
   SharedLayout,
   type NavigationItem,
 } from "./components/layouts";
-export { AppProviders } from "./components/theme-provider";
+export {
+  AppProviders,
+  useAppTheme,
+  type AppTheme,
+} from "./components/theme-provider";
 export { ThemeToggle } from "./components/theme-toggle";
 export { RetryButton, StatusPage } from "./components/status-page";
 export { cn } from "./lib/utils";

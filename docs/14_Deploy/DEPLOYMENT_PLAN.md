@@ -11,13 +11,13 @@ Status: Architecture baseline accepted by D-031 / ADR-017; external deployment e
 
 ## Environments
 
-| Environment | Purpose | Data |
-|---|---|---|
-| Local | Development and migration rebuild | Synthetic seed data only |
-| Test/CI | Automated checks | Ephemeral synthetic data |
-| Preview | Per-change Vercel review | Dedicated non-production Supabase boundary or safe mocked/synthetic data; never production private data |
-| Staging | Release rehearsal | Production-like configuration, no copied private production data |
-| Production | Live archive | Protected user data |
+| Environment | Purpose                           | Data                                                                                                    |
+| ----------- | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Local       | Development and migration rebuild | Synthetic seed data only                                                                                |
+| Test/CI     | Automated checks                  | Ephemeral synthetic data                                                                                |
+| Preview     | Per-change Vercel review          | Dedicated non-production Supabase boundary or safe mocked/synthetic data; never production private data |
+| Staging     | Release rehearsal                 | Production-like configuration, no copied private production data                                        |
+| Production  | Live archive                      | Protected user data                                                                                     |
 
 `apps/web`、`apps/admin` 和启用后的 `apps/docs` 必须作为可独立发布单元配置。默认每个应用使用独立 Vercel Project；即使后续决定共享某些部署资源，Web 与 Admin 也必须保持独立域名、环境变量、部署权限和缓存边界。
 
@@ -25,15 +25,15 @@ Production 使用独占的 Supabase 项目与凭据。Staging 必须与 Producti
 
 ## 当前 Vercel + Supabase 责任分配
 
-| 能力 | 当前实现 | 不可越过的边界 |
-|---|---|---|
-| Next.js compute | Vercel Node.js runtime | 业务正确性不依赖 Edge-only API、单实例或进程存活 |
-| Auth | Supabase Auth | 只通过 `packages/auth` 产生受信内部身份；不把 provider claims 当作业务角色 |
-| Relational data | Supabase PostgreSQL | migration、RLS、grant、function 与 extension 依赖可审查、可重建 |
-| Files | Supabase private Storage | 通过 file ID 和 `packages/services` 边界访问；授权读取不依赖永久公开 URL |
-| Jobs/schedules | 待需求批准后选定 adapter | job 必须幂等、可重试、可观测；不在请求中隐式运行长任务 |
-| Secrets | Vercel/Supabase environment secret management | 通过 `packages/config` 验证；不进入日志、客户端或仓库 |
-| Observability | 部署阶段批准的 provider | 保留结构化日志、metric、trace 和 correlation 语义 |
+| 能力            | 当前实现                                      | 不可越过的边界                                                             |
+| --------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
+| Next.js compute | Vercel Node.js runtime                        | 业务正确性不依赖 Edge-only API、单实例或进程存活                           |
+| Auth            | Supabase Auth                                 | 只通过 `packages/auth` 产生受信内部身份；不把 provider claims 当作业务角色 |
+| Relational data | Supabase PostgreSQL                           | migration、RLS、grant、function 与 extension 依赖可审查、可重建            |
+| Files           | Supabase private Storage                      | 通过 file ID 和 `packages/services` 边界访问；授权读取不依赖永久公开 URL   |
+| Jobs/schedules  | 待需求批准后选定 adapter                      | job 必须幂等、可重试、可观测；不在请求中隐式运行长任务                     |
+| Secrets         | Vercel/Supabase environment secret management | 通过 `packages/config` 验证；不进入日志、客户端或仓库                      |
+| Observability   | 部署阶段批准的 provider                       | 保留结构化日志、metric、trace 和 correlation 语义                          |
 
 ## Pipeline
 

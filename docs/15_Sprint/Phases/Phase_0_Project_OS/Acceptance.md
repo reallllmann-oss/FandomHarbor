@@ -15,4 +15,3 @@ Status: Completed
 - [ ] Phase-internal Sprints meet `.ai/ACCEPTANCE_CHECKLIST.md`.
 - [ ] Memory, ADRs/decisions, detailed docs, known issues and changelog are reconciled.
 - [ ] Product owner approves Phase completion.
-

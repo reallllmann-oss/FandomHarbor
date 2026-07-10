@@ -4,8 +4,6 @@ import { describe, expect, it } from "vitest";
 import { createAccessContextRepository } from "./access-context-repository";
 
 const identity: TrustedIdentity = {
-  email: "author@example.com",
-  emailVerified: true,
   id: "00000000-0000-4000-8000-000000000001",
 };
 

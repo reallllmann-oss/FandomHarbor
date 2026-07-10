@@ -1,6 +1,6 @@
 # Supabase Schema Blueprint
 
-Status: Phase 1C identity/access subset implemented in local SQL migrations; remaining catalog is proposed.
+Status: Phase 1C identity/access and Phase 2 / Sprint 002A content-domain subsets implemented in local SQL migrations; remaining catalog is proposed.
 
 ## Schema separation
 
@@ -19,9 +19,10 @@ Status: Phase 1C identity/access subset implemented in local SQL migrations; rem
 | `pen_names`              | id, owner_user_id, unique normalized slug, display name, state                                              | owner, slug, state               |
 | `invitations`            | id, SHA-256 `code_hash` unique, inviter, parent invite, max/use count, expiry, revocation reason/actor/time | inviter/time, parent             |
 | `invitation_redemptions` | id, invite_id, user_id unique, redeemed_at                                                                  | invite, user                     |
-| `works`                  | id, status, language, rating_id, current_revision_id, publication times                                     | status/date, language/rating     |
+| `works`                  | id, private owner, title/slug/summary, category, status and publication times                               | slug, owner/recent, publish feed |
 | `work_authors`           | work_id + pen_name_id unique, position                                                                      | pen name, work/position          |
-| `chapters`               | id, work_id, position unique per work, current_revision_id                                                  | work/position                    |
+| `chapters`               | id, work_id, position/slug unique per work, status, JSON content/schema version                             | work/status/position             |
+| `articles`               | id, private owner, title/slug/summary, category, status, JSON content/schema version                        | slug, owner/recent, publish feed |
 | `work_revisions`         | id, work_id, revision_no unique, immutable JSON snapshot                                                    | work/revision, created_at        |
 | `chapter_revisions`      | id, chapter_id, revision_no unique, TipTap JSON, plain text                                                 | chapter/revision                 |
 | `series`                 | id, owner/visibility/state, slug                                                                            | slug, state                      |
@@ -29,8 +30,10 @@ Status: Phase 1C identity/access subset implemented in local SQL migrations; rem
 | `ratings`                | id, code unique, label/order                                                                                | order                            |
 | `warnings`               | id, code unique, label/state                                                                                | state                            |
 | `work_warnings`          | work_id + warning_id unique                                                                                 | warning                          |
-| `tags`                   | id, type, normalized_name, slug, state, canonical_tag_id                                                    | type/name, canonical, search     |
+| `content_categories`     | id, name/slug unique, description, timestamps                                                               | slug                             |
+| `content_tags`           | id, type, name/slug unique, governance state, canonical_tag_id                                              | slug, type/state, canonical      |
 | `work_tags`              | work_id + tag_id unique, submitted label/order                                                              | tag, work/order                  |
+| `article_tags`           | article_id + tag_id unique                                                                                  | tag, article                     |
 | `assets`                 | id, owner, bucket/path unique, media type, size, scan/state                                                 | owner, state                     |
 | `kudos`                  | work_id + user_id unique, created_at                                                                        | work/date, user                  |
 | `bookmarks`              | id, user_id + work_id unique, visibility, recommended, notes                                                | user/date, public recommendation |
@@ -64,6 +67,8 @@ Likely atomic operations:
 - role/membership transition with audit event.
 
 Phase 1C implements the identity/access operations as explicit functions: `create_invitation`, `revoke_invitation`, `redeem_invitation`, `grant_role`, `revoke_role`, `set_membership_state`, and the private one-time `bootstrap_super_admin`. All are `security definer` with `search_path = ''`; public workflows are executable only by `authenticated`, and bootstrap remains owner-only.
+
+Phase 2 / Sprint 002A adds only a private `set_updated_at` trigger helper and a parameterless active-member helper for RLS. It does not add content-specific role tables, privileged workflow RPCs, editor functions or Revision functions.
 
 ## Seed and migration policy
 

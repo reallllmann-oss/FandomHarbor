@@ -233,11 +233,67 @@ Accepted decisions are authoritative until explicitly superseded. New entries in
 ## D-033 — Phase 1C identity, admission and role model
 
 - Date: 2026-06-29
-- Status: Accepted as an explicit Product Owner approval
+- Status: Superseded in part by D-037 / ADR-020 on 2026-07-02
 - Related ADR: `docs/17_Architecture_Decisions/ADR-018.md`
 - Resolves: KI-001, KI-006 and KI-011 for Phase 1
 - Decision: Phase 1 使用 Supabase Auth email/password 与强制邮箱验证，Magic Link 延后独立评审。有效邀请码在数据库原子事务中只创建 active membership，active membership 本身提供 Reader capability；Author、Admin 和 Super Admin 只能通过手工、可审计的 `role_grants` 授予。邀请支持 hash、次数、期限、撤销和邀请链，不自动处罚后代。产品邮件选择 Resend 作为 Supabase Custom SMTP provider，不引入应用邮件 SDK。
 - Consequence: 身份 provider claims 必须映射为项目内部 Trusted Identity；用户可编辑 metadata/JWT 不得作为角色事实源。敏感操作从 PostgreSQL membership/role grants 获取当前 capability，并由服务端授权 + RLS 双层强制。远程 Supabase/Resend 项目、SMTP 凭据与首个 Super Admin 仍由受控运维流程配置，不进入 seed 或仓库。
+
+保留项：active Membership 派生 Reader capability、手工高权限 `role_grants`、邀请链、审计及服务端 + RLS 双层授权继续有效。Email/verified-email/SMTP Auth 部分由 D-037 替代。
+
+## D-034 — Works, chapters and articles content foundation
+
+- Date: 2026-06-30
+- Status: Accepted as an explicit Product Owner approval for Phase 2 / Sprint 002A
+- Related ADR: `docs/17_Architecture_Decisions/ADR-019.md`
+- Decision: 内容领域以 `works` 承载可分章作品容器、`chapters` 承载作品内有序正文、`articles` 承载无需作品容器的独立文章；分类与标签词表由两类内容共享。slug 唯一范围与路由范围一致。私有 `owner_user_id` 仅用于授权，公开署名继续由后续 Pen Name/authorship 模型承担。
+- Consequence: 已发布内容仅对 active Membership 可读；拥有 Author 角色的所有者管理自己的内容，Admin/Super Admin 管理全部内容。RLS 复用 Phase 1 Membership/`role_grants`，不建立第二套权限体系。正文 Revision/编辑器、公开访客阅读、删除和社区功能不在本 Sprint。
+
+## D-035 — Autonomous factual Sprint documentation
+
+- Date: 2026-07-01
+- Status: Accepted as an explicit Product Owner instruction, effective from Sprint 002E
+- Decision: Codex may automatically update the approved README, Sprint, Architecture and `.ai` documentation paths after completing a Sprint/Step to record only verified status, acceptance, command results, Runtime state, modified files, boundaries, risks, blockers and next steps.
+- Consequence: Routine factual handoff documentation no longer requires per-Step approval. This authority cannot change code, product behavior, technology decisions, dependencies, package/lockfiles, database objects, auth/permission, publishing, storage/upload, deletion or deployment; those remain separately gated by Level 3. Final reports identify every automatic documentation update and whether further authorization is required.
+
+## D-036 — Continuous Sprint Mode
+
+- Date: 2026-07-01
+- Status: Accepted as an explicit Product Owner instruction
+- Decision: 在已批准 Sprint 内，Codex 的目标不再是完成单个 Step 后停下，而是持续推进后续 Step，直到整个 Sprint 完成或命中 Level 3 边界。完成一个 Step 后，如果下一 Step 仍属于已批准的 Level 1/Level 2 能力，则直接继续，不再等待新的普通工程授权。
+- Consequence: 已批准 Sprint 的连续开发成为默认执行模式。完成每个 Step 后，Codex 自动更新 README、Sprint、docs 与 `.ai` 的事实记录，然后判断下一 Step 是否仍在现有授权边界内；若下一步需要 Migration/Schema/RLS/RPC/Auth/Package/Dependency/Publish 等 Level 3 变更，必须立即停止并提交新的授权申请。
+
+## D-037 — Registration-name credentials and atomic invitation signup
+
+- Date: 2026-07-02
+- Status: Accepted as an explicit Product Owner Level 3 approval during Phase 2 acceptance
+- Related ADR: `docs/17_Architecture_Decisions/ADR-020.md`
+- Supersedes: D-033 的用户邮箱、强制邮箱验证与 Auth SMTP 部分；D-033 的 Membership、角色、邀请链和审计模型继续有效
+- Decision: V1 注册只接受注册名、至少 8 位密码和邀请码；登录只接受注册名与密码。注册名在 `profiles` 中大小写不敏感唯一。Supabase Auth 使用由注册名派生的内部不可投递标识，Email Confirm 必须关闭。Auth 用户、Profile、active Membership、Invitation Redemption、邀请码计数和审计记录在 `auth.users` 插入事务内原子完成。
+- Consequence: 邀请码无效、过期、撤销、耗尽或注册名冲突时整个注册事务回滚，不留下 Auth 用户。用户可编辑 metadata 只作为触发器输入，不作为运行期身份/角色事实源；Trusted Identity 继续只信任 Auth user ID，权限继续来自 Membership/`role_grants`。
+
+## D-038 — Mission Authorization v1
+
+- Date: 2026-07-02
+- Status: Accepted as an explicit Product Owner governance instruction, effective
+  from Phase 3
+- Supersedes: D-036 and D-032 only where they require Step/Sprint-level pauses or
+  separate approval for engineering work already contained in an authorized Mission
+- Decision: Product Owner authorizes product direction, Roadmap, Mission scope,
+  product decisions and final manual acceptance. Once a Mission is authorized,
+  Codex continuously owns its engineering decomposition, implementation, Runtime,
+  tests, SQL, Migration, in-scope refactor and bug fixes, documentation and
+  regression validation. Mission 3A is authorized for 3A-0, 3A-1, 3A-2 and any
+  real P0 work required under 3A-3.
+- Escalation boundary: Stop only when Mission scope is insufficient; a new product
+  decision, database direction, permission model, third-party dependency,
+  Deployment architecture or Auth architecture is required; or a major risk affects
+  the later Roadmap.
+- Consequence: Internal Steps and Sprint boundaries no longer require repeated
+  authorization inside a Mission. Existing security, RLS, migration, testing,
+  environment and documentation quality rules remain mandatory. Mission completion
+  produces one engineering report, Product Handoff and manual acceptance checklist,
+  then stops before the next Mission.
 
 ## Pending decisions
 

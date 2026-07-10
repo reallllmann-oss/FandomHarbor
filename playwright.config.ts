@@ -20,17 +20,20 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "pnpm --filter @fandom-harbor/web dev --hostname 127.0.0.1 --port 3000",
+      command:
+        "pnpm --filter @fandom-harbor/web dev --hostname 127.0.0.1 --port 3000",
       port: 3000,
       reuseExistingServer: !isCi,
     },
     {
-      command: "pnpm --filter @fandom-harbor/admin dev --hostname 127.0.0.1 --port 3001",
+      command:
+        "pnpm --filter @fandom-harbor/admin dev --hostname 127.0.0.1 --port 3001",
       port: 3001,
       reuseExistingServer: !isCi,
     },
     {
-      command: "pnpm --filter @fandom-harbor/docs dev --hostname 127.0.0.1 --port 3002",
+      command:
+        "pnpm --filter @fandom-harbor/docs dev --hostname 127.0.0.1 --port 3002",
       port: 3002,
       reuseExistingServer: !isCi,
     },

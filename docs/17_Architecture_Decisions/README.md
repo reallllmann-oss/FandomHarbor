@@ -34,3 +34,5 @@ ADRs explain why durable decisions were made, alternatives/trade-offs and conseq
 | ADR-016 | AI Tech Lead Behavior and Phase Documentation                     | D-023                            |
 | ADR-017 | Vercel + Supabase Baseline and Cloud-Server Migration Constraints | D-031                            |
 | ADR-018 | Phase 1C Identity, Admission and Manual Roles                     | D-003, D-005, D-011, D-033       |
+| ADR-019 | `works + chapters + articles` Content Domain Model                | D-003, D-006, D-007, D-034       |
+| ADR-020 | Registration-name Credentials and Atomic Invitation Signup        | D-003, D-005, D-011, D-037       |

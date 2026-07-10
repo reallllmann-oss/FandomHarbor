@@ -2,7 +2,9 @@
   "name": "@fandom-harbor/ui",
   "version": "0.1.0",
   "private": true,
-  "sideEffects": ["./src/styles.css"],
+  "sideEffects": [
+    "./src/styles.css"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles.css"

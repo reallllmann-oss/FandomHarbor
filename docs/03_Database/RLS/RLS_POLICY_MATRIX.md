@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access policies implemented locally; archive and later-domain rows remain proposed.
+Status: Phase 1C identity/access and Phase 2 / Sprint 002A content policies implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -40,6 +40,18 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - Direct table mutation is not granted to application roles. Invitation, membership and role mutations pass through narrow audited functions that recheck authorization.
 - A suspended or revoked membership causes the role helper to fail closed, even while a role grant remains historically active.
 - `supabase/tests/phase_1c_identity_access.sql` covers catalog/RLS assertions and a transactional invite/role/membership path for execution against a disposable Supabase/PostgreSQL environment.
+- Phase 2 Auth registration does not add a second permission model: the signup trigger may create only Profile, active Membership, Redemption and audit state. It cannot create Author/Admin/Super Admin grants. `phase_2_auth_registration.sql` verifies success and rollback paths.
+
+## Phase 2 / Sprint 002A enforced policies
+
+- `anon` receives no table privileges; Visitor cannot read titles, metadata or正文.
+- Active Membership may read only `published` works/articles and `published` chapters whose parent work is also published.
+- Owning active Author may read and mutate their own work/article rows and derived chapters/tag links, including drafts. An unrelated Author cannot access drafts or mutate another owner’s content.
+- Active Admin/Super Admin may read and mutate all content rows. All checks use Phase 1 Membership and active `role_grants`; user metadata/JWT role claims are not authorization truth.
+- Authenticated read grants omit `works.owner_user_id` and `articles.owner_user_id`; RLS row visibility does not expose private account identity.
+- Categories are Admin/Super Admin governed. Authors may create only `pending` non-alias tags and may attach/detach tags only on owned content.
+- Core content has no application DELETE grant; association rows may be removed. Retention/deletion remains blocked by KI-005.
+- `supabase/tests/phase_2_content_domain.sql` covers catalog, constraints, Visitor/inactive/Reader/owning Author/unrelated Author/Admin paths.
 
 ## Test matrix baseline
 

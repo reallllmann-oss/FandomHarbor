@@ -1,73 +1,77 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { getWebAccessContext } from "../../lib/identity-access";
-import { mockWorks } from "../../lib/mock-content";
+import { createWebIdentityAccess } from "../../lib/identity-access";
+import { createHybridReaderContentGateway } from "../../lib/reader-content";
+import { createSocialRelationshipGateway } from "../../lib/social-relationships";
+import { ReaderLibraryClient } from "../reader-library-client";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorksPage() {
-  const access = await getWebAccessContext();
-  if (!access) redirect("/auth/sign-in");
+  const dependencies = await createWebIdentityAccess();
+  const session = await dependencies.auth.getSession();
+  if (!session) redirect("/auth/sign-in");
+
+  const access = await dependencies.accessRepository.getForIdentity(
+    session.identity,
+  );
   if (!access.capabilities.has("archive:read")) redirect("/access");
+
+  const reader = createHybridReaderContentGateway(
+    access,
+    dependencies.runtime,
+    dependencies.cookieAdapter,
+  );
+  const [works, articles] = await Promise.all([
+    reader.listWorks(),
+    reader.listArticles(),
+  ]);
+  const authors = await createSocialRelationshipGateway(
+    dependencies.runtime,
+    dependencies.cookieAdapter,
+  ).getPublishedWorkAuthors(works.map((work) => work.slug));
+  const authorsByWork = new Map(
+    authors.map((author) => [author.workSlug, author]),
+  );
+  const workDetails = await Promise.all(
+    works.map((work) => reader.getWork(work.slug)),
+  );
+  const tagsByWork = new Map(
+    workDetails
+      .filter((detail) => detail !== null)
+      .map((detail) => [detail.work.slug, detail.tags.map((tag) => tag.name)]),
+  );
 
   return (
     <div className="site-stack">
       <section className="reading-card max-w-none">
-        <p className="eyebrow">Reader Shelf</p>
-        <h1 className="mt-3 text-3xl font-semibold">作品列表雏形</h1>
+        <p className="eyebrow">Reader Library</p>
+        <h1 className="mt-3 text-3xl font-semibold">阅读目录</h1>
         <p className="mt-4 max-w-3xl text-muted-foreground">
-          当前页面使用 mock data
-          展示第一版目录层级、卡片信息密度与阅读入口。后续接入数据库时，仍通过现有
-          Session、Access Context 与 Repository 边界提供真实数据。
+          当前通过统一 Reader Gateway 合并已发布数据库内容与 fixture
+          内容，只暴露 published
+          资源。这里同时作为公开阅读目录与本地书架的总入口。
         </p>
       </section>
-
-      <section className="book-grid">
-        {mockWorks.map((work) => (
-          <article className="stat-card" key={work.slug}>
-            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-              <span>{work.fandom}</span>
-              <span>{work.pairing}</span>
-              <span>{work.rating}</span>
-            </div>
-            <h2 className="mt-3 text-2xl font-semibold">{work.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              {work.summary}
-            </p>
-            <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
-              <div>
-                <dt className="text-muted-foreground">章节</dt>
-                <dd className="mt-1 font-medium">{work.chapters.length}</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">阅读时长</dt>
-                <dd className="mt-1 font-medium">{work.readingMinutes} 分钟</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">最后更新</dt>
-                <dd className="mt-1 font-medium">{work.updatedAt}</dd>
-              </div>
-            </dl>
-            <div className="mt-5 flex flex-wrap gap-2 text-xs text-muted-foreground">
-              {work.tags.map((tag) => (
-                <span
-                  className="rounded-full border border-border px-2 py-1"
-                  key={tag}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <Link
-              className="mt-6 inline-flex rounded-control bg-primary px-4 py-3 text-sm text-primary-foreground"
-              href={`/works/${work.slug}`}
-            >
-              进入阅读页
-            </Link>
-          </article>
-        ))}
-      </section>
+      <ReaderLibraryClient
+        articles={articles.map((article) => ({
+          id: article.id,
+          kind: "article" as const,
+          slug: article.slug,
+          summary: article.summary,
+          title: article.title,
+        }))}
+        works={works.map((work) => ({
+          authorName: authorsByWork.get(work.slug)?.displayName,
+          authorSlug: authorsByWork.get(work.slug)?.authorSlug,
+          id: work.id,
+          kind: "work" as const,
+          slug: work.slug,
+          summary: work.summary,
+          tagNames: tagsByWork.get(work.slug) ?? [],
+          title: work.title,
+        }))}
+      />
     </div>
   );
 }

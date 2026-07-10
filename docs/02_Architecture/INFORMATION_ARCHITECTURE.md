@@ -51,4 +51,3 @@ Archive
 - TipTap JSON revisions are the durable source for rich work/chapter content.
 - Derived HTML, plain text, search vectors, counters and analytics aggregates are rebuildable projections.
 - Vercel caches and TanStack Query caches are disposable delivery layers, never authority.
-

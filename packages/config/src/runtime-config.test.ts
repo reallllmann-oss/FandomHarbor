@@ -17,6 +17,15 @@ describe("runtime config", () => {
     );
   });
 
+  it("accepts an optional public site URL for canonical metadata", () => {
+    expect(
+      parsePublicRuntimeConfig({
+        ...publicEnvironment,
+        NEXT_PUBLIC_SITE_URL: "https://fandom.example",
+      }),
+    ).toMatchObject({ NEXT_PUBLIC_SITE_URL: "https://fandom.example" });
+  });
+
   it("parses server configuration without accepting undeclared secrets", () => {
     expect(
       parseServerRuntimeConfig({

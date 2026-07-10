@@ -12,4 +12,3 @@ Levels: `flat`, `raised`, `sticky`, `overlay` and `modal`.
 - Z-index uses semantic layers: base, sticky, dropdown, overlay, modal, toast.
 
 Components cannot invent numeric z-index escalation.
-

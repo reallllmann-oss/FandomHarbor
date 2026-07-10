@@ -14,4 +14,3 @@ Rules:
 - Tag types do not become a rainbow taxonomy; labels and structure carry meaning.
 
 Initial light values remain cataloged in `DESIGN_TOKENS.md`; final values require contrast verification before implementation.
-

@@ -47,7 +47,7 @@ The authoritative error vocabulary is `../Errors/ERROR_CATALOG.md`. The table be
 | Get/update preferences          | Active member, own          | Locale, reading and privacy preferences                       |
 | Request account export/deletion | Active member, own + reauth | Start auditable privacy workflow                              |
 
-Authentication transport uses Supabase email/password with mandatory email verification. Provider objects are translated to `TrustedIdentity`/`TrustedSession` at the auth package boundary and never enter business services.
+Authentication transport uses registration-name/password credentials. The provider adapter derives an internal Supabase identifier; users do not provide or verify an email. Provider objects are translated to ID-only `TrustedIdentity`/`TrustedSession` contracts and never enter business services.
 
 ### Invitations and roles
 
@@ -61,7 +61,7 @@ Authentication transport uses Supabase email/password with mandatory email verif
 
 Phase 1C implementation notes:
 
-- Sign-up does not grant archive admission; invitation redemption is a separate authenticated action.
+- Sign-up requires an invitation code. The Auth identity, Profile, active Membership, Invitation Redemption, invite counter and audit record are committed atomically; invalid invitations leave no account.
 - Invitation plaintext is returned only once by creation. Clients submit it over an authenticated server action; persistence and audit metadata contain only its SHA-256 hash or invitation ID.
 - Reader access is an active-membership capability. Author/Admin/Super Admin are explicit grants, and every elevated mutation is re-authorized inside the database transaction.
 - Provider/database errors are normalized at server action boundaries; raw Supabase `User`, `Session` and client objects are not public business contracts.

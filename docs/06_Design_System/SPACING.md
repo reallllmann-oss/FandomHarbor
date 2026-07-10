@@ -12,4 +12,3 @@ Base unit: 4px. Approved scale: 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64 and 80px
 - Touch hit areas remain at least 44×44px even when visual content is smaller.
 
 Components use semantic spacing roles. Negative margins and arbitrary values require documented layout necessity.
-

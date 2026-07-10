@@ -51,4 +51,3 @@ Every applicable page defines loading, empty, partial, error, unauthorized, forb
 - Filter state uses validated query parameters.
 - Private identifiers, invitation secrets and report evidence never appear in analytics-friendly URLs.
 - Redirects preserve canonical work/tag links after title or tag changes.
-

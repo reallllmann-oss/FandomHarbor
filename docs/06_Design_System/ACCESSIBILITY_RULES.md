@@ -15,4 +15,3 @@ Target: WCAG 2.2 AA for Reader, Author, Admin and Docs surfaces.
 - Automated checks supplement manual keyboard and screen-reader review.
 
 Accessibility is an acceptance condition, never postponed polish.
-

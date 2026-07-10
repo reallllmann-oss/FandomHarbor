@@ -24,4 +24,3 @@ For each option record benefits, costs, risks, reversibility, migration impact a
 ## Follow-up
 
 Update `.ai/DECISIONS.md`, affected detailed documents, `KNOWN_ISSUES.md`, roadmap and acceptance criteria. Meeting notes alone are not the decision source of truth.
-

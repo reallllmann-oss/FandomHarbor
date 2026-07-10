@@ -15,6 +15,7 @@ Status: Proposed; durations require product/legal approval under KI-005, KI-008,
 | ------------------- | ----------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
 | Account/profile     | Membership and settings | Disable access; queue policy-based deletion                | Remove/anonymize after approved hold                        |
 | Pen names/works     | Archive publishing      | Unpublish/archive; preserve link behavior as policy allows | Purge or tombstone after retention decision                 |
+| Articles/chapters   | Archive publishing      | Unpublish/archive with parent visibility                   | Purge or tombstone after retention decision                 |
 | Revisions           | Diff/restore/audit      | Restrict with parent content                               | Retain only per approved author/moderation policy           |
 | Bookmarks/history   | Personal reading        | User-controllable deletion                                 | Prompt purge; backups age out                               |
 | Kudos/comments      | Archive interaction     | Delete/anonymize by policy                                 | Preserve referential integrity without private identity     |
@@ -31,3 +32,7 @@ Export, correction, account deletion, content deletion and appeal requests need 
 ## Backup caveat
 
 Deletion documentation must disclose backup aging: deleted data may remain inaccessible in encrypted backups until scheduled expiry and must not be restored into active service except through incident recovery controls.
+
+## Phase 2 / Sprint 002A boundary
+
+`works`, `chapters` and `articles` implement `draft → published → archived`. Application roles receive no direct DELETE privilege; archive is the only current removal path. This intentionally leaves purge, tombstone, restore and retention duration unresolved until KI-005 is approved.

@@ -6,4 +6,3 @@
 - `GLOSSARY.md` — canonical vocabulary across product, data, API, UI and code
 
 Vision defines purpose. Principles constrain decisions. Non-Goals prevent scope creep. Glossary prevents language drift. None substitutes for another.
-

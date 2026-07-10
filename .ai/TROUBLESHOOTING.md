@@ -172,3 +172,50 @@ received undefined
 - 环境变量加载失败优先按本文件处理，不得直接升级为架构或供应商问题。
 - 更大的环境异常仍受 `.ai/ENVIRONMENT_POLICY.md` 管控。
 - 需要改依赖、Runtime Contract、环境变量策略或部署方式时，仍按 `.ai/WORKFLOW.md` 的 Level 3 执行。
+
+## 9. Codex Git 自动提交能力
+
+本项目已经完成一次完整的 Git 自动提交能力验收。当前结论是：
+
+- Codex 可在真实工作目录中执行 Git 命令
+- Codex 可写入 `.git`
+- Codex 可访问 GitHub
+- Codex 可通过 SSH remote 执行 `git push`
+
+### 当前已验证状态
+
+- 工作目录：`/Users/liuzyzy/Documents/FandomHarbor`
+- 当前 `origin`：`git@github.com:reallllmann-oss/FandomHarbor.git`
+- 分支：`main`
+
+### 通过的验收链
+
+```bash
+git status
+touch .git/codex-permission-test && rm .git/codex-permission-test
+git ls-remote origin
+git push origin main
+```
+
+### 说明
+
+- `git status` 成功表示 Codex 能正常读取仓库状态。
+- `.git` 权限测试成功表示后续 `git add` / `git commit` 所需的 lock 文件写入能力可用。
+- `git ls-remote origin` 成功表示 GitHub DNS、网络与认证通路可用。
+- `git push origin main` 返回 `Everything up-to-date` 或正常推送结果，都表示 push 通路已打通。
+
+### 推荐约定
+
+- 后续优先保持 SSH remote，不要切回 HTTPS，除非 Product Owner 明确要求。
+- 后续 Sprint 完成后，只有在 Product Owner 明确确认的前提下，Codex 才执行：
+  - `git add`
+  - `git commit`
+  - `git push`
+
+### 如果未来再次失败，优先排查
+
+1. `git remote get-url origin` 是否仍是 SSH 地址。
+2. `git status` 是否正常。
+3. `.git` 是否仍可创建 lock/测试文件。
+4. `git ls-remote origin` 是否可访问。
+5. 是否是系统权限、网络、DNS 或 SSH 凭证状态变化，而不是仓库本身问题。

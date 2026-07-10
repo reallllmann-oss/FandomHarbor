@@ -44,6 +44,13 @@ This file records product experience, interaction, UI and reading decisions. Arc
 - Decision: Rating and warning information appears before content, never relies on color alone, and uses neutral language.
 - Consequence: Warning conceal/reveal patterns must remain keyboard/screen-reader accessible.
 
+## DD-007 — Registration asks only for the credentials the product uses
+
+- Date: 2026-07-02
+- Status: Accepted during Phase 2 product acceptance
+- Decision: Registration shows exactly registration name, password and invitation code. Login shows registration name and password. Password guidance states only “at least 8 characters”; no email verification or complexity language appears.
+- Consequence: Invitation and field errors use explicit accessible alerts, and Auth implementation details such as the internal Supabase identifier remain invisible to users.
+
 ## Change protocol
 
 New design decisions use sequential `DD-xxx` IDs with status, rationale and consequences. Never hide an experience change inside a component implementation. Superseded decisions remain in history and link to their replacement.

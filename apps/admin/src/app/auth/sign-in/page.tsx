@@ -1,3 +1,4 @@
+import { MIN_PASSWORD_LENGTH } from "@fandom-harbor/auth";
 import { signIn } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -21,18 +22,18 @@ export default async function AdminSignInPage({
         <p className="mt-4 text-sm text-destructive" role="alert">
           {query.error === "forbidden"
             ? "该账号没有后台权限。"
-            : "登录失败，请检查凭据和邮箱验证状态。"}
+            : "登录失败，请检查注册名和密码。"}
         </p>
       ) : null}
       <form action={signIn} className="mt-6 space-y-5">
         <label className="block text-sm font-medium">
-          邮箱
+          注册名
           <input
-            autoComplete="email"
+            autoComplete="username"
             className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
-            name="email"
+            name="registrationName"
             required
-            type="email"
+            type="text"
           />
         </label>
         <label className="block text-sm font-medium">
@@ -40,7 +41,7 @@ export default async function AdminSignInPage({
           <input
             autoComplete="current-password"
             className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
-            minLength={12}
+            minLength={MIN_PASSWORD_LENGTH}
             name="password"
             required
             type="password"

@@ -32,7 +32,7 @@ Frozen install, type, lint, unit/contract tests and three-app production build p
 
 ## Decisions to preserve or supersede
 
-Preserve D-033/ADR-018: verified email/password, invitation-only admission, active Membership as Reader, manual elevated grants, provider isolation and audited security-definer workflows.
+2026-07-02 update: D-037/ADR-020 supersedes the verified-email portion of D-033/ADR-018 with registration-name/password and atomic invitation signup. Preserve invitation-only admission, active Membership as Reader, manual elevated grants, provider isolation and audited security-definer workflows.
 
 ## Changes recommended for the next Phase
 

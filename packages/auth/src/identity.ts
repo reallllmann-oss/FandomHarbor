@@ -4,8 +4,6 @@ export type Capability =
   "admin:operate" | "archive:read" | "super_admin:operate" | "work:author";
 
 export interface TrustedIdentity {
-  email: string;
-  emailVerified: boolean;
   id: string;
 }
 

@@ -6,6 +6,8 @@ export interface MockChapter {
 }
 
 export interface MockWork {
+  authorName: string;
+  authorSlug: string;
   slug: string;
   title: string;
   summary: string;
@@ -21,6 +23,8 @@ export interface MockWork {
 
 export const mockWorks: MockWork[] = [
   {
+    authorName: "Fandom Harbor Archive",
+    authorSlug: "fandom-harbor-archive",
     slug: "glass-harbor",
     title: "Glass Harbor",
     summary:
@@ -50,6 +54,8 @@ export const mockWorks: MockWork[] = [
     ],
   },
   {
+    authorName: "Fandom Harbor Archive",
+    authorSlug: "fandom-harbor-archive",
     slug: "radio-after-sunset",
     title: "Radio After Sunset",
     summary:
@@ -72,6 +78,8 @@ export const mockWorks: MockWork[] = [
     ],
   },
   {
+    authorName: "Fandom Harbor Archive",
+    authorSlug: "fandom-harbor-archive",
     slug: "salt-and-constellations",
     title: "Salt and Constellations",
     summary:
@@ -105,13 +113,14 @@ export const mockWorks: MockWork[] = [
 export const landingSignals = [
   {
     label: "当前阶段",
-    value: "Sprint 002A",
-    detail: "先完成可视化网页骨架，再逐步接入真实内容流。",
+    value: "Sprint 002B",
+    detail: "建立作品、章节与文章的阅读路由和可替换数据流。",
   },
   {
     label: "内容来源",
-    value: "Mock Data",
-    detail: "页面结构先稳定，避免在数据库设计未确定前提前耦合。",
+    value: "ContentStore Fixture",
+    detail:
+      "当前数据通过 002A Service 合同注入，后续可替换为 Supabase Repository。",
   },
   {
     label: "访问边界",

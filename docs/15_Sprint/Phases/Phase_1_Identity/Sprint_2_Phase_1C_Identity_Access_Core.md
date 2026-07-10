@@ -8,6 +8,8 @@ Product Phase：Phase 1 — Identity
 
 建立 email/password 身份、邀请门禁、Membership、手工 Role Grant、审计基线和 RLS 双层强制，使 Visitor、Reader、Author、Admin 与 Super Admin 的基础允许/拒绝路径可验证。
 
+> 2026-07-02 supersession note：本 Sprint 的邮箱凭据、邮箱验证与 Auth 邮件决策已由 Phase 2 D-037/ADR-020 替代。当前产品使用注册名/password 和原子邀请码注册；Membership、角色、审计与 RLS 模型保持有效。
+
 ## 已批准决策
 
 - Supabase Auth email/password，必须验证邮箱；Magic Link 不进入本 Sprint。

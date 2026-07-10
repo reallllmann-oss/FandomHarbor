@@ -21,7 +21,8 @@ export default async function AdminHomePage() {
         </h1>
         <p className="mt-4 max-w-3xl text-muted-foreground">
           当前身份已通过服务端验证；后台能力继续由 active membership、Role Grant
-          与 PostgreSQL RLS 双层强制。Sprint 002A 只建立页面框架，不扩展复杂业务。
+          与 PostgreSQL RLS 双层强制。Sprint 002A
+          只建立页面框架，不扩展复杂业务。
         </p>
       </section>
 
@@ -29,7 +30,12 @@ export default async function AdminHomePage() {
         {[
           ["权限状态", [...access.roles].join(", ") || "无 elevated role"],
           ["Membership", access.membershipState ?? "未入站"],
-          ["当前能力", access.capabilities.has("super_admin:operate") ? "Super Admin" : "Admin"],
+          [
+            "当前能力",
+            access.capabilities.has("super_admin:operate")
+              ? "Super Admin"
+              : "Admin",
+          ],
         ].map(([label, value]) => (
           <article className="stat-card" key={label}>
             <p className="text-sm text-muted-foreground">{label}</p>
@@ -48,7 +54,10 @@ export default async function AdminHomePage() {
               ["最近角色变更", "02", "继续复用现有 audit 机制"],
               ["内容区状态", "Empty", "Author 面板已预留入口"],
             ].map(([label, value, detail]) => (
-              <div className="rounded-card border border-border bg-surface-muted p-4" key={label}>
+              <div
+                className="rounded-card border border-border bg-surface-muted p-4"
+                key={label}
+              >
                 <p className="text-sm text-muted-foreground">{label}</p>
                 <p className="mt-2 text-2xl font-semibold">{value}</p>
                 <p className="mt-2 text-sm text-muted-foreground">{detail}</p>
@@ -61,7 +70,10 @@ export default async function AdminHomePage() {
           <p className="eyebrow">Quick Access</p>
           <h2 className="mt-3 text-2xl font-semibold">管理入口</h2>
           <div className="mt-5 space-y-3 text-sm">
-            <a className="block rounded-card border border-border p-4 hover:bg-surface-muted" href="/access">
+            <a
+              className="block rounded-card border border-border p-4 hover:bg-surface-muted"
+              href="/access"
+            >
               身份与权限管理
             </a>
             <div className="rounded-card border border-border p-4">

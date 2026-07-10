@@ -10,4 +10,3 @@ Status: Proposed
 - Super Admin controls are segregated from routine Admin navigation.
 - Private identity/evidence fields are revealed only when authorized and operationally needed.
 - Responsive fallback preserves labels and confirmation context rather than squeezing every column.
-

@@ -2,20 +2,20 @@
 
 Status: Approved by product owner on 2026-06-28. Replacements require explicit approval and a recorded decision.
 
-| Area | Technology | Architectural role |
-|---|---|---|
-| Web framework | Next.js App Router | Web/Admin product applications and future Docs viewer, Server Components first |
-| Language | TypeScript | Strictly typed application and shared packages |
-| Backend platform (current) | Supabase | Auth, PostgreSQL, Storage and platform services |
-| Database | PostgreSQL | Relational source of truth, constraints, search foundation and RLS |
-| Styling | Tailwind CSS | Token-driven utility styling; no arbitrary visual values in product code |
-| Component foundation | shadcn/ui | Source-owned accessible component primitives customized through `packages/ui` |
-| Rich-text editor | TipTap | Structured work/chapter editing; canonical content stored as validated JSON |
-| Runtime validation | Zod | Validation at server, form, environment and API boundaries |
-| Forms | React Hook Form | Client form state integrated with Zod schemas |
-| Client server-state | TanStack Query | Interactive/optimistic or frequently refreshed client data only |
-| Icons | Lucide Icons | Single icon language; decorative icons hidden from assistive technology |
-| Application hosting (current) | Vercel | Preview, staging and production deployment for Next.js applications |
+| Area                          | Technology         | Architectural role                                                             |
+| ----------------------------- | ------------------ | ------------------------------------------------------------------------------ |
+| Web framework                 | Next.js App Router | Web/Admin product applications and future Docs viewer, Server Components first |
+| Language                      | TypeScript         | Strictly typed application and shared packages                                 |
+| Backend platform (current)    | Supabase           | Auth, PostgreSQL, Storage and platform services                                |
+| Database                      | PostgreSQL         | Relational source of truth, constraints, search foundation and RLS             |
+| Styling                       | Tailwind CSS       | Token-driven utility styling; no arbitrary visual values in product code       |
+| Component foundation          | shadcn/ui          | Source-owned accessible component primitives customized through `packages/ui`  |
+| Rich-text editor              | TipTap             | Structured work/chapter editing; canonical content stored as validated JSON    |
+| Runtime validation            | Zod                | Validation at server, form, environment and API boundaries                     |
+| Forms                         | React Hook Form    | Client form state integrated with Zod schemas                                  |
+| Client server-state           | TanStack Query     | Interactive/optimistic or frequently refreshed client data only                |
+| Icons                         | Lucide Icons       | Single icon language; decorative icons hidden from assistive technology        |
+| Application hosting (current) | Vercel             | Preview, staging and production deployment for Next.js applications            |
 
 ## Architecture constraints
 

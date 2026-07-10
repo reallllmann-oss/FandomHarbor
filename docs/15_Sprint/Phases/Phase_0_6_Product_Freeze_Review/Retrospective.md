@@ -21,4 +21,3 @@ Status: Complete only after Phase exit.
 ## Changes recommended for the next Phase
 
 The retrospective records learning; it does not silently change architecture or product scope.
-

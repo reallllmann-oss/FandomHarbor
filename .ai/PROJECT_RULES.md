@@ -59,6 +59,13 @@
 54. 本地访问地址必须以终端输出的 `Local:` 为准；排查页面打不开、访问错应用或浏览器打开错误地址时，先核对终端实际端口，而不是按历史端口习惯操作。
 55. 开发环境变量采用 Root `.env.local`，并同步到 `apps/web/.env.local` 与 `apps/admin/.env.local`；未确认三处加载状态前，不得把 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 之类的 `undefined` 直接归因为 Supabase 服务端配置错误。
 56. 出现 Runtime Zod env 校验失败时，优先检查 `.env.local` 文件是否存在、应用级 `.env.local` 是否同步、Next Dev Server 是否已重启、相关 `.next` 缓存是否清理；常见环境与工具链问题必须记录和查阅 `.ai/TROUBLESHOOTING.md`。
+57. 自 Phase 3 起采用 Mission Authorization。Mission 获批后连续完成范围内全部
+    Sprint、工程拆分、Runtime、测试、SQL、Migration、Bug Fix、文档与回归，
+    不再按内部 Step 逐次授权。
+58. Mission 内只有 Scope 不足、新产品决策、数据库方向、权限模型、第三方依赖、
+    Deployment 架构、Auth 架构或重大 Roadmap 风险必须暂停。
+59. Mission 完成后统一提交工程报告、Product Handoff 与人工验收清单；未经人工
+    验收和下一 Mission 授权，不得进入下一 Mission。
 
 ## Autonomous Engineering Policy / Codex 自治工程权限
 
@@ -79,6 +86,10 @@
 - 必须先报告触发原因、建议变更和影响范围，批准前不得写入。
 
 Type/Lint/Build/Test 失败且修复属于 Level 1/2 时，Codex 必须直接修复、重跑检查并在最终报告中说明；不得为此暂停请求 Product Owner 批准。完整执行细则与报告格式以 `.ai/WORKFLOW.md` 为准。
+
+自 Phase 3 起，Level 1–3 用于风险记录，不再把已授权 Mission 内的 SQL、
+Migration、Runtime 或范围内工程实现拆成逐次授权。是否暂停以规则 58 的 Mission
+边界为准。
 
 ## Documentation maintenance
 

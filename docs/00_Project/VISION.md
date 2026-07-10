@@ -37,4 +37,3 @@ Growth is measured by archive health and trust—not by virality. The platform m
 ## Vision guardrail
 
 Fandom Harbor does not aim to be everything a community could do online. It aims to be unusually good at archiving, publishing, discovering and reading works inside a trusted private environment.
-
