@@ -1,7 +1,7 @@
 # V1 Beta Browser QA Checklist
 
 Created by: Mission RR-1A  
-Execution status: RR-1C final Browser QA and Mobile QA pass; Product Owner final acceptance pending
+Execution status: RR-1C PASS — Product Owner Accepted / Beta Ready
 
 Record target URL, deployment ID, database environment, tester, date, browser and viewport
 before checking any item. Use synthetic accounts and never paste credentials into this file.
@@ -29,6 +29,9 @@ before checking any item. Use synthetic accounts and never paste credentials int
 - [x] Severe network errors = 0.
 - [x] Expected Next.js RSC navigation aborts are treated as non-failing automation noise.
 - [x] Two generic non-severe 404 console notes are recorded as non-blocking.
+- [x] QA Fixture acceptance passes with Author and Reader accounts.
+- [x] Author enters Studio; Reader `/studio` redirects to `/archive`.
+- [x] Product Owner completes final RR-1C browser acceptance.
 
 ## Preconditions
 

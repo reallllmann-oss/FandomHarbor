@@ -2,6 +2,17 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-11 — Mission RR-1C PASS / V1 Beta Ready
+
+- Product Owner completed final Mission RR-1C acceptance and confirmed PASS.
+- QA Fixture acceptance completed.
+- Author / Reader permission chain passed manual verification.
+- Reader `/studio` correctly redirects to `/archive`.
+- Release Candidate baseline `8495bded5e0c78985be7410cceb902cd2c090421`
+  is Product Owner Accepted and Beta Ready.
+- Mission RR-1C is formally closed. No Git tag, Go / No-Go, release action or new
+  development was authorized.
+
 ## 2026-07-11 — Mission RR-1C Local QA Fixture Repair
 
 - Added `pnpm qa:credentials` so the Product Owner can read local-only acceptance
@@ -18,7 +29,7 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 - Browser QA passes Author login/Profile/Studio, Reader login/content access and
   Reader Studio denial with zero console errors.
 - No production data, Migration, RLS, Auth architecture or Permission Model changed.
-- RR-1C remains awaiting Product Owner final acceptance.
+- This repair was subsequently Product Owner accepted as part of RR-1C PASS.
 
 ## 2026-07-10 — Mission RR-1C Release Candidate Engineering Complete
 
@@ -31,10 +42,11 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 - Final desktop and 390×844 mobile QA pass on public discovery, SEO endpoints,
   metadata, unauthenticated guards and responsive overflow checks.
 - Created the Release Candidate Report and Beta Ready Checklist.
-- Established the Release Candidate Git baseline at `final RR-1C Git HEAD（见最终 handoff）`.
+- Established the Release Candidate Git baseline later accepted at
+  `8495bded5e0c78985be7410cceb902cd2c090421` after the QA Fixture supplement.
 - No new business feature, migration, dependency, permission model, framework,
   workflow or governance change was introduced.
-- Mission RR-1C awaits Product Owner final acceptance; no Git tag was created.
+- Mission RR-1C was subsequently Product Owner accepted; no Git tag was created.
 
 ## 2026-07-07 — Mission RR-1B PASS
 

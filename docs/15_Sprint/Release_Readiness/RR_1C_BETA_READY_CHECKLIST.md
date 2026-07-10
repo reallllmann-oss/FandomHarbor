@@ -1,8 +1,10 @@
 # V1 Beta Ready Checklist
 
-Status: Ready for Product Owner final acceptance  
-Mission: RR-1C — Release Candidate  
-Date: 2026-07-10
+Status: PASS — Product Owner Accepted / Beta Ready
+
+Mission: RR-1C — Release Candidate
+
+Acceptance date: 2026-07-11
 
 ## Product baseline
 
@@ -12,6 +14,7 @@ Date: 2026-07-10
 - [x] RR-1A Release Preparation baseline complete.
 - [x] RR-1B Production Deployment PASS.
 - [x] RR-1C Release Candidate audit complete.
+- [x] RR-1C Product Owner final acceptance complete.
 
 ## Runtime and database
 
@@ -50,6 +53,7 @@ Date: 2026-07-10
 - [x] Reader access and Author public profile access pass.
 - [x] Author Studio access passes.
 - [x] Reader has no Author grant and is redirected away from Studio.
+- [x] Product Owner verified Reader `/studio` redirects to `/archive`.
 - [x] Passwords are absent from tracked files and public documentation.
 - [x] Local-only host guard prevents remote fixture execution.
 
@@ -67,7 +71,8 @@ Date: 2026-07-10
 ## Release Candidate baseline
 
 - [x] Release Candidate Git baseline created.
-- [x] Baseline commit: `final RR-1C Git HEAD（见最终 handoff）`.
+- [x] Product Owner accepted baseline commit:
+      `8495bded5e0c78985be7410cceb902cd2c090421`.
 - [x] P0 = 0.
 - [x] No new business feature, migration, dependency, framework or permission model change.
 
@@ -96,5 +101,6 @@ or during final Public Beta Go / No-Go:
 
 ## Final status
 
-V1 Beta is technically ready for Product Owner final acceptance. Do not create a Git
-tag, start UI polish or begin a new mission until explicitly authorized.
+V1 Beta Release Candidate is Product Owner Accepted and Beta Ready. Mission RR-1C is
+closed. Do not create a Git tag, perform Go / No-Go, start UI polish or begin a new
+mission until explicitly authorized.

@@ -2,11 +2,11 @@
 
 ## 当前阶段
 
-Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Owner Acceptance)
+Mission RR-1C — PASS（Product Owner Accepted）/ Beta Ready
 
 ## 当前状态
 
-`RR-1C 本地 QA Fixture 已恢复 Reader/Author 登录与权限验收链；等待 Product Owner 最终验收`
+`RR-1C 已通过最终人工验收并正式关闭；Release Candidate 达到 Beta Ready`
 
 ## 已完成
 
@@ -175,12 +175,18 @@ Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Own
   history 14/14 对齐；六套 SQL suites 与 local schema lint 通过。
 - `pnpm validate` 全绿，167 项测试及 Web / Admin / Docs build 通过；P0 为零。
 - 桌面与 390×844 移动端 QA 均通过；未登录正文与 Studio 守卫符合当前权限模型。
-- Release Candidate Git baseline 已建立，commit 为 `final RR-1C Git HEAD（见最终 handoff）`。
+- Product Owner accepted Release Candidate baseline 为
+  `8495bded5e0c78985be7410cceb902cd2c090421`。
 - RR-1C 最终验收发现 local clean rebuild 后 Auth Users 为空；localhost-only
   QA Fixture 已完成工程修复，能够幂等恢复 Reader、Author、active Membership、
   Author grant/profile 与 Invitation Redemption。
 - Fixture clean rebuild recovery、Reader/Author 登录、Reader Access、Author Public
   Profile、Author Studio 与 Reader Studio 拒绝路径已通过浏览器验证，Console Error 为 0。
+- Product Owner 于 2026-07-11 完成最终人工验收并确认 Mission RR-1C PASS。
+- QA Fixture 验收完成；Author / Reader 权限链路人工验证通过。
+- Reader 访问 `/studio` 自动重定向 `/archive`；Release Candidate 达到 Beta Ready。
+- Product Owner accepted Release Candidate baseline:
+  `8495bded5e0c78985be7410cceb902cd2c090421`。
 
 ## 当前阻塞
 
@@ -193,10 +199,10 @@ Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Own
 - Phase 3 已完成 Product Owner 验收，无剩余 Phase 3 阻塞。
 - Mission RR-1A 发布准备基线已完成。
 - Mission RR-1B 已正式关闭，无已知工程 P0。
-- Mission RR-1C 工程完成，无已知 P0，等待 Product Owner 最终验收。
+- Mission RR-1C 已正式关闭，无已知 P0；Release Candidate 为 Beta Ready。
 - KI-018 Release Candidate Git 基线已由 RR-1C 处理。
 - KI-027 Moderate PostCSS advisory、KI-029 CI 缺口与 KI-030 Supabase dry-run
-  临时角色认证已分类，不阻塞 RR-1C 技术候选，但必须在后续 Go / No-Go 或未来数据库部署前复核。
+  临时角色认证已作为 Beta accepted risks 分类，需在后续 Go / No-Go 或未来数据库部署前复核。
 
 ## Product Owner 人工验收结论
 
@@ -214,9 +220,8 @@ Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Own
 - Phase 3：Completed — Product Owner Accepted（2026-07-04）。
 - Mission RR-1A：Release Preparation Baseline Complete。
 - Mission RR-1B：PASS — Product Owner Accepted（2026-07-07）。
-- Mission RR-1C：Engineering Complete — Awaiting Product Owner Acceptance（2026-07-10）。
-- Mission RR-1C QA Fixture：Engineering Complete — Awaiting Product Owner
-  Re-acceptance（2026-07-11）。
+- Mission RR-1C：PASS — Product Owner Accepted / Beta Ready（2026-07-11）。
+- Mission RR-1C QA Fixture：PASS — Product Owner Accepted（2026-07-11）。
 - Phase 1 的数据库实测与产品验收记录仍需在独立流程中补齐，但不阻塞 v0.1 文档归档。
 - 已登录 Author / Reader 的远程浏览器主链路已由 Product Owner 完整复验通过。
 
@@ -230,12 +235,18 @@ Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Own
 
 ## 下一步
 
-- 等待 Product Owner 对 Mission RR-1C 进行最终人工验收。
-- 未获明确授权前不创建 Git tag、不进入 UI Polish、Design Intelligence 或新 Mission。
+- 当前无 active Mission。
+- 未获明确授权前不执行 Go / No-Go、不创建 Git tag、不进行发布动作、不进入
+  UI Polish、Design Intelligence 或新 Mission。
 
 ## 最后更新
 
 2026-07-11
+
+- Product Owner confirmed Mission RR-1C PASS.
+- QA Fixture and Author / Reader permission chains are accepted.
+- Reader `/studio` redirects to `/archive`; Release Candidate is Beta Ready.
+- Mission RR-1C is formally closed; no next Mission or release action is authorized.
 
 - RR-1C local QA Fixture repair engineering complete.
 - Local clean rebuild recovery, Reader/Author login and permission Browser QA pass.
@@ -244,9 +255,10 @@ Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Own
 - Mission RR-1C Release Candidate engineering complete.
 - Final Runtime, Migration, SQL, Validation, Browser QA, Mobile QA and
   Documentation audits pass with P0 at zero.
-- Release Candidate Git baseline established at `final RR-1C Git HEAD（见最终 handoff）`.
+- Product Owner accepted Release Candidate baseline:
+  `8495bded5e0c78985be7410cceb902cd2c090421`.
 - Beta Ready Checklist and Release Candidate Report are created.
-- Mission RR-1C now awaits Product Owner final acceptance.
+- Mission RR-1C is Product Owner Accepted and closed.
 
 2026-07-07
 

@@ -1,21 +1,29 @@
 # Project Memory
 
+- 2026-07-11: Product Owner confirmed `Mission RR-1C PASS`. QA Fixture acceptance
+  is complete; Author / Reader permission chains pass manual verification; Reader
+  `/studio` redirects to `/archive`. Release Candidate baseline
+  `8495bded5e0c78985be7410cceb902cd2c090421` is Product Owner Accepted and Beta
+  Ready. RR-1C is formally closed. Git Tag, Go / No-Go, release actions and new
+  development remain separately gated.
+
 - 2026-07-11: RR-1C Product Owner acceptance found local Auth users empty after a
   clean rebuild. A localhost-guarded, idempotent QA fixture now restores synthetic
   Reader/Author identities, active Memberships, Author grant/profile and invitation
   redemption. Credentials remain only in Git-ignored `.local/qa-fixture.json` mode
   `0600`; `qa:web` injects local runtime values without overwriting `.env.local`.
   Clean rebuild recovery, both logins, Reader access, Author profile/Studio, Reader
-  Studio denial and zero-error browser console all pass. RR-1C remains awaiting
-  Product Owner final acceptance.
+  Studio denial and zero-error browser console all pass. This fixture was
+  subsequently Product Owner accepted.
 
 - 2026-07-10: Mission RR-1C Release Candidate engineering completed. Final
   Runtime, local/remote Migration parity, clean local rebuild, six SQL suites,
   schema lint, `pnpm validate`, desktop Browser QA, 390×844 Mobile QA,
   Documentation Audit, Known Issues Review and Beta Ready Checklist all pass with
-  P0 at zero. Release Candidate Git baseline is `final RR-1C Git HEAD（见最终 handoff）`. No new
+  P0 at zero. The accepted Release Candidate Git baseline is
+  `8495bded5e0c78985be7410cceb902cd2c090421`. No new
   feature, migration, dependency, permission model, framework, workflow or
-  governance change was introduced. RR-1C awaits Product Owner final acceptance.
+  governance change was introduced. RR-1C was subsequently Product Owner accepted.
 
 - 2026-07-07: Product Owner confirmed `Mission RR-1B. PASS` after final
   Production Deployment acceptance. Production URL, HTTPS, Environment Variables,

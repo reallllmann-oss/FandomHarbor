@@ -21,7 +21,7 @@ This is the authoritative queue for unresolved foundation questions. “Open” 
 | KI-015 | Reading-history default and privacy controls               | History is sensitive behavioral data                                                                                                       | Reading history                     | Open                                                                                              |
 | KI-016 | Remote Supabase Auth acceptance                            | Remote migration, Auth and full Product Owner acceptance chain required verification                                                       | Phase 2 Pass                        | Resolved 2026-07-02 — registration → login → manual Author grant → Studio passed                  |
 | KI-017 | Deployed frontend smoke test                               | Mission 3A browser QA used local Web against remote Supabase; deployed Vercel URL remains unverified                                       | Release Readiness                   | Resolved 2026-07-07 — RR-1B Product Owner accepted production Browser Smoke Test                  |
-| KI-018 | Release Candidate source baseline                          | Accepted Phase 2 through completed Phase 3 changes remain in an uncommitted working tree rather than one identifiable Git release baseline | Release Candidate                   | Resolved 2026-07-10 — RR-1C baseline commit `final RR-1C Git HEAD（见最终 handoff）`              |
+| KI-018 | Release Candidate source baseline                          | Accepted Phase 2 through completed Phase 3 changes remain in an uncommitted working tree rather than one identifiable Git release baseline | Release Candidate                   | Resolved — Product Owner accepted baseline `8495bded5e0c78985be7410cceb902cd2c090421`             |
 | KI-019 | Supabase SQL test harness format                           | Existing SQL suites are transactional scripts without TAP plans, so `supabase test db` reports no plan despite successful SQL execution    | Test reporting                      | Open — execute with PostgreSQL `ON_ERROR_STOP`; convert harness separately                        |
 | KI-020 | Studio multi-step writes                                   | Chapter publication selection and tag replacement reuse existing grants but are not one newly authorized atomic RPC                        | Acceptance robustness               | Open — refresh and verify after network failure; atomic write RPC requires approval               |
 | KI-021 | Chapter deletion                                           | Existing schema has no Chapter delete grant/policy and this Mission explicitly forbids permission expansion                                | Chapter management                  | Open — deletion remains unavailable by approved scope                                             |
@@ -59,8 +59,8 @@ This is the authoritative queue for unresolved foundation questions. “Open” 
 
 ## Current release-readiness limitations
 
-- Phase 3 and Release Readiness through RR-1B are Product Owner accepted; RR-1C has
-  established an identifiable Release Candidate commit.
+- Phase 3 and Release Readiness through RR-1C are Product Owner accepted. The
+  Release Candidate is Beta Ready.
 - Database changes are represented by 14 ordered migrations and six SQL suites, but
   the SQL harness remains non-TAP (KI-019).
 - Production deployment, domain/HTTPS configuration and deployed smoke testing passed RR-1B

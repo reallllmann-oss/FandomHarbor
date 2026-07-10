@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Phase 3 Completed; RR-1C QA Fixture Repair Complete
+Status: Active — Phase 3 Completed; RR-1C PASS / Beta Ready
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -90,7 +90,7 @@ Roadmap type: Product Phase Roadmap
   Product Owner 确认 PASS；`3C-2` Browse Experience 已由 Product Owner
   确认 PASS；`3C-3` SEO Foundation 已由 Product Owner 确认 PASS。
   Mission 3C 与 Phase 3 已正式关闭并标记 Completed。`RR-1A`、`RR-1B`
-  与 `RR-1C` 已进入 Release Readiness 记录；`RR-1C` 当前等待 Product Owner
+  与 `RR-1C` 已进入 Release Readiness 记录；`RR-1C` 已通过 Product Owner
   最终验收。
 
 退出结果：Phase 3 P0 为零，全部批准范围通过 Product Owner 人工验收，Phase 3
@@ -103,14 +103,16 @@ Completed，Beta 可以稳定上线。
 
 - `RR-1A` Release Preparation：Completed baseline。
 - `RR-1B` Deployment：PASS — Product Owner Accepted（2026-07-07）。
-- `RR-1C` Release Candidate：QA Fixture repair complete，等待 Product Owner 验收。
+- `RR-1C` Release Candidate：PASS — Product Owner Accepted / Beta Ready
+  （2026-07-11）。
 
 RR-1A 已建立 Runtime / Migration / Validation Baseline、Release Checklist 与 Browser
 QA Checklist。RR-1B 已完成生产部署与 Product Owner 人工验收。RR-1C Release
 Candidate 已完成最终审计、验证、Browser/Mobile QA、Beta Ready Checklist 与 Git
 baseline。Git Tag 与 Go / No-Go 尚未授权、未开始。
 RR-1C 验收发现的本地 Auth 空状态已通过 localhost-only QA Fixture 恢复；
-Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已验证。
+Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已验证。Reader
+访问 Studio 自动重定向 Archive；Mission 已正式关闭。
 
 证据见 [`Release_Readiness`](Release_Readiness/README.md)。
 

@@ -1,14 +1,29 @@
 # Mission RR-1C 验收报告
 
-Mission: Release Readiness Phase 1C — Release Candidate  
-Status: Engineering Complete — Awaiting Product Owner Acceptance  
-Date: 2026-07-10
+Mission: Release Readiness Phase 1C — Release Candidate
+
+Status: PASS — Product Owner Accepted
+
+Engineering completion: 2026-07-10
+
+Product Owner acceptance: 2026-07-11
+
+## Product Owner Final Acceptance — 2026-07-11
+
+- Mission RR-1C: PASS（Product Owner Accepted）。
+- QA Fixture 验收完成。
+- Author / Reader 权限链路人工验证通过。
+- Reader 访问 `/studio` 后自动重定向 `/archive`，符合当前权限模型。
+- Release Candidate 达到 Beta Ready。
+- Product Owner accepted Release Candidate baseline:
+  `8495bded5e0c78985be7410cceb902cd2c090421`。
+- Mission RR-1C 正式关闭；未授权 Git Tag、Go / No-Go 或新开发。
 
 ## QA Fixture acceptance supplement — 2026-07-11
 
 Product Owner final acceptance exposed that a local clean rebuild correctly restored
-schema but left Supabase Authentication Users empty. The RR-1C QA Fixture repair is
-now engineering complete while RR-1C remains awaiting Product Owner final acceptance.
+schema but left Supabase Authentication Users empty. The RR-1C QA Fixture repair was
+completed and subsequently accepted by the Product Owner.
 
 - Added a localhost-guarded, idempotent Reader/Author fixture workflow.
 - Added one active Reader Membership, one active Author Membership/Role/Public
@@ -65,7 +80,8 @@ Phase 2, Phase 3, RR-1A and RR-1B implementation/documentation state.
 - 当前 P0 = 0。
 - 无 Regression detected。
 - 没有新增业务功能、Migration、依赖、权限模型、技术栈、Workflow 或 Governance 修改。
-- Release Candidate Git baseline: `final RR-1C Git HEAD（见最终 handoff）`。
+- Product Owner accepted Release Candidate Git baseline:
+  `8495bded5e0c78985be7410cceb902cd2c090421`。
 
 ## Final Runtime Audit
 
@@ -138,8 +154,8 @@ Mobile viewport: 390 × 844。
 
 ## Documentation Audit
 
-- Project Status: updated to RR-1C Engineering Complete.
-- Roadmap: updated to Release Candidate complete / awaiting Product Owner acceptance.
+- Project Status: updated to RR-1C PASS / Beta Ready.
+- Roadmap: updated to RR-1C Product Owner Accepted.
 - Changelog: updated.
 - Acceptance: updated.
 - Memory: updated.
@@ -167,6 +183,7 @@ Summary:
 Resolved by RR-1C:
 
 - KI-018: Release Candidate source baseline.
+- KI-031: Local Auth identities after clean rebuild.
 
 Remaining product / operational decisions before or during Go / No-Go:
 
@@ -188,7 +205,7 @@ Future feature decisions, not Release Candidate blockers:
   deployment preflight; no database deployment was needed in RR-1C.
 - KI-026：Unauthenticated visitors can discover Published metadata but body access
   still redirects to sign-in by current product permission model.
-- Product Go / No-Go still needs Product Owner final acceptance and any separate Git
-  tag authorization.
+- Product Go / No-Go and any Git tag still require separate explicit authorization.
 
-Mission RR-1C is complete and stopped. Waiting for Product Owner final acceptance.
+Mission RR-1C is PASS, formally closed and stopped. Waiting for separate Product Owner
+authorization before any Go / No-Go, Git tag, release action or new development.

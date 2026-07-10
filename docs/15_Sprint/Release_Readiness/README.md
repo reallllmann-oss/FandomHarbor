@@ -1,6 +1,6 @@
 # Release Readiness
 
-Status: RR-1C QA Fixture Engineering Complete — Awaiting Product Owner Acceptance
+Status: RR-1C PASS — Product Owner Accepted / Beta Ready
 
 Release Readiness is independent from completed Phase 3.
 
@@ -15,6 +15,7 @@ Release Readiness is independent from completed Phase 3.
 
 RR-1C established the Release Candidate baseline and completed final audit,
 validation, Browser QA, Mobile QA, documentation review and Beta Ready checklist.
-The acceptance-found empty local Auth state now has a localhost-only fixture workflow
-with verified Reader/Author login and permission paths. RR-1C still waits for Product
-Owner final acceptance.
+The acceptance-found empty local Auth state now has a localhost-only fixture workflow.
+Product Owner verified the Author / Reader permission chain and Reader `/studio` →
+`/archive` redirect. RR-1C is PASS and formally closed; the Release Candidate is Beta
+Ready.

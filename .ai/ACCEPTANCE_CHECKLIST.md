@@ -13,7 +13,9 @@
 - [x] Product Owner can read credentials locally with `pnpm qa:credentials`.
 - [x] Credential display performs no database, network or production operation.
 - [x] No production data, Migration, Auth architecture, Permission Model or RLS changed.
-- [ ] Product Owner completes RR-1C final acceptance.
+- [x] Product Owner completes RR-1C final acceptance.
+- [x] Product Owner verifies Reader `/studio` redirects to `/archive`.
+- [x] QA Fixture acceptance is complete.
 
 ## Mission RR-1C Release Candidate evidence (2026-07-10)
 
@@ -30,11 +32,13 @@
 - [x] Known Issues final review completed.
 - [x] Release Checklist completed.
 - [x] Beta Ready Checklist completed.
-- [x] Release Candidate Git baseline established: `final RR-1C Git HEAD（见最终 handoff）`.
+- [x] Product Owner accepted Release Candidate Git baseline:
+      `8495bded5e0c78985be7410cceb902cd2c090421`.
 - [x] P0 = 0.
 - [x] No Regression detected.
 - [x] No new business feature, migration, dependency, framework or permission model change.
-- [ ] Product Owner completes RR-1C final acceptance.
+- [x] Product Owner completes RR-1C final acceptance.
+- [x] Mission RR-1C is formally closed and V1 Beta is Beta Ready.
 
 ## Mission RR-1B Deployment evidence (2026-07-07)
 

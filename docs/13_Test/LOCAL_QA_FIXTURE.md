@@ -1,6 +1,6 @@
 # Local QA Fixture
 
-Status: Active — RR-1C acceptance support
+Status: Accepted — RR-1C Product Owner Accepted
 
 Environment: Local development and Product Owner acceptance only
 

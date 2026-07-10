@@ -2,7 +2,7 @@
 
 Owner: Product Owner / Engineering  
 Created by: Mission RR-1A  
-Status: RR-1C Release Candidate complete; awaiting Product Owner acceptance
+Status: RR-1C PASS — Product Owner Accepted / Beta Ready
 
 ## RR-1A — Preparation baseline
 
@@ -51,7 +51,9 @@ Status: RR-1C Release Candidate complete; awaiting Product Owner acceptance
 - [x] Attach final Browser QA and Mobile QA evidence.
 - [x] Confirm P0 = 0 and document accepted P1/P2 risks.
 - [x] Complete Beta Ready Checklist.
-- [ ] Product Owner completes final RR-1C acceptance.
+- [x] Product Owner completes final RR-1C acceptance.
+- [x] QA Fixture and Author / Reader permission chain pass Product Owner verification.
+- [x] Reader `/studio` redirects to `/archive`.
 - [ ] Create a Git tag only after explicit authorization.
 
 ## Stop conditions
