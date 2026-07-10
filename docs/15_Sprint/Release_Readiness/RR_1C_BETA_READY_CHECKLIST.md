@@ -43,6 +43,16 @@ Date: 2026-07-10
 - [x] Horizontal overflow checks pass.
 - [x] No severe console or network errors.
 
+## Authenticated local QA fixture
+
+- [x] Local clean rebuild can be followed by deterministic fixture restoration.
+- [x] Local Reader and Author accounts can sign in with passwords.
+- [x] Reader access and Author public profile access pass.
+- [x] Author Studio access passes.
+- [x] Reader has no Author grant and is redirected away from Studio.
+- [x] Passwords are absent from tracked files and public documentation.
+- [x] Local-only host guard prevents remote fixture execution.
+
 ## Documentation
 
 - [x] Project Status updated.

@@ -18,8 +18,8 @@
 
 ## In Progress
 
-- Mission RR-1C Release Candidate — Engineering Complete / Awaiting Product Owner
-  Acceptance。
+- Mission RR-1C Release Candidate — QA Fixture repair complete / Awaiting Product
+  Owner Acceptance。
 
 ## Phase 3 Delivery Record
 
@@ -53,12 +53,14 @@
 
 - RR-1A Release Preparation — Completed baseline
 - RR-1B Deployment — PASS / Product Owner Accepted（2026-07-07）
-- RR-1C Release Candidate — Engineering Complete / Awaiting Product Owner Acceptance
+- RR-1C Release Candidate — QA Fixture repair complete / Awaiting Product Owner Acceptance
 
 RR-1B 已完成 Production Deployment、HTTPS、环境变量、Production Build、公开页面、
 SEO 端点、Metadata、Canonical、Open Graph 与 Browser Smoke Test 验收。RR-1C
 已完成最终审计、验证、Browser/Mobile QA、Beta Ready Checklist 与 Release
 Candidate Git baseline。Git Tag 与 Go / No-Go 尚未授权、未开始。
+RR-1C 最终验收发现的本地 Auth 空状态已由 localhost-only QA Fixture 修复并完成
+Reader/Author/Studio 浏览器验证；仍等待 Product Owner 最终验收。
 
 证据见 [`Release Readiness`](15_Sprint/Release_Readiness/README.md)。
 

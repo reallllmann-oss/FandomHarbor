@@ -38,6 +38,9 @@ Generate cases from `ROLE_PERMISSION_MATRIX.md` and `RLS_POLICY_MATRIX.md`: unau
 ## Test data
 
 - Synthetic fixtures only outside production.
+- RR-1C authenticated local acceptance identities use the explicit
+  [Local QA Fixture](LOCAL_QA_FIXTURE.md); credentials stay in a Git-ignored local
+  file and are never written into public documentation.
 - Factories explicitly encode owner/unrelated-role relationships.
 - Rich-content fixtures include empty, huge, malformed, Unicode, RTL/CJK, pasted markup and unsafe payload cases.
 - Never copy production user content into local, CI, Preview or staging.

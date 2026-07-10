@@ -1,5 +1,14 @@
 # Project Memory
 
+- 2026-07-11: RR-1C Product Owner acceptance found local Auth users empty after a
+  clean rebuild. A localhost-guarded, idempotent QA fixture now restores synthetic
+  Reader/Author identities, active Memberships, Author grant/profile and invitation
+  redemption. Credentials remain only in Git-ignored `.local/qa-fixture.json` mode
+  `0600`; `qa:web` injects local runtime values without overwriting `.env.local`.
+  Clean rebuild recovery, both logins, Reader access, Author profile/Studio, Reader
+  Studio denial and zero-error browser console all pass. RR-1C remains awaiting
+  Product Owner final acceptance.
+
 - 2026-07-10: Mission RR-1C Release Candidate engineering completed. Final
   Runtime, local/remote Migration parity, clean local rebuild, six SQL suites,
   schema lint, `pnpm validate`, desktop Browser QA, 390×844 Mobile QA,

@@ -24,6 +24,7 @@ test-results/
 
 # Logs and local tooling
 *.log
+.local/
 .vercel/
 supabase/.branches/
 supabase/.temp/

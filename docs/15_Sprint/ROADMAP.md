@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Phase 3 Completed; RR-1C Engineering Complete
+Status: Active — Phase 3 Completed; RR-1C QA Fixture Repair Complete
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -103,12 +103,14 @@ Completed，Beta 可以稳定上线。
 
 - `RR-1A` Release Preparation：Completed baseline。
 - `RR-1B` Deployment：PASS — Product Owner Accepted（2026-07-07）。
-- `RR-1C` Release Candidate：Engineering Complete，等待 Product Owner 验收。
+- `RR-1C` Release Candidate：QA Fixture repair complete，等待 Product Owner 验收。
 
 RR-1A 已建立 Runtime / Migration / Validation Baseline、Release Checklist 与 Browser
 QA Checklist。RR-1B 已完成生产部署与 Product Owner 人工验收。RR-1C Release
 Candidate 已完成最终审计、验证、Browser/Mobile QA、Beta Ready Checklist 与 Git
 baseline。Git Tag 与 Go / No-Go 尚未授权、未开始。
+RR-1C 验收发现的本地 Auth 空状态已通过 localhost-only QA Fixture 恢复；
+Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已验证。
 
 证据见 [`Release_Readiness`](Release_Readiness/README.md)。
 

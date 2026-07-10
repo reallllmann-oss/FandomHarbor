@@ -1,5 +1,18 @@
 # Acceptance Checklist
 
+## Mission RR-1C QA Fixture evidence (2026-07-11)
+
+- [x] Local clean rebuild followed by fixture restoration creates two Auth users.
+- [x] Reader and Author password login pass.
+- [x] Two active Memberships, one active Author grant and one invitation redemption exist.
+- [x] Reader page and Author public profile pass in the browser.
+- [x] Author can enter Studio; Reader is redirected away from Studio.
+- [x] Browser console errors are zero.
+- [x] Repeated fixture execution is idempotent.
+- [x] Credentials stay in Git-ignored `.local/qa-fixture.json` with mode `0600`.
+- [x] No production data, Migration, Auth architecture, Permission Model or RLS changed.
+- [ ] Product Owner completes RR-1C final acceptance.
+
 ## Mission RR-1C Release Candidate evidence (2026-07-10)
 
 - [x] Final Runtime Audit completed.

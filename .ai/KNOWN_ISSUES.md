@@ -34,6 +34,7 @@ This is the authoritative queue for unresolved foundation questions. “Open” 
 | KI-028 | Next.js workspace-root inference warning                   | Builds detect an unrelated parent-level lockfile and infer the workspace root outside this repository                                      | Build audit                         | Open — all builds pass; resolve through authorized toolchain configuration or environment cleanup |
 | KI-029 | No automated CI workflow                                   | Validation is reproducible locally but the repository has no checked-in CI workflow to enforce it remotely                                 | Release process                     | Open — decide and authorize CI before Release Candidate, or explicitly accept manual gate         |
 | KI-030 | Supabase linked dry-run temporary-role authentication      | `migration list --linked` succeeds at 14/14, but an additional `db push --dry-run` cannot authenticate its temporary login role            | Database deployment preflight       | Open — no write occurred; re-authenticate/repair CLI access before any future database deployment |
+| KI-031 | Local Auth identities missing after clean rebuild          | RR-1C Product Owner acceptance could not verify Login, Reader, Author or Studio when local Auth users were empty                           | RR-1C final acceptance              | Resolved 2026-07-11 — localhost-only idempotent QA fixture restores Reader/Author identities      |
 
 ## RR-1C classification
 
@@ -54,7 +55,7 @@ This is the authoritative queue for unresolved foundation questions. “Open” 
 
 ### Resolved history
 
-- KI-001, KI-006, KI-016, KI-017, KI-018, KI-022 and KI-025 remain in the table as audit history.
+- KI-001, KI-006, KI-016, KI-017, KI-018, KI-022, KI-025 and KI-031 remain in the table as audit history.
 
 ## Current release-readiness limitations
 

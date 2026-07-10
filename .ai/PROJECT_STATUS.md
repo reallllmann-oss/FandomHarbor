@@ -2,11 +2,11 @@
 
 ## 当前阶段
 
-Mission RR-1C — Release Candidate (Engineering Complete / Awaiting Product Owner Acceptance)
+Mission RR-1C — QA Fixture Repair (Engineering Complete / Awaiting Product Owner Acceptance)
 
 ## 当前状态
 
-`RR-1C Release Candidate 已完成最终审计、验证、Browser/Mobile QA 与 RC Git 基线；等待 Product Owner 最终验收`
+`RR-1C 本地 QA Fixture 已恢复 Reader/Author 登录与权限验收链；等待 Product Owner 最终验收`
 
 ## 已完成
 
@@ -176,6 +176,11 @@ Mission RR-1C — Release Candidate (Engineering Complete / Awaiting Product Own
 - `pnpm validate` 全绿，167 项测试及 Web / Admin / Docs build 通过；P0 为零。
 - 桌面与 390×844 移动端 QA 均通过；未登录正文与 Studio 守卫符合当前权限模型。
 - Release Candidate Git baseline 已建立，commit 为 `final RR-1C Git HEAD（见最终 handoff）`。
+- RR-1C 最终验收发现 local clean rebuild 后 Auth Users 为空；localhost-only
+  QA Fixture 已完成工程修复，能够幂等恢复 Reader、Author、active Membership、
+  Author grant/profile 与 Invitation Redemption。
+- Fixture clean rebuild recovery、Reader/Author 登录、Reader Access、Author Public
+  Profile、Author Studio 与 Reader Studio 拒绝路径已通过浏览器验证，Console Error 为 0。
 
 ## 当前阻塞
 
@@ -210,6 +215,8 @@ Mission RR-1C — Release Candidate (Engineering Complete / Awaiting Product Own
 - Mission RR-1A：Release Preparation Baseline Complete。
 - Mission RR-1B：PASS — Product Owner Accepted（2026-07-07）。
 - Mission RR-1C：Engineering Complete — Awaiting Product Owner Acceptance（2026-07-10）。
+- Mission RR-1C QA Fixture：Engineering Complete — Awaiting Product Owner
+  Re-acceptance（2026-07-11）。
 - Phase 1 的数据库实测与产品验收记录仍需在独立流程中补齐，但不阻塞 v0.1 文档归档。
 - 已登录 Author / Reader 的远程浏览器主链路已由 Product Owner 完整复验通过。
 
@@ -228,7 +235,11 @@ Mission RR-1C — Release Candidate (Engineering Complete / Awaiting Product Own
 
 ## 最后更新
 
-2026-07-10
+2026-07-11
+
+- RR-1C local QA Fixture repair engineering complete.
+- Local clean rebuild recovery, Reader/Author login and permission Browser QA pass.
+- Credentials remain in a Git-ignored mode-0600 local file; no production change.
 
 - Mission RR-1C Release Candidate engineering complete.
 - Final Runtime, Migration, SQL, Validation, Browser QA, Mobile QA and

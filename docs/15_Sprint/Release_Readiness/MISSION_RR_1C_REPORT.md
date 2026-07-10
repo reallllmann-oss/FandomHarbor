@@ -4,7 +4,37 @@ Mission: Release Readiness Phase 1C — Release Candidate
 Status: Engineering Complete — Awaiting Product Owner Acceptance  
 Date: 2026-07-10
 
+## QA Fixture acceptance supplement — 2026-07-11
+
+Product Owner final acceptance exposed that a local clean rebuild correctly restored
+schema but left Supabase Authentication Users empty. The RR-1C QA Fixture repair is
+now engineering complete while RR-1C remains awaiting Product Owner final acceptance.
+
+- Added a localhost-guarded, idempotent Reader/Author fixture workflow.
+- Added one active Reader Membership, one active Author Membership/Role/Public
+  Profile and a valid Invitation Redemption relationship.
+- Passwords and the plaintext invitation code are stored only in Git-ignored
+  `.local/qa-fixture.json` with mode `0600`; they are not in repository documents.
+- Added a local Web launcher that injects local Supabase runtime values without
+  overwriting the existing `.env.local`.
+- Reproduced a clean 14-migration rebuild and restored both accounts afterward.
+- Real browser QA passed Author login, public Author profile, Studio access, Reader
+  login, Reader access and Reader-to-Studio denial/redirect with zero console errors.
+- No production data, Migration, Auth architecture, Permission Model or RLS changed.
+
+Detailed handoff: [Local QA Fixture](../../13_Test/LOCAL_QA_FIXTURE.md).
+
 ## 修改文件列表
+
+QA Fixture repair files:
+
+- `.gitignore`
+- `package.json`
+- `scripts/local-qa-fixture.mjs`
+- `scripts/local-qa-web.mjs`
+- `scripts/README.md`
+- `docs/13_Test/LOCAL_QA_FIXTURE.md`
+- `docs/13_Test/TESTING_STRATEGY.md`
 
 RR-1C 文档同步文件：
 
@@ -16,7 +46,6 @@ RR-1C 文档同步文件：
 - `docs/ROADMAP.md`
 - `docs/15_Sprint/ROADMAP.md`
 - `docs/15_Sprint/Release_Readiness/README.md`
-- `docs/15_Sprint/Release_Readiness/RR_1A_RELEASE_CHECKLIST.md`
 - `docs/15_Sprint/Release_Readiness/RR_1C_BETA_READY_CHECKLIST.md`
 - 本报告。
 

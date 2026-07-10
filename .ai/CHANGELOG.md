@@ -2,6 +2,21 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-11 — Mission RR-1C Local QA Fixture Repair
+
+- Added localhost-guarded `qa:fixture`, `qa:reset` and `qa:web` workflows for
+  authenticated local Product Owner acceptance.
+- Added synthetic `Harbor QA Reader` and `Harbor QA Author` identities with active
+  memberships, Author grant/profile and invitation relationship.
+- Kept passwords and plaintext invitation data exclusively in Git-ignored local
+  credentials with mode `0600`.
+- Rebuilt all 14 local migrations and restored the fixture afterward; repeated
+  execution is idempotent.
+- Browser QA passes Author login/Profile/Studio, Reader login/content access and
+  Reader Studio denial with zero console errors.
+- No production data, Migration, RLS, Auth architecture or Permission Model changed.
+- RR-1C remains awaiting Product Owner final acceptance.
+
 ## 2026-07-10 — Mission RR-1C Release Candidate Engineering Complete
 
 - Completed final Runtime, Migration, SQL, Validation, Browser QA, Mobile QA,
