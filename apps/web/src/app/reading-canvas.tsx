@@ -2,11 +2,14 @@
 
 import { useAppTheme } from "@fandom-harbor/ui";
 import {
+  createContext,
   useEffect,
+  useContext,
   useRef,
   useState,
   type CSSProperties,
   type PropsWithChildren,
+  type ReactNode,
 } from "react";
 
 import {
@@ -21,6 +24,104 @@ type ReaderStyle = CSSProperties & {
   "--reader-line-height": string;
   "--reader-measure": string;
 };
+
+type ReadingPanel = "chapter-directory" | "navigation" | "settings";
+
+interface ReadingInteractionContextValue {
+  activePanel: ReadingPanel | null;
+  closePanel: () => void;
+  togglePanel: (panel: ReadingPanel) => void;
+}
+
+const ReadingInteractionContext =
+  createContext<ReadingInteractionContextValue | null>(null);
+
+function useReadingInteractions() {
+  const context = useContext(ReadingInteractionContext);
+  if (!context) {
+    throw new Error(
+      "Reading interactions must be rendered inside ReadingInteractionProvider",
+    );
+  }
+  return context;
+}
+
+export function ReadingInteractionProvider({ children }: PropsWithChildren) {
+  const [activePanel, setActivePanel] = useState<ReadingPanel | null>(null);
+
+  return (
+    <ReadingInteractionContext.Provider
+      value={{
+        activePanel,
+        closePanel: () => setActivePanel(null),
+        togglePanel: (panel) =>
+          setActivePanel((current) => (current === panel ? null : panel)),
+      }}
+    >
+      {children}
+    </ReadingInteractionContext.Provider>
+  );
+}
+
+export function ReadingDisclosure({
+  children,
+  className,
+  closeLabel,
+  expandedLabel,
+  panel,
+  panelClassName,
+  triggerLabel,
+  triggerMeta,
+}: {
+  children: ReactNode;
+  className: string;
+  closeLabel: string;
+  expandedLabel: string;
+  panel: Exclude<ReadingPanel, "settings">;
+  panelClassName: string;
+  triggerLabel: string;
+  triggerMeta?: string;
+}) {
+  const { activePanel, closePanel, togglePanel } = useReadingInteractions();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const open = activePanel === panel;
+  const panelId = `reading-${panel}-panel`;
+
+  function closeAndRestoreFocus() {
+    closePanel();
+    window.requestAnimationFrame(() => triggerRef.current?.focus());
+  }
+
+  return (
+    <div className={className} data-open={open || undefined}>
+      <button
+        aria-controls={panelId}
+        aria-expanded={open}
+        className="reading-disclosure-trigger"
+        onClick={() => togglePanel(panel)}
+        ref={triggerRef}
+        type="button"
+      >
+        <span>{open ? expandedLabel : triggerLabel}</span>
+        {triggerMeta ? (
+          <span className="chapter-directory-count">{triggerMeta}</span>
+        ) : null}
+      </button>
+      {open ? (
+        <div className={panelClassName} id={panelId}>
+          {children}
+          <button
+            className="reading-disclosure-close"
+            onClick={closeAndRestoreFocus}
+            type="button"
+          >
+            {closeLabel}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 const fontSizes = [
   { label: "小", value: "small" },
@@ -97,8 +198,10 @@ function ChoiceGroup<Value extends string>({
 
 export function ReadingCanvas({ children }: PropsWithChildren) {
   const { resolvedTheme, setTheme } = useAppTheme();
+  const { activePanel, togglePanel } = useReadingInteractions();
   const initialized = useRef(false);
   const [preferences, setPreferences] = useState(DEFAULT_READER_PREFERENCES);
+  const settingsOpen = activePanel === "settings";
 
   useEffect(() => {
     if (initialized.current || !resolvedTheme) return;
@@ -139,45 +242,69 @@ export function ReadingCanvas({ children }: PropsWithChildren) {
 
   return (
     <section
-      aria-labelledby="reader-settings-heading"
+      aria-label="阅读正文与显示设置"
       className="reader-canvas"
       style={style}
     >
-      <div className="reader-toolbar">
-        <h2 className="sr-only" id="reader-settings-heading">
-          阅读显示设置
-        </h2>
-        <ChoiceGroup
-          label="字号"
-          onChange={(value) => updatePreference("fontSize", value)}
-          options={fontSizes}
-          value={preferences.fontSize}
-        />
-        <ChoiceGroup
-          label="行高"
-          onChange={(value) => updatePreference("lineHeight", value)}
-          options={lineHeights}
-          value={preferences.lineHeight}
-        />
-        <ChoiceGroup
-          label="宽度"
-          onChange={(value) => updatePreference("measure", value)}
-          options={measures}
-          value={preferences.measure}
-        />
-        <ChoiceGroup
-          label="明暗"
-          onChange={(value) => updatePreference("theme", value)}
-          options={themes}
-          value={preferences.theme}
-        />
-        <p
-          aria-live="polite"
-          className="reader-preference-status"
-          role="status"
+      <div className="reader-settings">
+        <button
+          aria-controls="reader-settings-panel"
+          aria-expanded={settingsOpen}
+          className="reader-settings-trigger"
+          onClick={() => togglePanel("settings")}
+          type="button"
         >
-          阅读偏好自动保存在此设备
-        </p>
+          <span aria-hidden="true" className="reader-settings-glyph">
+            Aa
+          </span>
+          <span>{settingsOpen ? "收起阅读设置" : "阅读设置"}</span>
+        </button>
+
+        {settingsOpen ? (
+          <div
+            aria-labelledby="reader-settings-heading"
+            className="reader-settings-panel"
+            id="reader-settings-panel"
+            role="region"
+          >
+            <h2 className="sr-only" id="reader-settings-heading">
+              阅读显示设置
+            </h2>
+            <div className="reader-toolbar">
+              <ChoiceGroup
+                label="字号"
+                onChange={(value) => updatePreference("fontSize", value)}
+                options={fontSizes}
+                value={preferences.fontSize}
+              />
+              <ChoiceGroup
+                label="行高"
+                onChange={(value) => updatePreference("lineHeight", value)}
+                options={lineHeights}
+                value={preferences.lineHeight}
+              />
+              <ChoiceGroup
+                label="宽度"
+                onChange={(value) => updatePreference("measure", value)}
+                options={measures}
+                value={preferences.measure}
+              />
+              <ChoiceGroup
+                label="明暗"
+                onChange={(value) => updatePreference("theme", value)}
+                options={themes}
+                value={preferences.theme}
+              />
+              <p
+                aria-live="polite"
+                className="reader-preference-status"
+                role="status"
+              >
+                阅读偏好自动保存在此设备
+              </p>
+            </div>
+          </div>
+        ) : null}
       </div>
       {children}
     </section>

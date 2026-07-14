@@ -51,6 +51,38 @@ This file records product experience, interaction, UI and reading decisions. Arc
 - Decision: Registration shows exactly registration name, password and invitation code. Login shows registration name and password. Password guidance states only “at least 8 characters”; no email verification or complexity language appears.
 - Consequence: Invitation and field errors use explicit accessible alerts, and Auth implementation details such as the internal Supabase identifier remain invisible to users.
 
+## DD-008 — Global header uses three explicit regions
+
+- Date: 2026-07-12
+- Status: Accepted and frozen during UX-06C Step 01
+- Decision: At 768px and above, the global header separates the clickable `Fandom Harbor` brand anchor, primary navigation and utility/account controls into Left Brand、Center Navigation and Right Utility & Account regions. Reader primary navigation is ordered Archive、Search、then capability-gated Studio. Home is represented only by the brand anchor; theme stays in the right region.
+- Rationale: A stable three-part hierarchy keeps brand、product movement and account state legible without making the header feel like a mixed toolbar.
+- Consequence: Mobile may hide or simplify the center navigation, but the brand remains left and theme/account controls remain right. Theme and primary header targets keep a 44px minimum touch area. Auth、role、Studio access and theme persistence contracts do not change.
+
+## DD-009 — Multi-chapter Studio preserves editing focus and safe batch publication
+
+- Date: 2026-07-12
+- Status: Accepted and frozen as supplemental Studio UX foundation
+- Decision: A work with more than one chapter uses collapsible chapter management with one explicitly identified active editing chapter。Multi-chapter publication provides Select All for currently eligible chapters only，with none、partial and all states；zero selection cannot publish。
+- Rationale: Flattened chapter editors destroy editing orientation，while repetitive manual selection adds friction and indiscriminate bulk selection weakens publication safety。
+- Consequence: Published、ineligible、invalid and unsaved chapters cannot enter batch publication selection。Single-chapter works may retain the simple flow。Exact layout and implementation require a future independently authorized Author Studio / Chapter Management Mission。
+
+## DD-010 — Reading controls use progressive disclosure
+
+- Date: 2026-07-12
+- Status: Accepted and frozen during UX-06C Step 02
+- Decision: Chapter Reading defaults to Story Content with one quiet `Aa / 阅读设置` disclosure control。Font size、line height、measure and light / dark controls appear only after explicit activation and can be closed without resetting preferences。
+- Rationale: Permanent controls compete with the first reading view and make the page feel like a control panel rather than a Private Literary Reading Space。
+- Consequence: The disclosure target remains keyboard and screen-reader operable、at least 44px high and in document flow。Existing preference values、storage、theme behavior and Reader contracts do not change。
+
+## DD-011 — Reading auxiliary panels are mutually exclusive
+
+- Date: 2026-07-12
+- Status: Accepted and frozen during UX-06C Step 03
+- Decision: Chapter Directory、Mobile Reading Navigation and Reading Settings share one route-local active-panel state，so only one supporting surface can be open at a time。Directory panels open in document flow and explicit close actions restore focus to their trigger。
+- Rationale: Multiple simultaneous controls compete with Story Content and make the Reading Page feel like an interface workspace rather than a Private Literary Reading Space。
+- Consequence: Chapter switching returns to the default reading state；current Chapter remains marked with `aria-current`，and existing preference、route、permission、bookmark and history contracts do not change。
+
 ## Change protocol
 
 New design decisions use sequential `DD-xxx` IDs with status, rationale and consequences. Never hide an experience change inside a component implementation. Superseded decisions remain in history and link to their replacement.

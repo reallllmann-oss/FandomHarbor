@@ -14,7 +14,7 @@ export default async function SignInPage({
 
   return (
     <section className="reading-card mx-auto max-w-lg">
-      <p className="text-sm font-medium text-primary">Phase 1 · Identity</p>
+      <p className="text-sm font-medium text-primary">账号入口</p>
       <h1 className="mt-3 text-3xl font-semibold">登录 Fandom Harbor</h1>
       {query.status === "registered" ? (
         <p className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm">
@@ -58,8 +58,14 @@ export default async function SignInPage({
           登录
         </button>
       </form>
-      <p className="mt-6 text-sm text-muted-foreground">
-        还没有账号？ <Link href="/auth/sign-up">创建账号</Link>
+      <p className="mt-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+        <span>还没有账号？</span>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/sign-up"
+        >
+          创建账号
+        </Link>
       </p>
     </section>
   );

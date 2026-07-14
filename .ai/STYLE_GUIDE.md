@@ -10,6 +10,8 @@ This file is the quick-reference contract for UI dimensions and visual behavior.
 - Default measure: 68ch; supported range approximately 52–80ch; prose never stretches across a desktop viewport.
 - Paragraph spacing and indentation must be mutually coherent and user preference must not create both accidentally.
 - Chapter navigation has labeled previous/next actions and never depends on swipe or hover alone.
+- The complete Reading settings toolbar is hidden by default behind one `Aa / 阅读设置` disclosure control with a 44px minimum target、visible focus and expanded-state semantics.
+- Opening or closing Reading settings never resets font size、line height、measure or theme preferences；the open state itself is transient and defaults to closed on page load.
 
 ## Controls and spacing
 
@@ -22,6 +24,9 @@ This file is the quick-reference contract for UI dimensions and visual behavior.
 ## Mobile navigation
 
 - Reader/Web primary mobile navigation contains at most five top-level destinations.
+- Global Header uses `Brand | Primary Navigation | Utility + Account` at 768px and above. Brand contains only the clickable `Fandom Harbor` home anchor; Reader navigation is Archive、Search、then capability-gated Studio; theme and account state stay right-aligned.
+- Below 768px, the center navigation may collapse or hide. Brand remains left and theme/account remains right; the theme control never moves into the primary navigation list.
+- Global header navigation、theme and account actions use a minimum 44px target and must not cause horizontal overflow or truncate the brand at 390px.
 - Reading view prioritizes chapter context and reading controls over global navigation.
 - Author workflows may use staged sections; no essential action is hover-only.
 - Admin small-screen navigation uses a labeled drawer/side-sheet; destructive actions never hide in unlabeled gestures.

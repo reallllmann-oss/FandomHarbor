@@ -9,6 +9,26 @@ import { FollowAuthorButton } from "./follow-author-button";
 
 export const dynamic = "force-dynamic";
 
+function DiscoveryRecovery({ compact = false }: { compact?: boolean }) {
+  return (
+    <nav
+      aria-label="继续发现"
+      className={
+        compact
+          ? "author-recovery-actions"
+          : "author-recovery author-recovery-actions"
+      }
+    >
+      <Link className="author-secondary-action" href="/archive">
+        浏览作品档案
+      </Link>
+      <Link className="author-text-action" href="/search">
+        搜索作品或作者
+      </Link>
+    </nav>
+  );
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -51,29 +71,52 @@ export default async function AuthorProfilePage({
     session?.identity.id !== profile.userId;
 
   return (
-    <div className="site-stack">
-      <section className="reading-card max-w-none">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 gap-4">
+    <div className="author-profile-shell">
+      <section
+        aria-labelledby="author-profile-title"
+        className="author-identity"
+      >
+        <div className="author-identity-main">
+          <div className="author-identity-heading">
             <div
               aria-label={`${profile.displayName} 的头像`}
-              className="flex size-20 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-foreground"
+              className="author-avatar"
               role="img"
             >
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="eyebrow">Author Profile</p>
-              <h1 className="mt-2 break-words text-3xl font-semibold">
+              <p className="eyebrow">公开创作者</p>
+              <h1 className="author-name" id="author-profile-title">
                 {profile.displayName}
               </h1>
-              <p className="mt-3 max-w-2xl whitespace-pre-line text-muted-foreground">
-                {profile.bio || "这位作者还没有填写简介。"}
-              </p>
             </div>
           </div>
-          {canFollow ? (
-            session ? (
+          <p className="author-bio">
+            {profile.bio || "这位作者还没有填写公开简介。"}
+          </p>
+          <dl className="author-metrics" aria-label="作者公开信息">
+            <div>
+              <dt>公开作品</dt>
+              <dd>{profile.publishedWorkCount}</dd>
+            </div>
+            <div>
+              <dt>关注者</dt>
+              <dd>{profile.followerCount}</dd>
+            </div>
+            <div>
+              <dt>关注中</dt>
+              <dd>{profile.followingCount}</dd>
+            </div>
+          </dl>
+        </div>
+        {canFollow ? (
+          <aside aria-label="作者关系" className="author-relationship">
+            <p className="author-relationship-label">关注关系</p>
+            <p className="author-relationship-copy">
+              关注这位作者，保留你与其公开创作身份的联系。
+            </p>
+            {session ? (
               <FollowAuthorButton
                 authorSlug={profile.slug}
                 authorUserId={profile.userId}
@@ -81,72 +124,51 @@ export default async function AuthorProfilePage({
               />
             ) : (
               <Link
-                className="inline-flex min-h-11 items-center justify-center rounded-control bg-primary px-5 font-medium text-primary-foreground"
+                className="author-follow-action"
                 href={`/auth/sign-in?next=/author/${profile.slug}`}
               >
                 登录后关注
               </Link>
-            )
-          ) : null}
-        </div>
-        <dl className="mt-8 grid grid-cols-3 gap-3 border-t border-border pt-6 text-center sm:max-w-lg">
-          <div>
-            <dt className="text-sm text-muted-foreground">作品</dt>
-            <dd className="mt-1 text-xl font-semibold">
-              {profile.publishedWorkCount}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-muted-foreground">关注者</dt>
-            <dd className="mt-1 text-xl font-semibold">
-              {profile.followerCount}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-muted-foreground">关注中</dt>
-            <dd className="mt-1 text-xl font-semibold">
-              {profile.followingCount}
-            </dd>
-          </div>
-        </dl>
+            )}
+          </aside>
+        ) : null}
       </section>
 
-      <section
-        aria-labelledby="published-works"
-        className="reading-card max-w-none"
-      >
-        <h2 className="text-2xl font-semibold" id="published-works">
-          已发布作品
-        </h2>
+      <section aria-labelledby="published-works" className="author-works">
+        <header className="author-works-heading">
+          <div>
+            <p className="eyebrow">创作档案</p>
+            <h2 id="published-works">已发布作品</h2>
+          </div>
+          <p>
+            共 {profile.publishedWorkCount}{" "}
+            部公开作品。这里仅呈现作者已发布的创作。
+          </p>
+        </header>
         {profile.works.length === 0 ? (
-          <div className="mt-6 rounded-control border border-dashed border-border p-8 text-center">
-            <p className="font-medium">作品正在驶向港湾</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              这位作者目前还没有公开发布的作品。
-            </p>
+          <div className="author-empty">
+            <h3>作品正在驶向港湾</h3>
+            <p>这位作者目前还没有公开发布的作品。</p>
+            <DiscoveryRecovery compact />
           </div>
         ) : (
-          <ul className="mt-6 grid gap-4 md:grid-cols-2">
+          <ul className="author-work-list">
             {profile.works.map((work) => (
-              <li
-                className="rounded-control border border-border p-5"
-                key={work.id}
-              >
-                <h3 className="text-lg font-semibold">{work.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  作者：
-                  <Link
-                    className="text-primary"
-                    href={`/author/${profile.slug}`}
-                  >
-                    {profile.displayName}
-                  </Link>
+              <li className="author-work" key={work.id}>
+                <p className="author-work-date">
+                  发布于{" "}
+                  {work.publishedAt.toLocaleDateString("zh-CN", {
+                    timeZone: "UTC",
+                  })}
                 </p>
-                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                <h3 className="author-work-title">
+                  <Link href={`/works/${work.slug}`}>{work.title}</Link>
+                </h3>
+                <p className="author-work-summary">
                   {work.summary || "暂无作品简介。"}
                 </p>
                 <Link
-                  className="mt-4 inline-block font-medium"
+                  className="author-work-entry"
                   href={`/works/${work.slug}`}
                 >
                   查看作品
@@ -156,6 +178,8 @@ export default async function AuthorProfilePage({
           </ul>
         )}
       </section>
+
+      {profile.works.length > 0 ? <DiscoveryRecovery /> : null}
     </div>
   );
 }

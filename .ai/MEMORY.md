@@ -1,5 +1,481 @@
 # Project Memory
 
+- 2026-07-14：V1 GitHub Baseline secret audit 在未跟踪的 `docs/18_Design/UX-06D-STEP02_ACCEPTANCE.md` 第 86–87 行发现两条 localhost-only QA 密码。立即停止 commit / push / Vercel 流程，将明文替换为安全凭据命令说明并再次轮换 QA 凭据。确认该文件未跟踪，实际密码模式未进入 HEAD 或 Git 历史；处置后 OpenAI / GitHub / Vercel / Supabase / JWT / private key / database URL / service role / Auth secret / QA password 复扫无匹配。依据 Mission 强制暂停点，等待 Product Owner 确认后才能重新进入 Release Baseline 门禁。
+
+- 2026-07-14：执行 V1 Release Deployment 部署前检查。Node 24.18.0 / pnpm 11.7.0、offline frozen install、Supabase linked remote Migration 14 / 14、`pnpm validate`、169 tests、Web / Admin / Docs production builds、`git diff --check`、Local QA Fixture 与 Guest / Reader / Author Smoke 全部通过；Reader `/studio` 仍到 `/archive`，Author 可进入 Studio，Published-only / Draft isolation 无回退。当前 `main` 超前 `origin/main` 4 commits，但 UX-06 已验收实现仍在未提交工作区；仓库没有 Vercel Project 关联，CLI / Dashboard 无法完成核对，线上变量与 URL 未确认。因此 V1 Deployment Ready for Product Owner Review = NO，部署类型 Local only，Product P0 / P1 = 0 / 0，Release Gate P1 = 2。未执行 Preview / Production、远程 SQL、环境变量写入、DNS 或数据变更。新增中文 Deployment、Smoke、User Guide 与 Admin Guide；Admin 授权现状为已支持 Super Admin 通过 `/access` 受控 UI 授予 / 撤销 Admin，并写 audit log。
+
+- 2026-07-14：Product Owner 最终验收 UX-06J。UX-06J = PASS；Release UI Sweep / V1 UI Consistency = Accepted；Product Owner Acceptance = PASS；P0 = 0、P1 = 0。确认 V1 主路径 UI 审计、三个低风险 P2 修复、UX-06H / UX-06I 无回退、Guest / Reader / Author / Admin 边界、1280 / 390、Light / Dark、零溢出与全部工程验证通过。确认未修改 Database、Supabase、Migration、RLS、RPC、Auth logic、Role、Published-only、Draft isolation、Reader preferences、theme persistence 或 dependency。移动端当前路由高亮、Root Loading / Error 共享架构边界与极端长连续文本 Fixture coverage 保留为非阻塞后续项。UX-06J 已关闭，停止在当前状态，等待 Product Owner 下一条明确指令。
+
+- 2026-07-14：完成 UX-06J Release UI Sweep / V1 UI Consistency。审计 Homepage、Archive、Search、Work Detail、Published Reading、Author Profile、Studio Entry / Overview 与 Auth；1280 / 390、Light / Dark、44px、零溢出、Guest / Reader / Author、Reader Studio denial 与 browser console 0 通过。关闭三个 P2：Studio Mobile 内部导航由纵向收敛为三列，aside 高度约 262px 降至约 166px；Studio 四个入口提升到 44px；Auth `Phase 1 · Identity` 改为中文 Reader-facing 标签且登录 / 注册互链提升到 44px。未修改 Homepage、Global Shell、Auth logic、Permission、Role、Published-only、Database、Supabase、Migration、RLS、RPC 或业务逻辑。Web 81 / 81 tests、完整 `pnpm validate`、169 / 169 tests 与全部 production builds 通过。P0 = 0、P1 = 0；Release UI Sweep Ready for Product Owner Review = YES，等待验收，不进入下一项任务。
+
+- 2026-07-14：Product Owner 正式验收 UX-06I。UX-06I = PASS；Global Shell / Navigation = Accepted；Product Owner Acceptance = PASS；P0 = 0、P1 = 0。确认桌面三分区、Guest / Reader / Author 导航、Reader Studio denial、Author Studio access、主要页面回归与所有工程验证通过；确认未改变 Database、RLS、RPC、Migration、Auth 或 Published-only。接受移动端原生 `details` 作为 V1 安全最小实现；当前路由高亮保留为非阻塞后续优化项。UX-06I 已关闭，不进入下一项 UX 任务，等待 Product Owner 下一条明确指令。
+
+- 2026-07-14：完成 UX-06I 全局壳层与导航。桌面端继续使用左侧 Fandom Harbor、中间 Archive / Search / capability-gated Studio、右侧主题与账号的三分区结构；767px 以下新增默认收起、正常文档流内展开的“浏览站点”导航，Desktop / Mobile 复用同一导航数据源。将角色导航推导提取为纯函数并新增 2 个测试；右侧增加“显示与账号”组语义。Guest / Reader 不显示 Studio，Reader 直访 `/studio` 回到 `/archive`，Author 显示并可进入 Studio。Homepage、Archive、Search、Work Detail、Reading、Author Profile、Studio、390 / 1280、Light / Dark、44px、零溢出与 browser console 0 通过。未修改 Auth、Permission、Role、Published-only、Draft isolation、Database、Supabase、Migration、RLS、RPC 或页面产品逻辑。完整 `pnpm validate`、169 / 169 tests 与全部 production builds 通过。Global Shell / Navigation Ready for Product Owner Review = YES，等待验收，不进入下一项 UX 任务。
+
+- 2026-07-14: Completed UX-06H Step04 Homepage Release Acceptance Slim against
+  the frozen Step01–Step03 baseline. Step01 Audit Contract、Step02 Layout Upgrade
+  and Step03 Slim QA are PASS. Homepage is finalized as the Quiet Editorial Harbor
+  Entrance with Brand Orientation → Discovery Paths → Latest Published Works →
+  Reader Return / Access → Quiet Recovery. Entry / role / Published-only / Draft
+  isolation、1440 / 1280 / 768 / 390、Light / Dark、accessibility and browser console
+  0 evidence are frozen for Release. Shared Header / Footer remain unchanged；Root
+  Loading / Error stays Frozen；Auth / Permission / Invitation / login return and
+  all data contracts remain unchanged. HP-AUDIT-007 remains Frozen；HP-QA-001
+  remains a non-blocking Fixture enhancement；the stale chunked-cookie warning has
+  no actual functional impact. P0 = 0、P1 = 0. Step04 changed documentation only；
+  product implementation、data layer、shared architecture and remote Supabase were
+  not changed. Web checks、full `pnpm validate`、167 / 167 tests、all production
+  builds and diff checks pass. Homepage Ready for Release = YES，awaiting Product
+  Owner Final Review，and no new UX Track is authorized.
+
+- 2026-07-14: Completed UX-06H Step03 Homepage States & Responsive QA Slim under
+  the Product Owner's UX closure slim mode. QA stayed within Step02's direct
+  Homepage presentation impact: five-region rhythm、Archive / Search / Work /
+  Sign-in / Sign-up / Reader Library / Access smoke、Guest / Reader / Author、
+  Author shared Header Studio capability、Published-only and Draft Work / Chapter
+  isolation all pass. 1440 / 1280 / 768 / 390、Light / Dark、44px targets、keyboard
+  focus、semantics、zero overflow and browser console 0 pass. HP-AUDIT-007 remains
+  Frozen；HP-QA-001 remains a non-blocking Fixture enhancement. The previously
+  observed stale chunked-cookie warning was not reproduced in this fresh localhost
+  run；login、logout、roles and isolation remain normal. P0 = 0、P1 = 0、Step02
+  regression = 0，so no Allowed Fix was needed. Product implementation、data layer、
+  shared architecture、Auth and remote Supabase were not changed. Web checks、full
+  `pnpm validate`、167 / 167 tests、all production builds and diff checks pass.
+  Homepage Ready for Step04 = YES，awaiting Product Owner review，and Step04 is not
+  authorized.
+
+- 2026-07-14: Completed UX-06H Step02 Homepage Layout Upgrade within the frozen
+  Step01 contract. `/` now follows Brand Orientation → Discovery Paths → Latest
+  Published Works → Reader Return / Access → Quiet Recovery. Hero keeps Archive
+  primary and Search secondary；the static Reader Login and misleading `/author`
+  entry are removed. Latest Works still use the existing Public Browse Gateway、
+  newest order、three-item cap and `BrowseWork`，with one Work Detail main entry per
+  item. Existing Sign-in、Sign-up、Access、Reader Library and recovery routes are
+  clarified without changing Auth or Invitation behavior. Guest / Reader / Author、
+  Published-only、Draft Work / Chapter isolation、1440 / 1280 / 768 / 390、Light /
+  Dark、keyboard focus、44px targets、semantics、zero overflow and browser console 0
+  pass. HP-AUDIT-001–006 / 008–009 are Closed；007 remains a frozen shared root
+  state boundary；010 protection passes；HP-QA-001 is a non-blocking extreme-content
+  Fixture enhancement. Product changes are limited to Homepage route-local React /
+  CSS；data、Auth、Permission、Gateway、Service、Repository、query、Database、Supabase、
+  RLS、RPC and Migration remain unchanged. Web checks、full `pnpm validate`、167 /
+  167 tests、all production builds and diff checks pass. Homepage Layout Ready for
+  Step03 = YES，awaiting Product Owner review，and Step03 is not authorized.
+
+- 2026-07-14: Completed UX-06H Step01 Homepage UI Audit & Design Contract as a
+  documentation-only Mission. Homepage is frozen as the Quiet Editorial Harbor
+  Entrance with Brand Orientation → Discovery Paths → Latest Published Works →
+  Reader Return / Access → Quiet Recovery. Audited Hero、five labelled regions、
+  existing newest / three-item `BrowseWork` preview、Archive / Search / Work / Auth
+  entries、shared Loading / Error、Empty、Closing and Footer boundaries. Guest、
+  Reader、Author、Published-only、Draft Work / Chapter isolation、1280 / 390、Light /
+  Dark、zero overflow and browser console 0 pass. HP-AUDIT-001–010 record static
+  Login CTA、positioning、mixed language、44px targets、duplicate Work entry、Auth
+  journey、shared state ownership、Empty recovery、misleading `/author` destination
+  and long-content coverage as P2 findings；P0 / P1 are zero. Step01 changed no
+  product implementation、data fetch、Auth、Permission、Gateway、Service、Repository、
+  query、Database、Supabase、RLS、RPC or Migration. Web checks、full `pnpm validate`、
+  167 / 167 tests、all production builds and diff checks pass. Homepage Ready for
+  Step02 = YES，awaiting Product Owner review，and UX-06H Step02 is not authorized.
+
+- 2026-07-14: Product Owner completed final acceptance of UX-06G Work Detail
+  Track with PASS. Step01–Step04 are all Accepted；Work Detail remains the
+  Literary Work Decision Space，Work Detail Ready for Release = YES，and the Track
+  is completed / closed. WD-QA-001 remains a non-blocking QA Fixture enhancement.
+  Do not continue Work Detail optimization.
+
+- 2026-07-14: Completed UX-06G Step04 Work Detail Release Acceptance against
+  the frozen Step01–Step03 baseline. Step01 audit / design contract、Step02
+  route-local layout and Step03 states / responsive QA are PASS and frozen as
+  the Work Detail Release baseline. Work Detail remains the Literary Work
+  Decision Space with Work Orientation → Story Premise → Author / Published
+  Context → Reading Decision → Chapter Overview → Recovery. Default、Guest / Reader /
+  Author、no Published Chapters、Loading、Error contract、Not Found、Start / Continue /
+  Download、discovery / Author / Reading / recovery routes、Published-only、Draft
+  Work / Chapter isolation、1440 / 1280 / 768 / 390、Light / Dark、44px targets、
+  semantics、focus and browser console 0 pass. `reading-history-client.tsx`
+  remains presentation-only for Work Continue Reading；history data logic and
+  Reading are unchanged. WD-AUDIT-001 / 009 remain accepted frozen boundaries；
+  WD-AUDIT-010 passes；WD-QA-001 remains a non-blocking extreme-content Fixture
+  enhancement. P0 / P1 and remaining product issues are zero. Step04 changed
+  documentation only；Web checks、full `pnpm validate`、167 / 167 tests、all builds
+  and diff checks pass. Work Detail Ready for Release = YES，awaiting Product
+  Owner final review，and no new UX Track is authorized.
+
+- 2026-07-14: Completed UX-06G Step03 Work Detail States & Responsive QA
+  against the frozen Step02 baseline. Revalidated Work Orientation → Story
+  Premise → Author / Published Context → Reading Decision → Chapter Overview →
+  Recovery；default、no Published Chapters、Loading / Error source contract、Not
+  Found、Start / Continue / Download、Archive / Search / Reader Library recovery、
+  Guest / Reader / Author、Published-only and Draft Work / Chapter isolation pass.
+  `reading-history-client.tsx` Step02 diff remains limited to Continue Reading
+  classes、copy、heading hierarchy and 44px presentation；history data structure、
+  storage、read / write、selection、sorting and Reading are unchanged. 1440 / 1280 /
+  768 / 390、Light / Dark、single H1、named regions、semantic Chapter list、focus-
+  visible、minimum 44px targets、zero overflow and browser console 0 pass.
+  WD-AUDIT-001 / 009 remain accepted frozen boundaries；WD-AUDIT-010 passes；
+  WD-QA-001 remains a non-blocking extreme-content Fixture enhancement. P0 / P1
+  and Step02 remaining product issues are zero. Step03 changed documentation only；
+  Web checks、full `pnpm validate`、167 / 167 tests、all builds and diff checks pass.
+  Work Detail Ready for Step04 = YES，awaiting Product Owner review，and UX-06G
+  Step04 is not authorized.
+
+- 2026-07-14: Completed UX-06G Step02 Work Detail Layout Upgrade within the
+  frozen Step01 contract. `/works/[slug]` now follows Work Orientation → Story
+  Premise → Author / Published Context → Reading Decision → Chapter Overview →
+  Recovery. The route uses only existing Work / Author / Chapter fields，clarifies
+  Continue / Start / Download hierarchy without changing behavior，adds honest
+  no-summary / no-chapter recovery and route-local Loading / Error / Not Found，
+  and provides 44px targets plus long-content protection. Guest / Reader / Author、
+  Archive / Search / Author Profile entries、Author / Start / Continue Reading
+  exits、download、Published-only、Draft Work / Chapter isolation、1440 / 1280 /
+  768 / 390、Light / Dark、semantics、zero overflow and browser console 0 pass.
+  WD-AUDIT-002–008 are closed for presentation；WD-AUDIT-001 / 009 remain
+  accepted Auth / data-contract boundaries；WD-QA-001 is a non-blocking extreme-
+  content Fixture enhancement. P0 / P1 / remaining product P2 are zero. Step02
+  changed only Work Detail route-local UI / CSS and its Continue Reading
+  presentation；data、Auth、Permission、Gateway、Service、Repository、query、history、
+  chapter order、download and Reading behavior are unchanged. Web checks、full
+  `pnpm validate`、167 / 167 tests、all builds and diff checks pass；Work Detail
+  Layout Ready for Step03 = YES，awaiting Product Owner review，and UX-06G Step03
+  is not authorized.
+
+- 2026-07-14: Completed UX-06G Step01 Work Detail UI Audit & Design Contract as
+  a documentation-only Mission. `/works/[slug]` is frozen as a Literary Work
+  Decision Space between Archive / Search / Author Profile discovery and Reading.
+  Audited Work identity、summary、public author、tags、Published context、Continue /
+  Start、Download、Chapter list、No Chapters、Loading、Error and Not Found. Archive /
+  Search / Author Profile → Work Detail and Work Detail → Author Profile / Reading
+  pass；Guest retains the existing sign-in boundary，Reader / Author pass，and
+  page-local Studio actions remain zero. Published-only、Draft Work / Chapter
+  isolation、1280 / 390 zero overflow、single H1、semantic Chapter list and browser
+  console 0 pass. WD-AUDIT-001–010 record ten P2 hierarchy、accessibility、state、
+  recovery and data-contract constraints；P0 / P1 are zero. Step01 changed no
+  product implementation、data、Auth、Permission、Gateway、Service、Repository or
+  query contract. Web checks、`pnpm validate`、167 / 167 tests、all production builds
+  and diff checks pass；Work Detail Ready for Step02 = YES，awaiting Product Owner
+  review，and UX-06G Step02 is not authorized.
+
+- 2026-07-14: Product Owner completed final acceptance of UX-06F Author Profile
+  Track with PASS. Step01–Step04 are all Accepted；Author Profile remains the
+  Literary Creator Identity Space，Author Profile Ready for Release = YES，and the
+  Track is completed / closed. AP-QA-001 remains a non-blocking QA Fixture
+  enhancement. Do not continue Author Profile optimization.
+
+- 2026-07-14: Completed UX-06F Step04 Author Profile Release Acceptance against
+  the frozen Step01–Step03 baseline. Author Profile is finalized as a Literary
+  Creator Identity Space with Public Identity → Bio → Quiet Relationship →
+  Published Works Context → Body of Work → Recovery. Guest、Reader followed /
+  unfollowed / real pending、Author self and final Follow restoration pass；4
+  Published Works、Archive / Search / Work Detail routes、Published-only and Draft
+  Work / Chapter isolation pass. Empty / Error contracts、real Profile-shaped
+  Loading、1440 / 1280 / 768 / 390、Light / Dark、semantics、focus、44px targets、
+  zero overflow and browser console 0 pass. P0 / P1 and Author Profile product P2 /
+  post-Beta findings are zero；AP-QA-001 remains only a non-blocking QA Fixture
+  enhancement. Step04 changed no product implementation、Follow business、data
+  contract、permission or data layer. Web checks、`pnpm validate`、167 / 167 tests、
+  all production builds and diff checks pass；Author Profile Ready for Release =
+  YES，awaiting Product Owner final review，and no next UX Track is authorized.
+
+- 2026-07-14: Completed UX-06F Step03 Author Profile States & Responsive QA
+  against the frozen Step02 baseline. Guest、Reader followed / unfollowed / real
+  pending、Author self、Archive / Search / Work Detail routes、Published-only and
+  Draft Work / Chapter isolation pass；the local Reader Follow state was restored.
+  Real client navigation exposed the Profile-shaped Loading with `aria-busy` and
+  identity / works skeletons；Empty and Error contracts pass without fabricated
+  data or broken dependencies. 1440 / 1280 / 768 / 390、Light / Dark、headings、
+  named regions、focus-visible、44px targets、zero overflow and browser console 0
+  pass. AP-AUDIT-001–008 and 010 remain Closed；AP-QA-001 remains a non-blocking
+  extreme-content Fixture enhancement. Step03 changed no product implementation、
+  Follow business、data contract、permission or data layer. Web checks、`pnpm
+validate`、167 / 167 tests、all production builds and diff checks pass；Author
+  Profile Ready for Step04 = YES，awaiting Product Owner review，and Step04 is not
+  authorized.
+
+- 2026-07-13: Completed UX-06F Step02 Author Profile Layout Upgrade within the
+  frozen Step01 contract. `/author/[slug]` now follows Public Identity → Bio →
+  Quiet Relationship → Published Works Context → Body of Work → Recovery；public
+  name、bio and works lead while avatar、counts and Follow remain supporting. Work
+  title and entry are 44px targets，existing `publishedAt` is shown，repeated author
+  self-links are removed，and Empty / Loading / Error recovery is route-local.
+  Guest / Reader / Author、Archive / Search / Work Detail routes、Published-only、
+  Draft Work / Chapter isolation、1440 / 1280 / 768 / 390、Light / Dark、focus and
+  console 0 pass. AP-AUDIT-001–008 and 010 are closed；AP-AUDIT-009 implementation
+  protection is complete and the absent extreme-content Fixture remains `AP-QA-001`
+  for Step03 evidence. No data layer、permission、Follow business or contract changed.
+  Web checks、`pnpm validate`、167 / 167 tests、all production builds and diff checks
+  pass；Author Profile Layout Ready for Step03 = YES，awaiting Product Owner review，
+  and Step03 is not authorized.
+
+- 2026-07-13: Completed UX-06F Step01 Author Profile UI Audit & Design Contract
+  browser baseline and documentation draft. `/author/[slug]` is frozen as a
+  Literary Creator Identity Space for public display name、bio and Published Works
+  body of work. Archive / Search / Work Detail entries、Profile → Work Detail、
+  Guest / Reader / Author、current Follow / self states、1280 / 390 zero overflow、
+  Published-only and Draft Work / Chapter isolation pass with zero browser console
+  errors. Ten P2 findings cover social-profile dominance、generic cards、24px Work
+  entry、repeated self-attribution、metadata-light presentation、states、long-content
+  coverage and recovery continuity；P0 / P1 are zero. Step01 changed no product、
+  Follow、data、permission or query contract. Web checks、`pnpm validate`、167 / 167
+  tests、all production builds and diff checks pass；Author Profile Ready for
+  Step02 = YES，awaiting Product Owner review，and Step02 is not authorized.
+
+- 2026-07-13: Product Owner completed final acceptance of UX-06E Search Track with
+  PASS. Step01 Search UI Audit & Design Contract、Step02 Search Layout Upgrade、
+  Step03 Search States & Responsive QA and Step04 Search Release Acceptance are
+  all Accepted. Search is frozen as Active Story & Author Discovery；GET q、Initial、
+  80 / 81 boundary、NFKC normalization、Work 20 / Author 20、Published-only and
+  Draft isolation remain the final contract. P0 / P1 are zero，all Search findings
+  are closed，Search P2 / post-Beta risk is zero，and Search Ready for Release = YES.
+  UX-06E is Completed / Closed；do not continue Search optimization or start a new
+  UX Track without an explicit Product Owner Mission.
+
+- 2026-07-13: Completed UX-06E Step04 Search Release Acceptance final browser QA
+  against the accepted Step01–Step03 baseline. Search remains the Active Story &
+  Author Discovery entry and Archive remains Published Work browse / sort /
+  pagination. Initial、Valid、Empty、Invalid、80 / 81 boundary、NFKC normalization、
+  Loading、controlled Error、Work / Author Results、1440 / 1280 / 768 / 390、Light /
+  Dark、accessibility、Guest / Reader / Author、Published-only and Draft Work /
+  Chapter isolation all pass with zero clean-session browser errors. All Search
+  findings remain closed；P0 / P1 are zero. Step04 changed no product implementation、
+  data、permission or query contract. Web checks、`pnpm validate`、167 / 167 tests、
+  all production builds and diff checks pass；Search Ready for Release = YES. The
+  Product Owner subsequently recorded Final Decision PASS and closed UX-06E；no
+  next UX Track is authorized.
+
+- 2026-07-13: Completed UX-06E Step03 Search States & Responsive QA browser
+  verification. Initial、GET q、Empty、Invalid 80 / 81 boundary、NFKC normalization、
+  Loading、controlled Error、Work / Author Results、1440 / 1280 / 768 / 390、Light /
+  Dark、focus、44px targets、Guest / Reader / Author、Published-only and Draft Work /
+  Chapter isolation pass with zero clean-session browser errors. Controlled Error QA
+  found that the `清空并重新搜索` same-route client navigation retained the Next.js
+  segment error boundary；`search/error.tsx` now uses a native full navigation and
+  correctly restores Initial State. No data、permission、Gateway、Service、Repository、
+  RPC or query contract changed. Web checks、`pnpm validate`、167 / 167 workspace
+  tests and all production builds pass. P0 / P1 are zero；Search Ready for Step04 =
+  YES，and Step04 is not authorized.
+
+- 2026-07-13: Completed UX-06E Step02 Search Layout Upgrade within the accepted
+  Step01 contract. `/search` now uses an Orientation → visible-labeled Query →
+  Query Context / State → Work Results → Author Results rhythm. Work / Author
+  presentation、Initial / Empty recovery、Search-shaped Loading、single-owner Error、
+  44px entries、Light / Dark and 1440 / 1280 / 768 / 390 responsive behavior pass.
+  Product Owner authorized localhost QA Fixture rebuilding；Reader / Author login、
+  Published-only、Draft isolation、Work / Author entries and zero console errors pass.
+  `pnpm validate`、167 / 167 workspace tests、Web 79 / 79 and all production builds
+  pass；Search Layout Ready for Step03 = YES.
+  Only route-local Search UI changed；Database schema、Migration、RLS、RPC、Permission、
+  Gateway、Service、Repository and query contracts remain unchanged. Step03 is not
+  authorized and awaits Product Owner review.
+
+- 2026-07-13: Completed UX-06E Step01 Search UI Audit & Design Contract as a
+  documentation-only Mission. `/search` GET query、Work / Author results、Initial /
+  Invalid / Empty / Loading / Error、1280 / 390 responsive、semantics、Published-only
+  and Draft isolation were audited. Search is frozen as the active query entry and
+  Archive remains the browse / sort / pagination path. Eight P2 design / accessibility
+  findings were recorded；P0 / P1 are zero. `pnpm validate`、167 tests、Web 79 / 79
+  and all production builds pass. No product、data、permission、dependency or
+  deployment change was made. Search Ready for Step02 = YES；awaiting Product
+  Owner review，and Step02 is not authorized.
+
+- 2026-07-13: Product Owner issued final PASS for UX-06D Step04 and the full
+  Archive Track. Step01–Step04 are accepted；Archive is formally Completed /
+  Release Ready with `Archive Ready for Release = YES`. Curated Story Discovery
+  Space positioning、official sort contract and Published-only boundaries are
+  frozen. AR-AUDIT-003、AR-AUDIT-007 and KI-024 remain accepted P2 / post-Beta
+  items. Do not continue Archive optimization or start another UX Track without
+  a new explicit Mission.
+
+- 2026-07-13: Completed UX-06D Step04 Archive Release Acceptance. Step01–Step03
+  outputs were consolidated into the final release baseline. Curated Story
+  Discovery Space positioning、four official sorts、all route states、1440 / 1280 /
+  768 / 390、44px targets、accessibility、Guest / Reader / Author、Published-only、
+  Draft isolation、Work / Author links and ReaderShelf all pass with zero browser
+  errors. Full validation and 79 Web tests pass；P0 / P1 are zero. No product
+  implementation changed. AR-AUDIT-003、AR-AUDIT-007 and KI-024 remain P2 /
+  post-Beta. Archive Ready for Release = YES；subsequently accepted by Product Owner.
+
+- 2026-07-13: Completed UX-06D Step03 Archive States & Responsive QA. Real
+  Loading transition、default/sort/page boundaries、1440 / 1280 / 768 / 390、
+  accessibility semantics、Guest / Reader / Author、Published-only、Draft
+  isolation、Work / Author links and ReaderShelf regression pass with zero browser
+  errors. One route-local CSS fix raised Work title、Author and Work-entry tap
+  targets from 15–28px to at least 44px. Empty / Error contracts and live recovery
+  destinations pass without creating data or breaking dependencies. AR-AUDIT-003、
+  AR-AUDIT-007 and KI-024 remain；P0 / P1 are zero. Step04 is not authorized.
+
+- 2026-07-13: Completed UX-06D Step02 Archive Layout Upgrade within the frozen
+  Step01 contract. `/archive` now separates public discovery from private return,
+  uses an editorial work list, unified page-level Chinese labels, actionable empty
+  recovery and route-local loading continuity. Four sorts、URL pagination、
+  Published-only、Reader Permission、Draft Isolation and ReaderShelf behavior are
+  unchanged. 1440 / 1280 / 768 / 390 and Guest / Reader / Author browser QA pass
+  with zero console errors；P0 / P1 are zero. Metadata expansion、real multi-page
+  fixture coverage and KI-024 remain out of scope. Step03 is not authorized.
+
+- 2026-07-12: Completed UX-06D Step01 Archive UI Audit & Design Contract as a
+  documentation-only Mission. Current `/archive` Published-only browsing、four
+  sorts、URL pagination、states、1440 / 390 responsive and semantics were audited.
+  Seven P2 design / QA findings were recorded, led by weak Discovery / Return
+  separation、generic inventory cards and the metadata-light `BrowseWork`
+  contract. No implementation or data change was made；Archive Ready for Step02
+  = YES, pending Product Owner review and separate Step02 authorization.
+
+- 2026-07-12: Product Owner accepted UX-06C Step05 and the complete UX-06C
+  Reading Track. Step01–Step05 all pass；Reading is formally Completed / Release
+  Ready and Ready for Release = YES. Homepage Track and Reading Track are both
+  Release Ready. The existing QA Fixture Library remains the mandatory reusable
+  Reading regression baseline；the next UX Track requires separate authorization.
+
+- 2026-07-12: UX-06C Step05 Reading Release Readiness completed with an
+  engineering PASS and awaits Product Owner acceptance. Reading is Release
+  Ready after 1440 / 1280 / 768 / 390 responsive、accessibility、Long-form、
+  performance and full regression audits. `pnpm validate`、79 Web tests、all
+  production builds、QA Fixture and zero-error browser checks pass；P0 and P1
+  are zero. No implementation change was required.
+
+- 2026-07-12: Product Owner accepted UX-06C Reading Track Step04. Long-form
+  Reading QA、Desktop / Tablet、390 Mobile、Private Literary Reading Space、
+  regression、QA infrastructure and documentation governance all passed.
+  Step04 is formally closed；UX-06C Step05 Reading Release Readiness awaits
+  separate Mission Authorization.
+
+- 2026-07-12: UX-06C Step04 Long-form Reading QA rerun completed with an
+  engineering PASS and awaits Product Owner acceptance. The frozen Long Watch
+  fixture rendered 150 paragraphs consistently at 1440、768 and 390 with zero
+  overflow；Settings、Navigation、Directory、three-Chapter transition、Reader /
+  Author boundaries and Homepage / Archive / Reading / Author / Studio
+  regression passed with zero browser errors. No implementation fix was needed.
+
+- 2026-07-12: Product Owner accepted UX-06C Step04A QA Fixture Library
+  Foundation. The reusable Reading QA infrastructure、fixture lifecycle、data
+  isolation and regression results are frozen. Step04A is closed；the Step04
+  long-form rerun remains separately authorized and Step05 stays blocked.
+
+- 2026-07-12: Completed UX-06C Step04A QA Fixture Library Foundation by
+  extending the existing localhost-only `qa:fixture` flow. Four fixed-ID QA
+  Works and six Chapters now cover Short、150-paragraph Long-form、Multi Chapter、
+  Empty and Draft isolation scenarios；content-only cleanup preserves identities.
+  Idempotency、cleanup/recreate、Reader/Author isolation、1440/390 long scrolling
+  and regression pass. Step04 must still be rerun before Step05.
+
+- 2026-07-12: UX-06C Reading Track Step 04 passed all available real-content
+  Desktop / Tablet / Mobile、interaction、permission、error-state and role
+  regression checks，but is HOLD because local published content contains only
+  short chapters. No honest 20–30 minute long-form scenario can be executed
+  without separately authorized non-production QA content. Step 05 is blocked；
+  no code、database、Supabase or permission change was made.
+
+- 2026-07-12: Product Owner accepted UX-06C Reading Track Step 03. The
+  low-distraction Reading Interaction state、Chapter Directory、Progressive
+  Reading Settings、Chapter transition、scroll、responsive and accessibility
+  results are frozen. Step 03 is closed；Step 04 remains separately gated.
+
+- 2026-07-12: Completed UX-06C Reading Track Step 03 Reading Interaction.
+  Chapter Directory、Mobile Reading Navigation and Reading Settings now share
+  one route-local active panel；explicit close restores trigger focus，current
+  Chapter remains marked，and Chapter end preserves quiet Previous / Next
+  continuity. 1440 / 390 responsive、44px target、zero-overflow、Guest / Reader /
+  Author and clean-browser regression pass. Product Owner subsequently accepted
+  the Step；Step 04 remains unauthorized.
+
+- 2026-07-12: Completed UX-06C Reading Track Step 02 Typography & Reading
+  Rhythm. Existing Reader preference values and storage remain unchanged. Prose
+  and Chapter title now use a mixed-language system-serif fallback；Chapter title
+  uses discrete Desktop / Tablet / Mobile sizes，and paragraph、heading、list and
+  blockquote rhythm is tuned for long reading. 1440、768 and 390 responsive QA，
+  maximum preferences，persistence，contrast and regression pass. Product Owner
+  later accepted Step 02 and separately authorized Step 03.
+
+- 2026-07-12: Product Owner froze the Author Studio / Work Editor multi-chapter
+  UX foundation. Multi-chapter works require collapsible management with one
+  explicit active editing chapter；eligible-only Select All uses none、partial
+  and all states，and zero selection cannot publish. Published、ineligible、
+  invalid and unsaved chapters remain excluded. This is documentation only；a
+  future independent Author Studio / Chapter Management Mission must authorize
+  implementation.
+
+- 2026-07-12: Product Owner accepted UX-06C Reading Track Step 01 and its
+  Additional Mobile Reading Foundation. Reading Container、responsive long-text
+  containment、page-local low-distraction exits and collapsible Chapter
+  Navigation are now accepted foundations. Step 02 Typography & Reading Rhythm
+  remains unauthorized.
+
+- 2026-07-12: Completed the UX-06C Step 01 Additional Mobile Reading
+  Foundation. Mobile Chapter Reading now has an always-visible Return to Work
+  path and a native collapsible navigation panel for Homepage、Archive、Shelf、
+  Search、previous / next and Chapter Directory. The panel expands in document
+  flow and closes to full reading width. Desktop keeps its existing context and
+  continuation rhythm while Chapter Directory is closed by default. Typography、
+  Reader settings、bookmark、history、Auth、permission and data contracts remain
+  unchanged.
+
+- 2026-07-12: Added and froze the global Header three-zone structure within the
+  authorized UX-06C Step 01 supplement. At 768px and above, Brand、Primary
+  Navigation and Utility / Account are distinct; 390 Mobile keeps Brand and
+  right-side Theme / Account while simplifying navigation. Reader navigation is
+  Archive、Search、then existing capability-gated Studio. Auth、role、Studio
+  access and theme persistence behavior remain unchanged.
+  The same responsive audit exposed and fixed Reading grid overflow from
+  uninterrupted prose using intrinsic-width containment and emergency wrapping;
+  reader preference values remain unchanged.
+
+- 2026-07-12: Completed UX-06C Reading Track Step 01 Layout Foundation. Chapter
+  Reading now uses route-local Context, Content and Continuation regions plus a
+  pure Chapter Header. Existing Reader access, hybrid published-only data,
+  preference variables, history, bookmark and chapter flow contracts remain
+  unchanged. Web typecheck, lint, 79/79 tests and production build pass; Step 02
+  remains unauthorized pending Product Owner acceptance.
+
+- 2026-07-11: Completed UX-06B Homepage Implementation Step 04 Release
+  Readiness. No Homepage code change was required. Responsive audits at 1440,
+  1280, 768 and 390 widths, semantic accessibility, visible focus, Light/Dark
+  contrast, restrained interaction, production build/loading checks and complete
+  Guest/Register/Reader/Reading/Author/Studio regression all pass. `pnpm validate`
+  passes after mechanical formatting of existing Design documents. Homepage is
+  Release Ready. Product Owner accepted Step 04 and closed the UX-06B Homepage
+  Track. UX-06C Reading Track remains unauthorized.
+
+- 2026-07-11: Product Owner authorized the permanent Manual QA Handoff Gate.
+  Every Mission entering manual acceptance must proactively report the actual QA
+  environment, local-only Fixture credentials, Guest/Reader/Author validation and
+  the standard checklist. Fixture, credential, login, invitation or environment
+  failures are P0 and block Completed/Awaiting Acceptance. The current local QA
+  Fixture was repaired idempotently and Guest, Reader, Author, role boundaries,
+  Studio/Profile, Desktop/Mobile and zero-error console all pass.
+
+- 2026-07-11: Completed UX-06B Homepage Implementation Step 03 visual
+  refinement. Homepage structure and Published Work data remain unchanged;
+  typography, editorial measures, whitespace, semantic color usage and
+  restrained interaction feedback were refined only in route-local CSS. Web
+  typecheck, ESLint, 79/79 Vitest, production build, 1280 desktop, 768 tablet,
+  390 mobile, Light/Dark theme, key entry boundaries and zero-error console all
+  pass. Product Owner accepted Step 03; Step 04 remains unauthorized.
+
+- 2026-07-11: Product Owner accepted UX-06B Homepage Implementation Step 02.
+  Homepage content now follows Brand Introduction ->
+  Quiet Discovery -> three newest Published Works -> Reading Return -> Closing.
+  Published content reuses the existing public browse gateway and `BrowseWork`
+  contract without recommendation, ranking, schema or permission changes. Web
+  type, lint, 79 tests, production build, desktop/mobile Browser QA, real
+  Published Work/Author links and zero-error console all pass. Step 03 remains
+  unauthorized.
+
+- 2026-07-11: Product Owner accepted UX-06B Homepage Implementation Step 01. The
+  Homepage now uses a route-local shell with Entry,
+  Archive Foundation, Preview Shelf and Calm Closing regions, semantic colors and
+  responsive editorial rhythm. Existing Root Layout, SEO, Session, Reader gate,
+  Archive, Author, Auth, data and business contracts remain unchanged. Web type,
+  lint, 79 tests, production build, desktop/mobile/dark Browser QA and zero-error
+  Homepage console all pass. Step 02 remains unauthorized.
+
+- 2026-07-11: Product Owner accepted UX-06A Design System Implementation
+  Foundation. The current Tailwind CSS 4 + `packages/ui`
+  architecture, theme model and Reader preference variables are retained. The
+  approved strategy uses semantic Token layers, shared-component ownership and
+  mission-based page migration; no Token, Component, CSS, Tailwind, page,
+  permission, data or business behavior changed. UX-06B remains unauthorized.
+
 - 2026-07-11: Product Owner confirmed `Mission RR-1C PASS`. QA Fixture acceptance
   is complete; Author / Reader permission chains pass manual verification; Reader
   `/studio` redirects to `/archive`. Release Candidate baseline
@@ -388,3 +864,4 @@ AO3 核心功能：
 - 2026-06-28: Revised the permanent language policy: Product Owner communication and formal product-document content use Simplified Chinese; technical and filesystem naming remain in English; no translation-only migration is required.
 - 2026-06-28: Added the initial language policy and made it mandatory startup context.
 - 2026-06-28: Phase 0.6 completed final documentation architecture, registries, ADRs, Phase packages and AI behavior contract. No application code or packages introduced.
+- 2026-07-12: Product Owner accepted UX-06C Step 02. Reading typography, rhythm and progressive Reading controls are frozen; existing preference values, storage and theme behavior remain unchanged. Step 03 is not authorized.

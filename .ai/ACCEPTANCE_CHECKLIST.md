@@ -121,6 +121,26 @@
 
 No task, feature, Sprint, or release is complete until every applicable item passes. “N/A” requires a written reason.
 
+## Manual QA handoff gate
+
+- [ ] Final Output records the actual Local URL and running environment.
+- [ ] Final Output states whether the development or QA server must be restarted.
+- [ ] `pnpm qa:credentials` succeeds when the project QA Fixture applies.
+- [ ] Guest can access Homepage.
+- [ ] Reader credentials successfully authenticate.
+- [ ] Author credentials successfully authenticate.
+- [ ] Author public profile URL is verified when applicable.
+- [ ] Author Studio access is verified when applicable.
+- [ ] Reader Studio denial is preserved when applicable.
+- [ ] Invitation Code registration is verified when registration is in Mission scope.
+- [ ] Desktop and Mobile acceptance surfaces are ready.
+- [ ] Regression paths required by the Mission pass.
+- [ ] Final Output includes the standard Manual QA Checklist.
+- [ ] No QA Fixture, credential, login, invitation or environment P0 remains open.
+
+If any item required for the Mission fails, the Mission cannot be marked `Completed` or
+`Awaiting Product Owner Acceptance`. Repair and revalidation are mandatory before handoff.
+
 ## Before development
 
 - [ ] Environment Check passed with recorded evidence.

@@ -1,109 +1,219 @@
+import { readPublicRuntimeConfig } from "@fandom-harbor/config";
 import Link from "next/link";
 
-import { landingSignals, mockWorks } from "../lib/mock-content";
+import { createPublicBrowseGateway } from "../lib/public-browse";
+import { HomepageWorkPreview } from "./homepage-content";
+import { HomepageSection, HomepageShell } from "./homepage-shell";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const browse = await createPublicBrowseGateway(
+    readPublicRuntimeConfig(),
+  ).list({ page: 1, sort: "newest" });
+  const latestWorks = browse.items.slice(0, 3);
+
   return (
-    <div className="site-stack" id="foundation">
-      <section className="hero-panel">
-        <p className="eyebrow">Sprint 002B · Reading Experience Foundation</p>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight sm:text-5xl">
-          Fandom Harbor 是一个以阅读体验为核心、以权限边界为底线的私域作品港口。
-        </h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-          Reader 路由已开始使用 002A Content Service 合同组织作品、章节和文章。
-          当前由可替换 fixture 提供内容，数据库验证完成后可切换到 Supabase
-          Repository。
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            className="rounded-control bg-primary px-4 py-3 text-primary-foreground"
-            href="/search"
-          >
-            搜索作品与作者
-          </Link>
-          <Link
-            className="rounded-control border border-border px-4 py-3"
-            href="/works"
-          >
-            查看作品骨架
-          </Link>
-          <Link
-            className="rounded-control border border-border px-4 py-3"
-            href="/auth/sign-in"
-          >
-            登录 Reader
-          </Link>
-          <Link
-            className="rounded-control border border-border px-4 py-3"
-            href="/access"
-          >
-            邀请入口
-          </Link>
+    <HomepageShell>
+      <HomepageSection labelledBy="homepage-title">
+        <div className="homepage-hero">
+          <p className="eyebrow">安静的文学港湾</p>
+          <h1 className="homepage-title" id="homepage-title">
+            Fandom Harbor
+          </h1>
+          <p className="homepage-introduction">
+            一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。
+          </p>
+          <nav aria-label="首页主要入口" className="homepage-actions">
+            <Link
+              className="homepage-action homepage-action-primary"
+              href="/archive"
+            >
+              浏览公开作品
+            </Link>
+            <Link className="homepage-action" href="/search">
+              查找作品与作者
+            </Link>
+          </nav>
+          <p className="homepage-orientation-note">
+            Homepage 只提供安静的入口；完整浏览留在
+            Archive，带着关键词的寻找留在 Search。
+          </p>
         </div>
-      </section>
+      </HomepageSection>
 
-      <section className="info-grid">
-        {landingSignals.map((signal) => (
-          <article className="stat-card" key={signal.label}>
-            <p className="text-sm text-muted-foreground">{signal.label}</p>
-            <p className="mt-2 text-xl font-semibold">{signal.value}</p>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              {signal.detail}
-            </p>
-          </article>
-        ))}
-      </section>
-
-      <section className="site-stack">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow">Preview Shelf</p>
-            <h2 className="mt-3 text-2xl font-semibold">首页预览三部作品</h2>
-          </div>
-          <Link className="text-sm text-primary" href="/works">
-            进入 Reader 列表
-          </Link>
-        </div>
-        <div className="book-grid">
-          {mockWorks.map((work) => (
-            <article className="stat-card" key={work.slug}>
-              <p className="text-sm text-muted-foreground">
-                {work.fandom} · {work.rating} · {work.status}
+      <HomepageSection labelledBy="homepage-discovery-title" tone="quiet">
+        <header className="homepage-section-header">
+          <p className="eyebrow">发现路径</p>
+          <h2 className="homepage-section-title" id="homepage-discovery-title">
+            选择一条适合此刻的路径。
+          </h2>
+          <p className="homepage-section-lede">
+            这里没有热度榜或无尽信息流。你可以安静浏览完整归档，也可以带着一个名字或关键词主动寻找。
+          </p>
+        </header>
+        <div className="homepage-path-list">
+          <article className="homepage-path">
+            <p className="homepage-path-index">01</p>
+            <div>
+              <h3 className="homepage-path-title">沿 Archive 浏览</h3>
+              <p className="homepage-path-copy">
+                按发布时间或标题浏览完整的公开作品集合，慢慢比较故事与作者线索。
               </p>
-              <h3 className="mt-3 text-xl font-semibold">{work.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                作者：
-                <Link
-                  className="text-primary"
-                  href={`/author/${work.authorSlug}`}
-                >
-                  {work.authorName}
-                </Link>
-              </p>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {work.summary}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                {work.tags.map((tag) => (
-                  <span
-                    className="rounded-full border border-border px-2 py-1"
-                    key={tag}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <Link
-                className="mt-5 inline-flex text-sm text-primary"
-                href={`/works/${work.slug}`}
-              >
-                查看作品详情
+              <Link className="homepage-text-link" href="/archive">
+                进入 Archive
               </Link>
-            </article>
-          ))}
+            </div>
+          </article>
+          <article className="homepage-path">
+            <p className="homepage-path-index">02</p>
+            <div>
+              <h3 className="homepage-path-title">带着关键词寻找</h3>
+              <p className="homepage-path-copy">
+                主动查询已经公开的作品与作者，不需要穿过推荐、排名或 Feed。
+              </p>
+              <Link className="homepage-text-link" href="/search">
+                打开 Search
+              </Link>
+            </div>
+          </article>
+          <article className="homepage-path">
+            <p className="homepage-path-index">03</p>
+            <div>
+              <h3 className="homepage-path-title">从最近公开的故事开始</h3>
+              <p className="homepage-path-copy">
+                先读一段简介、认识公开作者，再进入作品详情决定是否开始阅读。
+              </p>
+              <Link
+                className="homepage-text-link"
+                href="#homepage-latest-title"
+              >
+                查看最新公开作品
+              </Link>
+            </div>
+          </article>
         </div>
-      </section>
-    </div>
+      </HomepageSection>
+
+      <HomepageSection labelledBy="homepage-latest-title">
+        <div className="homepage-section-heading-row">
+          <header>
+            <p className="eyebrow">最新公开作品</p>
+            <h2 className="homepage-section-title" id="homepage-latest-title">
+              最近抵达港湾的故事
+            </h2>
+            <p className="homepage-section-lede">
+              这里仅展示按发布时间排列的三部最新公开作品，作为进入 Work Detail
+              与完整 Archive 的邀请；它们不是推荐或排名。
+            </p>
+          </header>
+          <Link className="homepage-text-link" href="/archive">
+            浏览全部公开作品
+          </Link>
+        </div>
+        {latestWorks.length > 0 ? (
+          <div className="homepage-preview-list">
+            {latestWorks.map((work) => (
+              <HomepageWorkPreview key={work.id} work={work} />
+            ))}
+          </div>
+        ) : (
+          <div className="homepage-empty">
+            <p role="status">
+              这里暂时没有公开作品。已保存但尚未发布的草稿不会在 Homepage 出现。
+            </p>
+            <nav
+              aria-label="首页空状态恢复入口"
+              className="homepage-reading-links"
+            >
+              <Link className="homepage-text-link" href="/archive">
+                前往 Archive
+              </Link>
+              <Link className="homepage-text-link" href="/search">
+                打开 Search
+              </Link>
+              <Link className="homepage-text-link" href="/auth/sign-up">
+                创建账号
+              </Link>
+            </nav>
+          </div>
+        )}
+      </HomepageSection>
+
+      <HomepageSection labelledBy="homepage-reading-title" tone="quiet">
+        <div className="homepage-return-grid">
+          <header>
+            <p className="eyebrow">回到阅读</p>
+            <h2 className="homepage-section-title" id="homepage-reading-title">
+              继续自己的阅读路径。
+            </h2>
+            <p className="homepage-section-lede">
+              阅读记录与书签属于私人回访。Reader Library
+              会沿用既有登录边界，不在 Homepage 展示个人阅读内容。
+            </p>
+            <nav
+              aria-label="Reader 回访入口"
+              className="homepage-reading-links"
+            >
+              <Link
+                className="homepage-action homepage-action-primary"
+                href="/works"
+              >
+                进入 Reader Library
+              </Link>
+              <Link className="homepage-text-link" href="/archive">
+                发现新的故事
+              </Link>
+            </nav>
+          </header>
+          <div
+            aria-labelledby="homepage-access-title"
+            className="homepage-access-context"
+          >
+            <p className="homepage-access-label">账号路径</p>
+            <h3 className="homepage-access-title" id="homepage-access-title">
+              登录、注册与邀请各有清楚边界。
+            </h3>
+            <p className="homepage-access-copy">
+              页首负责显示当前账号状态。这里仅提供中性的既有路径：先创建或登录账号；需要门禁资格时，再按现有流程使用邀请码。
+            </p>
+            <nav aria-label="账号与邀请入口" className="homepage-access-links">
+              <Link className="homepage-text-link" href="/auth/sign-in">
+                账号登录
+              </Link>
+              <Link className="homepage-text-link" href="/auth/sign-up">
+                创建账号
+              </Link>
+              <Link className="homepage-text-link" href="/access">
+                使用邀请码
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </HomepageSection>
+
+      <HomepageSection labelledBy="homepage-closing-title">
+        <div className="homepage-closing">
+          <p className="eyebrow">安静继续</p>
+          <h2 className="homepage-section-title" id="homepage-closing-title">
+            从适合此刻的入口出发。
+          </h2>
+          <p className="homepage-section-lede">
+            还没有决定读什么时，可以回到完整归档，或用关键词寻找一部作品与它的公开作者。
+          </p>
+          <nav aria-label="首页恢复入口" className="homepage-reading-links">
+            <Link className="homepage-text-link" href="/archive">
+              回到 Archive
+            </Link>
+            <Link className="homepage-text-link" href="/search">
+              前往 Search
+            </Link>
+            <Link className="homepage-text-link" href="#homepage-title">
+              回到页面开头
+            </Link>
+          </nav>
+        </div>
+      </HomepageSection>
+    </HomepageShell>
   );
 }

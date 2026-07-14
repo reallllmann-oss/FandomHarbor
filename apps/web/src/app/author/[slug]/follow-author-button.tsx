@@ -10,7 +10,7 @@ function SubmitButton({ isFollowing }: { isFollowing: boolean }) {
   return (
     <button
       aria-label={isFollowing ? "取消关注作者" : "关注作者"}
-      className="min-h-11 rounded-control bg-primary px-5 font-medium text-primary-foreground disabled:opacity-60"
+      className="author-follow-action"
       disabled={pending}
       name="intent"
       type="submit"

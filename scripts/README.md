@@ -8,8 +8,10 @@ remote state changes and never embed secrets.
 - `pnpm qa:credentials` displays the Git-ignored local acceptance credentials in
   the current terminal after verifying the file is local-only and mode `0600`.
 - `pnpm qa:fixture` creates or repairs the synthetic local Reader/Author acceptance
-  identities, active memberships, Author grant, Author public profile and invitation
-  relationship.
+  identities, active memberships, Author grant, Author public profile, invitation
+  relationship and the Reading QA Fixture Library.
+- `pnpm qa:fixture:clean` removes only the fixed-ID Reading QA Works and Chapters;
+  it preserves the QA identities, credentials, memberships and role grants.
 - `pnpm qa:reset` performs a local-only clean rebuild and then restores the same
   fixture.
 - The command refuses non-local Supabase URLs and never reads or writes linked remote

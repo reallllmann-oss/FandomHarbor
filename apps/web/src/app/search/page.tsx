@@ -37,108 +37,151 @@ export default async function SearchPage({
   const resultCount = results.works.length + results.authors.length;
 
   return (
-    <div className="site-stack">
-      <section className="reading-card max-w-none">
-        <p className="eyebrow">Search MVP</p>
-        <h1 className="mt-3 text-3xl font-semibold">搜索作品与作者</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          按作品标题、作品 Slug、作者名称或作者 Slug
-          搜索。结果仅包含已发布作品。
+    <div className="search-shell">
+      <section className="search-orientation">
+        <p className="eyebrow">主动发现</p>
+        <h1>寻找一部作品，或一位作者</h1>
+        <p className="search-orientation-copy">
+          从一个明确的标题、作者名称或公开标识开始，在已经发布的故事与创作者之间找到下一条阅读路径。
         </p>
+      </section>
+
+      <section aria-labelledby="search-query-title" className="search-query">
+        <div className="search-query-copy">
+          <h2 id="search-query-title">输入你的线索</h2>
+          <p>搜索只会返回公开作品，以及拥有公开作品的作者。</p>
+        </div>
         <form
           action="/search"
-          className="mt-6 flex flex-col gap-3 sm:flex-row"
+          className="search-form"
           method="get"
           role="search"
         >
-          <label className="sr-only" htmlFor="public-search-query">
-            搜索 Published Works 与作者
+          <label className="search-label" htmlFor="public-search-query">
+            作品或作者关键词
           </label>
-          <input
-            autoComplete="off"
-            className="min-h-11 min-w-0 flex-1 rounded-control border border-border bg-background px-4"
-            defaultValue={rawQuery}
-            id="public-search-query"
-            maxLength={MAX_SEARCH_QUERY_LENGTH}
-            name="q"
-            placeholder="输入作品标题、Slug 或作者名称"
-            type="search"
-          />
-          <button
-            className="min-h-11 rounded-control bg-primary px-6 font-medium text-primary-foreground"
-            type="submit"
-          >
-            搜索
-          </button>
-        </form>
-        {invalid ? (
-          <p className="mt-3 text-sm text-destructive" role="alert">
-            搜索关键词需控制在 {MAX_SEARCH_QUERY_LENGTH}{" "}
-            个字符以内，且不能包含控制字符。
+          <div className="search-form-row">
+            <input
+              autoComplete="off"
+              className="search-input"
+              defaultValue={rawQuery}
+              id="public-search-query"
+              maxLength={MAX_SEARCH_QUERY_LENGTH}
+              name="q"
+              placeholder="例如：作品标题、作者名称或公开标识"
+              type="search"
+            />
+            <button className="search-submit" type="submit">
+              开始搜索
+            </button>
+          </div>
+          <p className="search-input-help">
+            最多 {MAX_SEARCH_QUERY_LENGTH} 个字符。搜索记录不会被保存。
           </p>
-        ) : null}
+          {invalid ? (
+            <p className="search-validation" role="alert">
+              关键词需控制在 {MAX_SEARCH_QUERY_LENGTH}{" "}
+              个字符以内，且不能包含控制字符。
+            </p>
+          ) : null}
+        </form>
       </section>
 
       {query.length === 0 ? (
         <section
-          className="reading-card max-w-none text-center"
           aria-labelledby="search-start-title"
+          className="search-recovery"
         >
-          <h2 className="text-xl font-semibold" id="search-start-title">
-            从一个明确的关键词开始
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Search MVP 不保存搜索历史，也不会提供推荐或热门词。
+          <p className="eyebrow">从线索开始</p>
+          <h2 id="search-start-title">想起一个名字，就从那里出发</h2>
+          <p>
+            这里不提供热门词或推荐排序。如果暂时没有明确关键词，可以先到作品归档中安静浏览。
           </p>
+          <div className="search-recovery-actions">
+            <Link className="search-secondary-action" href="/archive">
+              浏览作品归档
+            </Link>
+            <Link className="search-text-action" href="/">
+              返回首页
+            </Link>
+          </div>
         </section>
       ) : invalid ? null : resultCount === 0 ? (
-        <section
-          className="reading-card max-w-none text-center"
-          aria-live="polite"
-        >
-          <h2 className="text-xl font-semibold">没有找到公开结果</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            请检查标题或 Slug。草稿和未发布作品不会出现在搜索中。
+        <section aria-live="polite" className="search-recovery search-empty">
+          <p className="eyebrow">暂无匹配</p>
+          <h2>没有找到与“{results.query}”相符的公开结果</h2>
+          <p>
+            可以调整标题、作者名称或公开标识后再次搜索。草稿和未发布内容不会出现在这里。
           </p>
+          <div className="search-recovery-actions">
+            <Link className="search-secondary-action" href="/archive">
+              浏览作品归档
+            </Link>
+            <Link className="search-text-action" href="/">
+              返回首页
+            </Link>
+          </div>
         </section>
       ) : (
-        <div aria-live="polite" className="site-stack">
-          <p className="text-sm text-muted-foreground" role="status">
-            “{results.query}”共找到 {resultCount} 条公开结果
-          </p>
+        <div className="search-results-stack">
+          <section
+            aria-labelledby="search-context-title"
+            className="search-context"
+          >
+            <div>
+              <p className="eyebrow">查询结果</p>
+              <h2 id="search-context-title">关于“{results.query}”</h2>
+            </div>
+            <p className="search-result-count" role="status">
+              找到 {resultCount} 条公开结果
+            </p>
+          </section>
 
           {results.works.length > 0 ? (
             <section
               aria-labelledby="search-work-results"
-              className="reading-card max-w-none"
+              className="search-results-region search-work-results"
             >
-              <h2 className="text-2xl font-semibold" id="search-work-results">
-                已发布作品
-              </h2>
-              <ul className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="search-region-heading">
+                <div>
+                  <p className="eyebrow">故事线索</p>
+                  <h2 id="search-work-results">找到的公开作品</h2>
+                </div>
+                <p>{results.works.length} 部作品</p>
+              </div>
+              <ul className="search-work-list">
                 {results.works.map((work) => (
-                  <li
-                    className="rounded-control border border-border p-5"
-                    key={work.id}
-                  >
-                    <h3 className="text-lg font-semibold">
+                  <li className="search-work-result" key={work.id}>
+                    <h3 className="search-work-title">
                       <Link href={`/works/${work.slug}`}>{work.title}</Link>
                     </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      作者：
-                      <Link
-                        className="text-primary"
-                        href={`/author/${work.authorSlug}`}
-                      >
-                        {work.authorName}
-                      </Link>
+                    <p className="search-work-summary">
+                      {work.summary || "这部作品暂未留下简介。"}
                     </p>
-                    <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
-                      {work.summary || "暂无作品简介。"}
-                    </p>
-                    <p className="mt-3 text-xs text-muted-foreground">
-                      Slug：{work.slug}
-                    </p>
+                    <div className="search-work-meta">
+                      <p>
+                        作者
+                        <span aria-hidden="true"> · </span>
+                        <Link
+                          className="search-author-link"
+                          href={`/author/${work.authorSlug}`}
+                        >
+                          {work.authorName}
+                        </Link>
+                      </p>
+                      <p>
+                        {work.publishedAt.toLocaleDateString("zh-CN", {
+                          timeZone: "UTC",
+                        })}
+                        发布
+                      </p>
+                    </div>
+                    <Link
+                      className="search-result-entry"
+                      href={`/works/${work.slug}`}
+                    >
+                      查看作品 <span aria-hidden="true">→</span>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -148,29 +191,35 @@ export default async function SearchPage({
           {results.authors.length > 0 ? (
             <section
               aria-labelledby="search-author-results"
-              className="reading-card max-w-none"
+              className="search-results-region search-author-results"
             >
-              <h2 className="text-2xl font-semibold" id="search-author-results">
-                作者
-              </h2>
-              <ul className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="search-region-heading">
+                <div>
+                  <p className="eyebrow">创作者线索</p>
+                  <h2 id="search-author-results">找到的公开作者</h2>
+                </div>
+                <p>{results.authors.length} 位作者</p>
+              </div>
+              <ul className="search-author-list">
                 {results.authors.map((author) => (
-                  <li
-                    className="rounded-control border border-border p-5"
-                    key={author.slug}
-                  >
-                    <h3 className="text-lg font-semibold">
+                  <li className="search-author-result" key={author.slug}>
+                    <h3 className="search-author-title">
                       <Link href={`/author/${author.slug}`}>
                         {author.displayName}
                       </Link>
                     </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {author.bio || "这位作者还没有填写简介。"}
+                    <p className="search-author-bio">
+                      {author.bio || "这位作者暂未留下公开简介。"}
                     </p>
-                    <p className="mt-3 text-xs text-muted-foreground">
-                      已发布作品 {author.publishedWorkCount} · Slug：
-                      {author.slug}
+                    <p className="search-author-context">
+                      已公开 {author.publishedWorkCount} 部作品
                     </p>
+                    <Link
+                      className="search-result-entry"
+                      href={`/author/${author.slug}`}
+                    >
+                      查看作者主页 <span aria-hidden="true">→</span>
+                    </Link>
                   </li>
                 ))}
               </ul>

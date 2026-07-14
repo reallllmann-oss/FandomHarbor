@@ -45,6 +45,18 @@ Level 3 文件类型规则单独停批；但上述八类边界仍优先。工程
 Mission 完成后统一提交一次工程报告与 Product Handoff，等待一次人工验收。未经
 新 Mission 授权不得进入下一 Mission。
 
+## Manual QA Handoff Gate
+
+任何进入 Product Owner 人工验收的 Mission，在交付前必须满足
+`docs/13_Test/MANUAL_QA_HANDOFF.md`：
+
+1. 确认实际运行的 Local URL、运行环境和服务器重启要求。
+2. 项目存在 QA Fixture 时执行 `pnpm qa:credentials`；凭据不可写入 tracked 文档。
+3. 自动验证 Guest 首页、Reader 登录、Author 登录，以及 Mission 涉及注册时的邀请码注册。
+4. 凭据、Fixture、登录、邀请码或 QA 环境失败均为 P0。必须先修复并复验，不得带阻塞交付。
+5. 只有 QA Environment Ready 后，才允许标记 `Completed` 或 `Awaiting Product Owner Acceptance`。
+6. Final Output 必须主动提供环境、凭据、自动验证结果和可直接执行的 Manual QA Checklist。
+
 ## 风险分级方法
 
 - 执行前必须将整个预计修改按 Level 1、Level 2 或 Level 3 分类。
@@ -220,3 +232,9 @@ Phase 3 起 Mission 完成报告改为统一包含：
 8. Remaining Risks
 9. Product Handoff
 10. 人工验收清单
+11. QA Environment（实际 URL、运行环境、服务器重启要求）
+12. QA Credentials（Guest、Reader、Author、Invitation Code、Login URL、Author Profile URL，按适用范围）
+13. QA Validation（Guest、Reader、Author、注册邀请码的实际验证结果）
+
+上述 QA 项不得省略或以“可按需提供”替代。无适用项必须写明 N/A 与原因；任何 P0
+QA 阻塞都必须先修复，不能以未完成状态进入人工验收。

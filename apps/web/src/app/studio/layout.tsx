@@ -30,7 +30,10 @@ export default async function StudioLayout({ children }: PropsWithChildren) {
           <span className="eyebrow">Author</span>
           <span className="mt-1 block text-lg font-semibold">Studio</span>
         </Link>
-        <nav aria-label="Studio 导航" className="mt-4 grid gap-1">
+        <nav
+          aria-label="Studio 导航"
+          className="mt-4 grid grid-cols-3 gap-1 lg:grid-cols-1"
+        >
           {studioNavigation.map((item) => (
             <Link
               className="min-h-11 rounded-control px-3 py-2 text-sm font-medium hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
@@ -51,11 +54,17 @@ export default async function StudioLayout({ children }: PropsWithChildren) {
               作品与文章的统一管理入口
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 text-sm">
-            <Link className="text-primary" href="/author/invitations">
+          <div className="flex flex-wrap gap-1 text-sm">
+            <Link
+              className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+              href="/author/invitations"
+            >
               邀请码管理
             </Link>
-            <Link className="text-primary" href="/works">
+            <Link
+              className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+              href="/works"
+            >
               返回 Reader
             </Link>
           </div>

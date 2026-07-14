@@ -9,7 +9,6 @@ export interface NavigationItem {
 }
 
 interface SharedLayoutProps extends PropsWithChildren {
-  description: string;
   headerActions?: ReactNode;
   navigation: NavigationItem[];
   sidebar?: ReactNode;
@@ -19,7 +18,6 @@ interface SharedLayoutProps extends PropsWithChildren {
 
 export function SharedLayout({
   children,
-  description,
   headerActions,
   navigation,
   sidebar,
@@ -38,21 +36,50 @@ export function SharedLayout({
         跳到主要内容
       </a>
       <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex min-h-16 max-w-screen-xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="min-w-0">
-            <p className="truncate font-semibold">{title}</p>
-            <p className="truncate text-sm text-muted-foreground">
-              {description}
-            </p>
+        <div className="site-header-layout mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+          <div className="site-header-brand" data-header-region="brand">
+            <a
+              className="site-header-brand-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              href="/"
+            >
+              {title}
+            </a>
           </div>
-          <div className="flex items-center gap-2">
+          <nav
+            aria-label="主要导航"
+            className="site-header-navigation site-header-navigation-desktop"
+            data-header-region="navigation"
+          >
+            {navigation.map((item) => (
+              <a
+                className="site-header-navigation-link rounded-control text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                href={item.href}
+                key={item.href}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div
+            aria-label="显示与账号"
+            className="site-header-utilities"
+            data-header-region="utility-account"
+            role="group"
+          >
+            <ThemeToggle />
+            {headerActions}
+          </div>
+          <details className="site-header-mobile-navigation">
+            <summary className="site-header-mobile-navigation-trigger rounded-control text-sm">
+              浏览站点
+            </summary>
             <nav
-              aria-label="主要导航"
-              className="hidden items-center gap-1 md:flex"
+              aria-label="移动端主要导航"
+              className="site-header-mobile-navigation-links"
             >
               {navigation.map((item) => (
                 <a
-                  className="rounded-control px-3 py-2 text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                  className="site-header-navigation-link rounded-control text-sm"
                   href={item.href}
                   key={item.href}
                 >
@@ -60,9 +87,7 @@ export function SharedLayout({
                 </a>
               ))}
             </nav>
-            <ThemeToggle />
-            {headerActions}
-          </div>
+          </details>
         </div>
       </header>
       <div
@@ -84,18 +109,20 @@ export function SharedLayout({
 export function ReaderLayout({
   children,
   headerActions,
-}: PropsWithChildren<{ headerActions?: ReactNode }>) {
+  navigation,
+}: PropsWithChildren<{
+  headerActions?: ReactNode;
+  navigation?: NavigationItem[];
+}>) {
   return (
     <SharedLayout
-      description="阅读优先的私域作品归档"
       headerActions={headerActions}
-      navigation={[
-        { href: "/", label: "首页" },
-        { href: "/search", label: "搜索" },
-        { href: "/works", label: "作品" },
-        { href: "/archive", label: "Archive" },
-        { href: "/author", label: "Author 入口" },
-      ]}
+      navigation={
+        navigation ?? [
+          { href: "/archive", label: "Archive" },
+          { href: "/search", label: "Search" },
+        ]
+      }
       surface="reader"
       title="Fandom Harbor"
     >
@@ -112,7 +139,6 @@ export function AdminLayout({ children }: PropsWithChildren) {
 
   return (
     <SharedLayout
-      description="安全、可审计的管理工作区"
       navigation={navigation}
       sidebar={
         <nav aria-label="后台分区" className="space-y-2">
@@ -128,7 +154,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
         </nav>
       }
       surface="admin"
-      title="Fandom Harbor Admin"
+      title="Fandom Harbor"
     >
       {children}
     </SharedLayout>
@@ -138,10 +164,9 @@ export function AdminLayout({ children }: PropsWithChildren) {
 export function DocsLayout({ children }: PropsWithChildren) {
   return (
     <SharedLayout
-      description="只读项目文档浏览入口"
       navigation={[{ href: "/", label: "文档首页" }]}
       surface="docs"
-      title="Fandom Harbor Docs"
+      title="Fandom Harbor"
     >
       {children}
     </SharedLayout>

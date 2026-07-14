@@ -68,26 +68,28 @@ export default async function ArchiveBrowsePage({
   const lastItem = Math.min(page * browse.pageSize, browse.total);
 
   return (
-    <div className="site-stack">
-      <section className="reading-card max-w-none">
-        <p className="eyebrow">Archive Browse</p>
-        <h1 className="mt-3 text-3xl font-semibold">浏览已发布作品</h1>
-        <p className="mt-4 max-w-3xl text-muted-foreground">
-          Archive 只展示 Published Works。排序和页码保存在 URL
-          中，可直接分享并恢复当前浏览位置。
+    <div className="archive-shell">
+      <section className="archive-orientation">
+        <p className="eyebrow">作品归档</p>
+        <h1>发现下一段值得进入的故事</h1>
+        <p className="archive-orientation-copy">
+          这里收录已经发布的作品。按时间或标题安静浏览，从故事简介与作者线索中，找到适合此刻阅读的一篇。
         </p>
-        <form
-          action="/archive"
-          className="mt-6 flex flex-col gap-3 sm:max-w-md sm:flex-row sm:items-end"
-          method="get"
-        >
-          <label
-            className="grid flex-1 gap-2 text-sm font-medium"
-            htmlFor="archive-sort"
-          >
+      </section>
+
+      <section
+        aria-labelledby="archive-controls-title"
+        className="archive-controls"
+      >
+        <div className="archive-controls-copy">
+          <h2 id="archive-controls-title">整理浏览顺序</h2>
+          <p>排序和页码会保存在链接中，返回时仍能继续当前位置。</p>
+        </div>
+        <form action="/archive" className="archive-sort-form" method="get">
+          <label className="archive-sort-label" htmlFor="archive-sort">
             排序方式
             <select
-              className="min-h-11 rounded-control border border-border bg-background px-3"
+              className="archive-sort-select"
               defaultValue={sort}
               id="archive-sort"
               name="sort"
@@ -99,79 +101,84 @@ export default async function ArchiveBrowsePage({
               ))}
             </select>
           </label>
-          <button
-            className="min-h-11 rounded-control bg-primary px-5 font-medium text-primary-foreground"
-            type="submit"
-          >
-            应用排序
+          <button className="archive-sort-submit" type="submit">
+            更新顺序
           </button>
         </form>
       </section>
 
       {browse.items.length === 0 ? (
-        <section
-          className="reading-card max-w-none text-center"
-          aria-live="polite"
-        >
-          <h2 className="text-xl font-semibold">Archive 暂无已发布作品</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Draft 和未发布作品不会显示在这里。作品发布后会自动进入 Archive。
+        <section className="archive-empty" aria-live="polite">
+          <p className="eyebrow">尚无归档</p>
+          <h2>这里暂时没有已发布作品</h2>
+          <p>
+            草稿和未发布内容不会出现在公共归档中。你可以返回首页，或前往搜索查看其他公开入口。
           </p>
+          <div className="archive-empty-actions">
+            <Link className="archive-secondary-action" href="/">
+              返回首页
+            </Link>
+            <Link className="archive-secondary-action" href="/search">
+              前往搜索
+            </Link>
+          </div>
         </section>
       ) : (
-        <section aria-labelledby="archive-results" className="site-stack">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold" id="archive-results">
-                Published Works
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground" role="status">
+        <section aria-labelledby="archive-results" className="archive-results">
+          <div className="archive-results-heading">
+            <div className="archive-results-title-group">
+              <p className="eyebrow">公开作品</p>
+              <h2 id="archive-results">沿着故事线索浏览</h2>
+              <p className="archive-results-count" role="status">
                 共 {browse.total} 部作品，当前显示第 {firstItem}–{lastItem} 部
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="archive-page-context">
               {sortLabels[sort]} · 第 {browse.page} / {browse.pageCount} 页
             </p>
           </div>
 
-          <ul className="book-grid">
+          <ul className="archive-work-list">
             {browse.items.map((work) => (
-              <li className="stat-card" key={work.id}>
-                <p className="text-xs font-medium uppercase tracking-wide text-primary">
-                  Published Work
-                </p>
-                <h3 className="mt-3 text-xl font-semibold">
+              <li className="archive-work" key={work.id}>
+                <h3 className="archive-work-title">
                   <Link href={`/works/${work.slug}`}>{work.title}</Link>
                 </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  作者：
-                  <Link
-                    className="text-primary"
-                    href={`/author/${work.authorSlug}`}
-                  >
-                    {work.authorName}
-                  </Link>
+                <p className="archive-work-summary">
+                  {work.summary || "这部作品暂未留下简介。"}
                 </p>
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
-                  {work.summary || "暂无作品简介。"}
-                </p>
-                <p className="mt-4 text-xs text-muted-foreground">
-                  发布于{" "}
-                  {work.publishedAt.toLocaleDateString("zh-CN", {
-                    timeZone: "UTC",
-                  })}
-                </p>
+                <div className="archive-work-footer">
+                  <p className="archive-work-author">
+                    作者
+                    <span aria-hidden="true"> · </span>
+                    <Link
+                      className="archive-author-link"
+                      href={`/author/${work.authorSlug}`}
+                    >
+                      {work.authorName}
+                    </Link>
+                  </p>
+                  <p className="archive-work-date">
+                    {work.publishedAt.toLocaleDateString("zh-CN", {
+                      timeZone: "UTC",
+                    })}
+                    发布
+                  </p>
+                </div>
+                <Link
+                  className="archive-work-entry"
+                  href={`/works/${work.slug}`}
+                >
+                  查看作品 <span aria-hidden="true">→</span>
+                </Link>
               </li>
             ))}
           </ul>
 
-          <nav
-            aria-label="Archive 分页"
-            className="flex items-center justify-between gap-4"
-          >
+          <nav aria-label="Archive 分页" className="archive-pagination">
             {browse.page > 1 ? (
               <Link
-                className="inline-flex min-h-11 items-center rounded-control border border-border px-4"
+                className="archive-page-action"
                 href={archiveHref(browse.page - 1, sort)}
                 rel="prev"
               >
@@ -180,17 +187,17 @@ export default async function ArchiveBrowsePage({
             ) : (
               <span
                 aria-disabled="true"
-                className="inline-flex min-h-11 items-center px-4 text-muted-foreground"
+                className="archive-page-action archive-page-action-disabled"
               >
                 已是第一页
               </span>
             )}
-            <span aria-current="page" className="text-sm font-medium">
+            <span aria-current="page" className="archive-page-current">
               第 {browse.page} / {browse.pageCount} 页
             </span>
             {browse.page < browse.pageCount ? (
               <Link
-                className="inline-flex min-h-11 items-center rounded-control border border-border px-4"
+                className="archive-page-action"
                 href={archiveHref(browse.page + 1, sort)}
                 rel="next"
               >
@@ -199,7 +206,7 @@ export default async function ArchiveBrowsePage({
             ) : (
               <span
                 aria-disabled="true"
-                className="inline-flex min-h-11 items-center px-4 text-muted-foreground"
+                className="archive-page-action archive-page-action-disabled"
               >
                 已是最后一页
               </span>
@@ -208,19 +215,15 @@ export default async function ArchiveBrowsePage({
         </section>
       )}
 
-      <section
-        className="reading-card max-w-none"
-        aria-labelledby="local-shelf-title"
-      >
-        <p className="eyebrow">Local Reader Shelf</p>
-        <h2 className="mt-3 text-2xl font-semibold" id="local-shelf-title">
-          当前浏览器的本地书架
-        </h2>
-        <p className="mt-3 text-sm text-muted-foreground">
-          书签与最近阅读只保存在当前浏览器，不绑定账号，也不影响公开 Archive
-          浏览。
-        </p>
-        <div className="mt-6">
+      <section className="archive-shelf" aria-labelledby="local-shelf-title">
+        <div className="archive-shelf-heading">
+          <p className="eyebrow">私人回访</p>
+          <h2 id="local-shelf-title">回到当前浏览器保存的阅读</h2>
+          <p>
+            书签与最近阅读只保存在这台设备中。它们属于私人回访，不参与上方的公共作品浏览与排序。
+          </p>
+        </div>
+        <div className="archive-shelf-content">
           <ReaderShelf />
         </div>
       </section>

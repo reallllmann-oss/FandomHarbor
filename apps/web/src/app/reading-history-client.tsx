@@ -82,18 +82,16 @@ export function ContinueReadingForWork({
   return (
     <aside
       aria-labelledby="continue-reading-heading"
-      className="mt-8 rounded-xl border border-primary/40 bg-surface-muted p-4"
+      className="work-continue-reading"
     >
-      <p className="eyebrow">Continue Reading</p>
-      <h2 className="mt-2 text-lg font-semibold" id="continue-reading-heading">
-        继续阅读：{chapter.chapterTitle}
-      </h2>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="eyebrow">继续阅读</p>
+      <h3 id="continue-reading-heading">继续阅读：{chapter.chapterTitle}</h3>
+      <p>
         第 {chapter.chapterPosition} / {chapter.chapterCount} 章 · 阅读位置{" "}
         {chapter.progressPercent}%
       </p>
       <Link
-        className="mt-4 inline-flex min-h-11 items-center rounded-control bg-primary px-4 text-primary-foreground"
+        className="work-continue-action"
         href={`/works/${chapter.workSlug}/chapters/${chapter.chapterSlug}`}
       >
         从上次章节继续

@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import Link from "next/link";
 
 import "./globals.css";
+import { createGlobalShellNavigation } from "../lib/global-shell-navigation";
 import { getWebSessionSummary } from "../lib/identity-access";
 import { resolveSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "../lib/seo";
 import { signOut } from "./auth/actions";
@@ -26,41 +27,38 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const session = await getWebSessionSummary();
+  const navigation = createGlobalShellNavigation(
+    session?.access.capabilities.has("work:author") ?? false,
+  );
+
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <AppProviders>
           <ReaderLayout
+            navigation={navigation}
             headerActions={
               session ? (
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="hidden max-w-32 truncate sm:inline">
+                <div className="site-header-account text-sm">
+                  <span className="site-header-account-name">
                     {session.displayName}
                   </span>
-                  {session.access.capabilities.has("work:author") ? (
-                    <Link className="rounded-control px-3 py-2" href="/studio">
-                      Studio
-                    </Link>
-                  ) : null}
                   <form action={signOut}>
-                    <button className="rounded-control px-3 py-2" type="submit">
+                    <button
+                      className="site-header-account-action rounded-control"
+                      type="submit"
+                    >
                       退出
                     </button>
                   </form>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 text-sm">
+                <div className="site-header-account text-sm">
                   <Link
-                    className="rounded-control px-3 py-2"
+                    className="site-header-account-action rounded-control"
                     href="/auth/sign-in"
                   >
                     登录
-                  </Link>
-                  <Link
-                    className="rounded-control px-3 py-2"
-                    href="/auth/sign-up"
-                  >
-                    注册
                   </Link>
                 </div>
               )

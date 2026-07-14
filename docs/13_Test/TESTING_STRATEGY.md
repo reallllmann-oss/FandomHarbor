@@ -49,6 +49,15 @@ Generate cases from `ROLE_PERMISSION_MATRIX.md` and `RLS_POLICY_MATRIX.md`: unau
 
 Automated checks supplement, not replace, keyboard, focus, screen-reader and zoom testing. Representative Reader/Author/Admin screens receive visual regression coverage after the design system exists.
 
+## Manual QA handoff
+
+Every Mission requiring Product Owner manual acceptance must pass the
+[Manual QA Handoff](MANUAL_QA_HANDOFF.md) gate. The handoff must provide the
+actual environment and URL, retrieve local-only Fixture credentials, validate
+Guest/Reader/Author access, validate invitation registration when applicable and
+include the standard Manual QA Checklist. A broken Fixture or authentication path
+is P0 and blocks `Completed` / `Awaiting Product Owner Acceptance` status.
+
 ## CI gates
 
 Fast static/unit checks run on every change; database/integration/end-to-end suites run before merge according to cost. Migrations always receive clean-rebuild and upgrade-path tests. No skipped security test may merge without a documented blocker and approval.

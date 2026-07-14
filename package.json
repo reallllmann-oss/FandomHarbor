@@ -16,6 +16,7 @@
     "prepare": "husky",
     "qa:credentials": "node scripts/show-local-qa-credentials.mjs",
     "qa:fixture": "node scripts/local-qa-fixture.mjs",
+    "qa:fixture:clean": "node scripts/local-qa-fixture.mjs --clean-reading",
     "qa:reset": "supabase db reset --local --no-seed && pnpm qa:fixture",
     "qa:web": "node scripts/local-qa-web.mjs",
     "test": "turbo run test",

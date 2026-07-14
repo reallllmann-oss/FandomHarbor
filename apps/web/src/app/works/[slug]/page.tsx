@@ -35,6 +35,41 @@ export async function generateMetadata({
   });
 }
 
+function WorkRecovery({ compact = false }: { compact?: boolean }) {
+  const links = (
+    <>
+      <Link className="work-secondary-action" href="/archive">
+        浏览作品档案
+      </Link>
+      <Link className="work-text-action" href="/search">
+        搜索作品或作者
+      </Link>
+      <Link className="work-text-action" href="/works">
+        返回阅读目录
+      </Link>
+    </>
+  );
+
+  if (compact) {
+    return (
+      <nav aria-label="无章节恢复路径" className="work-recovery-links">
+        {links}
+      </nav>
+    );
+  }
+
+  return (
+    <nav aria-label="作品详情恢复路径" className="work-recovery">
+      <div className="work-recovery-copy">
+        <p className="eyebrow">继续发现</p>
+        <h2>在阅读之外保留下一条路径</h2>
+        <p>返回公共作品档案，主动搜索，或回到你的阅读目录。</p>
+      </div>
+      <div className="work-recovery-links">{links}</div>
+    </nav>
+  );
+}
+
 export default async function WorkDetailPage({
   params,
 }: {
@@ -63,9 +98,15 @@ export default async function WorkDetailPage({
     dependencies.cookieAdapter,
   ).getPublishedWorkAuthors([work.slug]);
   const firstChapter = chapters[0];
+  const publishedDate = work.publishedAt?.toLocaleDateString("zh-CN", {
+    timeZone: "UTC",
+  });
+  const updatedDate = work.updatedAt.toLocaleDateString("zh-CN", {
+    timeZone: "UTC",
+  });
 
   return (
-    <div className="site-stack">
+    <div className="work-detail-shell">
       <ReadingHistoryTracker
         entry={{
           authorName: author?.displayName,
@@ -75,107 +116,139 @@ export default async function WorkDetailPage({
           workTitle: work.title,
         }}
       />
-      <nav aria-label="面包屑" className="text-sm text-muted-foreground">
-        <Link className="text-primary" href="/works">
-          阅读目录
-        </Link>
-        <span aria-hidden="true"> / </span>
-        <span>{work.title}</span>
+
+      <nav aria-label="面包屑" className="work-breadcrumb">
+        <Link href="/works">阅读目录</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{work.title}</span>
       </nav>
 
-      <section className="reading-card max-w-none">
-        <p className="eyebrow">Work</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-          {work.title}
-        </h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-          {work.summary}
+      <header className="work-orientation">
+        <p className="eyebrow">作品详情</p>
+        <h1>{work.title}</h1>
+        <p className="work-orientation-copy">
+          先了解故事与公开章节，再决定从哪里进入阅读。
         </p>
-        {author ? (
-          <p className="mt-4 text-sm text-muted-foreground">
-            作者：
+      </header>
+
+      <section aria-labelledby="work-premise-heading" className="work-premise">
+        <div className="work-section-heading">
+          <p className="eyebrow">故事简介</p>
+          <h2 id="work-premise-heading">关于这部作品</h2>
+        </div>
+        <p className="work-summary">
+          {work.summary || "这部作品暂未留下简介。"}
+        </p>
+      </section>
+
+      <section aria-label="作者与公开发布信息" className="work-context">
+        <div className="work-author-context">
+          <p className="work-context-label">作者归属</p>
+          {author ? (
             <Link
-              className="text-primary"
+              className="work-author-link"
               href={`/author/${author.authorSlug}`}
             >
               {author.displayName}
             </Link>
-          </p>
-        ) : null}
-        {tags.length > 0 ? (
-          <div className="mt-4 flex flex-wrap gap-2" aria-label="作品标签">
-            {tags.map((tag) => (
-              <span
-                className="rounded-full border border-border px-2 py-1 text-xs"
-                key={tag.id}
-              >
-                {tag.name}
-              </span>
-            ))}
-          </div>
-        ) : null}
-        <dl className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+          ) : (
+            <p className="work-context-value">暂未提供公开作者资料</p>
+          )}
+        </div>
+
+        <dl className="work-published-context">
           <div>
-            <dt className="text-muted-foreground">章节</dt>
-            <dd className="mt-1 font-medium">{chapters.length}</dd>
+            <dt>公开章节</dt>
+            <dd>{chapters.length}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">状态</dt>
-            <dd className="mt-1 font-medium">已发布</dd>
+            <dt>状态</dt>
+            <dd>已发布</dd>
           </div>
+          {publishedDate ? (
+            <div>
+              <dt>发布</dt>
+              <dd>{publishedDate}</dd>
+            </div>
+          ) : null}
           <div>
-            <dt className="text-muted-foreground">更新</dt>
-            <dd className="mt-1 font-medium">
-              {work.updatedAt.toLocaleDateString("zh-CN")}
-            </dd>
+            <dt>更新</dt>
+            <dd>{updatedDate}</dd>
           </div>
         </dl>
+
+        {tags.length > 0 ? (
+          <div className="work-tags-context">
+            <p className="work-context-label">作品标签</p>
+            <ul aria-label="作品标签" className="work-tag-list">
+              {tags.map((tag) => (
+                <li key={tag.id}>{tag.name}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </section>
+
+      <section
+        aria-labelledby="work-reading-heading"
+        className="work-reading-decision"
+      >
+        <div className="work-reading-heading">
+          <div>
+            <p className="eyebrow">阅读路径</p>
+            <h2 id="work-reading-heading">从合适的位置进入故事</h2>
+          </div>
+          <p>有阅读记录时可从上次章节继续；也可以重新从第一章开始。</p>
+        </div>
+
         <ContinueReadingForWork
           availableChapterSlugs={chapters.map((chapter) => chapter.slug)}
           workSlug={work.slug}
         />
+
         {firstChapter ? (
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="work-reading-actions">
             <Link
-              className="inline-flex min-h-11 items-center rounded-control bg-primary px-5 text-primary-foreground"
+              className="work-primary-action"
               href={`/works/${work.slug}/chapters/${firstChapter.slug}`}
             >
-              开始阅读
+              从第一章开始
             </Link>
             <a
-              className="inline-flex min-h-11 items-center rounded-control border border-border px-5"
+              className="work-secondary-action"
               href={`/works/${work.slug}/download`}
             >
               下载 TXT
             </a>
           </div>
-        ) : null}
+        ) : (
+          <p className="work-reading-unavailable">
+            当前没有可进入的公开章节。你仍可查看作品信息，或从下方继续发现其他作品。
+          </p>
+        )}
       </section>
 
-      <section aria-labelledby="chapter-list-heading" className="site-stack">
-        <div>
-          <p className="eyebrow">Contents</p>
-          <h2 className="mt-2 text-2xl font-semibold" id="chapter-list-heading">
-            章节目录
-          </h2>
+      <section aria-labelledby="chapter-list-heading" className="work-chapters">
+        <div className="work-chapter-heading">
+          <div>
+            <p className="eyebrow">章节概览</p>
+            <h2 id="chapter-list-heading">公开章节</h2>
+          </div>
+          <p>{chapters.length} 个可读章节</p>
         </div>
         {chapters.length > 0 ? (
-          <ol className="grid gap-3">
+          <ol className="work-chapter-list">
             {chapters.map((chapter) => (
-              <li className="stat-card" key={chapter.id}>
+              <li className="work-chapter" key={chapter.id}>
                 <Link
-                  className="flex min-h-11 items-center justify-between gap-4 rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                  className="work-chapter-entry"
                   href={`/works/${work.slug}/chapters/${chapter.slug}`}
                 >
-                  <span>
-                    <span className="text-xs text-muted-foreground">
-                      Chapter {chapter.position}
-                    </span>
-                    <span className="mt-1 block text-lg font-semibold">
-                      {chapter.title}
-                    </span>
+                  <span className="work-chapter-position">
+                    第 {chapter.position} 章
                   </span>
-                  <span aria-hidden="true" className="text-primary">
+                  <span className="work-chapter-title">{chapter.title}</span>
+                  <span aria-hidden="true" className="work-chapter-arrow">
                     →
                   </span>
                 </Link>
@@ -183,9 +256,17 @@ export default async function WorkDetailPage({
             ))}
           </ol>
         ) : (
-          <p className="empty-state">这部作品暂时没有已发布章节。</p>
+          <div className="work-chapter-empty">
+            <h3>尚无可读章节</h3>
+            <p>
+              这部作品目前没有公开章节。草稿与未发布内容不会出现在这里，你可以继续浏览其他公开作品。
+            </p>
+            <WorkRecovery compact />
+          </div>
         )}
       </section>
+
+      {chapters.length > 0 ? <WorkRecovery /> : null}
     </div>
   );
 }

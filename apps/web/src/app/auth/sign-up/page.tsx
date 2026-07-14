@@ -31,7 +31,7 @@ export default async function SignUpPage({
 
   return (
     <section className="reading-card mx-auto max-w-lg">
-      <p className="text-sm font-medium text-primary">Phase 1 · Identity</p>
+      <p className="text-sm font-medium text-primary">门禁注册</p>
       <h1 className="mt-3 text-3xl font-semibold">创建门禁账号</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         使用注册名、密码和有效邀请码创建账号。邀请码只开放 Reader 门禁，不会授予
@@ -83,8 +83,14 @@ export default async function SignUpPage({
           创建账号
         </button>
       </form>
-      <p className="mt-6 text-sm text-muted-foreground">
-        已有账号？ <Link href="/auth/sign-in">返回登录</Link>
+      <p className="mt-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+        <span>已有账号？</span>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/sign-in"
+        >
+          返回登录
+        </Link>
       </p>
     </section>
   );

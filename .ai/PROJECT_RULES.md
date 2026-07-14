@@ -66,6 +66,10 @@
     Deployment 架构、Auth 架构或重大 Roadmap 风险必须暂停。
 59. Mission 完成后统一提交工程报告、Product Handoff 与人工验收清单；未经人工
     验收和下一 Mission 授权，不得进入下一 Mission。
+60. 任何需要 Product Owner 人工验收的 Mission，Final Output 必须主动提供 QA Environment、QA Credentials、自动 QA Validation 与 Manual QA Checklist；不得等待 Product Owner 追问。
+61. 项目存在 QA Fixture 时，交付前必须执行 `pnpm qa:credentials`，并验证 Guest 首页、Reader 登录、Author 登录及当前 Mission 适用的注册邀请码；凭据只可来自本地 Git-ignored Fixture，不得写入仓库文档。
+62. QA Fixture 不存在、失效、账号或密码错误、邀请码失效、应用无法启动或无法开始人工验收，统一视为 P0 阻塞。必须先诊断并修复 Fixture、按需执行 `pnpm qa:fixture` 或 `pnpm qa:reset`，重新验证成功后才能交付。
+63. QA Environment Ready 前，Mission 不得标记 `Completed` 或 `Awaiting Product Owner Acceptance`。完整交付规则以 `docs/13_Test/MANUAL_QA_HANDOFF.md` 为准。
 
 ## Autonomous Engineering Policy / Codex 自治工程权限
 

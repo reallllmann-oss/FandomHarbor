@@ -4,6 +4,12 @@ import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  readingFixtureChapters,
+  readingFixtureWorkIds,
+  readingFixtureWorks,
+} from "./qa-fixture-library.mjs";
+
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const credentialPath = resolve(projectRoot, ".local/qa-fixture.json");
 const authorUserId = "70000000-0000-4000-8000-000000000001";
@@ -93,6 +99,100 @@ function registrationEmail(registrationName) {
 
 function sqlLiteral(value) {
   return `'${String(value).replaceAll("'", "''")}'`;
+}
+
+function uuidList(values) {
+  return values.map((value) => `${sqlLiteral(value)}::uuid`).join(", ");
+}
+
+function readingFixtureCleanupSql() {
+  const workIds = uuidList(readingFixtureWorkIds);
+  return `
+    begin;
+    delete from public.work_tags where work_id in (${workIds});
+    delete from public.chapters where work_id in (${workIds});
+    delete from public.works where id in (${workIds});
+    commit;
+  `;
+}
+
+function readingFixtureSql() {
+  const workValues = readingFixtureWorks
+    .map(
+      (work) => `(
+        ${sqlLiteral(work.id)}::uuid,
+        ${sqlLiteral(authorUserId)}::uuid,
+        ${sqlLiteral(work.categoryId)}::uuid,
+        ${sqlLiteral(work.title)},
+        ${sqlLiteral(work.slug)},
+        ${sqlLiteral(work.summary)},
+        ${sqlLiteral(work.status)},
+        ${work.publishedAt ? `${sqlLiteral(work.publishedAt)}::timestamptz` : "null"},
+        ${sqlLiteral(work.createdAt)}::timestamptz,
+        ${sqlLiteral(work.updatedAt)}::timestamptz
+      )`,
+    )
+    .join(",\n");
+  const chapterValues = readingFixtureChapters
+    .map(
+      (chapter) => `(
+        ${sqlLiteral(chapter.id)}::uuid,
+        ${sqlLiteral(chapter.workId)}::uuid,
+        ${chapter.position},
+        ${sqlLiteral(chapter.title)},
+        ${sqlLiteral(chapter.slug)},
+        ${sqlLiteral(chapter.status)},
+        ${sqlLiteral(JSON.stringify(chapter.content))}::jsonb,
+        1,
+        ${chapter.publishedAt ? `${sqlLiteral(chapter.publishedAt)}::timestamptz` : "null"},
+        ${sqlLiteral(chapter.createdAt)}::timestamptz,
+        ${sqlLiteral(chapter.updatedAt)}::timestamptz
+      )`,
+    )
+    .join(",\n");
+
+  return `
+    ${readingFixtureCleanupSql()}
+    begin;
+    insert into public.works (
+      id, owner_user_id, category_id, title, slug, summary, status,
+      published_at, created_at, updated_at
+    ) values
+    ${workValues};
+
+    insert into public.chapters (
+      id, work_id, position, title, slug, status, content,
+      content_schema_version, published_at, created_at, updated_at
+    ) values
+    ${chapterValues};
+
+    do $$
+    begin
+      if (
+        select count(*) from public.works
+        where id in (${uuidList(readingFixtureWorkIds)})
+      ) <> ${readingFixtureWorks.length} then
+        raise exception 'Reading QA works were not created completely';
+      end if;
+
+      if (
+        select count(*) from public.chapters
+        where work_id = '71000000-0000-4000-8000-000000000002'::uuid
+          and status = 'published'
+      ) <> 3 then
+        raise exception 'Long-form QA published chapter set is incomplete';
+      end if;
+
+      if (
+        select length(content::text) from public.chapters
+        where id = '72000000-0000-4000-8000-000000000002'::uuid
+      ) < 10000 then
+        raise exception 'Long-form QA chapter is too short';
+      end if;
+    end;
+    $$;
+    commit;
+  `;
 }
 
 function runLocalSql(sql) {
@@ -254,6 +354,12 @@ async function authenticatedRpc(status, accessToken, name, input) {
 
 async function main() {
   const status = localStatus();
+  if (process.argv.includes("--clean-reading")) {
+    runLocalSql(readingFixtureCleanupSql());
+    console.log("Local Reading QA fixture content removed.");
+    console.log("QA Reader and Author identities were preserved.");
+    return;
+  }
   const credentials = await loadCredentials();
   const invitationHash = createHash("sha256")
     .update(credentials.invitationCode.trim())
@@ -371,6 +477,8 @@ async function main() {
     commit;
   `);
 
+  runLocalSql(readingFixtureSql());
+
   await updateUser(status, authorUserId, {
     password: credentials.author.password,
     email_confirm: true,
@@ -444,6 +552,10 @@ async function main() {
   console.log(`Author login name: ${credentials.author.registrationName}`);
   console.log(`Reader login name: ${credentials.reader.registrationName}`);
   console.log(`Credentials: ${credentialPath}`);
+  console.log("Reading fixtures:");
+  console.log("  /works/qa-reading-short");
+  console.log("  /works/qa-reading-longform");
+  console.log("  /works/qa-reading-empty");
   console.log(
     "Passwords were not printed. The credential file is local and Git-ignored.",
   );

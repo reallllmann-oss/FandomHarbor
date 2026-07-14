@@ -11,8 +11,7 @@ export default function StudioHomePage() {
         <p className="eyebrow">Author Studio</p>
         <h1 className="mt-3 text-3xl font-semibold">内容管理工作区</h1>
         <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
-          从这里进入作品与独立文章列表。创建、编辑和发布流程将在后续独立 Step
-          开放，本页不提供统计 Dashboard。
+          从这里进入作品与独立文章列表，继续创建、编辑与发布自己的内容。这里保持专注，不展示与创作无关的统计信息。
         </p>
       </section>
 
@@ -28,7 +27,7 @@ export default function StudioHomePage() {
               查看作品标题、状态与更新时间。
             </p>
             <Link
-              className="mt-5 inline-flex text-primary"
+              className="mt-3 inline-flex min-h-11 items-center rounded-control text-primary"
               href="/studio/works"
             >
               打开作品列表 →
@@ -41,7 +40,7 @@ export default function StudioHomePage() {
               查看独立文章、草稿状态与更新时间。
             </p>
             <Link
-              className="mt-5 inline-flex text-primary"
+              className="mt-3 inline-flex min-h-11 items-center rounded-control text-primary"
               href="/studio/articles"
             >
               打开文章列表 →
