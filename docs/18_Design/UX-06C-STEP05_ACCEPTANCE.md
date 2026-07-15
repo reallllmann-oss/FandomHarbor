@@ -95,6 +95,17 @@ Product Owner 已确认 PASS UX-06C Step05，并将 UX-06C Reading Track 标记�
 
 Reading Track 已正式关闭。任何后续 Track、发布动作或新 Mission 均等待独立授权。
 
+## Post-acceptance Typography Alignment（2026-07-15）
+
+V1 第一阶段 Reader-only 受控测试记录了 1 项 P2：长文正文希望在页面视觉正中间，并支持段落两端对齐。
+
+- 在不重构 Reading Page 的前提下，为 `.reader-canvas` 补充水平居中与完整可用宽度约束。
+- `.reader-prose` 使用 `max-width: min(100%, var(--reader-measure))`，在桌面保持阅读中轴，在 390px 视口不超过可用宽度。
+- 仅对正文段落应用 `text-align: justify` 与 `text-justify: auto`；标题、列表、引用结构和章节导航合同不变。
+- 既有 `--reader-font-size`、`--reader-line-height`、`--reader-measure`、主题和阅读偏好逻辑未修改。
+- 中文与英文长段落完成基础回归。短英文行或窄视口可能出现单词间距不均，这是浏览器两端对齐的非阻塞排版风险，不在本 Mission 扩大处理。
+- Result：`Reading Typography Alignment Fix = PASS`；P0 / P1 = `0 / 0`。
+
 ## Product Owner Acceptance
 
 - Decision: Approve UX-06C Reading Track。

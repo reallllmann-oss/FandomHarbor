@@ -1,10 +1,36 @@
 # V1 Beta Ready Checklist
 
-Status: PASS — Product Owner Accepted / Beta Ready
+Status: Historical RC PASS / Current Production Readiness Review PASS With Conditions
 
 Mission: RR-1C — Release Candidate
 
 Acceptance date: 2026-07-11
+
+## Production Readiness review supplement — 2026-07-15
+
+- [x] Product main flows and External Beta evidence pass.
+- [x] Product P0 / P1 is `0 / 0`.
+- [x] `Production Readiness Review = PASS`.
+- [x] Establish a clean current V1 Release Candidate baseline on `codex/v1-production-rc`; exact SHA is recorded in the PRC-01 Mission output.
+- [ ] Verify Production project, environment-variable names / scope, domain and HTTPS without exposing values.
+- [ ] Approve launch scale, budget, uptime, RPO / RTO, backup recovery, monitoring and incident ownership.
+- [ ] Approve legal identity, age / content, privacy, retention / deletion and takedown policies.
+- [ ] Approve rollback, minimum governance continuity and Production smoke runbooks.
+
+Current result: PRC-01 is `CLOSED`; PRC-02 through PRC-06 remain `BLOCKED`. `Production Ready = READY WITH CONDITIONS`; `Production Deployment Authorized = NO`. The historical RR-1C baseline remains accepted engineering evidence but does not authorize a current deployment.
+
+## External Beta closeout supplement — 2026-07-15
+
+- [x] Three-Reader external cohort completed and passed.
+- [x] External Author test completed and passed.
+- [x] Reader-only Controlled Test remains PASS.
+- [x] Author001 Publish E2E remains PASS.
+- [x] Product P0 / P1 remains `0 / 0`.
+- [x] Guest Work Detail / Chapter sign-in redirect is recorded as the active Membership product rule.
+- [x] Existing `/access` Admin changes remain frozen for the Admin phase and do not block Beta closeout.
+- [x] `V1 External Beta Closeout = PASS`.
+
+The project subsequently completed the Production Readiness Review recorded above. This historical External Beta supplement does not declare Production Ready or authorize Production Deployment.
 
 ## Product baseline
 

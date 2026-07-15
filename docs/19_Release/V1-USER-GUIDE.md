@@ -1,12 +1,24 @@
 # Fandom Harbor V1 使用教程
 
-状态：V1 文档已完成；线上入口待 Preview Deployment 生成后补充
-适用版本：2026-07-14 已验收 V1 baseline
+状态：Reader-only 受控 Beta 邀请可条件启动；Author 发布 E2E 待补齐
+适用版本：GitHub baseline `903bf70a6dc370090362098d26bedd6bf68af529`
+
+第一阶段 Reader 测试者应优先使用 [`V1-PHASE1-BETA-TESTING-GUIDE.md`](./V1-PHASE1-BETA-TESTING-GUIDE.md)。该指南包含准确的注册字段、3 人测试范围、Reader / Guest 清单、移动端检查、权限 P0 规则、反馈模板与可直接发送的中文邀请说明。
+
+## Controlled Beta 邀请说明（2026-07-15）
+
+- 当前只建议首批邀请 3 名 Reader，不邀请外部 Author。
+- Reader 邀请注册、默认 Reader 状态和 Studio 拒绝均已通过；邀请码不会自动授予 Author。
+- Author001 的 `/access` grant、audit、重新登录与三条 Studio 路由已通过，Reader → Author Provisioning Block 已解除。
+- Author001 的创建、保存、草稿隔离、发布与 Reader 回读仍待 Product Owner 内部完成。完成前不得把 Reader-only cohort 宣布为完整 Beta Ready。
+- Product Owner 人工创建并分发一次性 / 短期邀请码；不得在文档、聊天或截图记录真实邀请码，也不得自动邀请真实用户。
+- 注册页没有邮箱字段；测试者只填写注册名、密码和邀请码。当前注册要求邮箱确认关闭，Email Confirm 不属于 Phase 1 测试范围。
 
 ## 1. 访问与测试入口
 
-本轮部署类型为 `Local only`，尚未生成新的 Preview / Production URL。
+本轮部署类型为 `Vercel Preview Deployment`。Vercel Project 为 `fandom-harbor-web`，Root Directory 为 `apps/web`。
 
+- 当前 Preview：`https://fandom-harbor-ilvpjubrm-fandom-harbor.vercel.app`
 - 本地 Web：`http://127.0.0.1:3000`
 - Homepage：`/`
 - Archive：`/archive`
@@ -15,9 +27,9 @@
 - 注册：`/auth/sign-up`
 - Author Studio：`/studio`
 
-适合提供给测试用户的页面是 Homepage、Archive、Search、Published Work、Published Chapter、公开 Author Profile、Sign-in 与 Sign-up。`/studio` 只面向 Author；Admin 使用独立 Admin App，不应把 Admin 地址当作普通测试入口公开传播。
+适合内部测试的页面是 Homepage、Archive、Search、Published Work、Published Chapter、公开 Author Profile、Sign-in 与 Sign-up。`/studio` 只面向 Author；Admin 使用独立 Admin App，不应把 Admin 地址当作普通测试入口公开传播。当前人工 Smoke 尚有公开内容与 Author 项待补齐，不得向外部测试用户公开。
 
-确认线上版本时，应同时检查：地址栏为 Product Owner 提供的 Preview / Production 域名、HTTPS 正常、页面标题为 Fandom Harbor，并将部署页面显示的 commit 与本次 Release baseline 对照。当前没有可供对照的新线上 URL。
+确认线上版本时，应同时检查：地址栏为上述 Preview 域名、HTTPS 正常、页面标题为 Fandom Harbor，并将 Vercel deployment `dpl_2H2tUqGo7UXWrfhSC5FsmoeHGpX8` 与 baseline `903bf70a6dc370090362098d26bedd6bf68af529` 对照。不要把 Vercel Project 管理地址或未来 Admin 地址当作普通测试入口。
 
 ## 2. 账号类型与权限边界
 
@@ -32,6 +44,8 @@ Reader 可以登录、浏览 Archive、使用 Search、查看 Published Work / C
 ### Author
 
 Author 同时具有 Reader 侧能力，并可以进入 `/studio` 创建作品草稿、保存正文和章节、管理标签、选择发布章节，再从 Reader 侧检查公开结果。Author 只能管理自己的内容，不能访问其他 Author 的草稿，不能获得 Admin 能力，也不能绕过 Published-only 边界。
+
+邀请码注册不会自动成为 Author。用户必须先成为 active Reader，再由 Admin 或 Super Admin 通过独立、可审计的 Author Role Grant 开通；授权后应退出并重新登录以刷新 capability。
 
 ### Admin
 
@@ -76,6 +90,7 @@ V1 注册仍需要邀请码。
 3. 邀请码失败的常见原因包括：格式错误、已过期、已撤销、使用次数耗尽或远程 Migration / Environment 不完整。
 4. 当前未实现无需邀请码的公开注册窗口。
 5. 本地 QA 邀请码只能通过安全凭据命令查看，不属于正式或公开邀请码。
+6. Author 在 `/author/invitations` 创建和撤销自己的邀请码；原始邀请码只显示一次。Admin / Super Admin 的全局邀请码治理目前没有完整 UI，Beta 期间必须按已批准的责任人与事故流程操作。
 
 ## 6. Light / Dark
 
@@ -95,6 +110,16 @@ V1 注册仍需要邀请码。
 
 Studio 只对具有 Author capability 的账号显示。Reader 直访 `/studio` 会重定向 `/archive`，这是 V1 的预期权限行为。
 
+### Reader 如何成为 Author？
+
+Reader 不能自助升级，也不能通过邀请码获得 Author。需要由 Product Owner 安排 Admin / Super Admin 在受控 Admin `/access` 中选择 `author`、填写原因并提交；数据库会再次检查权限并写 audit。不要在 Codex、聊天或文档中发送密码或邀请码。
+
+端到端验收时，Product Owner 必须分别准备已登录的新 Reader Web 会话和已登录的 Admin `/access` 会话。若 `/access` 不可访问，或无法通过可信流程确认目标 User ID，测试必须停止；不得用直接 SQL、Supabase 控制台改角色、Auth 修改或 Migration 代替。
+
+如果提交后地址出现 `/access?error=invalid`，表示授权表单输入未通过校验，不代表角色已经生效。应停止并在浏览器内检查 User ID 格式、目标用户、`author` 角色和非空原因；不要反复提交，也不要把 User ID 或密码发送到 Codex。
+
+当前 Author001 已由 Product Owner 通过受控 `/access` 成功授权并完成 grant / audit / Studio 只读复核，不需要再次授权。后续新 Author 仍必须逐次获得明确批准并重复同一受控流程。
+
 ### Author 为什么看不到某个草稿？
 
 Studio 查询按 owner 隔离。确认草稿属于当前登录 Author，并确认当前访问环境与创建草稿时一致。
@@ -109,7 +134,7 @@ Studio 查询按 owner 隔离。确认草稿属于当前登录 Author，并确�
 
 ### 如何确认当前是 Preview 还是 Production？
 
-以 Product Owner 提供的域名和 Vercel deployment 信息为准，并核对 commit。不要只根据页面外观判断。当前任务没有生成 Preview URL。
+以 Product Owner 提供的域名和 Vercel deployment 信息为准，并核对 commit。上述 `*-vercel.app` 地址是 Preview；当前没有 Production deployment 或正式域名。不要只根据页面外观判断。
 
 ### 测试账号和正式账号如何区分？
 
@@ -119,9 +144,12 @@ Local QA 账号只由 `pnpm qa:fixture` 生成，凭据只通过 `pnpm qa:creden
 
 - 不在文档、Issue、截图或聊天中保存真实密码。
 - 不记录 Supabase secret、service role key、Vercel token 或数据库密码。
+- Preview 的 Protection Bypass for Automation secret 已由 Product Owner 删除或轮换；任何使用教程、测试记录或聊天均不得保存、分享或重新生成该值。
 - 不随意公开 Admin 域名或 Admin 登录链接。
 - 测试账号与正式账号分开管理。
 - Admin / Super Admin 授权属于高风险操作，必须由有权人员执行、填写原因并保留审计记录。
 - 不允许普通 Admin 或普通用户绕过 UI 直接修改数据库。
 
 详细 Admin 操作见 `V1-ADMIN-GUIDE.md`。
+
+V1 Release 四线拆分与 Beta 门槛见 `V1-RELEASE-FLOW-OPTIMIZATION.md`。

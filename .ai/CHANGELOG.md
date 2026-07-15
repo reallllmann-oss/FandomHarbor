@@ -2,6 +2,199 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-15 — PRC-01 RC Baseline Closeout
+
+- 从 `903bf70a6dc370090362098d26bedd6bf68af529` 创建 `codex/v1-production-rc`。
+- RC commit message 固定为 `chore(release): prepare V1 production candidate`；精确 SHA 记录在 Mission Final Output。
+- RC 只纳入已验收 Reading Typography / Layout 修复与获批 Release / Production Readiness / Production Preparation 文档。
+- 冻结 `/access` Admin 改动 `actions.ts`、`page.tsx`、`actions.test.ts` 未暂存、未进入 RC；没有处理或修改 Admin 实现。
+- 在独立干净 detached worktree 运行 `pnpm validate`、Prettier、`git diff --check`、Secret 特征扫描和 git status 检查。
+- PRC-01 = `CLOSED`；PRC-02 至 PRC-06 保持 `BLOCKED`；`Production Deployment Authorized = NO`。
+- 未 push、部署、绑定域名、创建 Production tag、修改 Vercel、数据库、Auth、RLS、RPC、Migration、创建账号、发送邀请码或授权 / 撤销角色。
+
+## 2026-07-15 — V1 Production Preparation
+
+- 只读确认 `main`、`origin/main` 与 HEAD 均为 `903bf70a6dc370090362098d26bedd6bf68af529`，但工作区混有已验收 Reading、冻结 `/access` Admin 与 Release / 状态文档改动，不能作为 RC 或部署源。
+- 只读核对 `fandom-harbor-web`：Root Directory=`apps/web`、Framework=Next.js、Node=24.x；Production 作用域 Environment Variables 为 0，团队正式域名为 0，正式 URL / HTTPS 未建立。
+- 只读确认 linked Supabase `fandom-harbor` 为 ACTIVE_HEALTHY，Local / Remote Migration 14 / 14；未执行远程写入。
+- 新增 `docs/19_Release/V1-PRODUCTION-PREPARATION.md`，记录 PRC-01 至 PRC-06 状态、RC 分离策略、Production 配置清单、运维 / 备份 / 监控 / 值班最低方案、法律 / 隐私 / 内容 / 数据政策、回滚 / Smoke 和 Super Admin 应急路径。
+- 当前 PRC-01 至 PRC-06 均为 `BLOCKED`：没有 Product Owner 逐项 `ACCEPTED RISK`，Production Preparation 未完成，不能进入 Production Deployment Mission 授权评审。
+- `Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO`、Product P0 / P1 = `0 / 0` 保持不变。
+- 本 Mission 只修改 Markdown；未部署、绑定域名、修改 Vercel、数据库、Auth、RLS、RPC、Migration、创建账号、发送邀请码、授权 / 撤销角色或继续实现 `/access` Admin。
+
+## 2026-07-15 — V1 Production Readiness Review
+
+- 汇总邀请注册、Reader / Author、创建 / 草稿 / 发布 / 回读、Draft isolation、Studio denial、Guest 门禁与 External Beta 证据，全部 PASS。
+- 确认 Product P0 / P1 = 0 / 0。
+- 新增 `docs/19_Release/V1-PRODUCTION-READINESS-REVIEW.md`，记录 Production 主链路、文档完整性、限制、阻断条件与 Go / No-Go。
+- 结论为 `Production Readiness Review = PASS`、`Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO`。
+- Production 前条件包括干净候选基线、Production 环境 / 域名、RPO / RTO、备份恢复、监控值班、法律 / 数据政策、回滚、最低治理连续性和部署后 Smoke。
+- `/access` Admin 改动继续冻结，Admin Preview 外部阻塞独立跟踪；未修改产品代码、数据库、Auth、RLS、RPC、Migration 或 Vercel，未部署或绑定域名。
+
+## 2026-07-15 — V1 External Beta Evidence Reconciliation and Closeout
+
+- 将 `External Beta Go / No-Go = GO — NOT OPENED` 修正为历史评审节点，不再作为当前状态。
+- 记录 Product Owner 已确认 3 名 Reader 小范围外部测试 PASS、外部 Author 测试 PASS。
+- 汇总 Reader-only Controlled Test、Reading Typography Alignment Fix、Author001 Publish E2E、3 Reader 外部测试和外部 Author 测试全部 PASS。
+- 确认 Product P0 / P1 = 0 / 0；Guest 详情 / 章节登录门禁属于 active Membership 产品规则，不作为缺陷。
+- `/access` Admin 既有改动继续冻结到 Admin 阶段，不阻塞 Beta Closeout。
+- `V1 External Beta Closeout = PASS`；项目可进入 V1 Release Candidate / Production Readiness Review，但本轮未授权或执行 Production、部署、账号、邀请码、角色或 Admin 操作。
+
+## 2026-07-15 — V1 External Beta Go / No-Go Review
+
+- 汇总 Phase 1 Reader-only 与 Phase 2 Author-controlled 结果，两阶段均 PASS，Product P0 / P1 = 0 / 0。
+- 完成 Reader / Guest 规则、Author 发布、Draft isolation、Studio denial、邀请码治理、已知限制、停止 / 回退和反馈收集的外部 Beta 最小门槛评审。
+- 记录 Guest 可发现作品但点击详情或章节后进入登录页为当前 active Membership 产品规则，不作为缺陷。
+- 结论为 `External Beta Go / No-Go = GO — NOT OPENED`；推荐后续单独授权 1 名外部 Author、5 名 Reader、7 天，仅限 Web Preview。
+- `/access` Admin 既有代码改动冻结到 Admin 阶段，不在本评审继续开发或部署；真实 Author 授权仍需单独批准并经受控 `/access`、服务端校验与 audit。
+- 本 Mission 仅更新文档；未开放 Beta、创建账号、发送邀请码、授权角色、修改产品代码 / 数据库 / Auth / RLS / RPC / Migration / Vercel，未执行 Deployment 或 Production。
+
+## 2026-07-15 — V1 Phase 2 Author-controlled / Author001 Publish E2E
+
+- Product Owner 使用 Author001 完成注册名登录与 `/studio`、`/studio/works`、`/studio/works/new` 三路访问。
+- 创建最小测试作品、保存章节草稿、发布所选章节、Work Detail、Published Reading 与 Reader 回读均 PASS。
+- Guest / Reader 均看不到未发布草稿；Reader 三条 Studio 路由返回 Archive，Guest `/studio` 进入登录页。
+- Guest 可搜索到已发布作品，点击作品或章节后进入登录页，符合当前 active Membership 产品规则。
+- 390px、Light / Dark 无明显横向溢出或破版；Console 产品级错误为 0，Product P0 / P1 = 0 / 0。
+- `pnpm validate` 通过；Author Release evidence gate 关闭。仅允许进入外部 Beta 的 Product Owner Go / No-Go 评审，未开放外部 Author、完整 Beta、Production、Deployment 或 Admin 测试。
+- 本 Mission 只更新 Release / 状态文档；未修改产品代码、数据库、Auth、RLS、Migration 或 Vercel 配置，未执行 Deployment、Production、直接 SQL、用户创建或角色授权。
+
+## 2026-07-15 — Reader-only Closeout and Reading Typography Alignment
+
+- Product Owner 已完成 V1 第一阶段 Reader-only 受控测试；Closeout 记录为 PASS，Product P0 / P1 = 0 / 0。
+- 将正文视觉位置与排版反馈记录为 Reading Page UI / Typography / Content Layout P2。
+- `.reader-canvas` 增加水平居中与完整可用宽度，`.reader-prose` 使用移动端安全的受限宽度，正文段落启用两端对齐。
+- 保持现有字号、行距、主题、阅读宽度偏好、正文数据与 Published-only / Membership 权限边界不变；未引入依赖或重构 Reading Page。
+- 同步 Release Smoke、Release Flow、Phase 1 测试指南、UX-06C 验收记录、Project Status 与 Memory。
+- 未修改数据库、Supabase、Auth、Role、RLS、Policy、RPC、Migration 或 Vercel 配置，未执行 Deployment、Production、Author / Admin 测试或新功能开发。
+
+## 2026-07-15 — V1 Phase 1 Reader-only Beta Testing Guide
+
+- 新增 `docs/19_Release/V1-PHASE1-BETA-TESTING-GUIDE.md`，面向 Product Owner 与第一批 3 名 Reader 测试者。
+- 根据实现核对注册流程：只填写注册名、至少 8 位的测试专用密码和邀请码；页面没有邮箱字段，当前环境要求邮箱确认关闭，Email Confirm 不属于 Phase 1 测试重点。
+- 记录 Guest / Reader 测试清单、三条 Studio denial、Draft isolation、公开阅读、移动端、Light / Dark、P0–P3 严重程度、反馈模板和第一阶段 PASS 标准。
+- 增加 Product Owner 邀请前清单与可直接发送给 Reader 测试者的中文说明；固定 3 Reader / 0 外部 Author，Author001 继续走独立 Publish E2E。
+- 本 Mission 只更新文档；未自动邀请、创建真实账号、授权 Author、修改产品代码 / 数据库 / Auth / RLS / Migration / Vercel，未执行 Deployment、Production 或 Beta 发布。
+
+## 2026-07-15 — V1 Controlled Beta Invite Readiness Gate
+
+- Reader 邀请注册、默认 active Reader 与授权前 `/studio`、`/studio/works`、`/studio/works/new` denial 均 PASS。
+- 只读确认 Author001（masked `2cbd52b1…351d`）active Membership、唯一 active `author` grant、对应 `role.granted` audit、Super Admin operator 与 `admin:operate` 对齐。
+- Author001 退出并重新登录后三条 Studio 路由均 PASS；Reader → Author Provisioning Block 已关闭。
+- Homepage、Archive、Search、Work Detail、Author Profile 当前可打开；Published Reading、Auth、390 × 844、Light / Dark 与 Console 沿用同一 Preview 既有 PASS，Product P0 / P1 = 0 / 0。
+- Author 创建入口 PASS；创建、保存、Draft isolation、发布与 Reader 回读为 NOT RUN。Gate 结论为 `CONDITIONAL GO — READER-ONLY`，建议首批 3 Reader / 0 外部 Author。
+- 本 Mission 只更新文档；未自动邀请、授权、修改产品代码、数据库、Auth、RLS、Migration 或 Vercel 配置，未执行 Deployment、Production 或 Beta 发布。
+
+## 2026-07-15 — `/access` Invalid Blocker Local Fix
+
+- 定位 `error=invalid`：只在 Role Grant / Revoke Server Action 的 Zod schema 校验失败时产生，发生在 Admin session、RPC 和数据库函数之前。
+- 确认表单字段、grant / revoke action、`author` role、`work:author` capability、RPC 名称与参数没有错配。
+- Role Grant Auth UUID 改为 trim 后再执行严格 UUID 校验，避免复制粘贴首尾空白导致拒绝。
+- 增加 `invalid-user-id`、`invalid-role`、`invalid-reason` 安全提示；不回显输入或敏感值。
+- 新增 4 个 `/access` grant targeted tests；Admin tests 6 / 6、lint、typecheck PASS。
+- 未执行真实授权，未产生 grant / audit；未修改数据库、Auth、RLS、Migration、Vercel，未执行 Deployment 或 Production 操作。Reader → Author E2E 仍待 Product Owner 手工授权与只读复核。
+
+## 2026-07-15 — Reader to Author E2E Grant INVALID
+
+- Product Owner 已在 Web Preview 注册并登录新 Reader；Codex 未读取或记录邀请码、密码。
+- 新 Reader 页首无 Studio；直访 `/studio`、`/studio/works`、`/studio/works/new` 最终均返回 `/archive`，授权前边界 PASS。
+- `http://localhost:3000/access` 已登录 Super Admin，完整 Role Grant 表单可见；目标 User ID 字段非空，角色为 `author`，Codex 未读取或输出 ID。
+- Product Owner 手动提交后页面为 `/access?error=invalid`；Author grant 未成功，没有新的 `role.granted` audit。
+- 依据安全规则停止，没有重试、修改目标 ID，也没有使用 SQL、Supabase 控制台、Auth、Migration 或 RLS 绕过 `/access`。
+- Product P0 / P1 保持 `0 / 0`；当前为表单输入 / 治理链阻塞，尚未确认产品代码 FAIL。
+- 已有 Preview Author 可用性结论保持有效；新 Reader → Author E2E Governance Block 继续阻塞 V1 Beta 与完整 Web Preview Smoke 收口。
+- 本轮只更新 Markdown；未修改产品代码、数据库、Auth、RLS、Vercel 配置，未创建 Deployment 或执行 Production 操作。
+
+## 2026-07-15 — Reader to Author Provisioning E2E BLOCKED
+
+- 在端到端 Smoke 前置检查中确认当前 Web Preview 标签为未登录 Guest，未准备新 Reader 会话。
+- 浏览器没有已登录 Admin / Super Admin `/access` 标签；受控检查 `http://127.0.0.1:3001/access` 返回连接被拒绝，Admin Preview 不在本 Mission 处理范围。
+- 依据安全规则立即停止：未注册用户、未输入或读取邀请码 / 密码、未确认或输出 User ID、未授予 Author、未产生新的 `role.granted` audit。
+- 未使用直接 SQL、Supabase 控制台角色修改、Auth、Migration 或 RLS 变更绕过 `/access`。
+- 已有 Preview Author 登录 / Studio 可用性结论保持有效；新 Reader → Author E2E Governance Block 独立保持 OPEN，继续阻塞 V1 Beta 与完整 Web Preview Smoke 收口。
+- Product P0 / P1 保持 `0 / 0`；当前为 Release / Governance Gate，不是已确认产品代码 FAIL。
+- Product Owner 需准备可访问且已登录的受控 `/access`、已注册并登录的新 Reader 会话，以及可信流程确认的目标 User ID；不得在 Codex 中提供密码或邀请码。
+- 本轮只更新 Markdown；未修改产品代码、数据库、Migration、Auth、RLS、Role、Supabase、Vercel 配置或环境变量，未创建 Deployment 或执行 Production 操作。
+
+## 2026-07-15 — Preview Author Web Smoke Evidence Partial
+
+- Product Owner 确认历史远程 Author 可在当前 Web Preview 登录并进入 `/studio`。
+- 受控浏览器确认已登录 Author Shell、Studio Header 入口、Studio 导航、作品管理、文章管理与邀请码管理入口；Web Shell 未显示 Admin 入口。
+- 将 Preview Author Provisioning Block 标记为解除：当前账号已证明具有 Author capability 并可进入 Studio。
+- 导航到 `/studio/works` 后页面最终回到 `/archive`，随后浏览器控制持续超时；按安全规则停止，未提交创建表单，未创建、保存或发布作品。
+- Reader / Guest 回读、Draft isolation、Author 专项 390 × 844、Light / Dark 与控制台复核为 `NOT RUN`；Author Web Flow 继续 `BLOCKED`，完整 Web Preview Smoke 不可收口。
+- 当前没有确认产品级 FAIL，Product P0 / P1 为 `0 / 0`；`/studio/works` 行为需 Product Owner 重新登录后人工复核，才能判断是否为产品问题。
+- Preview 标签已保留供 Product Owner 重新建立 Author 会话；不得在 Codex 中提供密码。
+- 本轮只更新 Markdown；未修改产品代码、数据库、Migration、Auth、RLS、Role、Supabase、Vercel 配置或环境变量，未创建账号、授予角色、执行 Deployment 或 Production 操作。
+
+## 2026-07-15 — Admin Governance Minimum Check and Beta Author Provisioning
+
+- 确认邀请注册只创建 active Membership / Reader；不会自动创建 Author Role Grant，Reader 无 `work:author` 且不能进入 Studio。
+- 确认 Reader → Author 受控路径已存在：Admin App `/access` 选择 `author`，Server Action 要求 `admin:operate`，数据库要求目标 active Membership、Admin / Super Admin 操作者和非空原因。
+- 确认 Author grant 写入 `role.granted` audit，记录操作者、目标、角色和原因；历史远程 `Auther001` grant 与 Studio 进入曾验收通过。
+- 将当前 Preview Author 状态记为 `UNCONFIRMED`：历史 Author 尚未在当前 Web Preview 复核，`Phase2RemoteInviter` 只确认 Super Admin 登录，Author capability 与发布结果仍为 PENDING。
+- 明确 Guest / Reader Smoke 可继续；Author Studio、创建、保存、发布、Reader 回读和 Draft isolation 在可用 Preview Author 确认前 BLOCKED，该项阻塞 V1 Beta。
+- 记录 Product Owner 最小人工动作：先验证历史远程 Author；如不可用，再单独授权现有 Super Admin 通过受控 `/access` 为指定 active Reader 授予 Author。未执行任何真实授权。
+- 同步 Admin Guide、User Guide、Release Flow、Smoke Test、Project Status 与 Memory。
+- 本轮只更新 Markdown；未修改产品代码、数据库、Migration、Auth、RLS、Role、Supabase、Vercel 配置或环境变量，未登录、创建账号、授予角色或执行 Deployment / Production 操作。
+
+## 2026-07-15 — V1 Release Flow Optimization and Admin Governance Split
+
+- 将 V1 Release 拆分为 Web V1 主站、Admin 最小治理、Admin Preview Deployment 解阻、Release 文档与中文教程四条独立主线。
+- 明确 Web Preview Smoke 可在 Admin Preview 外部阻塞期间继续，完整 Admin UI 不阻塞 V1 Beta，Admin Preview 继续作为独立外部阻塞项跟踪。
+- 明确 Admin 三层定义：权限底座、Admin UI、Admin Preview Deployment；外部 Preview 阻塞不代表权限底座或现有最小 UI 缺失。
+- 将 Admin 最小治理列为独立 Beta 硬门槛：Super Admin 存在并可登录，但连续性 / 恢复 runbook、远程 Admin 授权路径、邀请码事故治理与 audit 责任仍需单独验收。
+- 记录 owner-only bootstrap 只适用于没有未撤销 Super Admin grant 的场景；已有 grant 但身份不可登录时必须走受控账号修复或由另一名有效 Super Admin 处理。
+- 补充 Author `/author/invitations` 创建 / 撤销流程、邀请码只授予 Reader、一次性原始码与完整 Admin 全局邀请码 UI 后置边界。
+- 新增 `docs/19_Release/V1-RELEASE-FLOW-OPTIMIZATION.md`，并同步 Release Deployment、Smoke Test、Admin / User Guide、Project Status 与 Memory。
+- 本轮只更新 Markdown；未修改产品代码、数据库结构、Migration、RLS、Policy、Auth、Role、Supabase、Vercel 配置或环境变量，未执行 Deployment、DNS、远程写入或 Production 操作。
+
+## 2026-07-15 — Admin Vercel Support Evidence Pack
+
+- 汇总 Vercel API 只读审计、已删除 Deployment 元信息与 Product Owner Dashboard 人工复核结果。
+- 确认 `fandom-harbor-admin` 的 Production Branch=`main`、Preview Branch Tracking=`All unassigned git branches`、Root Directory=`apps/admin`，Deploy Hooks=0，Custom Environments=0，Preview / Production deployments=0 / 0。
+- 确认未发现 Project / Git / Environment / Domain / Build 设置错配，也未发现 `vercel.json`、`vercel.ts`、GitHub Actions deployment workflow 或强制 Production branch pattern。
+- 新增 `docs/19_Release/V1-ADMIN-VERCEL-SUPPORT-EVIDENCE.md`，包含中文问题摘要、可直接提交的英文 Support Message、Dashboard 复核结论、已删除 Deployment 脱敏摘要与暂停声明。
+- Admin Preview 继续 `BLOCKED`；在 Vercel Support 给出解释或 Product Owner 明确授权新方案前，不再次触发 Deployment、不进入 Production、不修改 Vercel 配置。
+- 本轮只修改本地 Markdown；未创建 Deployment，未修改 Git 分支、数据库、Supabase、Auth、Role、RLS、RPC、DNS 或 Docs Project，未记录任何敏感凭据值。
+
+## 2026-07-15 — Admin Preview Baseline Branch Deployment BLOCKED
+
+- 创建远程 branch `codex/admin-preview-baseline`，固定指向 Release Baseline `903bf70a6dc370090362098d26bedd6bf68af529`；`main` 未修改，branch 按 Product Owner 要求保留。
+- 确认 `fandom-harbor-admin` 已关联当前 GitHub Repository，Root Directory=`apps/admin`，Framework=Next.js。
+- 确认两个必需 Preview 环境变量名称存在，`NEXT_PUBLIC_SITE_URL` 未配置但为可选项；未读取或输出任何值。
+- GitHub Integration 未自动响应仅创建 branch 的事件；以该非 Production branch 为 Git source 受控触发后，Vercel 仍将首次 deployment 判定为 Production。
+- 依据 Mission 强制安全条款立即取消、删除并停止；Admin Preview / Production deployments 最终均为 0，没有生成可用 Admin Preview URL。
+- 共享主工作区只有既有 Release / `.ai` 文档变更，没有应用代码或配置变更；baseline 已在独立干净 worktree 中复核。
+- 未执行数据库、Migration、RLS、RPC、Policy、Auth、Role、DNS、Docs Project 或 Release Tag 变更；未输出密码、环境变量值、token 或 secret。
+
+## 2026-07-15 — Web Preview 人工 Smoke 部分完成
+
+- Product Owner 从本机浏览器提交 Guest、Reader、Super Admin 与通用显示的人工验收结果，替代 Codex 不可访问 Preview 网络的自动检查。
+- Guest Homepage / Archive / Search / Published Chapter Reading / Sign-in / Sign-up / Studio denial，Reader 登录 / Archive / Search / Studio denial / `/studio` → `/archive` / Published-only / Draft isolation / logout，以及 Light / Dark、390 × 844、1280、Global Shell 均为 PASS。
+- 浏览器控制台 P0 / P1 错误为 0 / 0；当前没有报告产品 FAIL，观察到 Product P0 / P1 = 0 / 0。
+- Guest Work Detail、Guest Author Profile、Reader Published Work / Chapter 为 BLOCKED，具体原因待 Product Owner 补充。
+- Super Admin 登录为 PASS；Author / Super Admin 其余 7 项仍是未选择的结果占位，不能标记为 PASS。
+- Online Smoke 记录为 PARTIAL / BLOCKED；Release Gate P0 / P1 = 0 / 2，分别对应公开内容路径证据与 Author 结果未完成。
+- 记录 Super Admin Account Repair 仅对齐历史 Auth email；Preview Reader 由 Product Owner 通过受控邀请码流程注册并登录。没有记录密码、邀请码、token、secret 或完整内部 email。
+- Admin Preview Project 尚未创建，Admin App 为本轮 Web Preview 范围外 BLOCKED；未执行 Production、DNS、Admin / Docs Project 创建或新的远程写入。
+
+## 2026-07-15 — Vercel Web Preview Deployment 与 Online Smoke 阻塞
+
+- 确认 GitHub Release Baseline `903bf70a6dc370090362098d26bedd6bf68af529` 已 push，`main` 与 `origin/main` 一致。
+- 在 `fandom-harbor` team 创建并关联 Vercel Project `fandom-harbor-web`。
+- 确认 Root Directory 为 `apps/web`、Framework 为 Next.js，`.vercel/project.json` 被忽略且未跟踪。
+- Product Owner 已在 Preview 配置 `NEXT_PUBLIC_SUPABASE_URL` 与 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`；只核对变量名存在，未读取或输出值。
+- 基于 GitHub baseline `903bf70a6dc370090362098d26bedd6bf68af529` 完成 Web Preview：`https://fandom-harbor-ilvpjubrm-fandom-harbor.vercel.app`，Deployment `dpl_2H2tUqGo7UXWrfhSC5FsmoeHGpX8`，状态 `Preview / Ready`。
+- Vercel CLI 在新建空项目首次 deploy 时错误生成的临时 Production deployments 均已删除；最终项目只保留 Preview。
+- 当前执行网络无法连接 `*.vercel.app:443`，且缺少 Preview Reader / Author 安全测试账号，因此 Online Smoke 保持 `NOT RUN`。
+- `vercel curl` 自动生成的项目级 Protection Bypass for Automation secret 已由 Product Owner 在 Dashboard 删除或轮换；未读取、复制、记录或分享值。P1-RD-SEC-001 已关闭，后续不得重新生成 bypass secret。
+- `NEXT_PUBLIC_SITE_URL` 也未配置，但代码存在 Vercel Preview URL fallback，不阻塞首次 Preview。
+- 指定核对的 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 也不存在，但当前 Web 代码实际使用 publishable key 变量名。
+- Vercel link 自动生成的本地会话变量只保存在权限为 `0600` 的忽略文件中；没有读取、输出或写入文档。
+- 未创建 Admin / Docs Project，未执行 Production、域名绑定、DNS、线上变量写入、远程数据库或 Supabase 权限变更。
+- Product P0 / P1 = 0 / 0；Release Gate P0 / P1 = 0 / 2。
+
 ## 2026-07-14 — V1 GitHub Baseline Secret Audit 安全暂停
 
 - 在未跟踪的 `docs/18_Design/UX-06D-STEP02_ACCEPTANCE.md` 第 86–87 行发现两条 localhost-only QA 密码。

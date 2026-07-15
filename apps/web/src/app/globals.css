@@ -1797,7 +1797,9 @@
     serif;
   display: grid;
   gap: 1rem;
+  margin-inline: auto;
   min-width: 0;
+  width: 100%;
 }
 
 .reading-page-layout {
@@ -2008,10 +2010,15 @@
   letter-spacing: 0;
   line-height: var(--reader-line-height);
   margin-inline: auto;
-  max-width: var(--reader-measure);
+  max-width: min(100%, var(--reader-measure));
   overflow-wrap: anywhere;
   text-rendering: optimizeLegibility;
   width: 100%;
+}
+
+.reader-prose p {
+  text-align: justify;
+  text-justify: auto;
 }
 
 .reader-prose > * {
