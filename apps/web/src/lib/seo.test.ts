@@ -52,6 +52,7 @@ describe("SEO foundation", () => {
       "https://fandom.example/",
       "https://fandom.example/archive",
       "https://fandom.example/search",
+      "https://fandom.example/legal",
       "https://fandom.example/works/published-work",
       "https://fandom.example/works/second-work",
       "https://fandom.example/author/author",

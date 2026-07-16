@@ -1,0 +1,530 @@
+import type { Metadata } from "next";
+import type { PropsWithChildren, ReactNode } from "react";
+
+import { pageMetadata } from "../../lib/seo";
+
+export const metadata: Metadata = pageMetadata({
+  description:
+    "Fandom Harbor V1 的隐私政策、使用条款、内容政策与数据请求说明。",
+  pathname: "/legal",
+  title: "隐私与使用政策",
+});
+
+const bodyClassName =
+  "text-base leading-8 text-muted-foreground [overflow-wrap:anywhere]";
+const listClassName =
+  "space-y-2 pl-6 text-base leading-8 text-muted-foreground [overflow-wrap:anywhere]";
+const linkClassName =
+  "rounded-control text-primary underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus";
+
+function PolicySection({
+  children,
+  id,
+  title,
+}: PropsWithChildren<{ id: string; title: string }>) {
+  return (
+    <section
+      aria-labelledby={`${id}-title`}
+      className="scroll-mt-24 space-y-5"
+      id={id}
+    >
+      <h2
+        className="font-serif text-2xl font-medium leading-tight text-foreground sm:text-3xl"
+        id={`${id}-title`}
+      >
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function PolicySubsection({
+  children,
+  title,
+}: PropsWithChildren<{ title: string }>) {
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold leading-7 text-foreground">
+        {title}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+function BulletList({ children }: { children: ReactNode }) {
+  return <ul className={`list-disc ${listClassName}`}>{children}</ul>;
+}
+
+function NumberedList({ children }: { children: ReactNode }) {
+  return <ol className={`list-decimal ${listClassName}`}>{children}</ol>;
+}
+
+function ContactLink() {
+  return (
+    <a className={linkClassName} href="mailto:fandomharbor@163.com">
+      fandomharbor@163.com
+    </a>
+  );
+}
+
+export default function LegalPage() {
+  return (
+    <article className="mx-auto min-w-0 max-w-3xl [overflow-wrap:anywhere]">
+      <header className="border-b border-border pb-10 pt-2 sm:pb-12 sm:pt-6">
+        <p className="eyebrow">Fandom Harbor · V1</p>
+        <h1 className="mt-4 max-w-2xl font-serif text-4xl font-medium leading-tight text-foreground sm:text-5xl">
+          隐私与使用政策
+        </h1>
+        <p className={`mt-5 max-w-2xl ${bodyClassName}`}>
+          本政策说明 Fandom Harbor V1
+          的运营范围、个人信息处理方式、使用与内容规则，以及用户提交数据和下架请求的方式。
+        </p>
+        <dl className="mt-8 grid gap-x-8 gap-y-4 border-t border-border pt-6 text-sm sm:grid-cols-2">
+          <div>
+            <dt className="text-muted-foreground">文档版本</dt>
+            <dd className="mt-1 font-medium text-foreground">V1</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">批准日期</dt>
+            <dd className="mt-1 font-medium text-foreground">2026-07-16</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">最后更新日期</dt>
+            <dd className="mt-1 font-medium text-foreground">2026-07-16</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground">生效日期</dt>
+            <dd className="mt-1 font-medium text-foreground">
+              Fandom Harbor V1 Production 正式上线之日
+            </dd>
+          </div>
+        </dl>
+      </header>
+
+      <nav
+        aria-label="政策章节"
+        className="my-10 rounded-card border border-border bg-surface p-5 sm:p-6"
+      >
+        <p className="text-sm font-semibold text-foreground">政策章节</p>
+        <ol className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+          {[
+            ["scope", "适用范围及运营主体"],
+            ["privacy", "隐私政策"],
+            ["terms", "使用条款"],
+            ["content", "内容政策"],
+            ["requests", "数据导出、删除与下架"],
+            ["liability", "责任边界"],
+            ["law", "适用法律与争议处理"],
+            ["updates", "政策更新"],
+          ].map(([href, label]) => (
+            <li key={href}>
+              <a
+                className="inline-flex min-h-11 items-center rounded-control px-2 text-primary hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-focus"
+                href={`#${href}`}
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <div className="space-y-14 sm:space-y-16">
+        <PolicySection id="scope" title="1. 适用范围及运营主体">
+          <p className={bodyClassName}>
+            Fandom Harbor 由位于中华人民共和国境内的个人运营者刘祯莹独立运营。
+          </p>
+          <dl className="grid gap-4 rounded-card border border-border bg-surface p-5 text-sm sm:grid-cols-2 sm:p-6">
+            <div>
+              <dt className="text-muted-foreground">运营主体</dt>
+              <dd className="mt-1 font-medium text-foreground">刘祯莹</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">运营所在地</dt>
+              <dd className="mt-1 font-medium text-foreground">
+                中华人民共和国
+              </dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-muted-foreground">联系邮箱</dt>
+              <dd className="mt-1 font-medium">
+                <ContactLink />
+              </dd>
+            </div>
+          </dl>
+          <p className={bodyClassName}>
+            Fandom Harbor V1 是一个小范围、仅限邀请用户使用的文本作品平台。
+          </p>
+          <BulletList>
+            <li>
+              用户必须年满 <strong className="text-foreground">18 周岁</strong>
+              。
+            </li>
+            <li>V1 仅限邀请用户注册和使用。</li>
+            <li>V1 仅支持文本作品。</li>
+            <li>
+              访客可以发现已发布作品；作品详情和章节内容需要登录并拥有有效账号及访问权限后访问。
+            </li>
+          </BulletList>
+        </PolicySection>
+
+        <PolicySection id="privacy" title="2. 隐私政策">
+          <PolicySubsection title="2.1 我们处理的信息">
+            <p className={bodyClassName}>
+              为提供和保护 Fandom Harbor V1，我们可能处理以下信息：
+            </p>
+            <BulletList>
+              <li>注册名及认证相关信息；</li>
+              <li>邀请码、角色、有效账号及访问权限信息；</li>
+              <li>用户创建的作品和章节；</li>
+              <li>阅读偏好、书签和阅读记录；</li>
+              <li>访问日志、错误日志和安全审计记录。</li>
+            </BulletList>
+            <p className={bodyClassName}>
+              请不要通过作品、章节、账号资料或支持请求提交不必要的敏感个人信息。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.2 信息来源与浏览器基础技术">
+            <p className={bodyClassName}>我们处理的个人信息可能来自：</p>
+            <BulletList>
+              <li>用户主动提交的信息；</li>
+              <li>用户进行注册、登录、创作、阅读和权限操作时产生的信息；</li>
+              <li>系统运行时自动生成的访问记录、错误记录和安全记录。</li>
+            </BulletList>
+            <p className={bodyClassName}>
+              为维持登录状态、保存阅读偏好并提供基础功能，Fandom Harbor 可能使用
+              Cookie、浏览器本地存储、会话信息或类似技术。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.3 个人信息出售与广告使用">
+            <p className={bodyClassName}>
+              Fandom Harbor
+              不出售用户个人信息，也不将用户个人信息用于第三方跨站广告画像。
+            </p>
+            <p className={bodyClassName}>当前 V1 不使用广告追踪服务。</p>
+            <p className={bodyClassName}>
+              如未来引入新的分析、广告或其他数据处理服务，Fandom Harbor
+              运营方将在启用前更新公开政策，并按照适用要求向用户提供必要说明。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.4 信息使用目的">
+            <p className={bodyClassName}>
+              我们仅在运行和保护服务所需的范围内使用这些信息，包括：
+            </p>
+            <BulletList>
+              <li>完成身份认证并管理访问权限；</li>
+              <li>管理邀请码、角色、有效账号及访问权限；</li>
+              <li>支持作品创作、发布、发现和阅读；</li>
+              <li>保存用户选择的阅读偏好和记录；</li>
+              <li>排查错误、防止滥用、处理安全事件并保留必要的审计记录；</li>
+              <li>响应导出、删除、下架和其他支持请求。</li>
+            </BulletList>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.5 第三方服务与数据处理地区">
+            <p className={bodyClassName}>
+              Fandom Harbor V1 使用以下第三方服务提供基础设施：
+            </p>
+            <BulletList>
+              <li>
+                <strong className="text-foreground">Supabase</strong>
+                ：认证、数据库及相关后端服务。Fandom Harbor 使用的 Supabase
+                项目当前配置在新加坡区域；
+              </li>
+              <li>
+                <strong className="text-foreground">Vercel</strong>
+                ：Web 应用托管及相关运行服务。
+              </li>
+            </BulletList>
+            <p className={bodyClassName}>
+              这些基础设施服务可能按照其各自的条款和隐私规则，在其提供服务的地区处理运行
+              Fandom Harbor 所需的数据。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.6 数据保留和保护">
+            <p className={bodyClassName}>我们采用以下 V1 数据保留期限：</p>
+            <BulletList>
+              <li>
+                账号、个人资料、作品及章节：在账号有效期间保留；批准删除后，目标在
+                30 天内完成受控处理；
+              </li>
+              <li>安全与权限审计记录：原则上保留 365 天；</li>
+              <li>邀请码及使用记录：原则上保留 90 天；</li>
+              <li>支持、举报、侵权及数据请求邮件：原则上保留 180 天；</li>
+              <li>
+                备份副本：按照最终确认的 Supabase 备份与轮换期限自然过期。
+              </li>
+            </BulletList>
+            <p className={bodyClassName}>
+              如为维护平台安全、处理争议、履行适用义务或完成受控删除流程而有必要，相关信息可能在合理范围内保留更长时间。我们会在不再需要时按照受控流程处理。
+            </p>
+            <p className={bodyClassName}>
+              我们会采用与 V1
+              小范围运行相匹配的访问控制和安全措施，但任何在线服务都不能保证绝对安全。请勿向任何人共享密码、Cookie、访问令牌
+              或会话信息。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="2.7 用户请求与个人信息权利">
+            <p className={bodyClassName}>
+              用户可以通过 <ContactLink />
+              提交个人信息查阅、复制、导出、更正、补充、删除或处理规则解释等请求。
+            </p>
+            <p className={bodyClassName}>
+              为保护账号和内容安全，Fandom Harbor
+              运营方可以在处理前验证请求人的身份、账号关系、权限及请求范围。数据导出和删除请求的目标处理时间为收到可验证、信息完整的请求后
+              30 天内。
+            </p>
+          </PolicySubsection>
+        </PolicySection>
+
+        <PolicySection id="terms" title="3. 使用条款">
+          <p className={bodyClassName}>
+            使用 Fandom Harbor V1 即表示用户同意遵守以下最低规则：
+          </p>
+          <NumberedList>
+            <li>用户必须年满 18 周岁，并通过邀请方式加入。</li>
+            <li>用户不得共享账号、密码、认证信息或以他人身份使用服务。</li>
+            <li>
+              邀请资格、角色、有效账号及访问权限不得绕过平台的受控流程转让或变更。
+            </li>
+            <li>
+              访客可以发现已发布作品，但必须登录并拥有有效账号及访问权限后才能访问作品详情和章节。
+            </li>
+            <li>
+              V1
+              仅用于文本作品。用户应确保其提交的内容拥有必要权利，且不侵犯他人合法权益。
+            </li>
+            <li>
+              用户内容权利和为运行服务所需的授权，按照下方“用户内容许可”条款处理。
+            </li>
+            <li>
+              用户不得干扰平台安全、规避访问控制、探测他人数据、传播恶意链接或以其他方式滥用服务。
+            </li>
+            <li>
+              Fandom Harbor
+              运营方可以为保护用户、内容和平台而暂停访问、限制发布、下架、归档或通过受控流程删除违规内容。
+            </li>
+          </NumberedList>
+
+          <PolicySubsection title="3.1 用户内容许可">
+            <p className={bodyClassName}>用户保留其依法拥有的内容权利。</p>
+            <p className={bodyClassName}>
+              为运行 Fandom Harbor，用户授予 Fandom Harbor
+              运营方一项非独占、仅限服务运行所需的许可，用于存储、备份、处理和向获准用户展示其提交的内容。
+            </p>
+            <p className={bodyClassName}>
+              该许可不允许 Fandom Harbor 运营方在与 Fandom Harbor
+              服务无关的范围内出售或商业利用用户作品。
+            </p>
+            <p className={bodyClassName}>
+              当内容被取消公开、归档或依法删除后，Fandom Harbor
+              运营方将停止继续公开展示；但安全、审计和备份副本可能按照本政策规定的期限继续保留。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="3.2 账号暂停与终止">
+            <p className={bodyClassName}>
+              用户违反本政策、危害平台或其他用户安全、绕过访问控制、滥用邀请或权限，或不再满足邀请制准入条件时，Fandom
+              Harbor 运营方可以暂停或终止其访问权限。
+            </p>
+            <p className={bodyClassName}>
+              暂停或终止访问不代表必须立即删除全部数据。相关数据仍按照隐私政策、审计、安全、备份和受控删除规则处理。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="3.3 服务可用性">
+            <p className={bodyClassName}>
+              Fandom Harbor V1 以小范围、仅限邀请方式提供。
+            </p>
+            <p className={bodyClassName}>
+              服务可能因维护、安全事件、第三方基础设施故障、风险控制或不可控制的原因暂时中断或调整。
+            </p>
+            <p className={bodyClassName}>
+              Fandom Harbor
+              运营方会在合理范围内维护服务，但不保证服务永久不中断、完全没有错误或始终满足所有用户需求。
+            </p>
+          </PolicySubsection>
+        </PolicySection>
+
+        <PolicySection id="content" title="4. 内容政策">
+          <PolicySubsection title="4.1 成人题材与敏感内容">
+            <p className={bodyClassName}>
+              Fandom Harbor 仅面向年满 18 周岁的受邀用户。
+            </p>
+            <p className={bodyClassName}>
+              在遵守中华人民共和国法律法规、尊重他人合法权益并符合本政策的前提下，平台允许包含成年人情感关系、性主题、暴力、非自愿情节及其他成熟主题的文学创作。
+            </p>
+            <p className={bodyClassName}>
+              用户不得发布违反中华人民共和国法律法规的淫秽色情内容。
+            </p>
+            <p className={bodyClassName}>
+              作者应使用平台当前可用的标题、简介、分类或标签，对成人题材、暴力、非自愿情节及其他可能引起强烈不适的内容提供适当提示。
+            </p>
+            <p className="text-base font-semibold leading-8 text-foreground">
+              严格禁止：
+            </p>
+            <NumberedList>
+              <li>
+                以具体、露骨方式描写性行为，且主要目的在于性刺激或淫秽传播的内容；
+              </li>
+              <li>
+                任何涉及未满 18
+                周岁角色，或可被合理理解为未成年人角色的色情、性化或性剥削内容；
+              </li>
+              <li>未经本人同意制作、发布或传播真实人物的私密性内容；</li>
+              <li>涉及现实性剥削、人口贩运、性勒索或其他违法行为的内容；</li>
+              <li>
+                其他违反适用法律、侵犯他人合法权益或对平台安全构成重大风险的内容。
+              </li>
+            </NumberedList>
+            <p className={bodyClassName}>
+              允许成熟文学题材不表示平台必须保留任何内容。
+            </p>
+            <p className={bodyClassName}>
+              Fandom Harbor
+              运营方仍可根据法律要求、安全风险、投诉情况和本政策，限制访问、取消公开、归档或通过受控流程删除相关内容。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="4.2 其他禁止内容与行为">
+            <p className={bodyClassName}>
+              Fandom Harbor V1 同时禁止发布、传播或协助以下内容或行为：
+            </p>
+            <BulletList>
+              <li>违法内容或违法活动；</li>
+              <li>侵犯版权、商标、隐私或其他合法权益的内容；</li>
+              <li>骚扰、仇恨、威胁或暴力煽动；</li>
+              <li>
+                泄露他人真实身份、联系方式、住址、认证信息或其他真实隐私；
+              </li>
+              <li>诈骗、垃圾信息、恶意链接或误导性操作；</li>
+              <li>破坏、规避或威胁平台安全的内容或行为。</li>
+            </BulletList>
+          </PolicySubsection>
+
+          <PolicySubsection title="4.3 内容治理、举报与普通侵权投诉">
+            <p className={bodyClassName}>
+              Fandom Harbor 运营方负责 V1
+              内容治理和下架。对于涉嫌违规或存在紧急风险的内容，Fandom Harbor
+              运营方可以先暂停相关访问、停止发布、下架或归档，再根据受控流程调查和处理；必要时可通过受控流程删除违规内容。
+            </p>
+            <p className={bodyClassName}>
+              举报人或受影响用户可以发送邮件至 <ContactLink />
+              ，并尽量提供作品名称、相关链接、问题说明以及可核对的材料。请勿在邮件中发送密码、Cookie、访问令牌
+              或会话信息。
+            </p>
+            <p className={bodyClassName}>
+              版权及其他知识产权投诉采用普通侵权举报流程。投诉人应说明其身份与联系方式、享有或代表的权利、被投诉内容的位置、涉嫌侵权的理由，并在可行时提供权利证明。Fandom
+              Harbor
+              运营方会核对投诉信息，并可根据风险先限制访问、取消公开或归档相关内容，再决定后续处理。本流程不声称采用或符合美国
+              DMCA 通知与反通知流程。
+            </p>
+          </PolicySubsection>
+        </PolicySection>
+
+        <PolicySection id="requests" title="5. 数据导出、删除与下架请求">
+          <PolicySubsection title="5.1 提交请求">
+            <p className={bodyClassName}>
+              请通过 <ContactLink /> 提交请求，并说明：
+            </p>
+            <BulletList>
+              <li>请求类型：数据导出、账号或数据删除、内容下架或其他；</li>
+              <li>与账号或内容相关的必要识别信息；</li>
+              <li>请求范围和原因；</li>
+              <li>如适用，可供核对的作品名称、链接或权利证明。</li>
+            </BulletList>
+            <p className={bodyClassName}>
+              为保护账号和内容安全，Fandom Harbor
+              运营方可能在处理前验证请求人的身份、账号关系、权限或权利基础及请求范围。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="5.2 数据导出">
+            <p className={bodyClassName}>
+              数据导出请求的目标处理时间为收到可验证、信息完整的请求后
+              <strong className="text-foreground"> 30 天内</strong>
+              。如请求复杂、范围不清或需要补充验证，我们会通过联系邮箱沟通后续安排。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="5.3 删除请求">
+            <p className={bodyClassName}>
+              删除请求的目标处理时间为收到可验证、信息完整的请求后
+              <strong className="text-foreground"> 30 天内</strong>
+              。为防止误删、权限破坏或审计缺失，删除通常按照以下受控顺序处理：
+            </p>
+            <NumberedList>
+              <li>暂停相关访问；</li>
+              <li>对相关内容取消公开或归档；</li>
+              <li>核对请求范围、权限、依赖关系和必要审计记录；</li>
+              <li>经批准后通过受控流程完成适当的删除或保留处理。</li>
+            </NumberedList>
+            <p className={bodyClassName}>
+              因安全、审计、备份或适用义务需要保留的信息，可能不会立即从所有记录中消失。备份副本会按照最终确认的
+              Supabase 备份与轮换期限自然过期。
+            </p>
+          </PolicySubsection>
+
+          <PolicySubsection title="5.4 内容下架">
+            <p className={bodyClassName}>
+              Fandom Harbor 运营方负责处理 V1
+              下架请求。对存在明显安全、违法、未成年人、侵权或隐私风险的内容，可以先暂停访问、取消公开或归档，再完成核对和后续受控处理。Fandom
+              Harbor
+              运营方也可以根据违规情况暂停账号访问或通过受控流程删除违规内容。
+            </p>
+          </PolicySubsection>
+        </PolicySection>
+
+        <PolicySection id="liability" title="6. 责任边界">
+          <p className={bodyClassName}>
+            用户应对其提交的内容、必要权利以及使用平台时的行为承担相应责任。
+          </p>
+          <p className={bodyClassName}>
+            在适用法律允许的范围内，Fandom Harbor
+            运营方不对用户内容、第三方服务故障或无法合理控制的服务中断承担超出法律规定范围的责任。
+          </p>
+          <p className={bodyClassName}>
+            本条款不排除或限制依法不得排除或限制的责任。
+          </p>
+        </PolicySection>
+
+        <PolicySection id="law" title="7. 适用法律与争议处理">
+          <p className={bodyClassName}>
+            本政策及 Fandom Harbor V1
+            的运营、使用和相关争议，适用中华人民共和国法律。
+          </p>
+          <p className={bodyClassName}>
+            如用户与 Fandom Harbor 运营方发生争议，双方应先通过 <ContactLink />
+            进行友好协商；协商不能解决的，任何一方可以依法向有管辖权的人民法院寻求解决。
+          </p>
+        </PolicySection>
+
+        <PolicySection id="updates" title="8. 政策更新">
+          <p className={bodyClassName}>
+            本政策可能随产品功能、运营方式、服务提供商或适用要求变化而更新。
+          </p>
+          <p className={bodyClassName}>
+            重大变更应通过网站公告、登录或注册页面，或其他合理方式提示，并标明更新版本和生效日期。
+          </p>
+          <p className={bodyClassName}>
+            除安全、法律或紧急风险需要立即处理的情况外，重大政策更新应在合理时间内告知用户。
+          </p>
+        </PolicySection>
+      </div>
+
+      <footer className="mt-14 border-t border-border pt-8 text-sm leading-7 text-muted-foreground sm:mt-16">
+        <p>
+          如需查阅、复制、导出、更正、补充、删除个人信息，或提交举报、侵权及下架请求，请联系{" "}
+          <ContactLink />。
+        </p>
+      </footer>
+    </article>
+  );
+}

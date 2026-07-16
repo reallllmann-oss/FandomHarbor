@@ -2,6 +2,87 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-16 — V1 Final Clean RC Baseline and Deployment Review Recheck
+
+- 保护原始 `codex/v1-production-rc` 工作区并记录内容指纹；分类结果为15个获批 RC 文件、3个冻结 Admin 文件、未分类文件0。
+- 从 Historical RC `67f30c13452680738e1626eb33dbdfb4eead1e62` 在仓库外创建 `codex/v1-production-rc-final` 独立 Worktree，逐文件纳入最终政策、Web `/legal`、注册入口、SEO、PDR-02 证据及获批 Release / `.ai` 文档。
+- Final RC 候选不包含 `apps/admin`、备份 SQL、`backup-manifest.txt`、Secret、环境文件、业务数据、node_modules 跟踪项或构建产物；完整 Project Ref 在候选改动中已掩码。
+- 使用本地 pnpm store 执行 offline frozen install，下载0、未修改 lockfile；`pnpm validate`、Web 81 / 81 tests、显式 Web production build、SEO、`/legal` route、格式、差异、年龄 / 政策和 Secret 检查通过。
+- Final RC Web 文件与既有 PDR-01 UI PASS 版本逐字节一致；HTTP 检查确认 `/legal` 与注册页200、title、description、canonical、mailto、政策入口和无新增复选框。唯一一次浏览器尝试被客户端阻止，已停止重试并记录 Product Owner Manual Verification Handoff；未修改产品代码。
+- PDR-01 / PDR-02=`CLOSED FOR DEPLOYMENT`，Production Deployment Review=`PASS`，Product P0 / P1=`0 / 0`，Production Ready=`YES / AWAITING PRODUCT OWNER AUTHORIZATION`。
+- Production Deployment Authorized=`NO`，Production Deployment / Smoke=`NOT RUN`。Final RC 完整 SHA 只记录在 Mission Final Output；未推送、创建 tag、合并 main、部署、修改 Vercel / Supabase 或原始工作区。
+
+## 2026-07-16 — PDR-02 Supabase Free Plan Manual Backup Evidence
+
+- Product Owner 确认 Supabase Plan=Free、Project=`fandom-harbor`、Healthy、Region=`ap-southeast-1` / Singapore、Automatic Backup=`No backups`。
+- 使用 Supabase CLI 2.108.0 对已链接项目执行仓库外受控逻辑导出；Schema (`public,private`) 与 Data-only + COPY 均成功，退出码为 0。
+- Schema 文件 93346 bytes，SHA-256=`252e605784de4d75f72c7f8afbe4cf2b9d5128ba1319856591a2999e727ac3e5`；Data 文件 204387 bytes，SHA-256=`4317c21e8e63aedcc1f824d3b5da6df777026850873549d685474ce47593bbc3`。
+- 私有目录权限为 `0700`，SQL 和 Manifest 为 `0600`；15 / 15 应用表定义与 COPY 段通过结构级验证。CLI role-only 临时检查为 0 个角色声明 / 0 个密码字段，Migration 也没有自建数据库角色，因此 Custom Role Backup=`NOT REQUIRED`；临时文件已删除。
+- 新增 `docs/19_Release/V1-SUPABASE-BACKUP-EVIDENCE.md`，记录非敏感证据、范围限制和 Free 套餐 7 天观察期每日备份运行要求；SQL、Manifest、业务数据和完整私有路径未进入仓库。
+- Auth / Storage 管理数据、实际 Storage 文件和完整 Supabase 平台镜像不在本次保证范围；Restore=`NOT RUN`、Remote Database Mutation=`NO`、Production Deployment=`NOT RUN`。
+- 最终公开政策与 Free / No backups 事实无实质冲突。PDR-02=`CLOSED FOR DEPLOYMENT`，PDR-01 保持关闭。
+- 重新 Deployment Review 后唯一剩余条件是刷新最终干净 RC baseline：历史 RC SHA 不包含最终政策、`/legal` 和 PDR-02 证据，当前工作区还混有冻结 Admin。Production Ready 保持 `READY WITH CONDITIONS`，Production Deployment Authorized 保持 `NO`。
+
+## 2026-07-16 — V1 PDR-01 Public Policy Finalization
+
+- 创建最终版本化政策文档 `docs/19_Release/V1-PUBLIC-POLICY.md`，固定 V1、批准 / 更新日期 2026-07-16，以及“V1 Production 正式上线之日”生效规则。
+- 创建 Web App Router `/legal` 页面，复用 Fandom Harbor 全局壳层、主题与视觉变量，覆盖全部获批政策章节；在注册页增加“隐私与使用政策”最小入口，不增加复选框或修改 Auth。
+- 只读确认 Supabase Project Region=`ap-southeast-1`（新加坡）；Vercel Project=`fandom-harbor-web`、Root=`apps/web`、Framework=Next.js、Node=24.x，未可靠确认精确运行地区且未虚构。
+- 最终公开文案清除 Draft、Internal Draft Review Notes、PDR / 工程状态和中英文混用术语，保持运营主体刘祯莹、中华人民共和国、18+、仅限邀请、仅文本、访客登录门禁、成熟文学题材与严格禁止边界、数据保留、用户权利、普通侵权投诉、责任边界和中华人民共和国法律。
+- `/legal` 本地 1280px / 390px、Light / Dark、无横向溢出、title / description、mailto 和公开正文检查通过；实际 Production URL 留待获批部署后的 Production Smoke。
+- PDR-01 更新为 `CLOSED FOR DEPLOYMENT`；PDR-02 保持 `BLOCKED`；Production Ready 保持 `READY WITH CONDITIONS`；Production Deployment Authorized 保持 `NO`；Product P0 / P1=`0 / 0`。
+- 未部署、点击 Deploy / Redeploy / Promote、绑定域名、修改 Vercel / 数据库 / Auth / RLS / RPC / Migration、处理 Supabase 套餐 / 备份、创建账号、发送邀请码、修改角色、执行 break-glass、处理冻结 `/access` Admin 或创建 tag。
+
+## 2026-07-16 — V1 Production Deployment Review
+
+- 新增 `docs/19_Release/V1-PRODUCTION-DEPLOYMENT-REVIEW.md`，汇总 Preparation、PRC、RC、政策、备份、Vercel、域名和 Smoke 证据。
+- 只读确认 RC SHA=`67f30c13452680738e1626eb33dbdfb4eead1e62`；当前工作区仍含后续 Release 文档和冻结 `/access` Admin 改动，不能作为部署源。
+- PDR-01=`BLOCKED`：没有最终公开 Privacy / Terms / Content Policy 文案或 Web 法律页面。
+- PDR-02=`BLOCKED`：Supabase 套餐未确认，physical backups 无记录、PITR 关闭且没有手动数据库导出证据。
+- 只读确认 Vercel Project / Root / Framework / Node 与三个 Production 环境变量名；值保持 Encrypted，Custom Domain=0，Production deployment=0。
+- 上一稳定 Production Deployment ID 记录为 `FIRST_PRODUCTION_DEPLOYMENT_PENDING`；Production Smoke=21 项、Rollback Smoke=10 项，均 `NOT RUN`。
+- 结论：`Production Deployment Review = BLOCKED`、`Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO`、`Can authorize Production Deployment Mission = NO`。
+- 仅更新 Markdown；未部署、点击 Deploy / Redeploy / Promote、绑定域名、修改 Vercel / 数据库 / Auth / RLS / RPC / Migration、执行 Smoke、账号 / 权限 / break-glass 或创建 tag。
+
+## 2026-07-16 — PRC-06 Governance and Emergency Path Closeout
+
+- 固定 Governance Owner、Super Admin Owner、Emergency Contact、Audit Reviewer=Product Owner；Technical Operator=Codex / 技术执行者且须 Product Owner 明确授权。
+- 固定至少一个 active Super Admin、最后一个 Super Admin 保护、禁止共享密码、禁止向 Codex / 聊天窗口发送密码及权限变更必须保留 audit 的规则。
+- 批准 Admin Preview 不可用时在受控工作站运行与 Production RC 同 SHA 的干净 Admin build；仍须走 `/access`、`admin:operate`、RPC 与 audit，每次 break-glass 前必须获 Product Owner 明确批准。
+- 固定紧急处理范围与七项禁止操作；未执行 Admin build、break-glass、权限 / 账号操作、部署或 Smoke。
+- PRC-06 更新为 `CLOSED FOR PREPARATION`；PRC-01 已关闭，PRC-02 至 PRC-06 均已关闭准备状态。
+- `Production Preparation = PREPARATION COMPLETE / DEPLOYMENT REVIEW ELIGIBLE`；`Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO` 保持不变。
+- Production Deployment Review 前仍须核对 PRC-04 最终公开文案、PRC-03 套餐 / 备份执行项、上一稳定 Production Deployment ID 与 Production Smoke 尚未执行。
+- 仅更新 Markdown；未修改代码 / Vercel / 数据库 / Auth / RLS / RPC / Migration / `/access` Admin，未创建账号、发送邀请码、修改角色或创建 tag。
+
+## 2026-07-15 — PRC-05 Rollback and Production Smoke Closeout
+
+- 固定 Rollback Approver / Backup Operator=Product Owner，Rollback Operator=Codex / 技术执行者且须 Product Owner 明确授权。
+- 默认通过 Vercel 回滚到上一稳定 Production Deployment；数据库默认不回滚，内容优先 unpublish / archive / 暂停访问，禁止未授权数据库恢复、删除、角色修改或直接 SQL。
+- 固定 12 项 P0 评估条件、P1 暂停邀请 / 新增发布与 60 分钟决策规则、21 项 Production Smoke 和 10 项 Rollback Smoke。
+- PRC-05 更新为 `CLOSED FOR PREPARATION`；实际上一稳定 Production Deployment ID 须在 rollout 前记录，本 Mission 未部署、回滚或执行 Smoke。
+- PRC-01 保持 `CLOSED`，PRC-02 至 PRC-04 保持 `CLOSED FOR PREPARATION`，PRC-06 保持 `BLOCKED`；PRC-04 最终公开文案仍须在 Production 前补齐。
+- `Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO` 保持不变。
+- 仅更新 Markdown；未点击 Deploy / Redeploy / Promote、绑定域名、修改 Vercel / 数据库 / Auth / RLS / RPC / Migration、创建账号、发送邀请码、修改角色、处理 `/access` Admin 或创建 tag。
+
+## 2026-07-15 — PRC-04 Age Boundary Correction
+
+- 将当前有效 V1 年龄边界固定为 18+、仅限受邀用户；明确任何早期 16+ 决定或表述均已被覆盖并作废。
+- 固定 invite-only、仅文本、禁止内容、违规处理、隐私数据边界、Supabase / Vercel 第三方服务、30 天导出 / 删除目标、受控删除 / 下架路径和联系邮箱 `fandomharbor@163.com`。
+- PRC-04 更新为 `CLOSED FOR PREPARATION`；Production 前仍须补齐可访问、版本化的最终公开文案，本 Mission 不生成正式法律页面。
+- PRC-01 保持 `CLOSED`，PRC-02 / PRC-03 保持 `CLOSED FOR PREPARATION`，PRC-05 / PRC-06 保持 `BLOCKED`。
+- `Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO` 保持不变。
+- 仅更新 Markdown；未部署、修改产品代码 / 数据库 / Auth / RLS / RPC / Migration / Vercel、创建账号、发送邀请码、修改角色、处理 `/access` Admin 或创建 tag。
+
+## 2026-07-15 — PRC-02 / PRC-03 Production Preparation Closeout
+
+- 记录 Product Owner 对 `fandom-harbor-web`、`apps/web`、Next.js、Production Branch=`main`、Vercel 默认 Production Domain / HTTPS、无 Custom Domain 的手动核对结果。
+- 记录三个获批环境变量名均已配置到 Production 作用域；未读取或输出任何变量值。
+- 记录获批的 7 天 invite-only、Reader 25 / Author 5、99.0% best-effort、RPO 24h / RTO 8h、事故响应时限、责任人、Dashboard + 人工反馈监控和条件备份方案。
+- PRC-02 / PRC-03 更新为 `CLOSED FOR PREPARATION`；PRC-01 保持 `CLOSED`，PRC-04 至 PRC-06 保持 `BLOCKED`。
+- `Production Ready = READY WITH CONDITIONS`、`Production Deployment Authorized = NO` 保持不变。
+- 仅更新 Markdown；未点击 Deploy / Redeploy / Promote，未部署、绑定 Custom Domain、修改 Vercel / 数据库 / Auth / RLS / RPC / Migration、创建账号、发送邀请码、修改角色、处理 `/access` Admin 或创建 tag。
+
 ## 2026-07-15 — PRC-01 RC Baseline Closeout
 
 - 从 `903bf70a6dc370090362098d26bedd6bf68af529` 创建 `codex/v1-production-rc`。
@@ -959,7 +1040,7 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
 ### Remote changes
 
-- Linked Supabase CLI to project `szfhngifsipsrxcpekti`.
+- Linked Supabase CLI to project `szfh…ekti`.
 - Deployed all nine ordered migrations and verified local/remote migration history parity.
 - Verified `validate_registration_invitation` and `registration_invitation_status` through the remote REST API.
 - Set remote `mailer_autoconfirm` to true without pushing unrelated local Auth configuration.

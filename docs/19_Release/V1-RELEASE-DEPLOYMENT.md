@@ -1,26 +1,34 @@
 # Fandom Harbor V1 Release Deployment
 
-状态：PRODUCTION READINESS REVIEW PASS / READY WITH CONDITIONS / DEPLOYMENT NOT AUTHORIZED
-日期：2026-07-15
+状态：PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED
+日期：2026-07-16
 部署类型：Vercel Preview Deployment
 
 ## 结论
 
-`Production Readiness Review = PASS`；`Production Ready = READY WITH CONDITIONS`；`Production Deployment Authorized = NO`
+`Production Readiness Review = PASS`；`Production Deployment Review = PASS`；`PDR-01 = CLOSED FOR DEPLOYMENT`；`PDR-02 = CLOSED FOR DEPLOYMENT`；`Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`；`Production Deployment Authorized = NO`
 
-详细评审见 [`V1-PRODUCTION-READINESS-REVIEW.md`](./V1-PRODUCTION-READINESS-REVIEW.md)。当前产品链路与 External Beta 证据已通过，Product P0 / P1 = `0 / 0`；尚未关闭的项目属于候选基线、Production 环境、域名、运维 / 灾备、法律 / 数据、回滚和最低治理连续性条件。
+详细评审见 [`V1-PRODUCTION-DEPLOYMENT-REVIEW.md`](./V1-PRODUCTION-DEPLOYMENT-REVIEW.md)。当前产品链路、External Beta 与 Production Preparation 已完成，Product P0 / P1 = `0 / 0`；PRC-01 已关闭，PRC-02 至 PRC-06 已 `CLOSED FOR PREPARATION`。最终版本化政策文档、Web `/legal` 页面、注册入口和本地页面验证已完成，PDR-01=`CLOSED FOR DEPLOYMENT`。Supabase Free / No backups 已确认，仓库外 Schema/Data 手动逻辑导出及完整性证据已完成，PDR-02=`CLOSED FOR DEPLOYMENT`。
+
+Final RC 已在独立干净 Worktree 中完成拆分和完整验证，仅纳入获批 Web、Policy、Release 与 PDR 改动，并排除冻结 `/access` Admin。完整 SHA 见本 Mission Final Output；后续授权必须明确引用该 SHA。
 
 Product Owner 已确认 3 名 Reader 的小范围外部测试完成并 PASS，外部 Author 测试完成并 PASS。此前 `GO — NOT OPENED` 仅保留为历史评审节点，不再是当前最终状态。
 
-## Production Preparation 最新结论（2026-07-15）
+## Production Preparation 最新结论（2026-07-16）
 
-只读核对与最低方案已记录在 [`V1-PRODUCTION-PREPARATION.md`](./V1-PRODUCTION-PREPARATION.md)。PRC-01 已关闭：`codex/v1-production-rc` 的 RC commit 只包含已验收 Reading 与 Release 文档，冻结 `/access` Admin 改动未进入 RC。PRC-02 至 PRC-06 仍为 `BLOCKED`：Production 变量和正式域名均未配置；运维 / 备份 / 监控 / 值班、法律 / 数据政策、Production 回滚目标和治理应急责任尚未获批。
+最新证据与最低方案已记录在 [`V1-PRODUCTION-PREPARATION.md`](./V1-PRODUCTION-PREPARATION.md)。PRC-01 已关闭：`codex/v1-production-rc` 的 RC commit 只包含已验收 Reading 与 Release 文档，冻结 `/access` Admin 改动未进入 RC。PRC-02 与 PRC-03 已 `CLOSED FOR PREPARATION`：Product Owner 确认 Web Project、`main`、Vercel 默认 Production Domain / HTTPS、三个 Production 变量名，以及 7 天 invite-only 最低运维包、责任人、监控、RPO / RTO 和条件备份方案。
 
-当前不能从残留冻结 Admin 改动的未提交工作区部署；后续只能引用已验证 RC SHA。PRC-02 至 PRC-06 关闭前仍不能进入 Production Deployment Mission 授权评审。本节不执行 Vercel 配置、域名、部署、账号、邀请码、角色或数据库操作；`Production Deployment Authorized = NO` 保持不变。
+PRC-04 已 `CLOSED FOR PREPARATION`：当前有效年龄边界为 18+、仅限受邀用户，任何早期 16+ 表述均已被覆盖并作废；V1 仅文本，禁止内容、隐私数据边界、Supabase / Vercel、30 天导出 / 删除目标、受控删除 / 下架责任与联系邮箱均已固定。最终 [`V1-PUBLIC-POLICY.md`](./V1-PUBLIC-POLICY.md) 与 Web `/legal` 已完成，PDR-01=`CLOSED FOR DEPLOYMENT`。
+
+PRC-05 已 `CLOSED FOR PREPARATION`：Product Owner 已批准回滚责任人、默认 Vercel 回滚到上一稳定 Production Deployment、数据库 / 内容处理边界、P0 / P1 条件、21 项 Production Smoke 与 10 项 Rollback Smoke。实际上一稳定 Deployment ID 必须在 rollout 前记录；本 Mission 未部署、回滚或执行 Smoke。
+
+PRC-06 已 `CLOSED FOR PREPARATION`：Product Owner 担任 Governance Owner、Super Admin Owner、Emergency Contact 与 Audit Reviewer；Technical Operator 为 Codex / 技术执行者且须明确授权。Admin Preview 不可用时，可在受控工作站运行与 Production RC 同 SHA 的干净 Admin build，但所有操作仍须走 `/access`、`admin:operate`、RPC 与 audit，且每次 break-glass 必须先获 Product Owner 批准。
+
+当前不能从残留冻结 Admin 改动的未提交工作区部署；后续只能引用最终批准 RC SHA 的干净 checkout。PDR-01 / PDR-02 均已关闭，备份证据见 [`V1-SUPABASE-BACKUP-EVIDENCE.md`](./V1-SUPABASE-BACKUP-EVIDENCE.md)。Vercel 当前没有 Production deployment，上一稳定 Production Deployment ID=`FIRST_PRODUCTION_DEPLOYMENT_PENDING`；Production Smoke=`NOT RUN`。本节不执行 Vercel 配置、域名、部署、账号、邀请码、角色或数据库写操作；`Production Deployment Authorized = NO` 保持不变。
 
 2026-07-15 最新 Gate 已确认 Author001 的 active Membership、active `author` grant、`role.granted` audit、授权后 Studio 三路访问，以及创建、保存草稿、Draft isolation、发布、Work Detail、Published Reading 与 Reader 回读均 PASS。Reader → Author Provisioning Block 与 Author Release evidence gate 均已解除，Product P0 / P1 = `0 / 0`。
 
-Guest 可搜索到已发布作品，但点击作品或章节后进入登录页，符合当前 active Membership 产品规则。390px、Light / Dark 无明显横向溢出或破版，控制台无产品级错误。此前 Go / No-Go 评审结论为 GO；当前 External Beta Closeout 已更新为 PASS，但这仍不等于 Production Ready 或 Production Deployment 授权。
+Guest 可搜索到已发布作品，但点击作品或章节后进入登录页，符合当前 active Membership 产品规则。390px、Light / Dark 无明显横向溢出或破版，控制台无产品级错误。此前 Go / No-Go 评审结论为 GO，External Beta Closeout 已更新为 PASS；当前 Production Ready 已为 YES，但这仍不等于 Production Deployment 授权。
 
 External Beta Closeout 确认 Reader / Guest 规则、Author 发布、Draft isolation、Studio denial、邀请码治理、已知限制、停止 / 回退与反馈模板均已通过实际测试，当前 Product P0 / P1 = `0 / 0`。此前 Online Smoke 的公开内容与 Author evidence 缺口已由 Phase 1、Phase 2 和外部 Beta 证据收口。
 
@@ -99,9 +107,9 @@ Product Owner 指定核对的 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 也不存在，但
 - Deployment 状态：`Preview / Ready`。
 - Admin Project：`fandom-harbor-admin` 已创建并关联 GitHub，Root Directory 为 `apps/admin`；Admin Preview Deployment 当前 BLOCKED。
 - Docs Project：未创建。
-- 正式域名：未绑定。
+- Production target：`https://fandom-harbor-web.vercel.app`；Custom Domain 未绑定。
 
-新建空项目的首次 CLI 部署被 Vercel 55.0.0 标记为 Production，即使已显式请求 Preview。所有误生成的 Production deployment 均已立即删除；随后使用官方 `redeploy --target preview` 建立并核验当前 Preview。项目现在只保留一条 Preview deployment，没有 Production deployment 或正式域名。
+新建空项目的首次 CLI 部署被 Vercel 55.0.0 标记为 Production，即使已显式请求 Preview。所有误生成的 Production deployment 均已立即删除；随后使用官方 `redeploy --target preview` 建立并核验当前 Preview。项目现在只保留一条 Preview deployment，没有 Production deployment 或 Custom Domain；V1 后续使用 Vercel 默认 Production Domain。
 
 Codex 执行网络仍无法连接 Preview，但 Product Owner 人工验收已替代自动网络检查，因此旧的网络不可达门禁已关闭。Preview Reader 已通过受控邀请码流程注册并登录；现有 Super Admin 已完成受控 Account Repair，并使用 Registration Name 手动登录成功，因此旧的角色账号可用性门禁也已关闭。
 
@@ -164,8 +172,8 @@ Web 主线当前仍有两个 Release Gate：
 
 ## Product Owner 下一步授权
 
-1. 决定是否授权 V1 Production Preparation Mission；该 Mission 不等于 Production Deployment。
-2. 逐项关闭 `V1-PRODUCTION-READINESS-REVIEW.md` 的 PRC-01 至 PRC-06，建立干净候选基线并确认环境、域名、运维、灾备、法律、回滚和最低治理连续性。
+1. Product Owner 审阅本 Mission Final Output 的完整 Final RC SHA。
+2. 如决定部署，必须通过独立 Production Deployment Authorization Mission 明确授权并引用该 SHA；当前不得部署。
 3. 决定 External Beta 测试账号、邀请码和测试内容的收尾处置；任何角色或 Membership 变更必须另行授权。
 4. Admin Preview 继续独立暂停；不得再次部署或修改 Vercel，除非另有明确 Mission。
 

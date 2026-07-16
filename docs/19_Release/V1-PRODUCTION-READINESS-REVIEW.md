@@ -1,29 +1,36 @@
 # Fandom Harbor V1 Production Readiness Review
 
-状态：`PASS / READY WITH CONDITIONS / PRODUCTION DEPLOYMENT NOT AUTHORIZED`
-日期：2026-07-15
+状态：`PASS / PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / PRODUCTION DEPLOYMENT NOT AUTHORIZED`
+日期：2026-07-16
 
 ## 1. 评审结论
 
 - `Production Readiness Review = PASS`。
-- `Production Ready = READY WITH CONDITIONS`。
+- `Production Deployment Review = PASS`。
+- `Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`。
 - `Production Deployment Authorized = NO`。
 - Product P0 / P1 = `0 / 0`。
+- `PDR-01 = CLOSED FOR DEPLOYMENT`。
+- `PDR-02 = CLOSED FOR DEPLOYMENT`。
 
-产品主链路和 External Beta 证据支持进入 Production 准备，但当前候选基线、Production 配置、正式域名、运维 / 灾备、法律 / 数据政策、治理连续性与最终回滚方案仍需 Product Owner 在独立 Production Preparation Mission 中关闭。上述项目是 Release / Operational Gate，不是已确认的产品 P0 / P1。
+产品主链路和 External Beta 证据支持 Production Preparation 完成；PRC-01 至 PRC-06 状态保持关闭 / 关闭准备状态。2026-07-16 已完成最终版本化政策文档、Web `/legal` 页面、注册入口与本地页面验证，PDR-01=`CLOSED FOR DEPLOYMENT`。Product Owner 已确认 Supabase Free / No backups，仓库外 Schema/Data 手动逻辑导出及完整性证据已完成，PDR-02=`CLOSED FOR DEPLOYMENT`。
 
-## 1A. Production Preparation 跟进（2026-07-15）
+Final RC 已在独立干净 Worktree 中从历史 RC 建立，仅包含15个获批 Web、Policy、Release 与 PDR 文件，并明确排除冻结 Admin。完整验证通过，因此 Deployment Review 更新为 `PASS`；完整 Final RC SHA 仅记录在本 Mission Final Output，等待 Product Owner 单独授权。
 
-V1 Production Preparation 已完成本轮只读审计与最低方案整理。PRC-01 已通过 RC Baseline Closeout Mission 关闭；PRC-02 至 PRC-06 当前仍为 `BLOCKED`，没有任何一项被 Product Owner 逐项记录为 `ACCEPTED RISK`。
+## 1A. Production Preparation 跟进（2026-07-16）
+
+V1 Production Preparation 已完成。PRC-01 已关闭；Product Owner 已完成 PRC-02 手动核对，并批准 PRC-03 最低运维方案、PRC-04 最低政策方案、PRC-05 回滚 / Smoke 方案及 PRC-06 治理 / 应急方案；PRC-02 至 PRC-06 均为 `CLOSED FOR PREPARATION`。
 
 - `codex/v1-production-rc` 已从 `903bf70` 建立；RC commit 只包含已验收 Reading 与 Release 文档，并排除冻结 `/access` Admin 改动。
-- Web Production 作用域 Environment Variables 为 0，团队正式域名为 0，正式 URL / HTTPS 尚未建立。
-- 预算、平台套餐、RPO / RTO、备份恢复演练、实名监控 / 值班责任尚未批准。
-- 年龄 / 内容、隐私、条款、删除 / 导出 / 保留和下架政策尚未批准并发布。
-- 当前 RC SHA、Production Deployment ID、实名回滚负责人和治理应急联系人尚未固定。
-- active Super Admin 有既有证据，但 Admin Preview 不可用时的应急路径尚未批准和演练。
+- Web Production Project=`fandom-harbor-web`、Root Directory=`apps/web`、Framework=Next.js、Production Branch=`main`；V1 使用 `fandom-harbor-web.vercel.app` 与 Vercel 默认 HTTPS，不绑定 Custom Domain。
+- 三个获批变量名已由 Product Owner 确认配置在 Production 作用域；未读取或输出任何值，也未执行 Deploy / Redeploy / Promote。
+- 7 天 invite-only、25 Reader / 5 Author、99.0% best-effort、RPO 24h / RTO 8h、事故时限、责任人、Dashboard + 人工反馈监控及条件备份方案已获批准。
+- PRC-04 当前有效年龄边界统一为 18+、仅限受邀用户；任何早期 16+ 表述均已被覆盖并作废。仅文本、禁止内容、隐私数据边界、Supabase / Vercel、30 天导出 / 删除目标、受控删除 / 下架路径与联系邮箱均已批准。
+- PRC-04 获批方案已整理为最终 [`V1-PUBLIC-POLICY.md`](./V1-PUBLIC-POLICY.md) 和 Web `/legal` 页面；PDR-01=`CLOSED FOR DEPLOYMENT`，实际 Production URL 留待部署后 Smoke。
+- PRC-05 已固定 Rollback Approver、Rollback Operator、Backup Operator、默认 Vercel 回滚方式、数据库 / 内容边界、P0 / P1 条件、Production Smoke 与 Rollback Smoke；上一稳定 Production Deployment ID 须在 rollout 前记录。
+- PRC-06 已固定 Governance Owner、Super Admin Owner、Emergency Contact、Audit Reviewer、Technical Operator、Super Admin 守则及 Admin Preview 不可用时的同 SHA 干净 Admin build 应急路径；本 Mission 未执行 break-glass 或权限操作。
 
-详细证据、建议和关闭清单见 [`V1-PRODUCTION-PREPARATION.md`](./V1-PRODUCTION-PREPARATION.md)。PRC-01 关闭不自动授权部署；PRC-02 至 PRC-06 关闭前仍不能进入 Production Deployment Mission 授权评审，`Production Deployment Authorized = NO` 保持不变。
+详细 Review 见 [`V1-PRODUCTION-DEPLOYMENT-REVIEW.md`](./V1-PRODUCTION-DEPLOYMENT-REVIEW.md)。PDR-01 与 PDR-02 均已关闭；备份证据见 [`V1-SUPABASE-BACKUP-EVIDENCE.md`](./V1-SUPABASE-BACKUP-EVIDENCE.md)。上一稳定 Production Deployment ID 记录为 `FIRST_PRODUCTION_DEPLOYMENT_PENDING`，Production Smoke 为 `NOT RUN`。最终干净 RC 已完成验证并排除冻结 Admin；最终 commit SHA 在本 Mission 提交完成后作为唯一部署候选交由 Product Owner 审阅。`Production Deployment Authorized = NO` 保持不变。
 
 ## 2. 已完成测试阶段
 
@@ -57,6 +64,8 @@ V1 Production Preparation 已完成本轮只读审计与最低方案整理。PRC
 - `V1-DEPLOYMENT-SMOKE-TEST.md`
 - `V1-RELEASE-FLOW-OPTIMIZATION.md`
 - `V1-PHASE1-BETA-TESTING-GUIDE.md`
+- `V1-PUBLIC-POLICY-DRAFT.md`
+- `V1-PUBLIC-POLICY.md`
 - `docs/15_Sprint/Release_Readiness/README.md`
 - `RR_1C_BETA_READY_CHECKLIST.md`
 - `.ai/PROJECT_STATUS.md`
@@ -70,7 +79,7 @@ RR-1B / RR-1C 资料保留为历史 Deployment / Release Candidate 基线，不�
 - Guest 不能直接打开作品详情或章节，点击后进入登录页；这是当前 active Membership 产品规则，不作为缺陷。
 - `/access` Admin 既有改动冻结到 Admin 阶段；本评审不修改、部署或扩展 Admin UI。
 - Admin Preview 的 Vercel 外部阻塞继续独立跟踪，不阻止 Web Production Preparation Review，但生产启动前必须确认获批的最低治理操作和应急联系人。
-- Production 尚未授权；未绑定正式域名、未执行当前 V1 Production Deployment 或 Production Smoke。
+- Production 尚未授权；V1 仅选定 Vercel 默认域名，未绑定 Custom Domain，未执行当前 V1 Production Deployment 或 Production Smoke。
 - 邀请码短码优化、完整 Admin UI 与文章管理不属于当前 V1 Production 条件。
 
 ## 6. Production 前必须关闭的条件
@@ -83,36 +92,52 @@ RR-1B / RR-1C 资料保留为历史 Deployment / Release Candidate 基线，不�
 
 ### PRC-02 Production 环境与入口
 
-- 只核对 Production 环境变量名称和作用域，不读取或输出值。
-- 确认 Web Production Project、Root Directory、Framework、Production Branch、域名 / HTTPS、环境变量和目标 URL。
-- Production Deployment 与正式域名绑定必须另行授权。
+- 状态：`CLOSED FOR PREPARATION`。
+- Product Owner 已确认 Web Production Project、Root Directory、Framework、Production Branch、默认域名 / HTTPS、三个 Production 环境变量名和目标 URL。
+- 本次未读取或输出变量值，未点击 Deploy / Redeploy / Promote，未绑定 Custom Domain 或修改 Vercel 配置。
+- 实际 Production Deployment 与部署后 URL / HTTPS / canonical Smoke 必须另行授权。
 
 ### PRC-03 运维、监控与灾备
 
-- 关闭 KI-009：明确测试规模、上线规模、预算、可用性目标、RPO 与 RTO。
-- 确认 Supabase / Vercel 备份策略、恢复责任人和至少一次受控恢复演练方案。
-- 明确监控、错误告警、值班联系人、事故升级和暂停邀请 / 发布流程。
+- 状态：`CLOSED FOR PREPARATION`。
+- Product Owner 已批准 7 天 invite-only observation window、25 Reader / 5 Author、99.0% best-effort、RPO 24 小时、RTO 8 小时、30 分钟事故确认与 60 分钟暂停 / 回滚决定。
+- Release Commander 与 Emergency Contact 为 Product Owner；Technical Operator 为 Codex / 技术执行者，但必须由 Product Owner 授权。
+- 监控使用 Vercel Dashboard、Supabase Dashboard 与 Product Owner 人工反馈。
+- Supabase Free、Automatic Backup=`No backups` 已确认；仓库外 Schema/Data 手动逻辑导出、权限、大小、SHA-256 和范围限制证据已完成，PDR-02=`CLOSED FOR DEPLOYMENT`。恢复未运行。
 
 ### PRC-04 法律与数据政策
 
-- 关闭或由 Product Owner 明确接受 KI-004、KI-005、KI-012：年龄 / 成人内容、删除 / 导出 / 保留、法律主体、隐私 / 条款与下架流程。
+- 状态：`CLOSED FOR PREPARATION`。
+- 年龄边界为 18+、仅限受邀用户；任何早期 16+ 决定或表述均已被覆盖并作废。
+- V1 仅文本、invite-only；禁止违法、侵权、骚扰、仇恨、威胁、暴力煽动、未成年人色情或性剥削、真实隐私泄露、诈骗、垃圾信息、恶意链接或破坏平台安全的内容。
+- Product Owner 负责暂停访问、下架、归档或通过受控流程删除违规内容；禁止直接 SQL 临时删除用户、角色、作品或章节。
+- 隐私边界、Supabase / Vercel 第三方服务、30 天导出 / 删除目标及联系邮箱 `fandomharbor@163.com` 已固定。
+- 最终版本化政策文档与 Web `/legal` 页面已创建并完成本地验证；PDR-01=`CLOSED FOR DEPLOYMENT`。
 - KI-026 以“Guest 发现、登录后阅读”的当前产品规则接受，不在本 Mission 修改 Auth / Permission。
 
 ### PRC-05 回滚与最终 Smoke
 
-- 固定可回滚的候选 commit 和上一稳定版本，记录 Vercel 回滚操作人、触发条件和验证清单。
-- 明确账号、邀请码、测试内容和 Published 内容的保留 / 下架责任；禁止直接 SQL 或未授权数据删除。
-- Production 部署后必须执行独立的 Homepage、Archive、Search、Auth、Published Reading、Studio denial、Author 最小发布、390px、Light / Dark 与 Console Smoke。
+- 状态：`CLOSED FOR PREPARATION`。
+- Rollback Approver 与 Backup Operator 为 Product Owner；Rollback Operator 为 Codex / 技术执行者，但必须由 Product Owner 明确授权。
+- 默认使用 Vercel 回滚到上一稳定 Production Deployment；实际 Deployment ID 必须在 rollout 前记录。
+- 默认不回滚数据库；未经 Product Owner 单独授权，不执行数据库恢复、数据删除、角色修改或直接 SQL。内容风险优先 unpublish / archive / 暂停访问。
+- P0 条件覆盖登录、Published Reading、Author 保存 / 发布、Draft isolation、Studio denial、邀请 / 角色 / Membership、域名 / HTTPS / 环境变量、secret、数据完整性、持续产品级错误及无法控制的严重违规内容。
+- P1 先暂停发放邀请码和新增发布，Product Owner 在 60 分钟内决定修复、暂停或回滚。
+- Production Smoke 21 项与 Rollback Smoke 10 项清单已固定；本 Mission 未执行部署、回滚或 Smoke。
 
 ### PRC-06 最低治理连续性
 
-- 至少一个 active Super Admin、治理责任人和紧急联系人必须在 Production Preparation 中再次确认。
-- `/access` 继续冻结；如 Admin Preview 尚不可用，Product Owner 必须批准可审计的最低治理应急路径。不得用直接 SQL 或 Supabase 控制台改角色替代。
+- 状态：`CLOSED FOR PREPARATION`。
+- Governance Owner、Super Admin Owner、Emergency Contact 与 Audit Reviewer 均为 Product Owner；Technical Operator 为 Codex / 技术执行者，但必须由 Product Owner 明确授权。
+- 至少保留一个 active Super Admin；不得删除最后一个 active Super Admin、共享密码或把密码发给 Codex / 聊天窗口；所有权限变更必须走受控路径并保留 audit。
+- Admin Preview 不可用时，可在受控工作站运行与 Production RC 同 SHA 的干净 Admin build，但仍必须走 `/access`、`admin:operate`、RPC 和 audit；每次 break-glass 前必须由 Product Owner 明确批准。
+- 禁止直接 SQL 或 Supabase Dashboard 绕过 audit 改角色，禁止共享密码 / Cookie / Token / Session，禁止 Codex 自行执行权限操作。
+- 本 Mission 未执行 Admin build、break-glass、权限变更、账号操作或部署。
 
 ## 7. Go / No-Go
 
-当前可以进入 **Production Preparation**，但不能执行 Production Deployment。
+`Production Preparation = PREPARATION COMPLETE`，`Production Deployment Review = PASS`。PDR-01 与 PDR-02 均已关闭，Final RC 已验证且排除冻结 Admin。
 
-只有 PRC-01 至 PRC-06 全部关闭或由 Product Owner 明确、逐项接受风险，并通过独立 Production Deployment Mission 授权后，才能把状态从 `READY WITH CONDITIONS` 更新为 `Production Ready = YES`。
+`Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`。这不是部署授权；`Production Deployment Authorized = NO`，Production Deployment=`NOT RUN`。
 
 本评审未修改产品代码、数据库、Auth、RLS、RPC、Migration 或 Vercel 配置，未绑定域名、创建账号、发送邀请码、执行角色操作或部署 Production。

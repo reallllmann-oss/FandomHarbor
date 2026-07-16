@@ -37,6 +37,16 @@ export default async function SignUpPage({
         使用注册名、密码和有效邀请码创建账号。邀请码只开放 Reader 门禁，不会授予
         Author 或管理员权限。
       </p>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+        注册和使用服务前，请阅读
+        <Link
+          className="mx-1 rounded-control text-primary underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          href="/legal"
+        >
+          隐私与使用政策
+        </Link>
+        。
+      </p>
       {query.error ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
           {registrationErrorMessages[query.error] ??
