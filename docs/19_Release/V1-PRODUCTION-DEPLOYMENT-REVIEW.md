@@ -1,18 +1,22 @@
 # Fandom Harbor V1 Production Deployment Review
 
-状态：`PASS / PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED`
-日期：2026-07-16
+状态：`PASS / PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW`
+日期：2026-07-17（部署状态更新；Review 证据日期为 2026-07-16）
 Mission：V1 Production Deployment Review
 
 ## 1. 评审结论
 
 - `Production Preparation = PREPARATION COMPLETE`。
 - `Production Deployment Review = PASS`。
-- `Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`。
-- `Production Deployment Authorized = NO`。
+- `Production Ready = DEPLOYED`。
+- `Production Deployment Authorized = CONSUMED / CLOSED`。
 - Product P0 / P1 = `0 / 0`。
 - `PDR-01 = CLOSED FOR DEPLOYMENT`。
 - `PDR-02 = CLOSED FOR DEPLOYMENT`。
+
+## 1A. Deployment Review 执行结果（2026-07-17）
+
+Review 后续独立授权已完成：Final RC=`ab04de63ed0ced4eadfaa4a64babfa6370c67058`，Production Deployment=`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`，默认域名=`https://fandom-harbor-web.vercel.app`，状态 READY。Product Owner Manual Production Smoke=`PASS`；Product P0 / P1=`0 / 0`。`Production Deployment=COMPLETED`、`Production Status=LIVE / 7-DAY OBSERVATION WINDOW`。完整证据见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](./V1-PRODUCTION-DEPLOYMENT-RECORD.md)。本节是 Review 后的执行记录，不改写 2026-07-16 Review 当时“尚未授权”的历史事实。
 
 PRC-01 至 PRC-06 状态一致，Production 环境变量名称、Vercel Project、默认域名策略和 Smoke 计划均已准备。PDR-01 已通过最终版本化政策文档、Web `/legal` 页面、注册页入口和本地页面验证关闭。Product Owner 已确认 Supabase Free / Healthy / Singapore / `No backups`，受控 Schema 与 Data 逻辑导出已成功保存在仓库外并完成权限、大小和 SHA-256 验证，因此 PDR-02 已关闭。
 

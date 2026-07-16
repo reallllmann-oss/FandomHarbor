@@ -2,6 +2,15 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-17 — V1 Production Deployment and Smoke PASS
+
+- 使用唯一获批 Final RC `ab04de63ed0ced4eadfaa4a64babfa6370c67058` 从干净独立 Worktree 创建全新 Vercel Production Deployment；Deployment=`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`，状态 READY，默认域名 `https://fandom-harbor-web.vercel.app` 已指向该部署。
+- Product Owner 完成人工 Production Smoke：公开页面、Guest、Reader、Author、`/legal`、注册政策入口、SEO / robots / sitemap、1280 × 800、390 × 844、Light / Dark 全部 PASS；Console 产品级错误与关键请求 5xx 均为 0。
+- Smoke 未创建、编辑、保存、发布或删除业务内容；未修改数据库；未提供密码、Cookie、Token 或 Session。
+- `Production Deployment=COMPLETED`、`Production Smoke=PASS`、`Production Status=LIVE / 7-DAY OBSERVATION WINDOW`、`Production Ready=DEPLOYED`、`Production Deployment Authorized=CONSUMED / CLOSED`；Product P0 / P1=`0 / 0`。
+- Observation Window：2026-07-17 00:30:30 至 2026-07-24 00:30:30（UTC+8）；Supabase Free / No backups 条件下至少每天完成一次仓库外受控 Schema / Data 逻辑导出。
+- 新增 `docs/19_Release/V1-PRODUCTION-DEPLOYMENT-RECORD.md`。两条历史失败 Deployment 仅作为证据保留，未 Redeploy、Promote 或 Rollback；Final RC、原始工作区、冻结 Admin、数据库、Tag 与 main 均未修改。
+
 ## 2026-07-16 — V1 Final Clean RC Baseline and Deployment Review Recheck
 
 - 保护原始 `codex/v1-production-rc` 工作区并记录内容指纹；分类结果为15个获批 RC 文件、3个冻结 Admin 文件、未分类文件0。

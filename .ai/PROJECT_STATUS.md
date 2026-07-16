@@ -2,9 +2,15 @@
 
 ## 当前阶段
 
-V1 Release — FINAL RC VALIDATED / PRODUCTION DEPLOYMENT REVIEW PASS / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED
+V1 Release — PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW
 
 ## 当前状态
+
+- 2026-07-17：Fandom Harbor V1 Production Deployment 完成。唯一部署源为 Final RC `ab04de63ed0ced4eadfaa4a64babfa6370c67058`；Vercel Deployment=`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`，默认域名=`https://fandom-harbor-web.vercel.app`，状态=`READY`。
+- Product Owner 已完成人工 Production Smoke：公开页面、Guest、Reader、Author、`/legal`、注册政策入口、SEO / robots / sitemap、1280 × 800、390 × 844、Light / Dark 全部 PASS；Console 产品级错误与关键请求 5xx 均为 0。未创建或修改业务内容，未修改数据库，未提供密码、Cookie、Token 或 Session。
+- `Production Deployment = COMPLETED`，`Production Smoke = PASS`，`Production Status = LIVE / 7-DAY OBSERVATION WINDOW`，`Production Ready = DEPLOYED`，`Production Deployment Authorized = CONSUMED / CLOSED`，Product P0 / P1=`0 / 0`。
+- Observation Window：2026-07-17 00:30:30 至 2026-07-24 00:30:30（UTC+8）。Supabase Free / No backups 条件下，观察期至少每天执行一次仓库外受控逻辑导出；恢复、回滚、权限或数据库操作仍须 Product Owner 单独授权。
+- 发布事实与历史失败记录见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](../docs/19_Release/V1-PRODUCTION-DEPLOYMENT-RECORD.md)。Final RC、原始主工作区、冻结 Admin、数据库、Tag 与 `main` 均未被本状态收尾修改。
 
 - 2026-07-16：V1 Final Clean RC Baseline and Deployment Review Recheck 完成。Final RC 在仓库外独立 Worktree 中从 Historical RC `67f30c13452680738e1626eb33dbdfb4eead1e62` 创建，branch=`codex/v1-production-rc-final`，只包含 15 个获批 Web、Policy、Release 与 PDR 文件，冻结 `/access` Admin、备份 SQL、Manifest、Secret、环境文件和构建产物均未进入候选。完整 `pnpm validate`、Web 81 / 81 tests、显式 Web production build、格式、差异、政策、SEO 和敏感信息检查通过；Final RC 完整 SHA 按非自引用规则仅记录在 Mission Final Output。
 - `Production Deployment Review = PASS`，PDR-01 / PDR-02=`CLOSED FOR DEPLOYMENT`，Product P0 / P1=`0 / 0`。`Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`；这不是部署授权，`Production Deployment Authorized = NO`、Production Deployment=`NOT RUN`、Production Smoke=`NOT RUN`。

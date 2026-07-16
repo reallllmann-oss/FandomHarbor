@@ -1,8 +1,20 @@
 # Fandom Harbor V1 Release Flow Optimization
 
-状态：PRODUCTION READINESS REVIEW PASS / READY WITH CONDITIONS / DEPLOYMENT NOT AUTHORIZED
-日期：2026-07-15
-变更类型：Release evidence closeout documentation
+状态：PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW
+日期：2026-07-17
+变更类型：Production deployment closeout documentation
+
+## 0G. V1 Production Deployment Closeout
+
+- Final RC：`ab04de63ed0ced4eadfaa4a64babfa6370c67058`。
+- Production Deployment：`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`，状态 READY。
+- Production Domain：`https://fandom-harbor-web.vercel.app`。
+- Product Owner Manual Production Smoke：PASS。
+- Product P0 / P1：`0 / 0`。
+- Production Status：`LIVE / 7-DAY OBSERVATION WINDOW`。
+- Production Deployment Authorized：`CONSUMED / CLOSED`。
+
+观察窗口为 2026-07-17 00:30:30 至 2026-07-24 00:30:30（UTC+8）；Supabase Free / No backups 条件下至少每天执行一次仓库外受控逻辑导出。完整记录见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](./V1-PRODUCTION-DEPLOYMENT-RECORD.md)。下方 0F 及更早章节保留为各阶段当时的历史状态，不覆盖本节最新结论。
 
 ## 0F. V1 Production Preparation
 

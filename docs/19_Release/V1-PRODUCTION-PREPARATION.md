@@ -1,23 +1,23 @@
 # Fandom Harbor V1 Production Preparation
 
-状态：`PREPARATION COMPLETE / PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED`
-日期：2026-07-16
+状态：`PREPARATION COMPLETE / PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW`
+日期：2026-07-17（部署状态更新；Preparation 证据日期为 2026-07-16）
 Mission：V1 Production Preparation
 
 ## 1. 结论
 
 - `Production Readiness Review = PASS`。
-- `Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`。
-- `Production Deployment Authorized = NO`。
+- `Production Ready = DEPLOYED`。
+- `Production Deployment Authorized = CONSUMED / CLOSED`。
 - Product P0 / P1 = `0 / 0`。
 - `Production Preparation = PREPARATION COMPLETE`：PRC-01 已关闭，PRC-02 至 PRC-06 均已由 Product Owner 确认为 `CLOSED FOR PREPARATION`。
-- Production Deployment Review 已重新执行，结论为 `PASS`；这不授权 Production Deployment，也不得从原始未提交工作区部署。
+- Production Deployment Review=`PASS`；后续独立授权已按 Final RC 执行并完成，未从原始未提交工作区部署。
 - PDR-01 已通过最终 `V1-PUBLIC-POLICY.md`、Web `/legal` 页面、注册页入口与本地页面验证关闭为 `CLOSED FOR DEPLOYMENT`。
 - PDR-02 已通过 Supabase Free / No backups 确认及仓库外 Schema/Data 手动逻辑导出证据关闭为 `CLOSED FOR DEPLOYMENT`。
 - Final RC 已在独立干净 Worktree 中建立并通过完整验证；候选排除冻结 Admin、备份 SQL、Manifest、Secret、环境文件和构建产物。完整 SHA 见本 Mission Final Output。
-- 上一稳定 Production Deployment ID 状态为 `FIRST_PRODUCTION_DEPLOYMENT_PENDING`；Production Smoke 保持 `NOT RUN`。
+- 首次 Production Deployment 已完成：`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`；Production Smoke=`PASS`。完整记录见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](./V1-PRODUCTION-DEPLOYMENT-RECORD.md)。
 
-本 Mission 只执行只读核对、方案整理和文档同步。没有部署 Production、绑定域名、修改 Vercel、修改数据库 / Auth / RLS / RPC / Migration、创建账号、发送邀请码、授权 / 撤销角色或继续实现 `/access` Admin。
+Preparation Mission 当时只执行只读核对、方案整理和文档同步。后续独立 Deployment Mission 已完成 Web Production 部署与只读 Smoke；仍未绑定自定义域名、修改数据库 / Auth / RLS / RPC / Migration、创建账号、发送邀请码、授权 / 撤销角色或继续实现 `/access` Admin。
 
 ## 2. PRC 状态表
 

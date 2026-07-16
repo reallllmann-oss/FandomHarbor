@@ -1,9 +1,15 @@
 # Fandom Harbor V1 Deployment Smoke Test
 
-状态：PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED / PRODUCTION SMOKE NOT RUN
-日期：2026-07-16
+状态：PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW
+日期：2026-07-17
 
 Phase 1 执行清单、反馈模板与测试者说明见 [`V1-PHASE1-BETA-TESTING-GUIDE.md`](./V1-PHASE1-BETA-TESTING-GUIDE.md)。Product Owner 已完成第一阶段 Reader-only 受控测试并提交收口结果。
+
+## Production Smoke Execution Record（2026-07-17）
+
+Production Deployment `dpl_9FSPEFRzazWwd31wrajY3yVw3wPs` 已达到 READY，默认域名 `https://fandom-harbor-web.vercel.app` 已指向该部署。Product Owner 人工确认公开页面、Guest、Reader、Author、`/legal`、注册政策入口、SEO / robots / sitemap、1280 × 800、390 × 844、Light / Dark 全部 PASS；Console 产品级错误=`0`，关键请求 5xx=`0`。
+
+本轮 Smoke 未创建、编辑、保存、发布或删除业务内容，未修改数据库，未提供密码、Cookie、Token 或 Session。`Production Smoke = PASS`；观察窗口为 2026-07-17 00:30:30 至 2026-07-24 00:30:30（UTC+8）。完整证据见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](./V1-PRODUCTION-DEPLOYMENT-RECORD.md)。下方 `NOT RUN` 清单保留为 2026-07-16 部署前计划快照，不代表当前最终状态。
 
 ## V1 Production Readiness Review（2026-07-15）
 
@@ -29,7 +35,7 @@ PRC-05 状态：`CLOSED FOR PREPARATION`。Rollback Approver 与 Backup Operator
 
 P0 回滚评估覆盖登录主链路、Published Reading、Reader Published 阅读、Author 保存 / 发布、Draft 泄露、Studio 越权、邀请码 / 角色 / Membership 边界、域名 / HTTPS / 环境变量、secret 泄露、数据完整性、核心路径持续产品级错误，以及无法通过下架流程控制的严重违法、未成年人、侵权或隐私泄露内容。P1 先暂停发放邀请码和新增发布，Product Owner 在 60 分钟内决定修复、暂停或回滚。
 
-### Production Smoke Checklist — NOT RUN
+### Production Smoke Checklist — PRE-DEPLOYMENT PLAN SNAPSHOT (2026-07-16)
 
 - [ ] HTTPS。
 - [ ] 首页。

@@ -1,16 +1,28 @@
 # Fandom Harbor V1 Release Deployment
 
-状态：PDR-01–PDR-02 CLOSED FOR DEPLOYMENT / FINAL RC VALIDATED / PRODUCTION READY YES / AWAITING PRODUCT OWNER AUTHORIZATION / DEPLOYMENT NOT AUTHORIZED
-日期：2026-07-16
-部署类型：Vercel Preview Deployment
+状态：PRODUCTION DEPLOYMENT COMPLETED / PRODUCTION SMOKE PASS / LIVE — 7-DAY OBSERVATION WINDOW
+日期：2026-07-17
+部署类型：Vercel Production Deployment
 
 ## 结论
 
-`Production Readiness Review = PASS`；`Production Deployment Review = PASS`；`PDR-01 = CLOSED FOR DEPLOYMENT`；`PDR-02 = CLOSED FOR DEPLOYMENT`；`Production Ready = YES / AWAITING PRODUCT OWNER AUTHORIZATION`；`Production Deployment Authorized = NO`
+`Production Readiness Review = PASS`；`Production Deployment Review = PASS`；`PDR-01 = CLOSED FOR DEPLOYMENT`；`PDR-02 = CLOSED FOR DEPLOYMENT`；`Production Ready = DEPLOYED`；`Production Deployment = COMPLETED`；`Production Smoke = PASS`；`Production Status = LIVE / 7-DAY OBSERVATION WINDOW`；`Production Deployment Authorized = CONSUMED / CLOSED`
 
 详细评审见 [`V1-PRODUCTION-DEPLOYMENT-REVIEW.md`](./V1-PRODUCTION-DEPLOYMENT-REVIEW.md)。当前产品链路、External Beta 与 Production Preparation 已完成，Product P0 / P1 = `0 / 0`；PRC-01 已关闭，PRC-02 至 PRC-06 已 `CLOSED FOR PREPARATION`。最终版本化政策文档、Web `/legal` 页面、注册入口和本地页面验证已完成，PDR-01=`CLOSED FOR DEPLOYMENT`。Supabase Free / No backups 已确认，仓库外 Schema/Data 手动逻辑导出及完整性证据已完成，PDR-02=`CLOSED FOR DEPLOYMENT`。
 
 Final RC 已在独立干净 Worktree 中完成拆分和完整验证，仅纳入获批 Web、Policy、Release 与 PDR 改动，并排除冻结 `/access` Admin。完整 SHA 见本 Mission Final Output；后续授权必须明确引用该 SHA。
+
+## Production Deployment Closeout（2026-07-17）
+
+- Source SHA：`ab04de63ed0ced4eadfaa4a64babfa6370c67058`。
+- Deployment ID：`dpl_9FSPEFRzazWwd31wrajY3yVw3wPs`。
+- Deployment URL：`https://fandom-harbor-r0ywp5b1l-fandom-harbor.vercel.app`。
+- Production Domain：`https://fandom-harbor-web.vercel.app`。
+- Deployment State / Build：`READY / PASS`。
+- Product Owner Manual Production Smoke：`PASS`。
+- Observation Window：2026-07-17 00:30:30 至 2026-07-24 00:30:30（UTC+8）。
+
+完整证据、历史失败记录和每日仓库外备份要求见 [`V1-PRODUCTION-DEPLOYMENT-RECORD.md`](./V1-PRODUCTION-DEPLOYMENT-RECORD.md)。本发布记录 Commit 不是部署源；Final RC 未被修改。
 
 Product Owner 已确认 3 名 Reader 的小范围外部测试完成并 PASS，外部 Author 测试完成并 PASS。此前 `GO — NOT OPENED` 仅保留为历史评审节点，不再是当前最终状态。
 
