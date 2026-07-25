@@ -67,6 +67,13 @@ export function buildSitemap(
     { changeFrequency: "weekly", priority: 1, url: url("/") },
     { changeFrequency: "daily", priority: 0.9, url: url("/archive") },
     { changeFrequency: "weekly", priority: 0.6, url: url("/search") },
+    { changeFrequency: "monthly", priority: 0.4, url: url("/privacy") },
+    { changeFrequency: "monthly", priority: 0.4, url: url("/terms") },
+    {
+      changeFrequency: "monthly",
+      priority: 0.4,
+      url: url("/content-policy"),
+    },
     ...works.map((work) => ({
       changeFrequency: "weekly" as const,
       lastModified: work.publishedAt,

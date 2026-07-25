@@ -9,6 +9,7 @@ export interface NavigationItem {
 }
 
 interface SharedLayoutProps extends PropsWithChildren {
+  footerLinks?: NavigationItem[];
   headerActions?: ReactNode;
   navigation: NavigationItem[];
   sidebar?: ReactNode;
@@ -18,6 +19,7 @@ interface SharedLayoutProps extends PropsWithChildren {
 
 export function SharedLayout({
   children,
+  footerLinks,
   headerActions,
   navigation,
   sidebar,
@@ -99,8 +101,23 @@ export function SharedLayout({
         {sidebar ? <aside aria-label="管理导航">{sidebar}</aside> : null}
         <main id="main-content">{children}</main>
       </div>
-      <footer className="border-t border-border px-4 py-6 text-center text-sm text-muted-foreground">
-        Fandom Harbor · 私域作品归档
+      <footer className="site-footer border-t border-border px-4 py-6 text-sm text-muted-foreground">
+        <div className="site-footer-layout mx-auto max-w-screen-xl">
+          <span>Fandom Harbor · 私域作品归档</span>
+          {footerLinks?.length ? (
+            <nav aria-label="公开政策" className="site-footer-navigation">
+              {footerLinks.map((item) => (
+                <a
+                  className="site-footer-link rounded-control"
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          ) : null}
+        </div>
       </footer>
     </div>
   );
@@ -116,6 +133,11 @@ export function ReaderLayout({
 }>) {
   return (
     <SharedLayout
+      footerLinks={[
+        { href: "/privacy", label: "Privacy" },
+        { href: "/terms", label: "Terms" },
+        { href: "/content-policy", label: "Content Policy" },
+      ]}
       headerActions={headerActions}
       navigation={
         navigation ?? [

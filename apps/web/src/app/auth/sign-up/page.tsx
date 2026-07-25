@@ -35,7 +35,31 @@ export default async function SignUpPage({
       <h1 className="mt-3 text-3xl font-semibold">创建门禁账号</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         使用注册名、密码和有效邀请码创建账号。邀请码只开放 Reader 门禁，不会授予
-        Author 或管理员权限。
+        Author 或管理员权限。Fandom Harbor 仅面向年满 18 周岁的受邀用户。
+      </p>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+        完成注册即表示你同意
+        <Link
+          className="mx-1 rounded-control text-primary underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          href="/terms"
+        >
+          Terms
+        </Link>
+        ，并已阅读
+        <Link
+          className="mx-1 rounded-control text-primary underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          href="/privacy"
+        >
+          Privacy
+        </Link>
+        与
+        <Link
+          className="mx-1 rounded-control text-primary underline decoration-transparent underline-offset-4 hover:decoration-current focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          href="/content-policy"
+        >
+          Content Policy
+        </Link>
+        。
       </p>
       {query.error ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
