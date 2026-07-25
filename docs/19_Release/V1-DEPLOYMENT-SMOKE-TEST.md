@@ -1,34 +1,97 @@
 # Fandom Harbor V1 Deployment Smoke Test
 
-状态：PRODUCTION READINESS REVIEW PASS / READY WITH CONDITIONS / DEPLOYMENT NOT AUTHORIZED
-日期：2026-07-15
+状态：PDR-01 OWNER DECISION COMPLETE — DEPLOYMENT AND SMOKE PENDING / PDR-02 CLOSED FOR CURRENT RELEASE / READY WITH CONDITIONS / DEPLOYMENT NOT AUTHORIZED / PRODUCTION POLICY SMOKE NOT RUN
+日期：2026-07-25
+
+## PDR-01 Owner Decision Application 更新（2026-07-25）
+
+- DECISION-01–27 已应用，当前唯一政策规范来源为 [`V1-PUBLIC-POLICY-V1.0.md`](./V1-PUBLIC-POLICY-V1.0.md)。
+- 三个本地页面已同步；独立法律审阅为 `NOT COMPLETED`。
+- `PDR-01 = OWNER DECISION COMPLETE / DEPLOYMENT AND SMOKE PENDING`。
+- Production Policy Deployment 未授权、未执行；本文件中的正式域名 Policy Smoke 检查仍全部 `NOT RUN`，不得用本地验证替代。
+- 本地 Production build 已完成 Guest、1280px Light、390px Dark、Footer、注册入口、`/legal` redirect、metadata、sitemap 内容、横向溢出与 Console 检查；全部通过。Browser 对 XML 直开受客户端限制，`sitemap.xml` 视觉项为 `MANUAL VERIFICATION REQUIRED`，自动化测试与本地 HTTP 内容检查通过。
+
+## PDR-02 Backup Audit 更新（2026-07-25）
+
+- 2026-07-16 历史备份保持 `VALID BUT STALE`。
+- 2026-07-25 22:38:50 +08:00 的当前 Production `public,private` Schema 与 Data-only + COPY 仓库外备份已完成；两个退出码为 0，Manifest、SHA-256、15 / 15 表、COPY 结束、权限和 Git 边界验证 PASS。
+- Owner 确认当前 Free、平台备份=0、PITR=false、Storage Bucket / 对象=0。
+- Recovery Runbook 已更新但未演练；`PDR-02 = CLOSED FOR CURRENT RELEASE`。
+- `PDR-01 = OWNER REVIEW REQUIRED` 保持不变；Production Smoke `NOT RUN`，整体 Release 尚不可收口。
+- 证据见 [`V1-SUPABASE-BACKUP-EVIDENCE.md`](./V1-SUPABASE-BACKUP-EVIDENCE.md) 与 [`V1-SUPABASE-RECOVERY-RUNBOOK.md`](./V1-SUPABASE-RECOVERY-RUNBOOK.md)。
+
+## PDR-01 Web Implementation 更新（2026-07-25）
+
+- 本地已验证 `/privacy`、`/terms`、`/content-policy` 的 Guest 直达 / 刷新、Footer / 注册链接、1280px / 390px、Light / Dark、metadata、无横向溢出与 Console Error=0。
+- 当前本地结论为 `PASS WITH OWNER REVIEW`；来源仍为 Draft、待 Product Owner 批准、生效状态待确认且法律审阅未完成。
+- Production 未在本 Mission 重新部署，因此三个新路由的 Production 实际 URL、所有登录角色访问和 Production Console 仍须在下次获批 Smoke 中核对。
+- 完整证据与手工项见 [`V1-PUBLIC-POLICY-WEB-ACCEPTANCE.md`](./V1-PUBLIC-POLICY-WEB-ACCEPTANCE.md)。
+- PDR-02 状态不变；本 Mission 未执行或重新执行数据库备份。
 
 Phase 1 执行清单、反馈模板与测试者说明见 [`V1-PHASE1-BETA-TESTING-GUIDE.md`](./V1-PHASE1-BETA-TESTING-GUIDE.md)。Product Owner 已完成第一阶段 Reader-only 受控测试并提交收口结果。
 
 ## V1 Production Readiness Review（2026-07-15）
 
 - `Production Readiness Review = PASS`。
+- `Production Deployment Review = BLOCKED`。
 - `Production Ready = READY WITH CONDITIONS`。
 - `Production Deployment Authorized = NO`。
 - Product P0 / P1 = `0 / 0`。
+- `PDR-01 = CLOSED FOR DEPLOYMENT`。
+- `PDR-02 = CLOSED FOR DEPLOYMENT`。
 
 邀请注册、Reader 登录 / Published 阅读、Author 登录 / Studio、创建、草稿保存、发布、Reader 回读、Draft isolation、Studio denial 与 Guest 登录门禁均 PASS。完整条件与风险见 [`V1-PRODUCTION-READINESS-REVIEW.md`](./V1-PRODUCTION-READINESS-REVIEW.md)。
 
-Production 前必须关闭：干净且获批的候选基线、Production 项目 / 环境 / 域名核对、RPO / RTO 与备份恢复、监控值班、法律 / 数据政策、回滚 runbook、最低治理连续性和部署后 Smoke。它们是 Release / Operational Gate，不计入当前 Product P0 / P1。
+Production Preparation 已完成，但 Production Deployment Review=`BLOCKED`：最终版本化政策文档与 Web `/legal` 已完成并关闭 PDR-01；Supabase Free / No backups 及仓库外 Schema/Data 手动逻辑导出证据已完成并关闭 PDR-02。唯一剩余条件是建立包含 PDR-01/02 最终改动、排除冻结 Admin 的新干净获批 RC SHA。Vercel 当前没有 Production deployment，上一稳定 Production Deployment ID=`FIRST_PRODUCTION_DEPLOYMENT_PENDING`。Production Smoke 计划完整，状态仍为 `NOT RUN`。
 
-## Production Preparation 与 Production Smoke（2026-07-15）
+## Production Preparation 与 Production Smoke（2026-07-16）
 
-Production Preparation 结论仍为 `INCOMPLETE`；PRC-01 已通过干净 RC baseline 关闭，PRC-02 至 PRC-06 仍为 `BLOCKED`。详细状态、RC 策略、回滚负责人字段和完整 Smoke runbook 见 [`V1-PRODUCTION-PREPARATION.md`](./V1-PRODUCTION-PREPARATION.md)。
+PRC-01 已关闭，PRC-02 至 PRC-06 已 `CLOSED FOR PREPARATION`。PRC-06 的责任人、Super Admin 守则和 Admin Preview 不可用时的受控同 SHA Admin build 应急路径已获批准；本 Mission 未执行 Admin build、break-glass、权限变更或账号操作。详细状态、RC 策略和完整 runbook 见 [`V1-PRODUCTION-PREPARATION.md`](./V1-PRODUCTION-PREPARATION.md)。
 
-Production 尚未部署，因此本 Mission 不执行浏览器 Production Smoke。后续独立 Deployment Mission 必须记录 Production URL、Deployment ID、RC SHA、执行时间与身份，并完成以下最小检查：
+详细 Review 见 [`V1-PRODUCTION-DEPLOYMENT-REVIEW.md`](./V1-PRODUCTION-DEPLOYMENT-REVIEW.md)。PDR-01 / PDR-02 均已关闭；刷新最终干净 RC SHA 并重新 Review 前，不授权部署或 Smoke。备份证据见 [`V1-SUPABASE-BACKUP-EVIDENCE.md`](./V1-SUPABASE-BACKUP-EVIDENCE.md)。
 
-- Guest：Homepage、Archive、Search、Auth 与 Studio 登录边界。
-- Reader：登录 / 重登、Published Work / Chapter、Studio denial、Draft isolation。
-- Author：Studio、创建、保存、Draft isolation、发布和 Reader 回读。
-- 通用：Desktop、390 × 844、Light / Dark、HTTPS、canonical、Sitemap、Robots 与 Console 产品级错误 0。
-- 治理：active Super Admin 登录能力与应急联系人可用；Smoke 不执行真实角色变更。
+PRC-05 状态：`CLOSED FOR PREPARATION`。Rollback Approver 与 Backup Operator 为 Product Owner；Rollback Operator 为 Codex / 技术执行者，但必须由 Product Owner 明确授权。默认回滚到上一稳定 Vercel Production Deployment，实际 Deployment ID 必须在 rollout 前记录。数据库默认不回滚，内容优先 unpublish / archive / 暂停访问，未经单独授权不得恢复数据库、删除数据、修改角色或执行直接 SQL。
 
-任一权限泄漏、Auth 主链路失败、Published Reading 失败、安全事件或未接受 P0 / P1 都必须停止 rollout，并按 Preparation runbook 回滚到已确认的上一稳定 Deployment。禁止伴随数据库回滚、直接 SQL、角色绕过或用户数据删除。
+P0 回滚评估覆盖登录主链路、Published Reading、Reader Published 阅读、Author 保存 / 发布、Draft 泄露、Studio 越权、邀请码 / 角色 / Membership 边界、域名 / HTTPS / 环境变量、secret 泄露、数据完整性、核心路径持续产品级错误，以及无法通过下架流程控制的严重违法、未成年人、侵权或隐私泄露内容。P1 先暂停发放邀请码和新增发布，Product Owner 在 60 分钟内决定修复、暂停或回滚。
+
+### Production Smoke Checklist — NOT RUN
+
+- [ ] HTTPS。
+- [ ] 首页。
+- [ ] Archive。
+- [ ] Search。
+- [ ] Guest 发现 Published 作品。
+- [ ] Guest 点击作品进入登录页。
+- [ ] Reader 登录。
+- [ ] Reader 阅读 Published 内容。
+- [ ] Reader Studio denial。
+- [ ] Author 登录。
+- [ ] Author Studio。
+- [ ] Author 创建 / 编辑测试作品。
+- [ ] 保存章节草稿。
+- [ ] 发布章节。
+- [ ] Reader 回读。
+- [ ] Draft isolation。
+- [ ] Guest Studio denial。
+- [ ] 390px 移动端。
+- [ ] Light / Dark。
+- [ ] `/privacy`、`/terms`、`/content-policy` 实际 URL、Owner 批准后的最终文案、Footer / 注册入口、mailto、title / description，以及 canonical / sitemap / robots；`/legal` 兼容重定向。
+- [ ] Console 产品级错误 = 0。
+
+### Rollback Smoke Checklist — NOT RUN
+
+- [ ] Production URL。
+- [ ] HTTPS。
+- [ ] 首页 / Archive / Search。
+- [ ] Reader 登录。
+- [ ] Reader Published 阅读。
+- [ ] Author 登录。
+- [ ] Studio denial。
+- [ ] Draft isolation。
+- [ ] Console 产品级错误。
+- [ ] 回滚记录。
+
+Production 尚未部署，因此本 Mission 不执行浏览器 Production Smoke 或 Rollback Smoke。任一 P0 必须停止 rollout、保存证据并由 Product Owner 评估回滚。禁止伴随未授权数据库回滚、直接 SQL、角色绕过或用户数据删除。
 
 ## V1 External Beta Closeout（2026-07-15）
 
