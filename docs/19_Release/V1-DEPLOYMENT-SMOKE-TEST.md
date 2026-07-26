@@ -1,5 +1,23 @@
 # Fandom Harbor V1 Deployment Smoke Test
 
+状态：PUBLIC POLICY PREVIEW PASS / PRODUCTION POLICY SMOKE NOT RUN
+当前日期：2026-07-26
+
+## Public Policy Preview Smoke（Product Owner，2026-07-26）
+
+- RC Preview Deployment：Ready；Preview 环境变量缺失已修复。
+- Homepage、Archive、登录、注册、Privacy、Terms、Content Policy、`/legal` 永久跳转、Footer、Guest、Reader 登录与阅读、Reader `/studio` → `/archive`、390px、Light / Dark：全部 PASS。
+- Console 明显错误：无；Product Owner 报告发现问题：无。
+- Runtime 日志复核：`GET /` 为 200，无 5xx、Supabase ZodError、变量 undefined 或政策页面路由 404；仅见非阻塞静态资源 404。
+- 该证据仅属于 Preview，不得替代 Production Policy Smoke。
+
+## Production Public Policy Smoke
+
+状态：`NOT RUN`。Public Policy 尚未部署到 Production；正式域名当前正常属于部署前基线，不得记作政策 Production Smoke PASS。
+
+以下 2026-07-14 Local / Online Smoke 内容按原样保留为历史基线；如与上方当前状态冲突，以上方两节为准。
+
+
 状态：LOCAL PASS / ONLINE NOT RUN
 日期：2026-07-14
 

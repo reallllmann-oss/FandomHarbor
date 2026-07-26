@@ -1,5 +1,16 @@
 # Project Memory
 
+## V1 Public Policy 当前长期状态（2026-07-26）
+
+- 唯一当前政策规范来源：`docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`；`V1-PUBLIC-POLICY-DRAFT.md` 与旧 `V1-PUBLIC-POLICY.md` 仅保留为 Superseded / Legacy 历史。
+- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`；`PDR-02 = CLOSED FOR CURRENT RELEASE`。
+- Public Policy RC Preview 已部署且 Product Owner Smoke 全部 PASS；Preview 环境变量缺失已经修复。Public Policy Production Deployment 与正式域名 Policy Smoke 仍为 `NOT RUN`。
+- 独立法律审阅为 `NOT COMPLETED`；Product Owner 的风险接受仅限有限、邀请制、Reader-only Beta。
+- Production 正式域名当前由 Product Owner 确认为正常；该事实不等于 Public Policy 已进入 Production。
+- Admin Preview 是独立工作流，不阻挡 Reader-only Beta；冻结的 Admin 文件不得进入 Public Policy Integration。
+- Final Release Approval=`PENDING`，Production Deployment Authorized=`NO`。不得把 Preview PASS、历史误触发的 Production redeploy 或本地 Integration 描述为正式 Public Policy Production Release。
+
+
 - 2026-07-14：V1 GitHub Baseline secret audit 在未跟踪的 `docs/18_Design/UX-06D-STEP02_ACCEPTANCE.md` 第 86–87 行发现两条 localhost-only QA 密码。立即停止 commit / push / Vercel 流程，将明文替换为安全凭据命令说明并再次轮换 QA 凭据。确认该文件未跟踪，实际密码模式未进入 HEAD 或 Git 历史；处置后 OpenAI / GitHub / Vercel / Supabase / JWT / private key / database URL / service role / Auth secret / QA password 复扫无匹配。依据 Mission 强制暂停点，等待 Product Owner 确认后才能重新进入 Release Baseline 门禁。
 
 - 2026-07-14：执行 V1 Release Deployment 部署前检查。Node 24.18.0 / pnpm 11.7.0、offline frozen install、Supabase linked remote Migration 14 / 14、`pnpm validate`、169 tests、Web / Admin / Docs production builds、`git diff --check`、Local QA Fixture 与 Guest / Reader / Author Smoke 全部通过；Reader `/studio` 仍到 `/archive`，Author 可进入 Studio，Published-only / Draft isolation 无回退。当前 `main` 超前 `origin/main` 4 commits，但 UX-06 已验收实现仍在未提交工作区；仓库没有 Vercel Project 关联，CLI / Dashboard 无法完成核对，线上变量与 URL 未确认。因此 V1 Deployment Ready for Product Owner Review = NO，部署类型 Local only，Product P0 / P1 = 0 / 0，Release Gate P1 = 2。未执行 Preview / Production、远程 SQL、环境变量写入、DNS 或数据变更。新增中文 Deployment、Smoke、User Guide 与 Admin Guide；Admin 授权现状为已支持 Super Admin 通过 `/access` 受控 UI 授予 / 撤销 Admin，并写 audit log。

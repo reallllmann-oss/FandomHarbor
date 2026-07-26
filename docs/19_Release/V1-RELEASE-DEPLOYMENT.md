@@ -1,5 +1,24 @@
 # Fandom Harbor V1 Release Deployment
 
+状态：LOCAL MAIN INTEGRATION REVIEW / PRODUCTION POLICY DEPLOYMENT NOT RUN
+当前日期：2026-07-26
+部署类型：本地 Public Policy Main Integration（未授权 Push / Production）
+
+## 当前 Public Policy Release 状态
+
+- 唯一当前政策规范来源：`V1-PUBLIC-POLICY-V1.0.md`；27 / 27 Owner Decisions 已完成。
+- RC Preview 已 Ready，环境变量缺失已修复，Product Owner Preview Smoke 全部 PASS。
+- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`，依据 2026-07-25 新鲜仓库外逻辑备份证据。
+- Legal Review=`NOT COMPLETED`；Final Release Approval=`PENDING`。
+- Public Policy Production Deployment=`NOT RUN`；Production Policy Smoke=`NOT RUN`。
+- Production Deployment Authorized=`NO`；此前误触发的 Production redeploy 不是 Public Policy Release。
+- 正式域名当前由 Product Owner 确认为正常；当前本地 Integration 不修改 Production、Vercel、DNS、Supabase 或数据库。
+- 下一步仅为新的 Integration commit 与文件范围 Owner Review，之后才可另行决定是否授权 Push。
+
+以下 2026-07-14 Release Deployment 内容按原样保留为历史基线；其中旧的当前状态已经被本节覆盖。
+
+
 状态：BLOCKED — 等待 Product Owner 处理发布门禁
 日期：2026-07-14
 部署类型：Local only

@@ -1,5 +1,22 @@
 # Project Status
 
+## 当前权威状态（2026-07-26）
+
+以下快照是当前 Release 状态；本文后续较早的“当前阶段 / 当前状态”段落按其原日期保留为历史记录，如有冲突以本节为准。
+
+- Production Web 正式域名：Product Owner 已确认当前正常。
+- Reader 基础链路：PASS；Guest 权限与 active Membership 产品行为已确认一致。
+- Public Policy Owner Decision：COMPLETE；唯一规范来源为 `V1-PUBLIC-POLICY-V1.0.md`。
+- Public Policy Preview：Ready；环境变量已修复；Product Owner Smoke 全部 PASS。
+- Public Policy Production Deployment：`NOT RUN`；正式域名 Policy Smoke：`NOT RUN`。
+- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`。
+- Legal Review=`NOT COMPLETED`；Final Release Approval=`PENDING`。
+- Production Deployment Authorized=`NO`。
+- 下一步仅为新的 Main Integration commits 与文件范围 Owner Review；在独立授权前不得 Push main 或部署 Production。
+- Admin Preview 的独立阻塞不阻挡有限 Reader-only Beta；冻结 Admin 文件继续排除。
+
+
 ## 当前阶段
 
 V1 Release Deployment — BLOCKED（Local gates PASS / Preview 未执行）

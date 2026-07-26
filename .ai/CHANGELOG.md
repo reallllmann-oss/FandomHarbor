@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-26 — V1 Public Policy Documentation Conflict Reconciliation
+
+- 保留 `origin/main` 的全部既有 Changelog 历史，并将获批 Public Policy Release Candidate 状态语义合并到本地 Main Integration；本记录不代表已 push 或已部署 Production。
+- Product Owner 已完成 DECISION-01–27；唯一当前政策规范来源为 `docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`，Draft 与旧政策仅作为 Superseded / Legacy 历史保留。
+- Public Policy RC Preview 已 Ready，环境变量缺失已修复；Product Owner Preview Smoke 全部 PASS，Homepage、Archive、Auth、三个政策页面、`/legal`、Footer、Guest / Reader、390px、Light / Dark 与 Console 均通过。
+- 2026-07-25 新鲜仓库外逻辑备份及证据已关闭 `PDR-02 = CLOSED FOR CURRENT RELEASE`；Recovery Runbook 已准备，恢复演练仍为 `NOT RUN`。
+- 当前 `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`；Public Policy Production Deployment 与正式域名 Policy Smoke 均为 `NOT RUN`。
+- 独立法律审阅为 `NOT COMPLETED`；Product Owner 仅接受有限、邀请制、Reader-only Beta 风险。Final Release Approval=`PENDING`，Production Deployment Authorized=`NO`。
+- Admin Preview 的独立平台阻塞不阻挡 Reader-only Beta；冻结的三个 Admin 工作区文件不进入 Public Policy Integration。
+
+
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
 ## 2026-07-14 — V1 GitHub Baseline Secret Audit 安全暂停
