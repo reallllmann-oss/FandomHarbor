@@ -1,5 +1,24 @@
 # Project Status
 
+## V1.0.1 Password Visibility 当前状态（2026-07-26，Local Only）
+
+| 项目                                   | 当前状态 |
+| -------------------------------------- | -------- |
+| Development                            | COMPLETE |
+| Local Validation                       | PASS     |
+| Product Owner Local Preview Acceptance | PENDING  |
+| Push                                   | NOT RUN  |
+| Preview / Production Deployment        | NOT RUN  |
+| External / Backend Change              | NONE     |
+
+- `/auth/sign-in` 与 `/auth/sign-up` 已新增默认隐藏、可显示/隐藏的独立密码控件；当前注册页没有确认密码字段，未创建新字段。
+- 控件复用现有 Lucide 图标，使用 `button type="button"`、动态中文 `aria-label`、`aria-pressed`、44×44 目标、Light / Dark 与 `focus-visible` 样式；切换保持输入值且不提交表单。
+- `current-password` / `new-password`、required / minLength、登录/注册 Server Action、邀请码必填、18+ 与 Terms / Privacy / Content Policy 合同保持不变。
+- frozen install、lint、typecheck、174 / 174 tests、targeted tests、Web / Admin / Docs production builds 全部 PASS。
+- 本地浏览器 1280 / 390、Light / Dark、登录错误状态、默认隐藏、显示/隐藏、值保持、44px、零横向溢出、自动填充属性/布局与 console errors = 0 全部 PASS；键盘可达性由原生按钮语义、焦点顺序合同与组件测试覆盖。
+- `Ready for Product Owner Local Preview = YES`；不得将此解释为 Product Owner 已验收、V1.0.1 已发布或已部署。
+- 未 Push、Deploy、Redeploy、Promote；未修改 Vercel、Supabase、数据库、Auth、RLS、RPC、DNS、环境变量、dependency 或 lockfile。
+
 ## 当前权威状态（2026-07-26 Final Release Closure）
 
 以下是当前 Release 权威状态；本文后续较早的“当前阶段 / 当前状态”及 Pending、Blocked、Not Run、Authorized=NO 表述均按原日期保留为历史记录，并已被本节取代。

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-07-26 — V1.0.1 Password Visibility Local Development
+
+- 为 `/auth/sign-in` 与 `/auth/sign-up` 的密码字段新增默认隐藏、可独立显示/隐藏的可访问控件；当前注册页不存在确认密码字段，因此未新增该字段。
+- 复用 `packages/ui` 客户端组件与现有 Lucide `Eye` / `EyeOff` 图标；切换按钮为 `type="button"`，提供动态中文 `aria-label`、`aria-pressed`、44×44 目标与 `focus-visible` 状态。
+- 保留登录 `current-password`、注册 `new-password`、必填与最小长度合同；切换后输入值不变、不提交表单，输入右侧为图标保留 48px 空间。
+- 邀请码仍为必填密码输入且 `autocomplete="off"`；18+ 提示、Terms、Privacy、Content Policy、登录/注册 Server Action 与 Auth 后端均未改变。
+- 通过 frozen install、lint、typecheck、174 / 174 tests、Web / Admin / Docs production builds 与 targeted password visibility tests。
+- 本地浏览器复验通过 1280 / 390、Light / Dark、登录错误状态、默认隐藏、显示/隐藏、值保持、44px、无横向溢出及 console errors = 0；自动填充属性与图标预留布局保持正常。
+- 本状态仅表示本地开发与验证完成，`V1.0.1 Product Owner Local Preview Acceptance = PENDING`；未 Push、Deploy、Promote，未修改 Vercel、Supabase、数据库、Auth、RLS、RPC、DNS 或环境变量。
+
 ## 2026-07-26 — V1 Reader-only Invitation Beta Final Release Closure
 
 - `Fandom Harbor V1 Reader-only Invitation Beta` 正式记录为 `RELEASED`；`Production Ready = YES FOR READER-ONLY INVITATION BETA`、`Production Deployment = COMPLETE`、`Production Smoke = PASS`、`Product Owner Final Acceptance = PASS`、`Final Release Closure = CLOSED`。

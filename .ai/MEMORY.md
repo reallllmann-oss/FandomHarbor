@@ -1,5 +1,15 @@
 # Project Memory
 
+## V1.0.1 Password Visibility 本地就绪状态（2026-07-26）
+
+- `/auth/sign-in` 与 `/auth/sign-up` 已在独立 V1.0.1 工作树完成密码显示/隐藏控件；默认隐藏，登录与注册分别独立控制。当前注册页没有确认密码字段，未创建新字段。
+- 共享 `PasswordInput` 仅管理显示状态，使用现有 Lucide `Eye` / `EyeOff`、原生 `button type="button"`、动态中文 `aria-label`、`aria-pressed`、44×44 目标与明确焦点样式。
+- 登录 `current-password`、注册 `new-password`、required / minLength、输入值保持及表单 Server Action 合同保持不变；邀请码、18+ 与三个政策链接无回退。
+- 工程验证：frozen install、lint、typecheck、174 / 174 tests、targeted tests、Web / Admin / Docs production builds 全部 PASS。
+- 本地浏览器验证：1280 / 390、Light / Dark、默认隐藏、显示/隐藏、值保持、登录错误状态、无横向溢出、44px、自动填充属性/布局与 console errors = 0 全部 PASS；键盘可达性由原生按钮语义、焦点顺序合同与组件测试覆盖。
+- 当前状态：`LOCAL DEVELOPMENT COMPLETE / READY FOR PRODUCT OWNER LOCAL PREVIEW`；`Product Owner Local Preview Acceptance = PENDING`。
+- 未 Push、Deploy、Redeploy 或 Promote；未修改 Vercel、Supabase、数据库、Auth、RLS、RPC、DNS、环境变量、dependency 或 lockfile。
+
 ## V1 Reader-only Beta 当前长期状态（2026-07-26 Final Closure）
 
 - Release：`Fandom Harbor V1 Reader-only Invitation Beta`。
