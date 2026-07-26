@@ -1,15 +1,20 @@
 # Project Memory
 
-## V1 Public Policy 当前长期状态（2026-07-26）
+## V1 Reader-only Beta 当前长期状态（2026-07-26 Final Closure）
 
-- 唯一当前政策规范来源：`docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`；`V1-PUBLIC-POLICY-DRAFT.md` 与旧 `V1-PUBLIC-POLICY.md` 仅保留为 Superseded / Legacy 历史。
-- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`；`PDR-02 = CLOSED FOR CURRENT RELEASE`。
-- Public Policy RC Preview 已部署且 Product Owner Smoke 全部 PASS；Preview 环境变量缺失已经修复。Public Policy Production Deployment 与正式域名 Policy Smoke 仍为 `NOT RUN`。
-- 独立法律审阅为 `NOT COMPLETED`；Product Owner 的风险接受仅限有限、邀请制、Reader-only Beta。
-- Production 正式域名当前由 Product Owner 确认为正常；该事实不等于 Public Policy 已进入 Production。
-- Admin Preview 是独立工作流，不阻挡 Reader-only Beta；冻结的 Admin 文件不得进入 Public Policy Integration。
-- Final Release Approval=`PENDING`，Production Deployment Authorized=`NO`。不得把 Preview PASS、历史误触发的 Production redeploy 或本地 Integration 描述为正式 Public Policy Production Release。
-
+- Release：`Fandom Harbor V1 Reader-only Invitation Beta`。
+- Release Status=`RELEASED`；Production Ready=`YES FOR READER-ONLY INVITATION BETA`；Production Deployment=`COMPLETE`；Production Smoke=`PASS`；Product Owner Final Acceptance=`PASS`；Final Release Closure=`CLOSED`。
+- `PDR-01 = CLOSED`；Closure basis 为 Owner policy decision complete、Public Policy V1.0 Production 部署、公开基础 Smoke PASS、Product Owner Reader Smoke PASS、正式域名正常及 Reader 权限/阅读链路通过。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`；依据 2026-07-25 仓库外受控新鲜 Production 逻辑备份及已记录的恢复流程与责任。该状态不是永久关闭；PITR 仍未启用，也不声称 Supabase 已存在平台物理备份。
+- 唯一政策规范来源：`docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`；批准日期 2026-07-25，正式发布生效日期 2026-07-26。Draft 与旧政策仅为 Superseded / Legacy 历史。
+- Production Deployment：`dpl_3dj8UwrQER7WukZYAk4rYmsbhwib`，Project=`fandom-harbor-web`，Environment=`Production`，Branch=`main`，Commit=`14f9af1c0b4fc440daab26fba9f2eb513f56142f`，Source=`GitHub Push`，Status=`READY`。
+- 正式域名 `https://www.fandomharbor.com/` 正常；`https://fandomharbor.com` 308 跳转至 www。
+- Product Owner Reader Smoke 已覆盖登录、Archive、作品详情、章节阅读、刷新、Reader `/studio` → `/archive`、草稿/后台隔离、退出登录权限恢复及 Console，全部 PASS；不保存任何 Reader 凭据或身份信息。
+- Legal Review=`NOT COMPLETED`；Owner Risk Acceptance=`ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA`。不得解释为法律批准、合规认证或完整法律许可。
+- 当前 Release 仅为有限、邀请制、Reader-only Beta；不含 Author Production Beta、Admin Production、开放注册、公众大规模发布、社交/评论/推荐/排名、图片正文、PITR 或无限规模承诺。
+- Admin Preview 独立跟踪且不阻挡 Reader-only Beta；Author 工程基础不等于 Author Production Beta 已发布。
+- 下一阶段：V1.0.1 Password Visibility（登录/注册密码显示隐藏按钮与最小回归）；随后为首批 3–5 名受控 Reader Beta、P0/P1 收集、Header/Global Shell、About、Author 章节与发布体验、11 位随机邀请码、Author Production Smoke、Site Settings/Admin。
+- 以下记录为按日期保留的历史时间线；其中 Pending、Blocked、Deployment Not Run 或 Deployment Authorized=NO 仅代表当时状态，已被本节 Final Closure 取代。
 
 - 2026-07-14：V1 GitHub Baseline secret audit 在未跟踪的 `docs/18_Design/UX-06D-STEP02_ACCEPTANCE.md` 第 86–87 行发现两条 localhost-only QA 密码。立即停止 commit / push / Vercel 流程，将明文替换为安全凭据命令说明并再次轮换 QA 凭据。确认该文件未跟踪，实际密码模式未进入 HEAD 或 Git 历史；处置后 OpenAI / GitHub / Vercel / Supabase / JWT / private key / database URL / service role / Auth secret / QA password 复扫无匹配。依据 Mission 强制暂停点，等待 Product Owner 确认后才能重新进入 Release Baseline 门禁。
 

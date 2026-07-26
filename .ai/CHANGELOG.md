@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-07-26 — V1 Reader-only Invitation Beta Final Release Closure
+
+- `Fandom Harbor V1 Reader-only Invitation Beta` 正式记录为 `RELEASED`；`Production Ready = YES FOR READER-ONLY INVITATION BETA`、`Production Deployment = COMPLETE`、`Production Smoke = PASS`、`Product Owner Final Acceptance = PASS`、`Final Release Closure = CLOSED`。
+- `PDR-01 = CLOSED`：Public Policy V1.0 已由 GitHub `main` 的获批提交部署到 Production，公开基础 Smoke 与 Product Owner Reader Smoke 均为 PASS，正式域名正常。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`：依据 2026-07-25 仓库外受控新鲜 Production 逻辑备份；本状态不是永久关闭，不代表 PITR 已启用或 Supabase 已存在平台物理备份。
+- Public Policy V1.0 批准日期为 2026-07-25，正式发布生效日期为 2026-07-26；唯一规范来源为 `docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`。
+- Legal Review=`NOT COMPLETED`；Owner Risk Acceptance=`ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA`，不构成法律批准、合规认证或无限制商业运营授权。
+- Product Owner Production Reader Smoke：登录、Archive、作品详情、章节阅读、刷新、Reader `/studio` → `/archive`、草稿与后台隔离、退出登录后权限恢复及 Console 均通过；未记录账号、密码、邀请码、Session、Cookie 或个人身份信息。
+- Release 范围仅含 Guest 公共发现、邀请制 Reader 注册/登录、已发布内容阅读、Reader 权限隔离、公开政策、18+ 提示、Footer、基础 SEO / Sitemap 与正式自定义域名；不含 Author Beta、Admin Production、开放注册、公众大规模发布、社交/评论/推荐/排名、图片正文、PITR 或法律审阅完成。
+- Admin Preview 问题继续独立跟踪，不阻挡 Reader-only Beta；Author Production Beta 仍需独立正式验收。
+- 下一阶段为 V1.0.1 Password Visibility 与最小回归验证；其后才是首批 3–5 名受控 Reader Beta、P0/P1 收集及后续体验和 Author/Admin 能力，不属于本次 V1 Release blocker。
+- 本 Closure 仅更新文档并创建本地 docs-only commit；未 Push、Deploy、Redeploy、Promote，未修改代码、Vercel、Supabase、数据库、Auth、RLS、RPC、DNS 或环境变量。
+
 ## 2026-07-26 — V1 Public Policy Documentation Conflict Reconciliation
 
 - 保留 `origin/main` 的全部既有 Changelog 历史，并将获批 Public Policy Release Candidate 状态语义合并到本地 Main Integration；本记录不代表已 push 或已部署 Production。
@@ -9,7 +22,6 @@
 - 当前 `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`；Public Policy Production Deployment 与正式域名 Policy Smoke 均为 `NOT RUN`。
 - 独立法律审阅为 `NOT COMPLETED`；Product Owner 仅接受有限、邀请制、Reader-only Beta 风险。Final Release Approval=`PENDING`，Production Deployment Authorized=`NO`。
 - Admin Preview 的独立平台阻塞不阻挡 Reader-only Beta；冻结的三个 Admin 工作区文件不进入 Public Policy Integration。
-
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 

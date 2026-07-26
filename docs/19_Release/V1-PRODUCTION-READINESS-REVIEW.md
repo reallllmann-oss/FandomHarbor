@@ -1,23 +1,26 @@
 # Fandom Harbor V1 Production Readiness Review
 
-状态：`PASS / READER-ONLY BETA READY WITH CONDITIONS / PUBLIC POLICY PRODUCTION DEPLOYMENT NOT RUN / DEPLOYMENT NOT AUTHORIZED`
+状态：`PASS / V1 READER-ONLY INVITATION BETA RELEASED / FINAL RELEASE CLOSURE CLOSED`
 日期：2026-07-26
 
-## 当前权威 Readiness 结论
+## 当前权威 Readiness 与 Release 结论
 
-- Reader-only Beta readiness：`PASS / READY WITH CONDITIONS`；邀请制与 active Membership 边界保持。
-- Public Policy Production readiness：工程、Owner Decision、RC Preview 与 Preview Smoke 均 PASS；正式 Production Deployment 与 Production Policy Smoke 为 `NOT RUN`。
-- Author Beta readiness：既有受控 Author 测试证据保持 PASS，不扩大当前有限 Reader-only Beta 授权。
-- Admin Preview：独立平台阻塞；不阻挡 Reader-only Beta，也不代表完整 Admin Production Ready。
-- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
+- Release Name=`Fandom Harbor V1 Reader-only Invitation Beta`；Release Status=`RELEASED`。
+- Production Ready=`YES FOR READER-ONLY INVITATION BETA`。
+- Production Deployment=`COMPLETE`；Production Smoke=`PASS`；Product Owner Final Acceptance=`PASS`；Final Release Closure=`CLOSED`。
+- `PDR-01 = CLOSED`。
 - `PDR-02 = CLOSED FOR CURRENT RELEASE`。
-- Legal Review=`NOT COMPLETED`；Final Release Approval=`PENDING`。
-- Production Deployment Authorized=`NO`。
-- 当前下一步仅为本地 Main Integration Owner Review，之后才可单独授权 Push。
+- Public Policy V1.0 已于 2026-07-26 正式发布生效；唯一规范来源为 [`V1-PUBLIC-POLICY-V1.0.md`](./V1-PUBLIC-POLICY-V1.0.md)。
+- 正式域名、公开基础 Smoke 与 Product Owner Reader Smoke 均 PASS；Production 必需的两个公开 Supabase 变量均已安全验证为 defined/string/nonEmpty=true，本文不记录实际值。
+- Legal Review=`NOT COMPLETED`；Owner Risk Acceptance=`ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA`。
+- Author Beta readiness：工程基础不等于 Author Production Beta 已发布；仍须独立正式验收。
+- Admin Preview：独立平台问题，不阻挡 Reader-only Beta，也不代表 Admin Production Ready。
+- 本 Release 不含开放注册、公众大规模发布、Author Beta、Admin Production、社交/评论/推荐/排名、图片正文、PITR、法律审阅完成或无限规模容量承诺。
+- 下一阶段为 V1.0.1 Password Visibility 与最小回归；后续受控 Reader cohort 与产品优化不是当前 V1 Release blocker。
 
 ## 历史 Production Readiness 记录
 
-以下 2026-07-25 及更早评审内容完整保留。其旧 PDR、政策来源、Custom Domain、Deployment 数量和授权结论均是历史快照，如与上方当前权威结论冲突，以上方结论为准。
+以下 2026-07-25 及更早评审内容完整保留。其旧 PDR、政策来源、Custom Domain、Deployment 数量、Pending、Blocked、Not Run 和授权结论均为历史快照并已被上方 Final Closure 取代。
 
 日期：2026-07-25
 

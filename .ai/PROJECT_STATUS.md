@@ -1,31 +1,42 @@
 # Project Status
 
-## 当前权威状态（2026-07-26）
+## 当前权威状态（2026-07-26 Final Release Closure）
 
-以下快照是当前 Release 状态；本文后续较早的“当前阶段 / 当前状态”段落按其原日期保留为历史记录，如有冲突以本节为准。
+以下是当前 Release 权威状态；本文后续较早的“当前阶段 / 当前状态”及 Pending、Blocked、Not Run、Authorized=NO 表述均按原日期保留为历史记录，并已被本节取代。
 
-- Production Web 正式域名：Product Owner 已确认当前正常。
-- Reader 基础链路：PASS；Guest 权限与 active Membership 产品行为已确认一致。
-- Public Policy Owner Decision：COMPLETE；唯一规范来源为 `V1-PUBLIC-POLICY-V1.0.md`。
-- Public Policy Preview：Ready；环境变量已修复；Product Owner Smoke 全部 PASS。
-- Public Policy Production Deployment：`NOT RUN`；正式域名 Policy Smoke：`NOT RUN`。
-- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
-- `PDR-02 = CLOSED FOR CURRENT RELEASE`。
-- Legal Review=`NOT COMPLETED`；Final Release Approval=`PENDING`。
-- Production Deployment Authorized=`NO`。
-- 下一步仅为新的 Main Integration commits 与文件范围 Owner Review；在独立授权前不得 Push main 或部署 Production。
-- Admin Preview 的独立阻塞不阻挡有限 Reader-only Beta；冻结 Admin 文件继续排除。
+| 项目                           | 当前状态                                         |
+| ------------------------------ | ------------------------------------------------ |
+| Release                        | Fandom Harbor V1 Reader-only Invitation Beta     |
+| Release Status                 | RELEASED                                         |
+| Production Ready               | YES FOR READER-ONLY INVITATION BETA              |
+| Production Deployment          | COMPLETE                                         |
+| Production Smoke               | PASS                                             |
+| Product Owner Final Acceptance | PASS                                             |
+| Final Release Closure          | CLOSED                                           |
+| PDR-01                         | CLOSED                                           |
+| PDR-02                         | CLOSED FOR CURRENT RELEASE                       |
+| Release Date                   | 2026-07-26                                       |
+| Legal Review                   | NOT COMPLETED                                    |
+| Owner Risk Acceptance          | ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA |
 
+- Public Policy V1.0 的唯一规范来源为 `docs/19_Release/V1-PUBLIC-POLICY-V1.0.md`；批准日期 2026-07-25，正式发布生效日期 2026-07-26。
+- Production Deployment `dpl_3dj8UwrQER7WukZYAk4rYmsbhwib` 为 `fandom-harbor-web` 的 GitHub `main` Production READY 部署，Commit=`14f9af1c0b4fc440daab26fba9f2eb513f56142f`。
+- 正式域名 `https://www.fandomharbor.com/` 正常，apex 308 跳转到 www；公开政策、注册提示、Footer、Sitemap、Guest 权限与 Product Owner Reader 链路 Smoke 全部 PASS。
+- `PDR-01 = CLOSED`。`PDR-02 = CLOSED FOR CURRENT RELEASE`，但不是永久关闭；PITR 未启用，不声称平台物理备份存在。
+- Legal Review 仍为 `NOT COMPLETED`；风险接受仅限有限、邀请制 Reader-only Beta。
+- Admin Preview 独立跟踪，不阻挡当前 Release；Author Production Beta 尚未完成独立正式验收。
+- 当前 Release 不含开放注册、公众大规模发布、Author Beta、Admin Production、社交/评论/推荐/排名、图片正文、PITR 或无限规模容量承诺。
+- 下一阶段为 V1.0.1 Password Visibility 与最小回归；其后才执行首批 3–5 名受控 Reader Beta 和后续体验/Author/Admin 工作，这些均不是当前 V1 Release blocker。
 
-## 当前阶段
+## 历史阶段（2026-07-14，Superseded）
 
 V1 Release Deployment — BLOCKED（Local gates PASS / Preview 未执行）
 
-## 当前状态
+## 历史状态（2026-07-14，Superseded）
 
 `部署前本地门禁通过；等待 Git baseline 与 Vercel 项目关联后继续 Preview`
 
-## 当前 Release Mission
+## 历史 Release Mission（2026-07-14，Superseded）
 
 - V1 Deployment Ready for Product Owner Review = NO；部署类型为 Local only。
 - Supabase linked remote Migration 14 / 14 一致；未执行任何远程写入。

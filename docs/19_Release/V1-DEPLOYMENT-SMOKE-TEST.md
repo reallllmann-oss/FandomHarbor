@@ -1,22 +1,61 @@
 # Fandom Harbor V1 Deployment Smoke Test
 
-状态：PUBLIC POLICY PREVIEW PASS / PRODUCTION POLICY SMOKE NOT RUN
+状态：`PRODUCTION SMOKE PASS / PRODUCT OWNER READER SMOKE PASS / V1 READER-ONLY BETA RELEASED`
 当前日期：2026-07-26
 
-## Public Policy Preview Smoke（Product Owner，2026-07-26）
+## 当前 Production Smoke 权威记录（2026-07-26）
+
+Release：`Fandom Harbor V1 Reader-only Invitation Beta`
+
+| 检查项                        | 结果 | 说明                                                  |
+| ----------------------------- | ---- | ----------------------------------------------------- |
+| Homepage                      | PASS | 正式 www 域名正常                                     |
+| Archive                       | PASS | Guest 可访问                                          |
+| 登录页                        | PASS | 正式页面正常                                          |
+| 注册页                        | PASS | 18+、仅限受邀用户、邀请码必填及三个政策链接存在       |
+| Privacy                       | PASS | HTTP 200                                              |
+| Terms                         | PASS | HTTP 200                                              |
+| Content Policy                | PASS | HTTP 200                                              |
+| `/legal`                      | PASS | 308 至 `/terms`                                       |
+| Footer 政策链接               | PASS | Privacy、Terms、Content Policy                        |
+| Sitemap                       | PASS | 包含三个政策 URL                                      |
+| Guest 权限                    | PASS | 公共页可访问；受保护正文和 Studio 不可进入            |
+| Middleware                    | PASS | 无 ZodError、无政策路由 404、无 500                   |
+| Apex Redirect                 | PASS | `fandomharbor.com` 308 至 `www.fandomharbor.com`      |
+| Production 必需环境变量布尔值 | PASS | 两项均 defined/string/nonEmpty=true；本文不记录实际值 |
+
+## Product Owner Production Reader Smoke（2026-07-26）
+
+- Reader 登录：PASS。
+- Archive：PASS。
+- 作品详情：PASS。
+- 章节阅读：PASS。
+- 页面刷新：PASS。
+- Reader `/studio` → `/archive`：PASS。
+- 草稿与后台不可见：PASS。
+- 退出登录后权限恢复：PASS。
+- Console 明显错误：无。
+- 本记录不包含 Reader 注册名、密码、邀请码、Session、Cookie 或个人身份信息。
+
+## Release Smoke 结论
+
+- Production Smoke=`PASS`。
+- Product Owner Final Acceptance=`PASS`。
+- `PDR-01 = CLOSED`。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`。
+- Final Release Closure=`CLOSED`。
+- Legal Review=`NOT COMPLETED`；Owner 风险接受仅限有限、邀请制 Reader-only Beta。
+- Admin Preview 独立问题不阻挡本 Release；Author Production Beta 不属于本次 Smoke 或 Release。
+
+## 历史 Public Policy Preview Smoke（2026-07-26，Superseded）
 
 - RC Preview Deployment：Ready；Preview 环境变量缺失已修复。
 - Homepage、Archive、登录、注册、Privacy、Terms、Content Policy、`/legal` 永久跳转、Footer、Guest、Reader 登录与阅读、Reader `/studio` → `/archive`、390px、Light / Dark：全部 PASS。
 - Console 明显错误：无；Product Owner 报告发现问题：无。
 - Runtime 日志复核：`GET /` 为 200，无 5xx、Supabase ZodError、变量 undefined 或政策页面路由 404；仅见非阻塞静态资源 404。
-- 该证据仅属于 Preview，不得替代 Production Policy Smoke。
+- 该证据属于 Preview 历史，不替代上方 Production Smoke。
 
-## Production Public Policy Smoke
-
-状态：`NOT RUN`。Public Policy 尚未部署到 Production；正式域名当前正常属于部署前基线，不得记作政策 Production Smoke PASS。
-
-以下 2026-07-14 Local / Online Smoke 内容按原样保留为历史基线；如与上方当前状态冲突，以上方两节为准。
-
+以下 2026-07-14 Local / Online Smoke 内容按原样保留为历史基线；其中 `ONLINE NOT RUN` 仅代表当时状态，已被上方 2026-07-26 Production Smoke PASS 取代。
 
 状态：LOCAL PASS / ONLINE NOT RUN
 日期：2026-07-14

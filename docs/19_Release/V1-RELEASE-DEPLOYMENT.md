@@ -1,23 +1,36 @@
 # Fandom Harbor V1 Release Deployment
 
-状态：LOCAL MAIN INTEGRATION REVIEW / PRODUCTION POLICY DEPLOYMENT NOT RUN
+状态：`PRODUCTION DEPLOYMENT COMPLETE / PRODUCTION SMOKE PASS / V1 READER-ONLY BETA RELEASED`
 当前日期：2026-07-26
-部署类型：本地 Public Policy Main Integration（未授权 Push / Production）
+部署类型：GitHub `main` 自动触发 Vercel Production
 
-## 当前 Public Policy Release 状态
+## 当前 Production Deployment 权威记录
 
-- 唯一当前政策规范来源：`V1-PUBLIC-POLICY-V1.0.md`；27 / 27 Owner Decisions 已完成。
-- RC Preview 已 Ready，环境变量缺失已修复，Product Owner Preview Smoke 全部 PASS。
-- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
-- `PDR-02 = CLOSED FOR CURRENT RELEASE`，依据 2026-07-25 新鲜仓库外逻辑备份证据。
-- Legal Review=`NOT COMPLETED`；Final Release Approval=`PENDING`。
-- Public Policy Production Deployment=`NOT RUN`；Production Policy Smoke=`NOT RUN`。
-- Production Deployment Authorized=`NO`；此前误触发的 Production redeploy 不是 Public Policy Release。
-- 正式域名当前由 Product Owner 确认为正常；当前本地 Integration 不修改 Production、Vercel、DNS、Supabase 或数据库。
-- 下一步仅为新的 Integration commit 与文件范围 Owner Review，之后才可另行决定是否授权 Push。
+| 项目        | 记录                                                             |
+| ----------- | ---------------------------------------------------------------- |
+| Deployment  | `dpl_3dj8UwrQER7WukZYAk4rYmsbhwib`                               |
+| Project     | `fandom-harbor-web`                                              |
+| Environment | `Production`                                                     |
+| Branch      | `main`                                                           |
+| Commit      | `14f9af1c0b4fc440daab26fba9f2eb513f56142f`                       |
+| Source      | `GitHub Push`                                                    |
+| Status      | `READY`                                                          |
+| Created     | `2026-07-26 17:45:00 +08:00`                                     |
+| Domain      | `https://www.fandomharbor.com/`                                  |
+| Apex        | `https://fandomharbor.com` 308 → `https://www.fandomharbor.com/` |
 
-以下 2026-07-14 Release Deployment 内容按原样保留为历史基线；其中旧的当前状态已经被本节覆盖。
+- Public Policy V1.0 Production Deployment=`COMPLETE`；Production Smoke=`PASS`；Product Owner Final Acceptance=`PASS`。
+- `PDR-01 = CLOSED`；`PDR-02 = CLOSED FOR CURRENT RELEASE`；Final Release Closure=`CLOSED`。
+- Production 必需变量 `NEXT_PUBLIC_SUPABASE_URL` 与 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 均已安全验证为 defined/string/nonEmpty=true；本文不记录或输出真实值。
+- Homepage、Archive、Auth、Privacy、Terms、Content Policy、`/legal`、Footer、Sitemap、Guest 权限及无 Middleware ZodError 均 PASS。
+- Product Owner Reader 登录、Archive、作品详情、章节阅读、刷新、Reader `/studio` → `/archive`、草稿/后台隔离、退出登录权限恢复及 Console 均 PASS。
+- 唯一政策规范来源为 `V1-PUBLIC-POLICY-V1.0.md`；批准日期 2026-07-25，正式发布生效日期 2026-07-26。
+- Legal Review=`NOT COMPLETED`；Owner Risk Acceptance=`ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA`。
+- Admin Preview 独立跟踪且不阻挡 Reader-only Beta；Author Production Beta 不属于本次 Release。
+- 本次 Release 仅覆盖有限、邀请制 Reader Beta，不代表开放注册、公众大规模发布、全角色发布、法律审阅完成或无限制商业运营。
+- 本 Final Closure 只创建本地 docs-only commit，不 Push，也不触发新的 Preview 或 Production Deployment。
 
+以下 2026-07-14 Release Deployment 内容按原样保留为历史基线；其中 Blocked、Not Run、Pending、Local only 与旧授权状态已被上方 2026-07-26 Production Deployment 权威记录取代。
 
 状态：BLOCKED — 等待 Product Owner 处理发布门禁
 日期：2026-07-14

@@ -1,22 +1,26 @@
 # Fandom Harbor V1 Production Preparation
 
-状态：`PREPARATION COMPLETE / PDR-01 OWNER DECISION COMPLETE — PRODUCTION DEPLOYMENT AND SMOKE PENDING / PDR-02 CLOSED FOR CURRENT RELEASE / DEPLOYMENT NOT AUTHORIZED`
+状态：`RELEASED / PDR-01 CLOSED / PDR-02 CLOSED FOR CURRENT RELEASE / FINAL RELEASE CLOSURE CLOSED`
 日期：2026-07-26
-Mission：V1 Public Policy Documentation Conflict Reconciliation
+Mission：Fandom Harbor V1 Reader-only Beta Final Release Closure
 
-## 当前权威状态
+## 当前权威状态（2026-07-26 Final Closure）
 
-- Public Policy 工程、DECISION-01–27、唯一规范源 `V1-PUBLIC-POLICY-V1.0.md`、RC Preview 与 Product Owner Preview Smoke 均已完成。
-- Public Policy Production Deployment 与正式域名 Policy Smoke 均为 `NOT RUN`；Final Release Approval=`PENDING`。
-- `PDR-01 = OWNER DECISION COMPLETE / PRODUCTION DEPLOYMENT AND SMOKE PENDING`。
-- `PDR-02 = CLOSED FOR CURRENT RELEASE`；关闭依据是 2026-07-25 新鲜仓库外逻辑备份及完整性证据，恢复演练仍为 `NOT RUN`。
-- Legal Review=`NOT COMPLETED`；Product Owner 仅接受有限、邀请制、Reader-only Beta 风险。
-- Production Deployment Authorized=`NO`。当前只允许本地 Main Integration Owner Review，不允许 Push、Merge 或 Production Deployment。
-- Admin Preview 独立阻塞不阻挡 Reader-only Beta；冻结 Admin 文件继续排除。
+- Release Name=`Fandom Harbor V1 Reader-only Invitation Beta`。
+- Release Status=`RELEASED`；Production Ready=`YES FOR READER-ONLY INVITATION BETA`。
+- Production Deployment=`COMPLETE`；Production Smoke=`PASS`；Product Owner Final Acceptance=`PASS`；Final Release Closure=`CLOSED`。
+- `PDR-01 = CLOSED`：Owner 决策、Public Policy V1.0 Production 部署、公开基础 Smoke、Product Owner Reader Smoke、正式域名、政策入口和 Reader 阅读/权限链路均已通过。
+- `PDR-02 = CLOSED FOR CURRENT RELEASE`：依据 2026-07-25 仓库外受控新鲜 Production 逻辑备份；当前 Release 不要求 PITR，恢复流程与责任已记录。该状态不是永久关闭，不声称 PITR 已启用或 Supabase 有平台物理备份。
+- Public Policy V1.0 唯一规范源为 `V1-PUBLIC-POLICY-V1.0.md`；批准日期 2026-07-25，正式发布生效日期 2026-07-26。
+- Legal Review=`NOT COMPLETED`；Owner Risk Acceptance=`ACCEPTED FOR LIMITED INVITATION-ONLY READER BETA`。
+- Production Deployment Authorization 已由获批的 GitHub `main` 部署完成并消费；本 docs-only Closure 不授权任何新 Push、Deploy、Redeploy 或 Promote。
+- Admin Preview 独立跟踪，不阻挡 Reader-only Beta；Author Production Beta 仍须独立正式验收。
+- 当前 Release 仅含 Guest 公共发现、邀请制 Reader、已发布内容阅读、Reader 隔离、公开政策、18+ 注册提示、Footer、基础 SEO/Sitemap 与正式自定义域名；不含开放注册、公众大规模发布、Author Beta、Admin Production、社交/评论/推荐/排名、图片正文、PITR、法律审阅完成或无限规模承诺。
+- 下一阶段：V1.0.1 Password Visibility 与最小回归；其后为首批 3–5 名受控 Reader Beta、P0/P1 收集及后续体验、Author 与 Admin 工作，均不是当前 V1 Release blocker。
 
 ## 历史 Production Preparation 记录
 
-以下 2026-07-25 及更早记录完整保留。其旧 PDR-01、政策源、部署授权、域名或 Production 数量表述均为历史快照，如与上方当前权威状态冲突，以上方状态为准。
+以下 2026-07-25 及更早记录完整保留。其旧 PDR-01、政策源、部署授权、域名、Production 数量、Pending、Blocked 或 Not Run 表述均为历史快照并已被上方 Final Closure 取代。
 
 Mission：V1 Production Preparation
 
