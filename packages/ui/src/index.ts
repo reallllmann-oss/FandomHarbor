@@ -1,5 +1,9 @@
 export { Button, type ButtonProps } from "./components/button";
 export {
+  PasswordInput,
+  type PasswordInputProps,
+} from "./components/password-input";
+export {
   AdminLayout,
   DocsLayout,
   ReaderLayout,

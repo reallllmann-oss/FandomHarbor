@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MIN_PASSWORD_LENGTH } from "@fandom-harbor/auth";
+import { PasswordInput } from "@fandom-harbor/ui";
 
 import { signIn } from "../actions";
 
@@ -40,17 +41,21 @@ export default async function SignInPage({
             type="text"
           />
         </label>
-        <label className="block text-sm font-medium">
-          密码
-          <input
+        <div>
+          <label
+            className="block text-sm font-medium"
+            htmlFor="sign-in-password"
+          >
+            密码
+          </label>
+          <PasswordInput
             autoComplete="current-password"
-            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+            id="sign-in-password"
             minLength={MIN_PASSWORD_LENGTH}
             name="password"
             required
-            type="password"
           />
-        </label>
+        </div>
         <button
           className="min-h-11 w-full rounded-control bg-primary px-4 text-primary-foreground"
           type="submit"

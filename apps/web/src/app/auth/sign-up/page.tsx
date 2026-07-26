@@ -3,6 +3,7 @@ import {
   MAX_REGISTRATION_NAME_LENGTH,
   MIN_PASSWORD_LENGTH,
 } from "@fandom-harbor/auth";
+import { PasswordInput } from "@fandom-harbor/ui";
 
 import { signUp } from "../actions";
 
@@ -79,17 +80,21 @@ export default async function SignUpPage({
             type="text"
           />
         </label>
-        <label className="block text-sm font-medium">
-          密码（至少 {MIN_PASSWORD_LENGTH} 位）
-          <input
+        <div>
+          <label
+            className="block text-sm font-medium"
+            htmlFor="sign-up-password"
+          >
+            密码（至少 {MIN_PASSWORD_LENGTH} 位）
+          </label>
+          <PasswordInput
             autoComplete="new-password"
-            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+            id="sign-up-password"
             minLength={MIN_PASSWORD_LENGTH}
             name="password"
             required
-            type="password"
           />
-        </label>
+        </div>
         <label className="block text-sm font-medium">
           邀请码
           <input
