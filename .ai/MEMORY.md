@@ -1,15 +1,18 @@
 # Project Memory
 
-## V1.0.2 Invitation Code Visibility 本地就绪状态（2026-07-27）
+## V1.0.2 Invitation Visibility and Standardization 本地就绪状态（2026-07-27）
 
-- `/auth/sign-up` 已在独立 V1.0.2 工作树完成邀请码显示 / 隐藏控件；默认隐藏，并与注册密码分别维护可见状态，任一切换都不改变另一字段或已输入值。
-- 复用共享 `PasswordInput`，仅新增可选显示 / 隐藏标签；既有密码默认标签、登录页行为、Lucide `Eye` / `EyeOff`、原生 `button type="button"`、动态 `aria-label`、`aria-pressed`、44×44 目标与焦点样式保持兼容。
-- 邀请码 `name="invitationCode"`、required、`autocomplete="off"`、注册 Server Action、trim / 长度校验、哈希 / Auth 路径、18+ 与三个政策链接均未改变。
-- 工程验证：frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests、Web / Admin / Docs production builds 全部 PASS；dependency 与 lockfile 无变化。
-- 本地浏览器验证：1280 / 390、Light / Dark、默认隐藏、独立显示 / 隐藏、值保持、邀请码错误状态、44px、48px 输入预留、零横向溢出与 console errors = 0 全部 PASS；登录页密码控件无回退。
-- 自动化环境无法真实派发 Tab / Enter / Space，不能触发真实密码管理器自动填充或设置真实 200% 页面缩放；原生按钮语义、组件测试和 640px 等效窄宽布局已通过，这三项仍需 Product Owner Preview 手动复核。
-- 当前状态：`LOCAL DEVELOPMENT COMPLETE / READY FOR PRODUCT OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。
-- 未 Push、Deploy、Redeploy 或 Promote；未修改邀请码生成 / 验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+- V1.0.2 完整本地范围为邀请码显示 / 隐藏与新邀请码 11 位标准化。注册邀请码默认隐藏，与注册密码分别管理状态；动态 `aria-label` / `aria-pressed`、原生 `button type="button"`、44×44、48px 预留、值保持及登录密码回归均通过。
+- 新邀请码共享合同为 `^[A-Za-z0-9]{11}$`。应用使用 Web Crypto，Fixture 使用 Node Crypto；不使用 `Math.random`、时间戳、顺序值或 UUID 截断。
+- Author 页面是当前唯一 UI 创建入口，调用共享 identity-access 服务；数据库 `code_hash UNIQUE` 负责原子冲突判断，服务最大重试 5 次。Admin / Super Admin 具备 RPC 权限，但当前没有独立创建页面或流程。
+- 注册和兑换继续对 trim 后的完整、区分大小写输入做 SHA-256 并查询数据库，不使用 11 位正则提前拒绝；现有 43 / 64 位旧格式及其他可能有效旧记录继续按数据库状态、过期和使用次数判断。
+- 新 Migration 仅为 `create_invitation` 增加 `ON CONFLICT (code_hash) DO NOTHING` 和空结果；没有修改邀请码表结构、RLS、角色权限、历史邀请码、创建人、状态、次数、原子注册消费或审计。
+- 本地验证：15 / 15 Migrations 重放、6 套事务式 SQL、Fixture reset、QA credentials check、11 位新邀请码注册、未知邀请码失败、43 位合成旧邀请码注册、Author 实际创建、状态与次数合同均 PASS。
+- 工程验证：frozen install、lint、typecheck、185 / 185 tests、Web / Admin / Docs production builds 全部 PASS；dependency、package 和 lockfile 无变化。
+- 浏览器验证：1280 / 390、Light / Dark、显示独立状态、登录回归、错误态、44px、零横向溢出、640px 等效窄宽与 console errors = 0 均 PASS；Tab / Enter / Space、真实 200% Zoom 与密码管理器仍需 Product Owner 手动复核。
+- 浏览器 QA 意外显示的本地合成值已通过删除单个 Git-ignored 凭据文件、本地数据库 reset 与 Fixture 轮换失效；没有 Production 或远程数据访问。
+- 当前状态：`LOCAL IMPLEMENTATION COMPLETE / READY FOR COMPLETE V1.0.2 OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。
+- 未 Push、Deploy、Redeploy、Promote 或执行远程 Supabase Migration / 数据库写入。
 
 ## V1.0.1 Password Visibility 本地就绪状态（2026-07-26）
 

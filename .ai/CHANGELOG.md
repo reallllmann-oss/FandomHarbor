@@ -1,15 +1,18 @@
 # Changelog
 
-## 2026-07-27 — V1.0.2 Invitation Code Visibility Local Development
+## 2026-07-27 — V1.0.2 Invitation Visibility and 11-Character Standardization
 
-- 为 `/auth/sign-up` 的邀请码字段复用共享 `PasswordInput`：默认隐藏，可通过独立的“显示邀请码 / 隐藏邀请码”控件切换；注册密码与邀请码的可见状态互不影响，输入值保持不变。
-- 共享组件新增可选显示 / 隐藏标签，既有密码标签与 `/auth/sign-in` 行为保持兼容；邀请码继续使用既有 `name`、required 与 `autocomplete="off"` 合同。
-- 切换按钮继续为原生 `button type="button"`，提供动态中文 `aria-label`、`aria-pressed`、44×44 目标、`focus-visible` 状态和 48px 输入右侧预留，不会提交注册表单。
-- 注册 Server Action、邀请码 trim / 长度校验与哈希 / Auth 路径均未改变；18+ 提示及 Terms、Privacy、Content Policy 链接保持不变。
-- 通过 frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests，以及 Web / Admin / Docs 三个 production builds。
-- 本地浏览器复验通过 1280 / 390、Light / Dark、默认隐藏、独立显示 / 隐藏、值保持、邀请码错误状态、44px、零横向溢出及 console errors = 0；640px 等效窄宽布局无溢出。
-- 当前浏览器自动化无法真实派发 Tab / Enter / Space，也不能调用浏览器密码管理器或设置真实 200% 页面缩放，因此这三项保留为 Product Owner Preview 手动复核；原生按钮语义、组件测试和响应式等效宽度合同均已通过。
-- 本状态仅表示本地开发与验证完成，`V1.0.2 Product Owner Preview Acceptance = PENDING`；未 Push、Deploy、Promote，未修改邀请码生成、邀请码验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+- V1.0.2 本地范围现同时包含 Invitation Code Visibility 与 11-Character Invitation Code Standardization：注册邀请码默认隐藏，可独立于注册密码显示 / 恢复隐藏，值保持且不提交表单。
+- 新邀请码统一使用共享合同 `^[A-Za-z0-9]{11}$`；应用创建入口由 Web Crypto 安全生成，Fixture 由 Node Crypto 安全生成，均不使用 `Math.random`、时间戳、顺序值或 UUID 截断。
+- Author 创建入口继续经过共享 identity-access 服务；数据库 `code_hash` 唯一约束提供原子冲突判断，服务最多重试 5 次，超过上限返回受控错误。当前不存在独立 Admin / Super Admin 邀请码创建入口。
+- 注册与兑换仅把最小输入边界从旧生成器的 32 位放宽到 11 位，继续对完整、区分大小写的输入做 SHA-256 后查询数据库；未增加 11 位前置正则或 `maxLength`，因此有效旧长格式邀请码继续遵守原状态、过期和使用次数规则。
+- 新 Migration 只让 `create_invitation` 在哈希唯一冲突时返回空结果以触发重试；未改写、删除、撤销或截断旧邀请码，未改变创建人、权限、最大使用次数、当前使用次数、RLS、原子注册消费或审计逻辑。
+- 本地 Supabase 从空库应用 15 / 15 Migrations；6 套事务式 SQL 以 `ON_ERROR_STOP` 通过，Fixture reset、11 位生成、Auth 触发注册、旧格式兼容、未知 / 撤销 / 过期 / 耗尽分类及 Author 创建均通过。
+- 通过 frozen install、lint、typecheck、185 / 185 tests，以及 Web / Admin / Docs 三个 production builds；无新增依赖、package 或 lockfile 变化。
+- 本地浏览器通过真实 11 位邀请码注册、未知邀请码失败、43 位合成旧邀请码注册、Author 新建 11 位邀请码、登录和注册显示回归、1280 / 390、Light / Dark、44px、零横向溢出及 console errors = 0；640px 等效窄宽布局无溢出。
+- 浏览器自动化仍无法真实派发 Tab / Enter / Space、调用密码管理器或设置真实 200% 页面缩放，这些项目保留为 Product Owner 完整 Preview 手动复核。
+- 浏览器 QA 曾把本地合成测试值带入工具输出；已立即删除单个 Git-ignored 凭据文件、重置仅本地数据库并重建 Fixture，使相关值和临时账号失效。未涉及 Production、远程 Supabase 或仓库 Secret。
+- 当前状态为 `LOCAL IMPLEMENTATION COMPLETE / READY FOR COMPLETE V1.0.2 OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。未 Push、Deploy、Promote 或执行远程 Supabase / 数据库变更。
 
 ## 2026-07-26 — V1.0.1 Password Visibility Local Development
 

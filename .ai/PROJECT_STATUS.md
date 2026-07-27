@@ -1,25 +1,29 @@
 # Project Status
 
-## V1.0.2 Invitation Code Visibility 当前状态（2026-07-27，Local Only）
+## V1.0.2 Invitation Visibility and Standardization 当前状态（2026-07-27，Local Only）
 
 | 项目                             | 当前状态                                       |
 | -------------------------------- | ---------------------------------------------- |
-| Development                      | COMPLETE                                       |
+| Visibility Development           | COMPLETE                                       |
+| 11-Character Standardization     | COMPLETE                                       |
 | Automated / Local Validation     | PASS                                           |
+| Local Database / Fixture         | PASS                                           |
 | Owner Manual Preview Checks      | REQUIRED — Tab / Enter / Space、200%、自动填充 |
 | Product Owner Preview Acceptance | PENDING                                        |
 | Push                             | NOT RUN                                        |
 | Preview / Production Deployment  | NOT RUN                                        |
-| External / Backend Change        | NONE                                           |
+| Remote Supabase / Database       | UNCHANGED                                      |
 
-- `/auth/sign-up` 邀请码已复用共享 `PasswordInput`，默认隐藏，可独立显示 / 隐藏；注册密码与邀请码互不改变可见状态，切换保持输入值且不提交表单。
-- 控件使用自定义“显示邀请码 / 隐藏邀请码”动态 `aria-label`、`aria-pressed`、原生 `button type="button"`、44×44 目标、48px 输入预留与既有 Light / Dark / `focus-visible` 样式；既有密码默认标签和登录页行为无回退。
-- 邀请码 `name`、required、`autocomplete="off"`、注册 Server Action、trim / 长度校验、邀请码哈希 / Auth 路径、18+ 与 Terms / Privacy / Content Policy 合同保持不变。
-- frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests，以及 Web / Admin / Docs production builds 全部 PASS。
-- 本地浏览器 1280 / 390、Light / Dark、邀请码错误状态、默认隐藏、独立显示 / 隐藏、值保持、44px、零横向溢出、640px 等效窄宽与 console errors = 0 全部 PASS；登录页回归通过。
-- 自动化浏览器不能真实派发 Tab / Enter / Space、调用浏览器密码管理器或设置真实 200% 页面缩放；以上三项为 Owner Manual Preview Required，不记录为自动 PASS。
-- `Ready for Product Owner Preview = YES WITH MANUAL CHECKS`；不得将此解释为 Product Owner 已验收、V1.0.2 已发布或已部署。
-- 未 Push、Deploy、Redeploy、Promote；未修改邀请码生成 / 验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+- `/auth/sign-up` 邀请码默认隐藏，可独立于注册密码显示 / 隐藏；动态 `aria-label`、`aria-pressed`、`type="button"`、44×44、48px 输入预留、值保持、required、`autocomplete="off"` 及登录密码行为均无回退。
+- 所有新的应用邀请码固定 11 位且仅含 A–Z、a–z、0–9；Author 当前唯一 UI 创建入口使用 Web Crypto 共享服务，Fixture 使用 Node Crypto 并读取同一格式合同。
+- 数据库 `code_hash UNIQUE` 原子判断冲突，服务最多重试 5 次；超过上限返回受控错误。Admin / Super Admin 当前没有独立邀请码创建入口。
+- 注册和兑换没有 11 位前置正则或 `maxLength`；完整、区分大小写的输入在服务端哈希后查询数据库，因此有效旧长格式邀请码继续按既有 revoked / expiry / max_uses / use_count 规则处理。
+- 新 Migration 未改写任何邀请码数据、权限、RLS、创建人、状态或次数；原子注册消费与审计保持不变。
+- 本地 15 / 15 Migrations、6 套 SQL、Fixture reset、QA credentials、11 位新邀请码注册、未知邀请码失败、旧格式兼容、Author 创建、lint、typecheck、185 / 185 tests 和 Web / Admin / Docs builds 全部 PASS。
+- 浏览器 1280 / 390、Light / Dark、独立显示、登录回归、错误态、44px、零横向溢出、640px 等效窄宽及 console errors = 0 均 PASS；Tab / Enter / Space、真实 200% Zoom 与密码管理器为 Owner Manual Preview Required。
+- 本地合成 QA 值意外进入浏览器工具输出后，已删除单个 Git-ignored 凭据文件、重置仅本地数据库并轮换 Fixture；相关值与临时账号已失效，远程环境未受影响。
+- `Ready for Complete V1.0.2 Product Owner Preview = YES WITH MANUAL CHECKS`；不得解释为已验收、已发布或已部署。
+- 未 Push、Deploy、Redeploy、Promote 或执行远程 Supabase Migration / 数据库写入；无 dependency、package 或 lockfile 变化。
 
 ## V1.0.1 Password Visibility 当前状态（2026-07-26，Local Only）
 
