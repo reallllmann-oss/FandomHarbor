@@ -9,10 +9,18 @@ export {
 } from "./object-storage";
 export {
   createIdentityAccessService,
+  INVITATION_CODE_CREATE_MAX_ATTEMPTS,
+  InvitationCodeGenerationError,
   invitationSecretHash,
   type CreatedInvitation,
   type IdentityAccessStore,
 } from "./identity-access";
+export {
+  generateInvitationCode,
+  INVITATION_CODE_LENGTH,
+  INVITATION_CODE_PATTERN,
+  isStandardInvitationCode,
+} from "./invitation-code";
 export {
   ContentAuthorizationError,
   createContentService,

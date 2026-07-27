@@ -29,7 +29,7 @@ export function createSupabaseIdentityAccessStore(
 
   return {
     createInvitation(input) {
-      return rpc<string>("create_invitation", {
+      return rpc<string | null>("create_invitation", {
         p_code_hash: input.codeHash,
         p_expires_at: input.expiresAt.toISOString(),
         p_max_uses: input.maxUses,

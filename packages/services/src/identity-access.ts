@@ -1,11 +1,26 @@
 import type { ElevatedRole, MembershipState } from "@fandom-harbor/auth";
 
+import {
+  generateInvitationCode,
+  INVITATION_CODE_LENGTH,
+  isStandardInvitationCode,
+} from "./invitation-code";
+
+export const INVITATION_CODE_CREATE_MAX_ATTEMPTS = 5;
+
+export class InvitationCodeGenerationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvitationCodeGenerationError";
+  }
+}
+
 export interface IdentityAccessStore {
   createInvitation(input: {
     codeHash: string;
     expiresAt: Date;
     maxUses: number;
-  }): Promise<string>;
+  }): Promise<string | null>;
   grantRole(input: {
     reason: string;
     role: ElevatedRole;
@@ -33,20 +48,9 @@ export interface CreatedInvitation {
   secret: string;
 }
 
-function invitationSecret(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(32));
-  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join(
-    "",
-  );
-  return btoa(binary)
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/=+$/, "");
-}
-
 export async function invitationSecretHash(secret: string): Promise<string> {
   const normalized = secret.trim();
-  if (normalized.length < 32 || normalized.length > 256) {
+  if (normalized.length < INVITATION_CODE_LENGTH || normalized.length > 256) {
     throw new Error("Invalid invitation secret");
   }
 
@@ -60,7 +64,10 @@ export async function invitationSecretHash(secret: string): Promise<string> {
     .join("");
 }
 
-export function createIdentityAccessService(store: IdentityAccessStore) {
+export function createIdentityAccessService(
+  store: IdentityAccessStore,
+  options: { generateInvitationCode?: () => string } = {},
+) {
   return {
     async createInvitation(input: {
       expiresAt: Date;
@@ -73,14 +80,33 @@ export function createIdentityAccessService(store: IdentityAccessStore) {
         throw new Error("Invitation expiry must be in the future");
       }
 
-      const secret = invitationSecret();
-      const id = await store.createInvitation({
-        codeHash: await invitationSecretHash(secret),
-        expiresAt: input.expiresAt,
-        maxUses: input.maxUses,
-      });
+      const codeGenerator =
+        options.generateInvitationCode ?? generateInvitationCode;
 
-      return { id, secret };
+      for (
+        let attempt = 0;
+        attempt < INVITATION_CODE_CREATE_MAX_ATTEMPTS;
+        attempt += 1
+      ) {
+        const secret = codeGenerator();
+        if (!isStandardInvitationCode(secret)) {
+          throw new InvitationCodeGenerationError(
+            "Invitation code generator returned an invalid result",
+          );
+        }
+
+        const id = await store.createInvitation({
+          codeHash: await invitationSecretHash(secret),
+          expiresAt: input.expiresAt,
+          maxUses: input.maxUses,
+        });
+
+        if (id) return { id, secret };
+      }
+
+      throw new InvitationCodeGenerationError(
+        "Unable to generate a unique invitation code",
+      );
     },
 
     async redeemInvitation(secret: string): Promise<string> {

@@ -24,7 +24,7 @@ const identity = {
 
 function createCredentialsFormData(
   password = "12345678",
-  invitationCode = "a".repeat(32),
+  invitationCode = "AbC123xYz90",
 ) {
   const formData = new FormData();
   formData.set("registrationName", "HarborReader");
@@ -68,6 +68,32 @@ describe("web auth actions", () => {
       registrationName: "HarborReader",
     });
     expect(signOut).toHaveBeenCalledOnce();
+  });
+
+  it("keeps valid legacy invitation lengths eligible for database validation", async () => {
+    const signUpWithPassword = vi.fn(async () => ({
+      identity,
+      session: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      auth: {
+        signUpWithPassword,
+      },
+    } as never);
+
+    await expect(
+      signUp(
+        createCredentialsFormData(
+          "12345678",
+          "LegacyInvitationCodeThatRemainsValid123",
+        ),
+      ),
+    ).rejects.toThrow("REDIRECT:/auth/sign-in?status=registered");
+    expect(signUpWithPassword).toHaveBeenCalledWith({
+      invitationCodeHash: expect.stringMatching(/^[0-9a-f]{64}$/),
+      password: "12345678",
+      registrationName: "HarborReader",
+    });
   });
 
   it("requires a registration name and invitation code", async () => {

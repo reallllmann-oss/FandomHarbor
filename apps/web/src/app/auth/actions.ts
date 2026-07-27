@@ -8,7 +8,10 @@ import {
   MIN_PASSWORD_LENGTH,
   normalizeRegistrationName,
 } from "@fandom-harbor/auth";
-import { invitationSecretHash } from "@fandom-harbor/services";
+import {
+  invitationSecretHash,
+  INVITATION_CODE_LENGTH,
+} from "@fandom-harbor/services";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 
@@ -23,7 +26,7 @@ const credentialsSchema = z.object({
 });
 
 const registrationSchema = credentialsSchema.extend({
-  invitationCode: z.string().trim().min(32).max(256),
+  invitationCode: z.string().trim().min(INVITATION_CODE_LENGTH).max(256),
 });
 
 export async function signIn(formData: FormData) {
@@ -126,7 +129,11 @@ export async function signOut() {
 }
 
 export async function redeemInvitation(formData: FormData) {
-  const secret = z.string().min(32).max(256).safeParse(formData.get("invite"));
+  const secret = z
+    .string()
+    .min(INVITATION_CODE_LENGTH)
+    .max(256)
+    .safeParse(formData.get("invite"));
   if (!secret.success) redirect("/access?error=invalid");
 
   const { auth, identityAccess } = await createWebIdentityAccess();

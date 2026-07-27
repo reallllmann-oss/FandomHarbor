@@ -167,6 +167,26 @@ select public.create_invitation(
   statement_timestamp() + interval '1 day'
 );
 
+do $$
+begin
+  if public.create_invitation(
+    repeat('a', 64),
+    1,
+    statement_timestamp() + interval '1 day'
+  ) is not null then
+    raise exception 'duplicate invitation hash did not return a collision';
+  end if;
+
+  if (
+    select count(*)
+    from public.invitations
+    where code_hash = repeat('a', 64)
+  ) <> 1 then
+    raise exception 'duplicate invitation hash changed stored invitations';
+  end if;
+end;
+$$;
+
 reset role;
 
 set local role authenticated;

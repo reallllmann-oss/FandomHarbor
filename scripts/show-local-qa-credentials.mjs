@@ -2,9 +2,15 @@ import { readFile, stat } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import invitationCodeContract from "../packages/services/src/invitation-code-contract.json" with { type: "json" };
+
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const credentialPath = resolve(projectRoot, ".local/qa-fixture.json");
 const checkOnly = process.argv.includes("--check");
+
+function isStandardInvitationCode(value) {
+  return new RegExp(invitationCodeContract.pattern).test(value);
+}
 
 function isCredentialRecord(value) {
   return (
@@ -14,7 +20,8 @@ function isCredentialRecord(value) {
     typeof value.author?.slug === "string" &&
     typeof value.reader?.registrationName === "string" &&
     typeof value.reader?.password === "string" &&
-    typeof value.invitationCode === "string"
+    typeof value.invitationCode === "string" &&
+    isStandardInvitationCode(value.invitationCode)
   );
 }
 

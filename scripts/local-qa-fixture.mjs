@@ -9,6 +9,7 @@ import {
   readingFixtureWorkIds,
   readingFixtureWorks,
 } from "./qa-fixture-library.mjs";
+import invitationCodeContract from "../packages/services/src/invitation-code-contract.json" with { type: "json" };
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const credentialPath = resolve(projectRoot, ".local/qa-fixture.json");
@@ -54,7 +55,22 @@ function generatedPassword() {
   return `Qa1!${randomBytes(18).toString("base64url")}`;
 }
 
+function generatedInvitationCode() {
+  return Array.from(
+    randomBytes(invitationCodeContract.length),
+    (value) =>
+      invitationCodeContract.alphabet[
+        value % invitationCodeContract.alphabet.length
+      ],
+  ).join("");
+}
+
+function isStandardInvitationCode(value) {
+  return new RegExp(invitationCodeContract.pattern).test(value);
+}
+
 async function loadCredentials() {
+  let storedCredentials;
   try {
     const stored = JSON.parse(await readFile(credentialPath, "utf8"));
     if (
@@ -62,26 +78,34 @@ async function loadCredentials() {
       typeof stored.reader?.password === "string" &&
       typeof stored.invitationCode === "string"
     ) {
-      return stored;
+      if (isStandardInvitationCode(stored.invitationCode)) return stored;
+      storedCredentials = stored;
     }
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
 
-  const credentials = {
-    generatedAt: new Date().toISOString(),
-    environment: "local-only",
-    author: {
-      registrationName: identities.author.registrationName,
-      password: generatedPassword(),
-      slug: authorSlug,
-    },
-    reader: {
-      registrationName: identities.reader.registrationName,
-      password: generatedPassword(),
-    },
-    invitationCode: randomBytes(32).toString("hex"),
-  };
+  const credentials = storedCredentials
+    ? {
+        ...storedCredentials,
+        generatedAt: new Date().toISOString(),
+        environment: "local-only",
+        invitationCode: generatedInvitationCode(),
+      }
+    : {
+        generatedAt: new Date().toISOString(),
+        environment: "local-only",
+        author: {
+          registrationName: identities.author.registrationName,
+          password: generatedPassword(),
+          slug: authorSlug,
+        },
+        reader: {
+          registrationName: identities.reader.registrationName,
+          password: generatedPassword(),
+        },
+        invitationCode: generatedInvitationCode(),
+      };
 
   await mkdir(dirname(credentialPath), { recursive: true });
   await writeFile(credentialPath, `${JSON.stringify(credentials, null, 2)}\n`, {

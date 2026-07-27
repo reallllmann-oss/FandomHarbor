@@ -117,6 +117,21 @@ describe("Phase 1C migration contract", () => {
     expect(sql).toContain("set search_path = ''");
     expect(sql).toContain("to anon, authenticated");
   });
+
+  it("returns a nullable collision result without changing invitation state", async () => {
+    const sql = await migration(
+      "20260727150707_standardize_invitation_code_collision_handling.sql",
+    );
+
+    expect(sql).toContain("function public.create_invitation");
+    expect(sql).toContain("on conflict (code_hash) do nothing");
+    expect(sql).toContain("if v_invitation_id is null then");
+    expect(sql).toContain("return null;");
+    expect(sql).toContain("security definer");
+    expect(sql).toContain("set search_path = ''");
+    expect(sql).not.toContain("update public.invitations");
+    expect(sql).not.toContain("delete from public.invitations");
+  });
 });
 
 describe("Mission 3B social relationship migration contract", () => {
