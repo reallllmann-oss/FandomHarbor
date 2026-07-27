@@ -1,5 +1,26 @@
 # Project Status
 
+## V1.0.2 Invitation Code Visibility 当前状态（2026-07-27，Local Only）
+
+| 项目                             | 当前状态                                       |
+| -------------------------------- | ---------------------------------------------- |
+| Development                      | COMPLETE                                       |
+| Automated / Local Validation     | PASS                                           |
+| Owner Manual Preview Checks      | REQUIRED — Tab / Enter / Space、200%、自动填充 |
+| Product Owner Preview Acceptance | PENDING                                        |
+| Push                             | NOT RUN                                        |
+| Preview / Production Deployment  | NOT RUN                                        |
+| External / Backend Change        | NONE                                           |
+
+- `/auth/sign-up` 邀请码已复用共享 `PasswordInput`，默认隐藏，可独立显示 / 隐藏；注册密码与邀请码互不改变可见状态，切换保持输入值且不提交表单。
+- 控件使用自定义“显示邀请码 / 隐藏邀请码”动态 `aria-label`、`aria-pressed`、原生 `button type="button"`、44×44 目标、48px 输入预留与既有 Light / Dark / `focus-visible` 样式；既有密码默认标签和登录页行为无回退。
+- 邀请码 `name`、required、`autocomplete="off"`、注册 Server Action、trim / 长度校验、邀请码哈希 / Auth 路径、18+ 与 Terms / Privacy / Content Policy 合同保持不变。
+- frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests，以及 Web / Admin / Docs production builds 全部 PASS。
+- 本地浏览器 1280 / 390、Light / Dark、邀请码错误状态、默认隐藏、独立显示 / 隐藏、值保持、44px、零横向溢出、640px 等效窄宽与 console errors = 0 全部 PASS；登录页回归通过。
+- 自动化浏览器不能真实派发 Tab / Enter / Space、调用浏览器密码管理器或设置真实 200% 页面缩放；以上三项为 Owner Manual Preview Required，不记录为自动 PASS。
+- `Ready for Product Owner Preview = YES WITH MANUAL CHECKS`；不得将此解释为 Product Owner 已验收、V1.0.2 已发布或已部署。
+- 未 Push、Deploy、Redeploy、Promote；未修改邀请码生成 / 验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+
 ## V1.0.1 Password Visibility 当前状态（2026-07-26，Local Only）
 
 | 项目                                   | 当前状态 |

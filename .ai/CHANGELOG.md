@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-27 — V1.0.2 Invitation Code Visibility Local Development
+
+- 为 `/auth/sign-up` 的邀请码字段复用共享 `PasswordInput`：默认隐藏，可通过独立的“显示邀请码 / 隐藏邀请码”控件切换；注册密码与邀请码的可见状态互不影响，输入值保持不变。
+- 共享组件新增可选显示 / 隐藏标签，既有密码标签与 `/auth/sign-in` 行为保持兼容；邀请码继续使用既有 `name`、required 与 `autocomplete="off"` 合同。
+- 切换按钮继续为原生 `button type="button"`，提供动态中文 `aria-label`、`aria-pressed`、44×44 目标、`focus-visible` 状态和 48px 输入右侧预留，不会提交注册表单。
+- 注册 Server Action、邀请码 trim / 长度校验与哈希 / Auth 路径均未改变；18+ 提示及 Terms、Privacy、Content Policy 链接保持不变。
+- 通过 frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests，以及 Web / Admin / Docs 三个 production builds。
+- 本地浏览器复验通过 1280 / 390、Light / Dark、默认隐藏、独立显示 / 隐藏、值保持、邀请码错误状态、44px、零横向溢出及 console errors = 0；640px 等效窄宽布局无溢出。
+- 当前浏览器自动化无法真实派发 Tab / Enter / Space，也不能调用浏览器密码管理器或设置真实 200% 页面缩放，因此这三项保留为 Product Owner Preview 手动复核；原生按钮语义、组件测试和响应式等效宽度合同均已通过。
+- 本状态仅表示本地开发与验证完成，`V1.0.2 Product Owner Preview Acceptance = PENDING`；未 Push、Deploy、Promote，未修改邀请码生成、邀请码验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+
 ## 2026-07-26 — V1.0.1 Password Visibility Local Development
 
 - 为 `/auth/sign-in` 与 `/auth/sign-up` 的密码字段新增默认隐藏、可独立显示/隐藏的可访问控件；当前注册页不存在确认密码字段，因此未新增该字段。

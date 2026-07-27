@@ -1,5 +1,16 @@
 # Project Memory
 
+## V1.0.2 Invitation Code Visibility 本地就绪状态（2026-07-27）
+
+- `/auth/sign-up` 已在独立 V1.0.2 工作树完成邀请码显示 / 隐藏控件；默认隐藏，并与注册密码分别维护可见状态，任一切换都不改变另一字段或已输入值。
+- 复用共享 `PasswordInput`，仅新增可选显示 / 隐藏标签；既有密码默认标签、登录页行为、Lucide `Eye` / `EyeOff`、原生 `button type="button"`、动态 `aria-label`、`aria-pressed`、44×44 目标与焦点样式保持兼容。
+- 邀请码 `name="invitationCode"`、required、`autocomplete="off"`、注册 Server Action、trim / 长度校验、哈希 / Auth 路径、18+ 与三个政策链接均未改变。
+- 工程验证：frozen install、lint、typecheck、175 / 175 tests、24 个 targeted tests、Web / Admin / Docs production builds 全部 PASS；dependency 与 lockfile 无变化。
+- 本地浏览器验证：1280 / 390、Light / Dark、默认隐藏、独立显示 / 隐藏、值保持、邀请码错误状态、44px、48px 输入预留、零横向溢出与 console errors = 0 全部 PASS；登录页密码控件无回退。
+- 自动化环境无法真实派发 Tab / Enter / Space，不能触发真实密码管理器自动填充或设置真实 200% 页面缩放；原生按钮语义、组件测试和 640px 等效窄宽布局已通过，这三项仍需 Product Owner Preview 手动复核。
+- 当前状态：`LOCAL DEVELOPMENT COMPLETE / READY FOR PRODUCT OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。
+- 未 Push、Deploy、Redeploy 或 Promote；未修改邀请码生成 / 验证、Vercel、Supabase、数据库、Auth、RLS、RPC、环境变量、dependency 或 lockfile。
+
 ## V1.0.1 Password Visibility 本地就绪状态（2026-07-26）
 
 - `/auth/sign-in` 与 `/auth/sign-up` 已在独立 V1.0.1 工作树完成密码显示/隐藏控件；默认隐藏，登录与注册分别独立控制。当前注册页没有确认密码字段，未创建新字段。
