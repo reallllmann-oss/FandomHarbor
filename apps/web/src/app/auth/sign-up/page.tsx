@@ -95,16 +95,23 @@ export default async function SignUpPage({
             required
           />
         </div>
-        <label className="block text-sm font-medium">
-          邀请码
-          <input
+        <div>
+          <label
+            className="block text-sm font-medium"
+            htmlFor="sign-up-invitation-code"
+          >
+            邀请码
+          </label>
+          <PasswordInput
             autoComplete="off"
-            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3 font-mono"
+            className="font-mono"
+            hideLabel="隐藏邀请码"
+            id="sign-up-invitation-code"
             name="invitationCode"
             required
-            type="password"
+            showLabel="显示邀请码"
           />
-        </label>
+        </div>
         <button
           className="min-h-11 w-full rounded-control bg-primary px-4 text-primary-foreground"
           type="submit"

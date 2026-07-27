@@ -63,29 +63,99 @@ describe("PasswordInput", () => {
       <>
         <label htmlFor="primary-password">密码</label>
         <PasswordInput id="primary-password" name="password" />
-        <label htmlFor="confirmation-password">确认密码</label>
-        <PasswordInput id="confirmation-password" name="confirmPassword" />
+        <label htmlFor="invitation-code">邀请码</label>
+        <PasswordInput
+          autoComplete="off"
+          hideLabel="隐藏邀请码"
+          id="invitation-code"
+          name="invitationCode"
+          required
+          showLabel="显示邀请码"
+        />
       </>,
     );
 
     const primary = screen.getByLabelText("密码") as HTMLInputElement;
-    const confirmation = screen.getByLabelText("确认密码") as HTMLInputElement;
-    const showButtons = screen.getAllByRole("button", { name: "显示密码" });
-    const [showPrimary, showConfirmation] = showButtons;
+    const invitation = screen.getByLabelText("邀请码") as HTMLInputElement;
+    const showPrimary = screen.getByRole("button", { name: "显示密码" });
+    const showInvitation = screen.getByRole("button", {
+      name: "显示邀请码",
+    });
 
-    expect(showButtons).toHaveLength(2);
-    if (!showPrimary || !showConfirmation) {
-      throw new Error("Expected two password visibility controls");
-    }
-    fireEvent.click(showConfirmation);
-
-    expect(primary.type).toBe("password");
-    expect(confirmation.type).toBe("text");
+    fireEvent.change(primary, { target: { value: "local-password-value" } });
+    fireEvent.change(invitation, {
+      target: { value: "local-invitation-value" },
+    });
 
     fireEvent.click(showPrimary);
-
     expect(primary.type).toBe("text");
-    expect(confirmation.type).toBe("text");
+    expect(invitation.type).toBe("password");
+
+    fireEvent.click(showInvitation);
+    expect(primary.type).toBe("text");
+    expect(invitation.type).toBe("text");
+    expect(primary.value).toBe("local-password-value");
+    expect(invitation.value).toBe("local-invitation-value");
+
+    fireEvent.click(screen.getByRole("button", { name: "隐藏密码" }));
+    expect(primary.type).toBe("password");
+    expect(invitation.type).toBe("text");
+
+    fireEvent.click(screen.getByRole("button", { name: "隐藏邀请码" }));
+    expect(primary.type).toBe("password");
+    expect(invitation.type).toBe("password");
+  });
+
+  it("uses invitation labels and preserves its form contract while toggling", () => {
+    const onSubmit = vi.fn((event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+    });
+
+    render(
+      <form onSubmit={onSubmit}>
+        <label htmlFor="invitation-code-contract">邀请码</label>
+        <PasswordInput
+          autoComplete="off"
+          hideLabel="隐藏邀请码"
+          id="invitation-code-contract"
+          name="invitationCode"
+          required
+          showLabel="显示邀请码"
+        />
+      </form>,
+    );
+
+    const input = screen.getByLabelText("邀请码") as HTMLInputElement;
+    const showButton = screen.getByRole("button", {
+      name: "显示邀请码",
+    }) as HTMLButtonElement;
+
+    fireEvent.change(input, { target: { value: "local-invitation-value" } });
+
+    expect(input.type).toBe("password");
+    expect(input.id).toBe("invitation-code-contract");
+    expect(input.name).toBe("invitationCode");
+    expect(input.required).toBe(true);
+    expect(input.autocomplete).toBe("off");
+    expect(showButton.type).toBe("button");
+    expect(showButton.getAttribute("aria-pressed")).toBe("false");
+
+    fireEvent.click(showButton);
+
+    expect(input.type).toBe("text");
+    expect(input.value).toBe("local-invitation-value");
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    const hideButton = screen.getByRole("button", {
+      name: "隐藏邀请码",
+    }) as HTMLButtonElement;
+    expect(hideButton.getAttribute("aria-pressed")).toBe("true");
+
+    fireEvent.click(hideButton);
+
+    expect(input.type).toBe("password");
+    expect(input.value).toBe("local-invitation-value");
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it("disables the visibility control with a disabled input", () => {

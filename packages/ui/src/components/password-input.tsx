@@ -10,16 +10,20 @@ export interface PasswordInputProps extends Omit<
   "type"
 > {
   containerClassName?: string;
+  hideLabel?: string;
+  showLabel?: string;
 }
 
 export function PasswordInput({
   className,
   containerClassName,
   disabled,
+  hideLabel = "隐藏密码",
+  showLabel = "显示密码",
   ...props
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
-  const actionLabel = visible ? "隐藏密码" : "显示密码";
+  const actionLabel = visible ? hideLabel : showLabel;
 
   function preserveInputFocus(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();

@@ -24,6 +24,10 @@ describe("auth password visibility contract", () => {
 
   it("keeps sign-up invitation, age, and policy requirements intact", async () => {
     const source = await pageSource("./sign-up/page.tsx");
+    const passwordInputs = source.match(/<PasswordInput[\s\S]*?\/>/g) ?? [];
+    const invitationInput = passwordInputs.find((input) =>
+      input.includes('name="invitationCode"'),
+    );
 
     expect(source).toContain(
       'import { PasswordInput } from "@fandom-harbor/ui"',
@@ -33,11 +37,17 @@ describe("auth password visibility contract", () => {
     expect(source).toContain('autoComplete="new-password"');
     expect(source).toContain("minLength={MIN_PASSWORD_LENGTH}");
     expect(source).toMatch(/<PasswordInput[\s\S]*?\srequired[\s\S]*?\/>/);
-    expect(source).toContain('name="invitationCode"');
-    expect(source).toMatch(
-      /name="invitationCode"[\s\S]*?\srequired[\s\S]*?type="password"/,
-    );
+    expect(passwordInputs).toHaveLength(2);
+    expect(invitationInput).toBeDefined();
+    expect(invitationInput).toContain('autoComplete="off"');
+    expect(invitationInput).toContain('className="font-mono"');
+    expect(invitationInput).toContain('hideLabel="隐藏邀请码"');
+    expect(invitationInput).toContain('id="sign-up-invitation-code"');
+    expect(invitationInput).toContain('name="invitationCode"');
+    expect(invitationInput).toContain("required");
+    expect(invitationInput).toContain('showLabel="显示邀请码"');
     expect(source).toContain("年满 18 周岁的受邀用户");
+    expect(source).toContain("邀请码无效，请检查后重新输入。");
     expect(source).toContain('href="/terms"');
     expect(source).toContain('href="/privacy"');
     expect(source).toContain('href="/content-policy"');
