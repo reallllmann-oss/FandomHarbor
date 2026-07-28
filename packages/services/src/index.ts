@@ -10,6 +10,7 @@ export {
 export {
   createIdentityAccessService,
   INVITATION_CODE_CREATE_MAX_ATTEMPTS,
+  InvitationCodeCollisionError,
   InvitationCodeGenerationError,
   invitationSecretHash,
   type CreatedInvitation,

@@ -1,6 +1,9 @@
 import type { AuthCookieStore } from "@fandom-harbor/auth";
 import type { PublicRuntimeConfig } from "@fandom-harbor/config";
-import type { IdentityAccessStore } from "@fandom-harbor/services";
+import {
+  InvitationCodeCollisionError,
+  type IdentityAccessStore,
+} from "@fandom-harbor/services";
 
 import { DatabaseAccessError } from "./access-context-repository";
 import { createServerSupabaseClient } from "./server-client";
@@ -28,12 +31,38 @@ export function createSupabaseIdentityAccessStore(
   }
 
   return {
-    createInvitation(input) {
-      return rpc<string | null>("create_invitation", {
+    async createInvitation(input) {
+      const { data, error } = await client.rpc("create_invitation", {
         p_code_hash: input.codeHash,
         p_expires_at: input.expiresAt.toISOString(),
         p_max_uses: input.maxUses,
       });
+
+      if (error?.code === "23505") {
+        throw new InvitationCodeCollisionError();
+      }
+      if (error) {
+        throw new DatabaseAccessError(
+          "Identity access operation failed: create_invitation",
+          { cause: error },
+        );
+      }
+      if (
+        data === null ||
+        (typeof data === "object" &&
+          data !== null &&
+          "id" in data &&
+          data.id === null)
+      ) {
+        throw new InvitationCodeCollisionError();
+      }
+      if (typeof data !== "string" || data.length === 0) {
+        throw new DatabaseAccessError(
+          "Identity access operation failed: create_invitation",
+        );
+      }
+
+      return data;
     },
     grantRole(input) {
       return rpc<string>("grant_role", {

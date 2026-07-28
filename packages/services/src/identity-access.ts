@@ -15,12 +15,19 @@ export class InvitationCodeGenerationError extends Error {
   }
 }
 
+export class InvitationCodeCollisionError extends Error {
+  constructor() {
+    super("Invitation code collision");
+    this.name = "InvitationCodeCollisionError";
+  }
+}
+
 export interface IdentityAccessStore {
   createInvitation(input: {
     codeHash: string;
     expiresAt: Date;
     maxUses: number;
-  }): Promise<string | null>;
+  }): Promise<string>;
   grantRole(input: {
     reason: string;
     role: ElevatedRole;
@@ -95,13 +102,18 @@ export function createIdentityAccessService(
           );
         }
 
-        const id = await store.createInvitation({
-          codeHash: await invitationSecretHash(secret),
-          expiresAt: input.expiresAt,
-          maxUses: input.maxUses,
-        });
+        try {
+          const id = await store.createInvitation({
+            codeHash: await invitationSecretHash(secret),
+            expiresAt: input.expiresAt,
+            maxUses: input.maxUses,
+          });
 
-        if (id) return { id, secret };
+          return { id, secret };
+        } catch (error) {
+          if (error instanceof InvitationCodeCollisionError) continue;
+          throw error;
+        }
       }
 
       throw new InvitationCodeGenerationError(

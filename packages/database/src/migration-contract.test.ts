@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -8,6 +8,10 @@ async function migration(name: string) {
     resolve(process.cwd(), "../../supabase/migrations", name),
     "utf8",
   );
+}
+
+async function migrationNames() {
+  return readdir(resolve(process.cwd(), "../../supabase/migrations"));
 }
 
 describe("Phase 1C migration contract", () => {
@@ -118,19 +122,17 @@ describe("Phase 1C migration contract", () => {
     expect(sql).toContain("to anon, authenticated");
   });
 
-  it("returns a nullable collision result without changing invitation state", async () => {
-    const sql = await migration(
-      "20260727150707_standardize_invitation_code_collision_handling.sql",
-    );
-
+  it("preserves the original non-null invitation collision contract", async () => {
+    const sql = await migration("20260629211000_invitation_workflows.sql");
     expect(sql).toContain("function public.create_invitation");
-    expect(sql).toContain("on conflict (code_hash) do nothing");
-    expect(sql).toContain("if v_invitation_id is null then");
-    expect(sql).toContain("return null;");
+    expect(sql).toContain("returning id into v_invitation_id");
+    expect(sql).toContain("return v_invitation_id");
     expect(sql).toContain("security definer");
     expect(sql).toContain("set search_path = ''");
-    expect(sql).not.toContain("update public.invitations");
-    expect(sql).not.toContain("delete from public.invitations");
+    expect(sql).not.toContain("on conflict (code_hash) do nothing");
+    expect(await migrationNames()).not.toContain(
+      "20260727150707_standardize_invitation_code_collision_handling.sql",
+    );
   });
 });
 

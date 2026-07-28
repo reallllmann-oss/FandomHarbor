@@ -169,14 +169,22 @@ select public.create_invitation(
 
 do $$
 begin
-  if public.create_invitation(
+  perform public.create_invitation(
     repeat('a', 64),
     1,
     statement_timestamp() + interval '1 day'
-  ) is not null then
-    raise exception 'duplicate invitation hash did not return a collision';
-  end if;
+  );
+  raise exception using
+    errcode = 'XX000',
+    message = 'duplicate invitation hash unexpectedly succeeded';
+exception
+  when unique_violation then
+    null;
+end;
+$$;
 
+do $$
+begin
   if (
     select count(*)
     from public.invitations
@@ -184,10 +192,35 @@ begin
   ) <> 1 then
     raise exception 'duplicate invitation hash changed stored invitations';
   end if;
+
+  if (
+    select use_count
+    from public.invitations
+    where code_hash = repeat('a', 64)
+  ) <> 0 then
+    raise exception 'duplicate invitation hash changed invitation use count';
+  end if;
 end;
 $$;
 
 reset role;
+
+do $$
+begin
+  if (
+    select count(*)
+    from public.audit_logs
+    where action = 'invitation.created'
+      and target_id = (
+        select id
+        from public.invitations
+        where code_hash = repeat('a', 64)
+      )
+  ) <> 1 then
+    raise exception 'duplicate invitation hash changed successful audit records';
+  end if;
+end;
+$$;
 
 set local role authenticated;
 select set_config(
