@@ -1,29 +1,34 @@
 # Project Status
 
-## V1.0.2 Invitation Visibility and Standardization 当前状态（2026-07-27，Local Only）
+## V1.0.2 Bidirectional Collision Compatibility 当前状态（2026-07-28，Local Only）
 
-| 项目                             | 当前状态                                       |
-| -------------------------------- | ---------------------------------------------- |
-| Visibility Development           | COMPLETE                                       |
-| 11-Character Standardization     | COMPLETE                                       |
-| Automated / Local Validation     | PASS                                           |
-| Local Database / Fixture         | PASS                                           |
-| Owner Manual Preview Checks      | REQUIRED — Tab / Enter / Space、200%、自动填充 |
-| Product Owner Preview Acceptance | PENDING                                        |
-| Push                             | NOT RUN                                        |
-| Preview / Production Deployment  | NOT RUN                                        |
-| Remote Supabase / Database       | UNCHANGED                                      |
+| 项目                                      | 当前状态                                   |
+| ----------------------------------------- | ------------------------------------------ |
+| Visibility Development                    | COMPLETE                                   |
+| 11-Character Standardization              | COMPLETE                                   |
+| Bidirectional Collision Patch             | COMPLETE                                   |
+| Matrix A / B / C / D                      | PASS / PASS / PASS / PASS                  |
+| Final Database Contract                   | NON-NULL UUID / COLLISION 23505            |
+| Final Migration Strategy                  | NULL-COLLISION MIGRATION REMOVED           |
+| Local Database / SQL / Fixture / Advisors | PASS                                       |
+| Engineering Validation                    | PASS — 193 / 193 TESTS                     |
+| Push                                      | NOT RUN                                    |
+| Preview / Production Deployment           | NOT RUN                                    |
+| Remote Supabase / Database                | UNCHANGED                                  |
+| Remote Topology / Migration Audit         | PENDING OWNER READ-ONLY ACCESS RESTORATION |
 
-- `/auth/sign-up` 邀请码默认隐藏，可独立于注册密码显示 / 隐藏；动态 `aria-label`、`aria-pressed`、`type="button"`、44×44、48px 输入预留、值保持、required、`autocomplete="off"` 及登录密码行为均无回退。
-- 所有新的应用邀请码固定 11 位且仅含 A–Z、a–z、0–9；Author 当前唯一 UI 创建入口使用 Web Crypto 共享服务，Fixture 使用 Node Crypto 并读取同一格式合同。
-- 数据库 `code_hash UNIQUE` 原子判断冲突，服务最多重试 5 次；超过上限返回受控错误。Admin / Super Admin 当前没有独立邀请码创建入口。
-- 注册和兑换没有 11 位前置正则或 `maxLength`；完整、区分大小写的输入在服务端哈希后查询数据库，因此有效旧长格式邀请码继续按既有 revoked / expiry / max_uses / use_count 规则处理。
-- 新 Migration 未改写任何邀请码数据、权限、RLS、创建人、状态或次数；原子注册消费与审计保持不变。
-- 本地 15 / 15 Migrations、6 套 SQL、Fixture reset、QA credentials、11 位新邀请码注册、未知邀请码失败、旧格式兼容、Author 创建、lint、typecheck、185 / 185 tests 和 Web / Admin / Docs builds 全部 PASS。
-- 浏览器 1280 / 390、Light / Dark、独立显示、登录回归、错误态、44px、零横向溢出、640px 等效窄宽及 console errors = 0 均 PASS；Tab / Enter / Space、真实 200% Zoom 与密码管理器为 Owner Manual Preview Required。
-- 本地合成 QA 值意外进入浏览器工具输出后，已删除单个 Git-ignored 凭据文件、重置仅本地数据库并轮换 Fixture；相关值与临时账号已失效，远程环境未受影响。
-- `Ready for Complete V1.0.2 Product Owner Preview = YES WITH MANUAL CHECKS`；不得解释为已验收、已发布或已部署。
-- 未 Push、Deploy、Redeploy、Promote 或执行远程 Supabase Migration / 数据库写入；无 dependency、package 或 lockfile 变化。
+- Matrix A（V1.0.1 Code + V1.0.1 Schema）、B（V1.0.1 Code + V1.0.2 Final Schema）、C（V1.0.2 Code + V1.0.1 Schema）和 D（V1.0.2 Code + V1.0.2 Final Schema）均已用本地数据库与精确应用版本验证 PASS。
+- 最终 V1.0.2 Schema 与 V1.0.1 Schema 相同：未部署的 NULL-collision Migration 已删除，所以 Matrix B 与 A、Matrix D 与 C 的 Schema 相同；不是通过人工推断跳过测试。
+- `create_invitation` 保持签名与返回类型；成功返回非空 UUID，冲突继续抛出 `23505`，旧 V1.0.1 不会接收 NULL 成功或显示幽灵邀请码。
+- V1.0.2 Adapter 识别结构化 `23505`、防御性 `data=null` 与 `data={id:null}`，统一映射为类型化冲突；Service 最多重试 5 次，非冲突数据库错误只调用一次且不泄露内部详情。
+- 首次冲突后成功、两次冲突后成功、连续 5 次受控失败、第 6 次不调用、每次 Secret / Hash 不同、成功审计唯一、无孤立记录、use_count 不变均 PASS。
+- 新邀请码继续为 11 位 Base62；100 组格式、Reader 新邀请码注册、旧长格式注册、多人消费、耗尽、撤销、过期与大小写区分全部 PASS。
+- UI 回归保持邀请码默认隐藏、显示 / 恢复隐藏、密码与邀请码独立、键盘、`type="button"`、`aria-label`、`aria-pressed`、required、`autocomplete="off"`、18+、Invitation-only、政策链接、390px 与 Light / Dark。
+- 本地 14 / 14 Migrations、6 套 SQL、Fixture reset、QA credentials contract、Database lint 0 errors、frozen install、format、lint、typecheck、193 / 193 tests 和 Web / Admin / Docs builds 全部 PASS。
+- 无 dependency、package、lockfile、`next-env.d.ts` 或 Admin 文件漂移；Secret Audit PASS。
+- 当前只能报告 `LOCAL COMPLETE`，不得写成 Production Ready、Released 或已部署。
+- 未 Push、Deploy、Redeploy、Promote、修改环境变量或执行远程 Supabase / 数据库写入。
+- Vercel Preview / Production Supabase 拓扑和远程 Migration 历史仍等待 Product Owner 恢复只读审计能力；在该独立审计完成前，不进入 Remote Migration、Preview 或 Production。
 
 ## V1.0.1 Password Visibility 当前状态（2026-07-26，Local Only）
 

@@ -1,18 +1,19 @@
 # Changelog
 
-## 2026-07-27 — V1.0.2 Invitation Visibility and 11-Character Standardization
+## 2026-07-28 — V1.0.2 Bidirectional Invitation Collision Compatibility
 
-- V1.0.2 本地范围现同时包含 Invitation Code Visibility 与 11-Character Invitation Code Standardization：注册邀请码默认隐藏，可独立于注册密码显示 / 恢复隐藏，值保持且不提交表单。
-- 新邀请码统一使用共享合同 `^[A-Za-z0-9]{11}$`；应用创建入口由 Web Crypto 安全生成，Fixture 由 Node Crypto 安全生成，均不使用 `Math.random`、时间戳、顺序值或 UUID 截断。
-- Author 创建入口继续经过共享 identity-access 服务；数据库 `code_hash` 唯一约束提供原子冲突判断，服务最多重试 5 次，超过上限返回受控错误。当前不存在独立 Admin / Super Admin 邀请码创建入口。
-- 注册与兑换仅把最小输入边界从旧生成器的 32 位放宽到 11 位，继续对完整、区分大小写的输入做 SHA-256 后查询数据库；未增加 11 位前置正则或 `maxLength`，因此有效旧长格式邀请码继续遵守原状态、过期和使用次数规则。
-- 新 Migration 只让 `create_invitation` 在哈希唯一冲突时返回空结果以触发重试；未改写、删除、撤销或截断旧邀请码，未改变创建人、权限、最大使用次数、当前使用次数、RLS、原子注册消费或审计逻辑。
-- 本地 Supabase 从空库应用 15 / 15 Migrations；6 套事务式 SQL 以 `ON_ERROR_STOP` 通过，Fixture reset、11 位生成、Auth 触发注册、旧格式兼容、未知 / 撤销 / 过期 / 耗尽分类及 Author 创建均通过。
-- 通过 frozen install、lint、typecheck、185 / 185 tests，以及 Web / Admin / Docs 三个 production builds；无新增依赖、package 或 lockfile 变化。
-- 本地浏览器通过真实 11 位邀请码注册、未知邀请码失败、43 位合成旧邀请码注册、Author 新建 11 位邀请码、登录和注册显示回归、1280 / 390、Light / Dark、44px、零横向溢出及 console errors = 0；640px 等效窄宽布局无溢出。
-- 浏览器自动化仍无法真实派发 Tab / Enter / Space、调用密码管理器或设置真实 200% 页面缩放，这些项目保留为 Product Owner 完整 Preview 手动复核。
-- 浏览器 QA 曾把本地合成测试值带入工具输出；已立即删除单个 Git-ignored 凭据文件、重置仅本地数据库并重建 Fixture，使相关值和临时账号失效。未涉及 Production、远程 Supabase 或仓库 Secret。
-- 当前状态为 `LOCAL IMPLEMENTATION COMPLETE / READY FOR COMPLETE V1.0.2 OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。未 Push、Deploy、Promote 或执行远程 Supabase / 数据库变更。
+- V1.0.2 本地双向兼容补丁已完成。Matrix A（V1.0.1 Code + V1.0.1 Schema）、B（V1.0.1 Code + V1.0.2 Final Schema）、C（V1.0.2 Code + V1.0.1 Schema）和 D（V1.0.2 Code + V1.0.2 Final Schema）全部 PASS。
+- 最终数据库继续保持旧外部运行时合同：`create_invitation(text, integer, timestamptz) → uuid`；成功返回非空 UUID，唯一冲突抛出 PostgreSQL `23505`，不会向旧调用方返回 NULL 成功。
+- 删除未部署的 `20260727150707_standardize_invitation_code_collision_handling.sql`。它唯一会把冲突变成 NULL，11 位邀请码不需要 Schema 变化；最终 V1.0.2 Schema 因而与 V1.0.1 Schema 相同，Matrix B 与 A、Matrix D 与 C 使用同一最终 Migration 集。
+- Adapter 按结构化 `error.code === "23505"` 将旧 Schema 冲突映射为内部 `InvitationCodeCollisionError`，并把防御性的 `data=null` / `data={id:null}` 映射为同一类型；其他数据库错误继续转为受控 `DatabaseAccessError`，不匹配错误文本。
+- Service 只对类型化冲突重试，最多 5 次；每次重新生成 11 位 Base62 Secret 并重新计算 SHA-256。首次冲突后成功、两次冲突后成功、连续 5 次受控失败、第 6 次不调用、非 23505 只调用一次均通过。
+- 幽灵邀请码、成功审计、孤立记录和 use_count 回归均通过：只有真实持久化 UUID 才返回成功；冲突不新增 invitation 或成功审计，不改变 use_count；最终 Secret 与实际持久化 Hash 对应。
+- 新 11 位邀请码、100 组格式、Reader 注册、旧长格式注册、多人消费、耗尽、撤销、过期、显示 / 隐藏、注册密码独立、键盘与可访问性合同自动化回归均 PASS。
+- 本地 Supabase 从空库应用 14 / 14 Migrations；6 套事务式 SQL、Fixture reset、QA credentials contract 和 Database lint（0 errors）通过。
+- frozen install、format、lint、typecheck、193 / 193 tests 及 Web / Admin / Docs production builds 全部 PASS；无新增依赖、package、lockfile 或 `next-env.d.ts` 漂移。
+- Secret Audit PASS；未记录 Project Ref、本地固定凭据、远程 URL / Key、真实邀请码或测试账号密码。
+- 当前状态为 `V1.0.2 BIDIRECTIONAL COLLISION COMPATIBILITY LOCAL COMPLETE`。仍未 Push、Deploy、Promote 或修改远程 Supabase；Vercel Preview / Production Supabase 拓扑和远程 Migration 历史仍等待 Product Owner 恢复只读审计能力。
+- 在拓扑与远程 Migration 历史审计完成前，不进入 Remote Migration、Preview 或 Production。
 
 ## 2026-07-26 — V1.0.1 Password Visibility Local Development
 

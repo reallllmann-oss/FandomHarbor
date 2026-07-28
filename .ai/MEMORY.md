@@ -1,18 +1,19 @@
 # Project Memory
 
-## V1.0.2 Invitation Visibility and Standardization 本地就绪状态（2026-07-27）
+## V1.0.2 双向邀请码冲突兼容本地状态（2026-07-28）
 
-- V1.0.2 完整本地范围为邀请码显示 / 隐藏与新邀请码 11 位标准化。注册邀请码默认隐藏，与注册密码分别管理状态；动态 `aria-label` / `aria-pressed`、原生 `button type="button"`、44×44、48px 预留、值保持及登录密码回归均通过。
-- 新邀请码共享合同为 `^[A-Za-z0-9]{11}$`。应用使用 Web Crypto，Fixture 使用 Node Crypto；不使用 `Math.random`、时间戳、顺序值或 UUID 截断。
-- Author 页面是当前唯一 UI 创建入口，调用共享 identity-access 服务；数据库 `code_hash UNIQUE` 负责原子冲突判断，服务最大重试 5 次。Admin / Super Admin 具备 RPC 权限，但当前没有独立创建页面或流程。
-- 注册和兑换继续对 trim 后的完整、区分大小写输入做 SHA-256 并查询数据库，不使用 11 位正则提前拒绝；现有 43 / 64 位旧格式及其他可能有效旧记录继续按数据库状态、过期和使用次数判断。
-- 新 Migration 仅为 `create_invitation` 增加 `ON CONFLICT (code_hash) DO NOTHING` 和空结果；没有修改邀请码表结构、RLS、角色权限、历史邀请码、创建人、状态、次数、原子注册消费或审计。
-- 本地验证：15 / 15 Migrations 重放、6 套事务式 SQL、Fixture reset、QA credentials check、11 位新邀请码注册、未知邀请码失败、43 位合成旧邀请码注册、Author 实际创建、状态与次数合同均 PASS。
-- 工程验证：frozen install、lint、typecheck、185 / 185 tests、Web / Admin / Docs production builds 全部 PASS；dependency、package 和 lockfile 无变化。
-- 浏览器验证：1280 / 390、Light / Dark、显示独立状态、登录回归、错误态、44px、零横向溢出、640px 等效窄宽与 console errors = 0 均 PASS；Tab / Enter / Space、真实 200% Zoom 与密码管理器仍需 Product Owner 手动复核。
-- 浏览器 QA 意外显示的本地合成值已通过删除单个 Git-ignored 凭据文件、本地数据库 reset 与 Fixture 轮换失效；没有 Production 或远程数据访问。
-- 当前状态：`LOCAL IMPLEMENTATION COMPLETE / READY FOR COMPLETE V1.0.2 OWNER PREVIEW WITH MANUAL CHECKS`；`Product Owner Preview Acceptance = PENDING`。
-- 未 Push、Deploy、Redeploy、Promote 或执行远程 Supabase Migration / 数据库写入。
+- V1.0.2 Invitation Visibility、11 位标准化与 Bidirectional Collision Compatibility 已在本地完成；Matrix A、B、C、D 全部 PASS。
+- 最终数据库合同保留 V1.0.1 行为：`create_invitation` 成功返回非空 UUID，`code_hash` 唯一冲突抛出结构化 `23505`。旧应用不会收到 NULL 或显示幽灵邀请码。
+- 未部署的 `20260727150707_standardize_invitation_code_collision_handling.sql` 已在新的修复 Commit 中删除；它唯一会把冲突改成 NULL，11 位生成不依赖 Schema 变化。最终 V1.0.2 Migration 集与 V1.0.1 相同。
+- V1.0.2 Adapter 将 `23505`、`data=null` 和 `data={id:null}` 统一转换为 `InvitationCodeCollisionError`。Service 只重试该类型，最多 5 次；其他数据库错误立即以受控 `DatabaseAccessError` 结束。
+- 每次重试生成新的 11 位 Base62 Secret 并重新计算 SHA-256；首次 / 两次冲突后成功、连续 5 次受控失败、第 6 次不调用、非 23505 只调用一次均有回归证据。
+- 幽灵邀请码专项、成功审计、孤立记录、use_count 与 Secret/Hash 对应关系均 PASS；冲突不产生 invitation、成功审计或消费副作用。
+- 新邀请码继续使用 `^[A-Za-z0-9]{11}$` 与 Web Crypto；Fixture 使用共享合同和 Node Crypto。旧长格式继续区分大小写，并按状态、过期、撤销和使用次数处理。
+- 本地验证：14 / 14 Migrations、6 套 SQL、Fixture、QA credentials contract、Database lint 0 errors、format、lint、typecheck、193 / 193 tests 和三套 production builds 全部 PASS。
+- UI 自动化回归继续覆盖邀请码默认隐藏、显示 / 恢复隐藏、密码与邀请码独立、`type="button"`、`aria-label`、`aria-pressed`、required、`autocomplete="off"`、18+、Invitation-only、政策链接、390px 与 Light / Dark。
+- Secret Audit PASS；本轮未输出或提交 Project Ref、本地固定凭据、远程 URL / Key、真实邀请码或账号密码。
+- 当前状态：`V1.0.2 BIDIRECTIONAL COLLISION COMPATIBILITY LOCAL COMPLETE`；未 Push、Deploy、Promote 或修改远程 Supabase。
+- Vercel Preview / Production Supabase 拓扑与远程 Migration 历史仍等待 Product Owner 恢复只读审计能力；在完成前不得进入 Remote Migration、Preview 或 Production。
 
 ## V1.0.1 Password Visibility 本地就绪状态（2026-07-26）
 
