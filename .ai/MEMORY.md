@@ -1,6 +1,19 @@
 # Project Memory
 
-## V1.0.2 双向邀请码冲突兼容本地状态（2026-07-28）
+## V1.0.2 Final Release Closure（2026-07-29）
+
+- V1.0.2 已正式发布：Release Status=`RELEASED`，Production Deployment=`COMPLETE`，Product Owner Final Acceptance=`PASS`，Production Functional Smoke=`PASS`，Final Release Closure=`CLOSED`。
+- Release Commit 为 `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`；Web Production Deployment 为 `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`，状态 READY，正式域名 `https://www.fandomharbor.com/` 已更新。
+- 最终范围包括邀请码默认隐藏与独立显示/恢复、密码与邀请码独立状态、11 位 Base62 安全随机邀请码、最多 5 次结构化 `23505` 冲突重试、NULL 结果防御、非冲突不重试及旧邀请码兼容。
+- Lint、TypeScript、193 / 193 tests、Web / Admin / Docs builds 与 Matrix A / B / C / D 全部 PASS。
+- Product Owner Local Preview、Online Preview 与 Production Functional Smoke 全部 PASS；Production 功能验收包含 UI、键盘、响应式、主题、Console、Author 邀请码、Reader 注册/登录/阅读/权限与邀请码耗尽检查，发现问题为无。
+- Admin Production Branch 为 `admin-production-disabled`，Frozen Commit 为 `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a`；V1.0.2 `main` Push 仅产生 Admin Preview。
+- Admin Production 未更新，仍为 `dpl_AVTGLwSF48DoEeLSqyadUQjoMFhs`；公开 Alias 暂时仍公开，Product Owner 已接受该独立残余风险。
+- 最终 Supabase Migration=`NONE`；无远程 Schema、Auth、RLS、RPC、环境变量或数据库结构修改。
+- Unresolved V1.0.2 Blocker=`NONE`；唯一 Closure 权威记录为 `docs/19_Release/V1.0.2-RELEASE-CLOSURE.md`。
+- 本记录不代表 Admin 已发布、私有化或退休，也不授权启动后续版本开发。
+
+## V1.0.2 双向邀请码冲突兼容历史本地状态（2026-07-28，Superseded）
 
 - V1.0.2 Invitation Visibility、11 位标准化与 Bidirectional Collision Compatibility 已在本地完成；Matrix A、B、C、D 全部 PASS。
 - 最终数据库合同保留 V1.0.1 行为：`create_invitation` 成功返回非空 UUID，`code_hash` 唯一冲突抛出结构化 `23505`。旧应用不会收到 NULL 或显示幽灵邀请码。

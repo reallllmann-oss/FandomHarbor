@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-29 — V1.0.2 Final Acceptance and Release Closure
+
+- Fandom Harbor V1.0.2 正式记录为 `RELEASED`；Production Deployment=`COMPLETE`，Product Owner Final Acceptance=`PASS`，Production Functional Smoke=`PASS`，Final Release Closure=`CLOSED`。
+- Release Commit 为 `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`；`fandom-harbor-web` Production Deployment `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74` 为 GitHub `main` 来源、状态 READY，正式域名已更新。
+- 发布范围包括邀请码默认隐藏与独立显示、密码和邀请码状态独立、11 位 Base62 安全随机邀请码、最多 5 次结构化 `23505` 冲突重试、NULL 结果防御、非冲突错误不重试及旧邀请码兼容。
+- Lint、TypeScript、193 / 193 tests、Web / Admin / Docs builds 与 Matrix A / B / C / D 全部 PASS。
+- Product Owner Local / Online Preview 与最终 Production Functional Smoke 全部 PASS；UI、键盘、Light / Dark、390px、200% Zoom、密码管理器、Console、Author 邀请码、Reader 注册/登录/阅读/权限及单次邀请码耗尽检查均通过，发现问题为无。
+- Admin Production Branch 保持 `admin-production-disabled`，Frozen Commit 保持 `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a`；V1.0.2 `main` Push 仅产生 Admin Preview。
+- Admin Production 未更新，仍为 `dpl_AVTGLwSF48DoEeLSqyadUQjoMFhs`；公开 Admin Alias 暂时仍公开，Product Owner 已明确接受该残余风险。
+- 最终 Supabase Migration=`NONE`；无远程 Schema、Auth、RLS、RPC、环境变量或数据库结构修改；Unresolved V1.0.2 Blocker=`NONE`。
+- 新增唯一 V1.0.2 Closure 权威记录 `docs/19_Release/V1.0.2-RELEASE-CLOSURE.md`；本收尾仅修改文档并创建本地 docs-only Commit，不 Push、不 Deploy。
+
 ## 2026-07-28 — V1.0.2 Bidirectional Invitation Collision Compatibility
 
 - V1.0.2 本地双向兼容补丁已完成。Matrix A（V1.0.1 Code + V1.0.1 Schema）、B（V1.0.1 Code + V1.0.2 Final Schema）、C（V1.0.2 Code + V1.0.1 Schema）和 D（V1.0.2 Code + V1.0.2 Final Schema）全部 PASS。

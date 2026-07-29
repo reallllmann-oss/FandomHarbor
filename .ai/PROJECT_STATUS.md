@@ -1,6 +1,35 @@
 # Project Status
 
-## V1.0.2 Bidirectional Collision Compatibility 当前状态（2026-07-28，Local Only）
+## V1.0.2 当前权威状态（2026-07-29 Final Release Closure）
+
+本文后续保留的 V1.0.2 Local Only、Preview、Pending、Not Run 或 Owner Smoke Required 均为带日期的历史记录，已被本节取代。
+
+| 项目                           | 当前状态                                           |
+| ------------------------------ | -------------------------------------------------- |
+| Release Version                | V1.0.2                                             |
+| Release Commit                 | `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`         |
+| Web Production Deployment      | `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`                 |
+| Web Production Status          | READY                                              |
+| Formal Domain                  | `https://www.fandomharbor.com/`                    |
+| Product Owner Final Acceptance | PASS                                               |
+| Production Functional Smoke    | PASS                                               |
+| Release Status                 | RELEASED                                           |
+| Final Release Closure          | CLOSED                                             |
+| Admin Production Branch        | `admin-production-disabled`                        |
+| Admin Frozen Commit            | `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a`         |
+| Supabase Migration             | NONE                                               |
+| Database / Schema Change       | NONE                                               |
+| Unresolved V1.0.2 Blocker      | NONE                                               |
+
+- Web Production 为 GitHub `main` 的 `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`，状态 READY，正式域名已更新。
+- Lint、TypeScript、193 / 193 tests、Web / Admin / Docs builds 及 Matrix A / B / C / D 全部 PASS。
+- Product Owner Local / Online Preview 与最终 Production Functional Smoke 全部 PASS；未发现问题。
+- V1.0.2 `main` Push 只产生 Admin Preview；Admin Production 保持 `dpl_AVTGLwSF48DoEeLSqyadUQjoMFhs` 和冻结 Commit `e137c31f...`。
+- Admin 公开 Alias 暂时仍公开；Product Owner 已接受该残余风险。不得写成 Admin 已私有化、关闭、退休或发布 V1.0.2。
+- 最终无 Supabase Migration，无远程 Schema、Auth、RLS、RPC 或环境配置变化，无未解决 V1.0.2 blocker。
+- 唯一 V1.0.2 Closure 权威记录为 `docs/19_Release/V1.0.2-RELEASE-CLOSURE.md`。
+
+## V1.0.2 历史本地状态（2026-07-28，Superseded）
 
 | 项目                                      | 当前状态                                   |
 | ----------------------------------------- | ------------------------------------------ |
