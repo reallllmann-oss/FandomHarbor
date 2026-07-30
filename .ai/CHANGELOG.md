@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-30 — Admin P0 DB-01 Schema and Security Foundation
+
+- 新增 `site_copy_revisions` 不可变完整快照与 `site_copy_state` global Current Pointer；P0 可编辑数据严格限于八个 typed text 字段。
+- 新增 `get_public_site_copy()`、`get_admin_site_copy()` 与显式八字段参数的 `save_site_copy(...)`，全部使用 `SECURITY DEFINER` 和空 `search_path`。
+- Public projection 只包含八字段和非敏感 version；Admin Read/Save 复用既有 active Admin / Super Admin 检查，不增加 capability，不改变 `/access` 或最后一个 Super Admin 保护。
+- 保存以 global advisory transaction lock、Pointer row lock 和锁内 request ID 复核实现原子 optimistic concurrency；同 Base 只有一个请求成功，冲突无部分写入，重复 request ID 按冻结合同返回原结果或稳定 `INVALID_INPUT`。
+- Revision 写入完整快照；每次成功变更原子写入一条不可编辑 Audit，metadata 仅记录变化字段；Revision update/delete 由数据库触发器拒绝。
+- 文本统一执行 NFC、trim、Unicode code point 长度和控制字符校验。表 RLS 默认拒绝，`anon`/`authenticated` 无内部表权限，授权仅限三个 RPC 的最小执行范围。
+- 新增事务式权限/原子性 SQL 测试与两连接同 Base 并发 SQL 测试；正式 Version 1 与 `site_copy.initialized` 留给 DATA-01，本阶段未写入 Baseline 数据。
+- 本地 clean rebuild 与 existing migration upgrade 通过；未修改 Admin/Web/packages、Auth/capability、远程 Supabase、Preview/Production，也未 Push 或创建 PR。
+
 ## 2026-07-29 — V1.0.2 Final Acceptance and Release Closure
 
 - Fandom Harbor V1.0.2 正式记录为 `RELEASED`；Production Deployment=`COMPLETE`，Product Owner Final Acceptance=`PASS`，Production Functional Smoke=`PASS`，Final Release Closure=`CLOSED`。

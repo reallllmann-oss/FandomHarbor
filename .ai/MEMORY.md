@@ -1,5 +1,16 @@
 # Project Memory
 
+## Admin P0 DB-01 Schema and Security Foundation（2026-07-30）
+
+- DB-01 在独立 `feature/admin-p0-site-copy-db-01` 分支实现，只包含 Migration、SQL 测试和获准数据库状态文档。
+- 数据合同固定为 Current Pointer + immutable full Revision；Revision 只有八个可编辑文案列，不能存储导航路径/顺序/显隐、Studio capability、CTA target 或 Footer 法务链接。
+- `save_site_copy` 的并发顺序固定为 global advisory transaction lock、`site_copy_state` row lock、锁内 request ID 复核；相同请求返回原结果，不同 payload 稳定返回 `INVALID_INPUT`，stale base 返回无副作用 conflict。
+- 每次成功变更在同一事务写入一条 `site_copy.updated` Audit、一条完整 Revision 并移动 Pointer；Audit metadata 只含变化字段。失败和 conflict 不允许部分写入。
+- `get_public_site_copy` 只返回八字段和版本；Admin Read/Save 仅允许既有 active Admin / Super Admin。Reader、Author、suspended/revoked Admin 与所有直接表访问均拒绝。
+- 文本语义固定为 NFC 归一化、首尾空白移除、按 Unicode code point 计数并拒绝控制字符；数据库约束与 RPC 使用同一 helper。
+- DB-01 不创建正式 Version 1。`site_copy.initialized`、actor null 的 Baseline 留给单独 DATA-01。
+- 本地 Migration clean rebuild、existing upgrade、事务 SQL 和真实双连接同 Base concurrency 验证通过；远程数据库、Admin/Web、Auth、`/access`、Push 和 Deployment 未执行。
+
 ## V1.0.2 Final Release Closure（2026-07-29）
 
 - V1.0.2 已正式发布：Release Status=`RELEASED`，Production Deployment=`COMPLETE`，Product Owner Final Acceptance=`PASS`，Production Functional Smoke=`PASS`，Final Release Closure=`CLOSED`。

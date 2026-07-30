@@ -1,25 +1,43 @@
 # Project Status
 
+## Admin P0 DB-01 本地实施状态（2026-07-30）
+
+| 项目                         | 状态                                            |
+| ---------------------------- | ----------------------------------------------- |
+| Mission                      | Admin P0 DB-01 — Schema and Security Foundation |
+| 实施                         | LOCAL COMPLETE                                  |
+| Schema / RLS / RPC           | COMPLETE                                        |
+| 正式 Baseline / Version 1    | NOT CREATED — DATA-01 boundary                  |
+| Admin / Web 产品代码         | UNCHANGED                                       |
+| Remote Supabase / Deployment | NOT RUN                                         |
+| Push / PR                    | NOT RUN                                         |
+
+- 新增不可变八字段 `site_copy_revisions`、单一 `site_copy_state` Current Pointer，以及 Public Read、Admin Read、Admin Save 三个 RPC。
+- 保存采用 global advisory transaction lock → Current Pointer row lock → 锁内 request ID 复核；禁止 Last Write Wins，冲突不产生 Revision、Audit 或 Pointer 更新。
+- 字段和 reason 均按 NFC → 首尾空白移除 → Unicode code point 长度校验，并拒绝控制字符；Revision 保存完整快照，Audit metadata 只保存变化字段。
+- `anon` / `authenticated` 无内部表直读写权限；Public RPC 只暴露八字段与非敏感版本；Admin RPC 复用既有 active Admin / Super Admin 权限事实。
+- 本地 clean rebuild、upgrade path、事务权限/原子性测试和双连接同 Base 并发测试通过。未创建正式 Baseline，未修改 Auth、capability、`/access`、Admin/Web、依赖或部署状态。
+
 ## V1.0.2 当前权威状态（2026-07-29 Final Release Closure）
 
 本文后续保留的 V1.0.2 Local Only、Preview、Pending、Not Run 或 Owner Smoke Required 均为带日期的历史记录，已被本节取代。
 
-| 项目                           | 当前状态                                           |
-| ------------------------------ | -------------------------------------------------- |
-| Release Version                | V1.0.2                                             |
-| Release Commit                 | `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`         |
-| Web Production Deployment      | `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`                 |
-| Web Production Status          | READY                                              |
-| Formal Domain                  | `https://www.fandomharbor.com/`                    |
-| Product Owner Final Acceptance | PASS                                               |
-| Production Functional Smoke    | PASS                                               |
-| Release Status                 | RELEASED                                           |
-| Final Release Closure          | CLOSED                                             |
-| Admin Production Branch        | `admin-production-disabled`                        |
-| Admin Frozen Commit            | `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a`         |
-| Supabase Migration             | NONE                                               |
-| Database / Schema Change       | NONE                                               |
-| Unresolved V1.0.2 Blocker      | NONE                                               |
+| 项目                           | 当前状态                                   |
+| ------------------------------ | ------------------------------------------ |
+| Release Version                | V1.0.2                                     |
+| Release Commit                 | `9ede1c6813e658ea8d7197c74a6ab2703cd0b528` |
+| Web Production Deployment      | `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`         |
+| Web Production Status          | READY                                      |
+| Formal Domain                  | `https://www.fandomharbor.com/`            |
+| Product Owner Final Acceptance | PASS                                       |
+| Production Functional Smoke    | PASS                                       |
+| Release Status                 | RELEASED                                   |
+| Final Release Closure          | CLOSED                                     |
+| Admin Production Branch        | `admin-production-disabled`                |
+| Admin Frozen Commit            | `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a` |
+| Supabase Migration             | NONE                                       |
+| Database / Schema Change       | NONE                                       |
+| Unresolved V1.0.2 Blocker      | NONE                                       |
 
 - Web Production 为 GitHub `main` 的 `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`，状态 READY，正式域名已更新。
 - Lint、TypeScript、193 / 193 tests、Web / Admin / Docs builds 及 Matrix A / B / C / D 全部 PASS。
