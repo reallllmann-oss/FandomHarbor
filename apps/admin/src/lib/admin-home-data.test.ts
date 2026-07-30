@@ -3,11 +3,11 @@ import { SITE_COPY_FIELD_IDS } from "@fandom-harbor/services";
 import { describe, expect, it, vi } from "vitest";
 
 import {
-  ADMIN_SITE_COPY_GROUPS,
   adminSiteCopyFieldIds,
   formatSiteCopyVersion,
   loadAdminHomeData,
 } from "./admin-home-data";
+import { ADMIN_SITE_COPY_GROUPS } from "./site-copy-fields";
 
 const identity = {
   id: "20000000-0000-4000-8000-000000000011",

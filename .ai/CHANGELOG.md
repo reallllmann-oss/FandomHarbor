@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-31 — Admin P0 ADMIN-02 Review, Save and Conflict
+
+- 在 ADMIN-01 严格读取基础上新增 Exact Eight Fields 的受控编辑表单、Unicode code-point 计数、字段/reason 错误提示与 Review Changes 阶段。
+- Review 使用已验收 Domain 规范化与 Diff，NFC/trim 等价输入不会产生虚假变化；无实际变化仍由数据库返回 Unchanged，且不伪造 Audit。
+- 新增 Server Action，重新验证可信 `admin:operate` 后调用既有 Admin Save Service/Repository；Supabase Client、RPC transport 与原始数据库错误不进入浏览器合同。
+- 每个新保存意图生成非 nil request UUID；相同 reviewed payload 重试保持 ID，编辑后重新 Review 生成新 ID；同步提交锁和 pending 状态阻止按钮连点产生独立写入。
+- Saved 更新本地 Version/Revision/content 基线；Conflict 保留输入、禁止自动重试和旧 base 再提交，并对丢弃输入的重新读取执行确认；Error 保留输入并显示稳定安全状态。
+- 新增 43 项 ADMIN-02 定向测试，覆盖权限矩阵、Exact Eight Fields、锁定边界、reason/字段规范化、Saved/Unchanged/Conflict/Error、幂等、bigint、UUID、时间与敏感错误隔离。
+- 既有 DATA-01、DB-01、双连接同 Base Conflict、Audit/幂等及 Identity/Access SQL 回归通过，测试结束无 Profile/Role/Audit 污染。
+- Web 仍使用硬编码 Baseline；未修改 Migration/RPC/Auth/RLS/capability/packages/ui/config，未 Push、PR、远程 Supabase 或部署，Admin Production 保持 Paused。
+
 ## 2026-07-30 — Admin P0 ADMIN-01 Read-only Admin Surface
 
 - 将 Admin 根页面从早期占位 Dashboard 更新为安静、克制的 Site Copy 只读工作台，分组展示 Homepage、Navigation、Footer 的严格八字段。

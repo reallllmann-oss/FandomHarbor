@@ -1,5 +1,7 @@
 import {
   createAdminSiteCopyService,
+  type AdminSiteCopySaveInput,
+  type AdminSiteCopySaveResult,
   type AdminSiteCopySnapshot,
 } from "@fandom-harbor/services";
 import type {
@@ -10,9 +12,7 @@ import { readPublicRuntimeConfig } from "@fandom-harbor/config";
 import { createSupabaseAdminSiteCopyRepository } from "@fandom-harbor/database";
 import { cookies } from "next/headers";
 
-export async function readAdminSiteCopy(
-  access: TrustedAccessContext,
-): Promise<AdminSiteCopySnapshot> {
+async function createAdminSiteCopy() {
   const cookieStore = await cookies();
   const cookieAdapter = {
     getAll: () => cookieStore.getAll(),
@@ -31,5 +31,18 @@ export async function readAdminSiteCopy(
     cookieAdapter,
   );
 
-  return createAdminSiteCopyService(repository).read(access);
+  return createAdminSiteCopyService(repository);
+}
+
+export async function readAdminSiteCopy(
+  access: TrustedAccessContext,
+): Promise<AdminSiteCopySnapshot> {
+  return (await createAdminSiteCopy()).read(access);
+}
+
+export async function saveAdminSiteCopy(
+  access: TrustedAccessContext,
+  input: AdminSiteCopySaveInput,
+): Promise<AdminSiteCopySaveResult> {
+  return (await createAdminSiteCopy()).save(access, input);
 }

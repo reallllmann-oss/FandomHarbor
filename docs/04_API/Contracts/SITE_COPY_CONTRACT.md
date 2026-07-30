@@ -1,8 +1,8 @@
 # Admin P0 Site Copy Domain Contract
 
-Status: DOMAIN-01 implemented locally; ADMIN-01 connects the strict Admin Read
-path to a read-only Admin surface. Admin write and Web consumers are not
-connected.
+Status: DOMAIN-01 implemented locally; ADMIN-01 connects strict Admin Read;
+ADMIN-02 connects controlled Review and Save locally. Web consumers remain
+unconnected.
 
 ## Ownership and flow
 
@@ -130,9 +130,50 @@ publish control. It does not expose Revision, Audit or RPC transport objects to
 the page. Database corruption or unavailability remains a strict Admin failure
 and is handled by the existing Admin error boundary; no Baseline is substituted.
 
+## ADMIN-02 Review and Save connection
+
+The Admin surface edits exactly the eight declared content fields. CTA targets,
+navigation path/order/count/visibility, Studio capability and Footer legal
+links have no edit controls and never enter the App save input.
+
+The UI normalizes each field and reason with the accepted Domain helpers before
+Review. Review displays only normalized changed fields, so NFC- or trim-
+equivalent values do not create false changes. A no-diff review can still be
+submitted for the database to return `Unchanged`; the UI never presents it as
+Saved and never invents an Audit.
+
+Each new Review intent receives a non-nil request UUID. Retrying that same
+reviewed payload keeps the ID. Returning to edit and preparing a new Review
+creates a new ID. A synchronous submission lock plus React pending state blocks
+button double-submit.
+
+The Server Action derives the current trusted access context again and calls
+the shared `requireSiteCopyAdmin` before input parsing or the save dependency.
+It then calls the accepted Admin Save Service and Repository. Client-provided
+Role, Membership and capability are ignored. Supabase clients, RPC unions and
+raw database errors do not cross the action result.
+
+Action results are browser-safe:
+
+- `Saved`: real decimal Version, Revision UUID, decimal Audit ID, changed
+  fields and database time. The reviewed content and returned Version/Revision
+  become the next local baseline without requiring a page refresh.
+- `Unchanged`: real Version and Revision only. No Audit ID exists in the UI
+  contract.
+- `Conflict`: current database Version/Revision, no overwrite and no automatic
+  retry. Draft and reason remain in memory. Returning to edit marks the old
+  base unusable; re-reading requires confirmation because it discards input.
+- `Error`: stable Domain code and safe text only. Draft, reason, base and
+  request ID remain available for a same-payload retry.
+
+Content, immutable Revision, Audit and Current Pointer are still written only
+by `save_site_copy` in one database transaction. ADMIN-02 does not write an
+Audit separately.
+
 ## Current stop boundary
 
-Admin Read is connected locally. Admin edit/save/publish, Web Homepage, Header,
+Admin Read, Review and Save are connected locally. Web Homepage, Header,
 Footer, SEO, metadata, Auth, capability, Migration, RLS and RPC are unchanged.
-No remote Migration, Push, PR, Preview or Production deployment is part of
-ADMIN-01. The next Mission requires separate Product Owner authorization.
+Web still renders its existing hardcoded Baseline. No remote Migration, Push,
+PR, Preview or Production deployment is part of ADMIN-02. The next Mission
+requires separate Product Owner authorization.

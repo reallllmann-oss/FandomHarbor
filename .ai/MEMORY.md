@@ -1,5 +1,16 @@
 # Project Memory
 
+## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
+
+- Admin Site Copy 保存链路固定为 `strict Admin Read → exact eight-field edit → normalized Review → Server Action trusted access check → accepted Domain Save → Repository → save_site_copy`。
+- apps/admin 不重写 Role/Membership/capability 真相或数据库保存合同；Server Action 复用 `requireSiteCopyAdmin`，Domain Service 和 RPC 继续独立复核。
+- 客户端只持有十进制 Version、Revision UUID、八字段 draft、reason 与单次 Review request UUID；不得将 bigint 转成 JavaScript number，不得接触 Supabase/RPC transport。
+- 新 Review 生成新 request ID；同一 review 的失败重试复用原 ID。返回编辑、修改内容/reason/base 后再 Review 必须使用新 ID。pending 与同步 lock 防重复提交。
+- Saved 的数据库 Version/Revision 成为继续编辑的新本地基线；Unchanged 不存在 Audit ID；Conflict 不改本地基线、不自动覆盖/重试，保留输入并要求确认后重新读取。
+- Error 只显示稳定 Domain code 与安全文案，保留输入；不得泄漏 SQL、hint、PostgREST、Token 或内部 metadata。
+- Exact Eight Fields 之外的 CTA path、导航 path/order/count/visibility、Studio capability 和 Footer 法务链接永远不进入 App save input。
+- Web 在 ADMIN-02 后仍使用编译期 Baseline；Migration/RPC/Auth/RLS/Role/Membership/capability 与 Admin Production Paused 均未改变。
+
 ## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
 
 - Admin 根页面是 P0 Site Copy 的只读入口，展示当前数据库 Version 与 Homepage 4 项、Navigation 3 项、Footer 1 项；不得在 ADMIN-01 增加第九字段、动态字段、编辑、保存或发布。

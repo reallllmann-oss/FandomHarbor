@@ -7,39 +7,7 @@ import {
 
 import { getAdminAccessContext } from "./identity-access";
 import { readAdminSiteCopy } from "./site-copy";
-
-export const ADMIN_SITE_COPY_GROUPS = [
-  {
-    description: "首页访客可见的标题、介绍与两个入口标签。",
-    fields: [
-      ["homepage_title", "可见主标题"],
-      ["homepage_introduction", "介绍文字"],
-      ["homepage_primary_cta_label", "主 CTA 显示文案"],
-      ["homepage_secondary_cta_label", "次 CTA 显示文案"],
-    ],
-    title: "Homepage",
-  },
-  {
-    description:
-      "仅展示名称。顺序固定为 Archive → Search → Studio，路径与可见性规则保持锁定。",
-    fields: [
-      ["navigation_archive_label", "Archive 显示名称"],
-      ["navigation_search_label", "Search 显示名称"],
-      ["navigation_studio_label", "Studio 显示名称"],
-    ],
-    title: "Navigation",
-  },
-  {
-    description:
-      "只包含品牌说明；Footer 法务链接、路径和存在性不在可编辑范围。",
-    fields: [["footer_brand_note", "品牌说明"]],
-    title: "Footer",
-  },
-] as const satisfies readonly {
-  description: string;
-  fields: readonly (readonly [SiteCopyFieldId, string])[];
-  title: string;
-}[];
+import { ADMIN_SITE_COPY_GROUPS } from "./site-copy-fields";
 
 interface AdminHomeDependencies {
   getAccessContext(): Promise<TrustedAccessContext | null>;

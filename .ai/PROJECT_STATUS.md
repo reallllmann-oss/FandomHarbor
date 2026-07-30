@@ -1,5 +1,31 @@
 # Project Status
 
+## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
+
+| 项目                         | 状态              |
+| ---------------------------- | ----------------- |
+| Mission                      | Admin P0 ADMIN-02 |
+| Admin Site Copy Read         | LOCAL CONNECTED   |
+| Admin Review / Save          | LOCAL IMPLEMENTED |
+| Atomic Revision / Audit      | VERIFIED          |
+| Same-base Conflict           | VERIFIED          |
+| Exact Eight Fields           | EDITABLE          |
+| Locked Product Boundaries    | PRESERVED         |
+| Existing `/access`           | PRESERVED         |
+| Web Site Copy Consumer       | NOT CONNECTED     |
+| Migration / RPC / Auth       | UNCHANGED         |
+| Remote Supabase / Deployment | NOT RUN           |
+| Push / PR                    | NOT RUN           |
+| Admin Production             | PAUSED            |
+
+- Admin 根页面继续使用严格 Admin Read，并新增 Exact Eight Fields 的编辑、规范化变更复核、reason、Saving、Saved、Unchanged、Conflict 与安全 Error 状态。
+- Server Action 重新取得可信 Access Context，并复用共享 `requireSiteCopyAdmin` 后调用已验收 Domain Save Service/Repository；不信任客户端 Role、Membership 或 capability。
+- 每次新 Review 生成非 nil request UUID；同一 reviewed payload 的安全重试复用该 ID，返回编辑后重新 Review 生成新 ID。连点由同步 submission lock 与 pending disabled 双重阻止。
+- Saved 使用数据库真实 Version、Revision、Audit、changed fields 与 time，并在继续编辑时更新本地基线；Unchanged 不显示或伪造 Audit。
+- Conflict 保留八字段和 reason，不自动覆盖或重试；旧 base 被阻止再次提交，重新读取会丢弃输入时必须经过明确确认。
+- DB-01、DATA-01、双连接并发及 Identity/Access SQL 回归通过；结束后本地数据库恢复唯一 Version 1 基线，无测试 Profile、Role 或额外 Site Copy Audit。
+- apps/web、Migration、RPC、RLS、Grant、Auth、Role、Membership、capability、packages/ui/config 均未修改。
+
 ## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
 
 | 项目                         | 状态                |
