@@ -1,5 +1,25 @@
 # Project Status
 
+## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
+
+| 项目                         | 状态                |
+| ---------------------------- | ------------------- |
+| Mission                      | Admin P0 ADMIN-01   |
+| Admin Site Copy Read         | LOCAL IMPLEMENTED   |
+| Exact Eight Fields / Version | READ-ONLY CONNECTED |
+| Edit / Save / Publish        | NOT IMPLEMENTED     |
+| Existing `/access`           | PRESERVED           |
+| Web Site Copy Consumer       | NOT CONNECTED       |
+| Migration / RPC / Auth       | UNCHANGED           |
+| Remote Supabase / Deployment | NOT RUN             |
+| Push / PR                    | NOT RUN             |
+| Admin Production             | PAUSED              |
+
+- Admin 根页面通过已验收的 `createAdminSiteCopyService` 与 `createSupabaseAdminSiteCopyRepository` 读取当前严格 Snapshot，展示数据库 Version 和恰好八项 Site Copy。
+- anon、Reader、Author、suspended/revoked 身份在 Repository 调用前拒绝；仅 active Admin / Super Admin 可读取，Domain 与数据库仍执行既有双层检查。
+- 页面明确标记只读与锁定边界，不包含 Site Copy 输入框、编辑、保存或发布操作；CTA 目标、导航合同、Studio capability 和 Footer 法务链接均未进入存储或 UI 控件。
+- `/access`、最后一个 Super Admin 保护、Web、Migration、RPC、Auth、Role、Membership、capability 与共享 UI 均未修改。
+
 ## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
 
 | 项目                         | 状态               |

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-30 — Admin P0 ADMIN-01 Read-only Admin Surface
+
+- 将 Admin 根页面从早期占位 Dashboard 更新为安静、克制的 Site Copy 只读工作台，分组展示 Homepage、Navigation、Footer 的严格八字段。
+- 展示当前数据库 bigint Version，并保持十进制字符串无损呈现；页面不显示或伪造 Public Baseline Version。
+- 新增 Admin App 服务端适配，复用已验收 Admin Read Service/Repository；现有 `admin:operate` 在读取 Repository 前检查，数据库 RPC 继续二次授权。
+- 新增 anon/Reader 前置拒绝、Admin/Super Admin allow、严格八字段唯一性及大 bigint Version 测试。
+- 页面无 Site Copy 编辑、保存或发布控件；`/access`、Web、packages/ui、Migration、RPC、Auth、Role、Membership、capability 与远程环境均未修改。
+- 未 Push、PR、Preview 或 Production Deployment；Admin Production 保持 Paused。
+
 ## 2026-07-30 — Admin P0 DOMAIN-01 Service and Repository Contracts
 
 - 新增 provider-neutral Site Copy Domain：严格八字段、DATA-01 Baseline、字段/reason 规范化、UUID/requestId、Diff、Public/Admin Store、capability、错误及封闭保存结果。

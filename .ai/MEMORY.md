@@ -1,5 +1,13 @@
 # Project Memory
 
+## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
+
+- Admin 根页面是 P0 Site Copy 的只读入口，展示当前数据库 Version 与 Homepage 4 项、Navigation 3 项、Footer 1 项；不得在 ADMIN-01 增加第九字段、动态字段、编辑、保存或发布。
+- App 通过 `loadAdminHomeData → createAdminSiteCopyService → createSupabaseAdminSiteCopyRepository → get_admin_site_copy` 读取；权限上下文来自现有 Identity/Access 边界，Repository 调用前要求 `admin:operate`。
+- 数据库 Snapshot 严格失败，不使用 Baseline 掩盖 Admin 数据损坏；现有根级 Error Boundary 负责受控失败界面。
+- Version 保持 Domain `bigint` 并直接以十进制字符串展示，不经过 JavaScript number。
+- `/access`、最后一个 Super Admin 保护、Web、Migration/RPC、Auth/Role/Membership/capability 与 packages/ui 保持不变；Admin Production 继续 Paused。
+
 ## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
 
 - Site Copy Domain 固定为八个显式字段，不允许 index signature、动态 Record、额外/缺失字段或未知属性透传；Version 1 Baseline 与 DATA-01 逐字一致。

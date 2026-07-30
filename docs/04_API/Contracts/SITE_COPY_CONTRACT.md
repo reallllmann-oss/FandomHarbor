@@ -1,6 +1,8 @@
 # Admin P0 Site Copy Domain Contract
 
-Status: DOMAIN-01 implemented locally; Admin UI and Web consumers are not connected.
+Status: DOMAIN-01 implemented locally; ADMIN-01 connects the strict Admin Read
+path to a read-only Admin surface. Admin write and Web consumers are not
+connected.
 
 ## Ownership and flow
 
@@ -115,6 +117,22 @@ Known transport limit: the approved RPCs currently use standard JSON numeric tra
 
 Mappings use structured codes, never fuzzy database message matching. Raw error objects, SQL details, table/function names, hints and sensitive metadata are not exposed to Apps.
 
-## DOMAIN-01 stop boundary
+## ADMIN-01 read-only connection
 
-The Domain and Repository contracts are callable through package exports. No Admin page, Web Homepage, Header, Footer, SEO, metadata, Auth, capability, Migration, RLS or RPC is changed. No remote Migration, Push, PR, Preview or Production deployment is part of DOMAIN-01. The next separately authorized Mission is `ADMIN-01 — Read-only Admin Surface`.
+The Admin root page now calls the accepted Admin Service and Repository to
+display the current database Version and all eight fields. The App derives the
+existing trusted access context first; unauthenticated or non-`admin:operate`
+contexts do not call the Site Copy Repository. The Service and database RPC
+continue to enforce the same capability independently.
+
+The surface contains no Site Copy inputs, edit state, save Server Action or
+publish control. It does not expose Revision, Audit or RPC transport objects to
+the page. Database corruption or unavailability remains a strict Admin failure
+and is handled by the existing Admin error boundary; no Baseline is substituted.
+
+## Current stop boundary
+
+Admin Read is connected locally. Admin edit/save/publish, Web Homepage, Header,
+Footer, SEO, metadata, Auth, capability, Migration, RLS and RPC are unchanged.
+No remote Migration, Push, PR, Preview or Production deployment is part of
+ADMIN-01. The next Mission requires separate Product Owner authorization.
