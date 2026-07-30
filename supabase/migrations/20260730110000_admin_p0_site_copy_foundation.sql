@@ -391,7 +391,7 @@ begin
   v_footer_brand_note := private.require_site_copy_text(
     p_footer_brand_note, 'footer_brand_note', 1, 80
   );
-  v_reason := private.require_site_copy_text(p_reason, 'reason', 1, 500);
+  v_reason := private.require_site_copy_text(p_reason, 'reason', 4, 200);
 
   if p_request_id is null
     or p_base_version is null
@@ -760,4 +760,4 @@ comment on function public.save_site_copy(
   text,
   text
 ) is
-  'Atomic optimistic-concurrency save with global serialization, request idempotency, immutable revision, current pointer, and one audit event.';
+  'Atomic optimistic-concurrency save with normalized 4-200 code-point reason, global serialization, request idempotency, immutable revision, current pointer, and one audit event.';

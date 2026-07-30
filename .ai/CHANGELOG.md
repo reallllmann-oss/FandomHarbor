@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-30 — Admin P0 DB-01A Change Reason Contract Alignment
+
+- 将 `save_site_copy` 的 change reason 数据库限制从 1–500 修正为冻结的 4–200 个 NFC 归一化、trim 后 Unicode code points。
+- 保持既有统一文本 helper：拒绝控制字符和换行，以稳定 `INVALID_INPUT` 报告非法 reason。
+- 新增 3、4、200、201、trim、NFC、控制字符、换行边界，以及非法 reason 对 Revision/Audit/Pointer 零写入验证。
+- 验证合法 Audit 保存规范化 reason；相同 request ID 的规范化等价 reason 返回原保存结果，不同规范化 reason 返回 `INVALID_INPUT`。
+- 保持 DB-01 八字段、数据模型、权限矩阵、Version、Conflict、锁顺序、原子性、并发和 DATA-01 boundary 不变。
+- DB-01 Commit `651228c0d6c76bbba92339103bafdf9090f331b9` 未 amend、squash 或重写；本修正创建后续独立本地 Commit，不 Push。
+
 ## 2026-07-30 — Admin P0 DB-01 Schema and Security Foundation
 
 - 新增 `site_copy_revisions` 不可变完整快照与 `site_copy_state` global Current Pointer；P0 可编辑数据严格限于八个 typed text 字段。

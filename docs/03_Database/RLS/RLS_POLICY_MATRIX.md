@@ -49,6 +49,7 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - `get_public_site_copy()` is the only Visitor projection. It returns the fixed eight copy fields and a non-sensitive version, with no actor, reason, request ID, audit ID or internal pointer.
 - `get_admin_site_copy()` and `save_site_copy(...)` require an active `admin` or `super_admin` role through the existing identity helpers. Reader, Author, suspended Admin and revoked Admin fail closed.
 - `save_site_copy(...)` serializes the global scope, checks the current pointer, rejects stale bases without writes and atomically creates one immutable full revision, one audit event and one pointer update.
+- Admin save reasons are normalized to NFC, trimmed, counted as Unicode code points and constrained to 4–200 with control characters rejected. Audit and idempotency comparison use the normalized reason.
 - The revision tables cannot store navigation paths/order/visibility, Studio capability rules, CTA targets or Footer legal links. Version 1 initialization remains outside DB-01.
 - `supabase/tests/admin_p0_site_copy_db_01.sql` covers catalog, grants, role matrix, normalization, validation, idempotency, rollback, audit and pointer contracts. `admin_p0_site_copy_db_01_concurrency.sql` proves that two simultaneous requests using one base produce one save and one conflict.
 

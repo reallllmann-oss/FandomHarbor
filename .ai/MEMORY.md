@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
+
+- Product Owner 要求将普通 Admin `save_site_copy` 的 change reason 合同从错误的 1–500 修正为冻结的 4–200。
+- 最终数据库语义为 NFC → trim → Unicode code point 计数 4–200，并拒绝控制字符和换行；该限制在 RPC 内直接执行。
+- Audit 保存规范化 reason，request ID 幂等比较同样使用规范化 reason；规范化等价输入返回原结果，规范化后不同则返回稳定 `INVALID_INPUT`。
+- SQL 自动化覆盖 3/4/200/201、trim、NFC、控制字符、换行、非法输入零写入、Audit reason、幂等、Conflict、原子回滚和双连接并发。
+- DB-01 Foundation Commit `651228c0d6c76bbba92339103bafdf9090f331b9` 必须保持不变；DB-01A 形成其后的独立本地修正 Commit。
+- DATA-01、正式 Baseline、Admin/Web、远程 Supabase、Push 和 Deployment 仍未授权。
+
 ## Admin P0 DB-01 Schema and Security Foundation（2026-07-30）
 
 - DB-01 在独立 `feature/admin-p0-site-copy-db-01` 分支实现，只包含 Migration、SQL 测试和获准数据库状态文档。

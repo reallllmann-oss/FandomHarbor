@@ -607,6 +607,9 @@ select set_config(
 do $$
 declare
   v_result jsonb;
+  v_revision_count bigint;
+  v_audit_count bigint;
+  v_pointer uuid;
 begin
   if (
     select count(*) from public.get_admin_site_copy()
@@ -668,6 +671,146 @@ begin
       end if;
   end;
 
+  reset role;
+  select count(*) into strict v_revision_count
+  from public.site_copy_revisions;
+  select count(*) into strict v_audit_count
+  from public.audit_logs;
+  select current_revision_id into strict v_pointer
+  from public.site_copy_state
+  where scope = 'global';
+  set local role authenticated;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000012',
+      'Reason length three',
+      'Reason validation must not write',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      'abc'
+    );
+    raise exception 'three-code-point reason was accepted';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'reason length 3 returned unstable error: %', sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000013',
+      'Trimmed reason length three',
+      'Reason validation must not write',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      '  abc  '
+    );
+    raise exception 'trimmed three-code-point reason was accepted';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'trimmed reason length 3 returned unstable error: %',
+          sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000014',
+      'Reason length two hundred one',
+      'Reason validation must not write',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      repeat('界', 201)
+    );
+    raise exception '201-code-point reason was accepted';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'reason length 201 returned unstable error: %', sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000015',
+      'Reason control rejection',
+      'Reason validation must not write',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      E'ab\tcd'
+    );
+    raise exception 'reason control character was accepted';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'reason control character returned unstable error: %',
+          sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000016',
+      'Reason newline rejection',
+      'Reason validation must not write',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      E'ab\ncd'
+    );
+    raise exception 'reason newline was accepted';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'reason newline returned unstable error: %', sqlerrm;
+      end if;
+  end;
+
+  reset role;
+  if (select count(*) from public.site_copy_revisions) <> v_revision_count
+    or (select count(*) from public.audit_logs) <> v_audit_count
+    or (
+      select current_revision_id
+      from public.site_copy_state
+      where scope = 'global'
+    ) <> v_pointer
+  then
+    raise exception 'invalid reason produced a partial write';
+  end if;
+  set local role authenticated;
+
   v_result := public.save_site_copy(
     1,
     '83000000-0000-4000-8000-000000000001',
@@ -680,7 +823,7 @@ begin
     'Search',
     'Studio',
     'Fandom Harbor · 私域作品归档',
-    '  Normalize and save  '
+    U&'  e\0301abc  '
   );
 
   if v_result ->> 'status' <> 'saved'
@@ -695,6 +838,13 @@ begin
     from public.get_admin_site_copy()
   ) <> 'Café Harbor' then
     raise exception 'NFC normalization and trimming were not persisted';
+  end if;
+
+  if (
+    select last_change_reason
+    from public.get_admin_site_copy()
+  ) <> 'éabc' then
+    raise exception 'normalized four-code-point reason was not audited';
   end if;
 end;
 $$;
@@ -734,7 +884,7 @@ begin
     'Search',
     'Studio',
     'Fandom Harbor · 私域作品归档',
-    'Normalize and save'
+    'éabc'
   );
 
   if v_retry_result is distinct from v_first_result then
@@ -756,6 +906,30 @@ begin
       1,
       '83000000-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000020',
+      U&'Cafe\0301 Harbor',
+      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+      '浏览公开作品',
+      '查找作品与作者',
+      'Archive',
+      'Search',
+      'Studio',
+      'Fandom Harbor · 私域作品归档',
+      'abcd'
+    );
+    raise exception 'same request id accepted a different normalized reason';
+  exception
+    when sqlstate '22023' then
+      if sqlerrm <> 'INVALID_INPUT' then
+        raise exception 'request reason mismatch returned unstable error: %',
+          sqlerrm;
+      end if;
+  end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      '83000000-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000020',
       'Different payload',
       '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
       '浏览公开作品',
@@ -764,13 +938,14 @@ begin
       'Search',
       'Studio',
       'Fandom Harbor · 私域作品归档',
-      'Normalize and save'
+      'éabc'
     );
-    raise exception 'same request id accepted a different payload';
+    raise exception 'same request id accepted different content';
   exception
     when sqlstate '22023' then
       if sqlerrm <> 'INVALID_INPUT' then
-        raise exception 'request mismatch returned unstable error: %', sqlerrm;
+        raise exception 'request content mismatch returned unstable error: %',
+          sqlerrm;
       end if;
   end;
 
@@ -783,6 +958,47 @@ begin
   set local role authenticated;
 end;
 $$;
+
+savepoint db01_reason_200_boundary;
+
+do $$
+declare
+  v_current record;
+  v_result jsonb;
+begin
+  select * into v_current from public.get_admin_site_copy();
+
+  v_result := public.save_site_copy(
+    v_current.version,
+    v_current.revision_id,
+    '84000000-0000-4000-8000-000000000022',
+    v_current.homepage_title,
+    v_current.homepage_introduction,
+    v_current.homepage_primary_cta_label,
+    v_current.homepage_secondary_cta_label,
+    v_current.navigation_archive_label,
+    v_current.navigation_search_label,
+    v_current.navigation_studio_label,
+    'Fandom Harbor · 200 code point reason boundary',
+    '  ' || repeat('界', 200) || '  '
+  );
+
+  if v_result ->> 'status' <> 'saved'
+    or (v_result ->> 'version')::bigint <> 3
+  then
+    raise exception '200-code-point reason was not accepted: %', v_result;
+  end if;
+
+  if (
+    select last_change_reason
+    from public.get_admin_site_copy()
+  ) <> repeat('界', 200) then
+    raise exception '200-code-point reason was not normalized in Audit';
+  end if;
+end;
+$$;
+
+rollback to savepoint db01_reason_200_boundary;
 
 do $$
 declare
@@ -852,6 +1068,15 @@ begin
     )
   ) then
     raise exception 'save audit metadata contains more than changed fields';
+  end if;
+
+  if (
+    select a.reason
+    from public.site_copy_revisions r
+    join public.audit_logs a on a.id = r.audit_log_id
+    where r.version = 2
+  ) <> 'éabc' then
+    raise exception 'save audit did not keep the normalized reason';
   end if;
 
   if (

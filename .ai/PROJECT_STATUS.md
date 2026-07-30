@@ -1,5 +1,22 @@
 # Project Status
 
+## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
+
+| 项目               | 状态                                                   |
+| ------------------ | ------------------------------------------------------ |
+| Mission            | DB-01A — Change Reason Contract Alignment              |
+| 修正               | `1–500` → `4–200` Unicode code points                  |
+| 数据库强制校验     | COMPLETE                                               |
+| 边界与原子性测试   | COMPLETE                                               |
+| DB-01 Commit       | PRESERVED — `651228c0d6c76bbba92339103bafdf9090f331b9` |
+| Baseline / DATA-01 | NOT RUN                                                |
+| Push / Deployment  | NOT RUN                                                |
+
+- `save_site_copy` 直接执行 NFC、trim、Unicode code point 4–200 和控制字符拒绝；不依赖未来 Admin、Service 或 Server Action。
+- 3、trim 后 3、201、控制字符及换行均稳定返回 `INVALID_INPUT` 且 Revision/Audit/Pointer 零写入；NFC + trim 后 4 与 trim 后 200 均允许。
+- Audit 保存规范化 reason；相同 request ID 的规范化等价 reason 返回原结果，不同规范化 reason 返回 `INVALID_INPUT`。
+- DB-01 数据模型、八字段、权限、Version、Conflict、锁顺序、并发和 Initialization boundary 均未改变。
+
 ## Admin P0 DB-01 本地实施状态（2026-07-30）
 
 | 项目                         | 状态                                            |
