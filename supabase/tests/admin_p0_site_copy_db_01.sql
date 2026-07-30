@@ -140,8 +140,8 @@ begin
 
   if (
     select count(*) from public.get_public_site_copy()
-  ) <> 0 then
-    raise exception 'DB-01 unexpectedly initialized public site copy';
+  ) <> 1 then
+    raise exception 'DATA-01 baseline is not available through the public projection';
   end if;
 end;
 $$;
@@ -349,88 +349,40 @@ insert into public.role_grants (
     'DB-01 revoked Admin fixture'
   );
 
+set local role authenticated;
+select set_config(
+  'request.jwt.claim.sub',
+  '81000000-0000-4000-8000-000000000001',
+  true
+);
+
 do $$
 declare
-  v_audit_log_id bigint;
+  v_copy record;
 begin
-  v_audit_log_id := private.write_audit(
-    null,
-    'site_copy.initialized',
-    'site_copy_revision',
-    '83000000-0000-4000-8000-000000000001',
-    'DB-01 transactional baseline fixture',
-    pg_catalog.jsonb_build_object(
-      'homepage_title', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Fandom Harbor'
-      ),
-      'homepage_introduction', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', '一座为公开故事发现与长久阅读保留安静位置的文学港湾。'
-      ),
-      'homepage_primary_cta_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', '浏览公开作品'
-      ),
-      'homepage_secondary_cta_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', '查找作品与作者'
-      ),
-      'navigation_archive_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Archive'
-      ),
-      'navigation_search_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Search'
-      ),
-      'navigation_studio_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Studio'
-      ),
-      'footer_brand_note', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Fandom Harbor · 私域作品归档'
-      )
-    )
-  );
+  select * into strict v_copy from public.get_admin_site_copy();
 
-  insert into public.site_copy_revisions (
-    id,
-    version,
-    base_version,
-    base_revision_id,
-    homepage_title,
-    homepage_introduction,
-    homepage_primary_cta_label,
-    homepage_secondary_cta_label,
-    navigation_archive_label,
-    navigation_search_label,
-    navigation_studio_label,
-    footer_brand_note,
-    request_id,
-    audit_log_id
-  ) values (
-    '83000000-0000-4000-8000-000000000001',
-    1,
-    0,
-    null,
-    'Fandom Harbor',
-    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
-    '浏览公开作品',
-    '查找作品与作者',
-    'Archive',
-    'Search',
-    'Studio',
-    'Fandom Harbor · 私域作品归档',
-    '84000000-0000-4000-8000-000000000001',
-    v_audit_log_id
-  );
-
-  insert into public.site_copy_state (scope, current_revision_id)
-  values ('global', '83000000-0000-4000-8000-000000000001');
+  if v_copy.version <> 1
+    or v_copy.revision_id <> 'dada0100-0000-4000-8000-000000000001'
+    or v_copy.homepage_title <> 'Fandom Harbor'
+    or v_copy.homepage_introduction <>
+      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。'
+    or v_copy.homepage_primary_cta_label <> '浏览公开作品'
+    or v_copy.homepage_secondary_cta_label <> '查找作品与作者'
+    or v_copy.navigation_archive_label <> 'Archive'
+    or v_copy.navigation_search_label <> 'Search'
+    or v_copy.navigation_studio_label <> 'Studio'
+    or v_copy.footer_brand_note <> 'Fandom Harbor · 私域作品归档'
+    or v_copy.last_actor_user_id is not null
+    or v_copy.last_change_reason <>
+      'DATA-01 site copy baseline initialization'
+  then
+    raise exception 'Super Admin did not receive the exact Version 1 baseline';
+  end if;
 end;
 $$;
+
+reset role;
 
 set local role anon;
 
@@ -490,7 +442,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000004',
       'Reader cannot save',
       'Reader cannot save',
@@ -521,9 +473,19 @@ select set_config(
 do $$
 begin
   begin
+    perform public.get_admin_site_copy();
+    raise exception 'Author read Admin site copy';
+  exception
+    when insufficient_privilege then
+      if sqlerrm <> 'FORBIDDEN' then
+        raise exception 'Author read received unstable error: %', sqlerrm;
+      end if;
+  end;
+
+  begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000003',
       'Author cannot save',
       'Author cannot save',
@@ -562,6 +524,29 @@ begin
         raise exception 'Suspended Admin received unstable error: %', sqlerrm;
       end if;
   end;
+
+  begin
+    perform public.save_site_copy(
+      1,
+      'dada0100-0000-4000-8000-000000000001',
+      '84000000-0000-4000-8000-000000000005',
+      'Suspended Admin cannot save',
+      'Suspended Admin cannot save',
+      'Primary',
+      'Secondary',
+      'Archive',
+      'Search',
+      'Studio',
+      'Footer',
+      'Suspended Admin denial'
+    );
+    raise exception 'Suspended Admin saved Admin site copy';
+  exception
+    when insufficient_privilege then
+      if sqlerrm <> 'FORBIDDEN' then
+        raise exception 'Suspended Admin save received unstable error: %', sqlerrm;
+      end if;
+  end;
 end;
 $$;
 
@@ -574,9 +559,19 @@ select set_config(
 do $$
 begin
   begin
+    perform public.get_admin_site_copy();
+    raise exception 'Revoked Admin read Admin site copy';
+  exception
+    when insufficient_privilege then
+      if sqlerrm <> 'FORBIDDEN' then
+        raise exception 'Revoked Admin read received unstable error: %', sqlerrm;
+      end if;
+  end;
+
+  begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000006',
       'Revoked Admin cannot save',
       'Revoked Admin cannot save',
@@ -611,10 +606,25 @@ declare
   v_audit_count bigint;
   v_pointer uuid;
 begin
-  if (
-    select count(*) from public.get_admin_site_copy()
-  ) <> 1 then
-    raise exception 'active Admin could not read site copy';
+  if not exists (
+    select 1
+    from public.get_admin_site_copy() copy
+    where copy.version = 1
+      and copy.revision_id = 'dada0100-0000-4000-8000-000000000001'
+      and copy.homepage_title = 'Fandom Harbor'
+      and copy.homepage_introduction =
+        '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。'
+      and copy.homepage_primary_cta_label = '浏览公开作品'
+      and copy.homepage_secondary_cta_label = '查找作品与作者'
+      and copy.navigation_archive_label = 'Archive'
+      and copy.navigation_search_label = 'Search'
+      and copy.navigation_studio_label = 'Studio'
+      and copy.footer_brand_note = 'Fandom Harbor · 私域作品归档'
+      and copy.last_actor_user_id is null
+      and copy.last_change_reason =
+        'DATA-01 site copy baseline initialization'
+  ) then
+    raise exception 'active Admin did not receive the exact Version 1 baseline';
   end if;
 
   begin
@@ -628,7 +638,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000010',
       repeat('界', 41),
       'Length rejection',
@@ -651,7 +661,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000011',
       'Control rejection',
       E'Line one\nLine two',
@@ -684,7 +694,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000012',
       'Reason length three',
       'Reason validation must not write',
@@ -707,7 +717,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000013',
       'Trimmed reason length three',
       'Reason validation must not write',
@@ -731,7 +741,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000014',
       'Reason length two hundred one',
       'Reason validation must not write',
@@ -754,7 +764,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000015',
       'Reason control rejection',
       'Reason validation must not write',
@@ -778,7 +788,7 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000016',
       'Reason newline rejection',
       'Reason validation must not write',
@@ -813,10 +823,10 @@ begin
 
   v_result := public.save_site_copy(
     1,
-    '83000000-0000-4000-8000-000000000001',
+    'dada0100-0000-4000-8000-000000000001',
     '84000000-0000-4000-8000-000000000020',
     U&'  Cafe\0301 Harbor  ',
-    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
     '浏览公开作品',
     '查找作品与作者',
     'Archive',
@@ -874,10 +884,10 @@ begin
 
   v_retry_result := public.save_site_copy(
     1,
-    '83000000-0000-4000-8000-000000000001',
+    'dada0100-0000-4000-8000-000000000001',
     '84000000-0000-4000-8000-000000000020',
     U&'Cafe\0301 Harbor',
-    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
     '浏览公开作品',
     '查找作品与作者',
     'Archive',
@@ -904,10 +914,10 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000020',
       U&'Cafe\0301 Harbor',
-      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
       '浏览公开作品',
       '查找作品与作者',
       'Archive',
@@ -928,10 +938,10 @@ begin
   begin
     perform public.save_site_copy(
       1,
-      '83000000-0000-4000-8000-000000000001',
+      'dada0100-0000-4000-8000-000000000001',
       '84000000-0000-4000-8000-000000000020',
       'Different payload',
-      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+      '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
       '浏览公开作品',
       '查找作品与作者',
       'Archive',
@@ -1017,10 +1027,10 @@ begin
 
   v_result := public.save_site_copy(
     1,
-    '83000000-0000-4000-8000-000000000001',
+    'dada0100-0000-4000-8000-000000000001',
     '84000000-0000-4000-8000-000000000021',
     'Stale request',
-    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。',
+    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
     '浏览公开作品',
     '查找作品与作者',
     'Archive',

@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
+
+- DATA-01 与 DB-01 Schema 分离，通过独立 owner-only Migration 原子创建 Version 1：一条 `site_copy.initialized` Audit（actor `null`）、一条严格八字段完整 Revision 和一个 global Current Pointer。
+- 基线值逐项来自当前 Web 实际渲染来源：Homepage 的标题、介绍、两个 CTA，global shell 的 Archive/Search/Studio 标签，以及 `ReaderLayout` 的 Footer 品牌说明。
+- 初始化复用 DB-01 文本 helper 和 global advisory lock；任何已有 site-copy State、Revision 或相关 Audit 都返回稳定 `SITE_COPY_ALREADY_INITIALIZED`，不做 Last Write Wins、修补或覆盖。
+- 初始化不通过 Admin `save_site_copy`，nil UUID 只作为系统 Version 1 request marker，普通 Admin 继续使用 v4 request ID 与既有幂等合同。
+- SQL 验证覆盖精确值、public projection、actor-null Audit/八字段 metadata、重复与残缺状态拒绝、强制失败原子回滚、权限矩阵、Version/Conflict/并发和 Identity/Access 回归。
+- DATA-01 不修改 Admin/Web、Auth/capability、`/access`、远程 Supabase 或部署；DB-01 与 DB-01A Commit 保持不变。
+
 ## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
 
 - Product Owner 要求将普通 Admin `save_site_copy` 的 change reason 合同从错误的 1–500 修正为冻结的 4–200。

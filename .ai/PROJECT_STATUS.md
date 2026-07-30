@@ -1,5 +1,23 @@
 # Project Status
 
+## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
+
+| 项目                         | 状态                                                 |
+| ---------------------------- | ---------------------------------------------------- |
+| Mission                      | Admin P0 DATA-01 — Site Copy Baseline Initialization |
+| Version 1 / Current Pointer  | LOCAL IMPLEMENTED                                    |
+| Initialization Audit         | `site_copy.initialized` / actor `null`               |
+| 基线字段                     | 当前 Web 实际渲染的严格八字段                        |
+| DB-01 / DB-01A Commits       | PRESERVED                                            |
+| Admin / Web 产品代码         | UNCHANGED                                            |
+| Remote Supabase / Deployment | NOT RUN                                              |
+| Push / PR                    | NOT RUN                                              |
+
+- 独立 DATA Migration 在单一事务中创建一条 actor-null 初始化 Audit、一条完整不可变 Version 1 Revision 和一个 global Current Pointer；不调用普通 Admin `save_site_copy`。
+- 初始化前取得与保存流程相同的 global advisory transaction lock；发现任意 site-copy State、Revision 或初始化/更新 Audit 时稳定拒绝，不覆盖、不补齐、不产生部分写入。
+- Version 1 使用保留的 nil UUID 系统 request marker，不占用普通 Admin v4 request ID 命名空间。
+- Public Projection 只返回八字段与非敏感 version；既有 active Admin/Super Admin allow 及 Reader、Author、suspended/revoked deny 权限合同保持不变。
+
 ## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
 
 | 项目               | 状态                                                   |

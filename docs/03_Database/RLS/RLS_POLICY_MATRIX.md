@@ -50,8 +50,29 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - `get_admin_site_copy()` and `save_site_copy(...)` require an active `admin` or `super_admin` role through the existing identity helpers. Reader, Author, suspended Admin and revoked Admin fail closed.
 - `save_site_copy(...)` serializes the global scope, checks the current pointer, rejects stale bases without writes and atomically creates one immutable full revision, one audit event and one pointer update.
 - Admin save reasons are normalized to NFC, trimmed, counted as Unicode code points and constrained to 4–200 with control characters rejected. Audit and idempotency comparison use the normalized reason.
-- The revision tables cannot store navigation paths/order/visibility, Studio capability rules, CTA targets or Footer legal links. Version 1 initialization remains outside DB-01.
-- `supabase/tests/admin_p0_site_copy_db_01.sql` covers catalog, grants, role matrix, normalization, validation, idempotency, rollback, audit and pointer contracts. `admin_p0_site_copy_db_01_concurrency.sql` proves that two simultaneous requests using one base produce one save and one conflict.
+- The revision tables cannot store navigation paths/order/visibility, Studio capability rules, CTA targets or Footer legal links.
+- DATA-01 creates exactly one formal global Version 1 graph: an actor-null `site_copy.initialized` Audit, one immutable full Revision and one Current Pointer. It is separate from the Admin save RPC, reserves the nil UUID outside the normal v4 request-ID namespace and fails closed if any site-copy State, Revision or Audit already exists.
+- Application roles cannot execute the owner-only initializer; they retain only the existing public projection and active Admin/Super Admin RPC boundaries.
+- `supabase/tests/admin_p0_site_copy_data_01.sql` verifies the exact eight baseline values, public projection, initialization permissions, rerun rejection, incomplete-state rejection and atomic rollback. `admin_p0_site_copy_db_01.sql` covers catalog, grants, role matrix, normalization, validation, idempotency, rollback, audit and pointer contracts. `admin_p0_site_copy_db_01_concurrency.sql` proves that two simultaneous requests using one base produce one save and one conflict while preserving Version 1.
+
+### DATA-01 Version 1 baseline
+
+| Field                          | Version 1 value                                                                                                                                | Current rendered source                                       |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `homepage_title`               | `Fandom Harbor`                                                                                                                                | `apps/web/src/app/page.tsx:22`                                |
+| `homepage_introduction`        | `一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。` | `apps/web/src/app/page.tsx:25`                                |
+| `homepage_primary_cta_label`   | `浏览公开作品`                                                                                                                                 | `apps/web/src/app/page.tsx:32`                                |
+| `homepage_secondary_cta_label` | `查找作品与作者`                                                                                                                               | `apps/web/src/app/page.tsx:35`                                |
+| `navigation_archive_label`     | `Archive`                                                                                                                                      | `apps/web/src/lib/global-shell-navigation.ts:4`               |
+| `navigation_search_label`      | `Search`                                                                                                                                       | `apps/web/src/lib/global-shell-navigation.ts:5`               |
+| `navigation_studio_label`      | `Studio`                                                                                                                                       | `apps/web/src/lib/global-shell-navigation.ts:10`              |
+| `footer_brand_note`            | `Fandom Harbor · 私域作品归档`                                                                                                                 | `packages/ui/src/components/layouts.tsx:106`, rendered by Web |
+
+The initializer records actor `null` because DATA-01 is a system Migration, not an Admin or Product Owner action. Its Audit action is `site_copy.initialized`, and metadata contains exactly the eight fields above as `{ before: null, after: value }`.
+
+Before writing, the initializer acquires the global site-copy transaction lock and proves that no site-copy State, Revision or related Audit exists. Any prior or incomplete state returns `SITE_COPY_ALREADY_INITIALIZED`; the Migration never deletes, repairs, overwrites or renumbers existing data. Audit, Revision and Pointer are one transaction, so a failure in any step rolls back all three.
+
+After DATA-01, Public Read returns Version 1 plus only these eight fields. Existing active Admin/Super Admin Read and Save permissions continue unchanged; all other Admin RPC and direct-table denials remain in force. Admin and Web product code do not yet consume this baseline, and no remote Migration or deployment is part of DATA-01.
 
 ## Phase 2 / Sprint 002A enforced policies
 

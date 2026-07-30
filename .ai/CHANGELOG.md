@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-30 — Admin P0 DATA-01 Site Copy Baseline Initialization
+
+- 新增独立 DATA Migration，以当前 Web 实际渲染的八个文案值原子创建 global Version 1、actor-null `site_copy.initialized` Audit 与 Current Pointer。
+- 初始化不调用普通 Admin save RPC，不改变八字段、字段限制、权限矩阵、Version/Conflict/request ID 逻辑；nil UUID 仅作为系统基线 request marker。
+- 初始化取得同一 global advisory transaction lock，并在任何已有 site-copy State、Revision 或相关 Audit 时稳定失败，禁止覆盖、自动修补和部分写入。
+- 新增 DATA-01 SQL 测试，验证精确基线、严格八字段 Audit metadata、公开非敏感投影、初始化函数最小授权、重复/残缺状态拒绝及强制失败零写入。
+- 既有 DB-01 权限/原子性测试改为消费正式 Version 1；双连接测试完成后恢复并保留唯一正式基线。
+- 未修改 Admin/Web/packages、Auth/capability、`/access`、远程 Supabase 或部署；不 Push、不创建 PR。
+
 ## 2026-07-30 — Admin P0 DB-01A Change Reason Contract Alignment
 
 - 将 `save_site_copy` 的 change reason 数据库限制从 1–500 修正为冻结的 4–200 个 NFC 归一化、trim 后 Unicode code points。

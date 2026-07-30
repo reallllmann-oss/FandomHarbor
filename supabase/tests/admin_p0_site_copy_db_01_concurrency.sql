@@ -11,8 +11,18 @@ begin
       'run this local-only dblink concurrency test as supabase_admin';
   end if;
 
-  if exists (select 1 from public.site_copy_state where scope = 'global') then
-    raise exception 'concurrency test requires an uninitialized DB-01 database';
+  if (
+    select count(*)
+    from public.site_copy_state s
+    join public.site_copy_revisions r on r.id = s.current_revision_id
+    join public.audit_logs a on a.id = r.audit_log_id
+    where s.scope = 'global'
+      and r.id = 'dada0100-0000-4000-8000-000000000001'
+      and r.version = 1
+      and a.action = 'site_copy.initialized'
+      and a.actor_user_id is null
+  ) <> 1 then
+    raise exception 'concurrency test requires the formal DATA-01 baseline';
   end if;
 end;
 $$;
@@ -69,89 +79,6 @@ insert into public.role_grants (
   'DB-01 concurrency fixture'
 );
 
-do $$
-declare
-  v_audit_log_id bigint;
-begin
-  v_audit_log_id := private.write_audit(
-    null,
-    'site_copy.initialized',
-    'site_copy_revision',
-    '93000000-0000-4000-8000-000000000001',
-    'DB-01 concurrency baseline fixture',
-    pg_catalog.jsonb_build_object(
-      'homepage_title', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Fandom Harbor'
-      ),
-      'homepage_introduction', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Concurrency baseline'
-      ),
-      'homepage_primary_cta_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Browse'
-      ),
-      'homepage_secondary_cta_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Search'
-      ),
-      'navigation_archive_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Archive'
-      ),
-      'navigation_search_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Search'
-      ),
-      'navigation_studio_label', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Studio'
-      ),
-      'footer_brand_note', pg_catalog.jsonb_build_object(
-        'before', null,
-        'after', 'Fandom Harbor'
-      )
-    )
-  );
-
-  insert into public.site_copy_revisions (
-    id,
-    version,
-    base_version,
-    base_revision_id,
-    homepage_title,
-    homepage_introduction,
-    homepage_primary_cta_label,
-    homepage_secondary_cta_label,
-    navigation_archive_label,
-    navigation_search_label,
-    navigation_studio_label,
-    footer_brand_note,
-    request_id,
-    audit_log_id
-  ) values (
-    '93000000-0000-4000-8000-000000000001',
-    1,
-    0,
-    null,
-    'Fandom Harbor',
-    'Concurrency baseline',
-    'Browse',
-    'Search',
-    'Archive',
-    'Search',
-    'Studio',
-    'Fandom Harbor',
-    '94000000-0000-4000-8000-000000000001',
-    v_audit_log_id
-  );
-
-  insert into public.site_copy_state (scope, current_revision_id)
-  values ('global', '93000000-0000-4000-8000-000000000001');
-end;
-$$;
-
 create or replace function public.db01_test_concurrent_save(
   p_request_id uuid,
   p_title text,
@@ -177,16 +104,16 @@ begin
 
   return public.save_site_copy(
     1,
-    '93000000-0000-4000-8000-000000000001',
+    'dada0100-0000-4000-8000-000000000001',
     p_request_id,
     p_title,
-    'Concurrency baseline',
-    'Browse',
-    'Search',
+    '一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。',
+    '浏览公开作品',
+    '查找作品与作者',
     'Archive',
     'Search',
     'Studio',
-    'Fandom Harbor',
+    'Fandom Harbor · 私域作品归档',
     'Two requests use the same base'
   );
 end;
@@ -294,11 +221,14 @@ drop function public.db01_test_concurrent_save(uuid, text, boolean);
 drop table db01_concurrency_results;
 
 set session_replication_role = replica;
-delete from public.site_copy_state where scope = 'global';
-delete from public.site_copy_revisions;
+update public.site_copy_state
+set current_revision_id = 'dada0100-0000-4000-8000-000000000001'
+where scope = 'global';
+delete from public.site_copy_revisions
+where version > 1;
 delete from public.audit_logs
 where target_type = 'site_copy_revision'
-  and action in ('site_copy.initialized', 'site_copy.updated');
+  and action = 'site_copy.updated';
 set session_replication_role = origin;
 
 delete from public.role_grants
@@ -314,15 +244,26 @@ drop extension dblink;
 
 do $$
 begin
-  if exists (select 1 from public.site_copy_state where scope = 'global')
-    or exists (select 1 from public.site_copy_revisions)
+  if (select count(*) from public.site_copy_state) <> 1
+    or (select count(*) from public.site_copy_revisions) <> 1
+    or (
+      select count(*)
+      from public.audit_logs
+      where action = 'site_copy.initialized'
+        and target_type = 'site_copy_revision'
+    ) <> 1
+    or (
+      select current_revision_id
+      from public.site_copy_state
+      where scope = 'global'
+    ) <> 'dada0100-0000-4000-8000-000000000001'
     or exists (
       select 1
       from auth.users
       where id = '91000000-0000-4000-8000-000000000001'
     )
   then
-    raise exception 'concurrency fixture cleanup failed';
+    raise exception 'concurrency cleanup did not preserve only the DATA-01 baseline';
   end if;
 end;
 $$;
