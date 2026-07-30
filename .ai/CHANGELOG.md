@@ -120,6 +120,17 @@
 
 All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 
+## 2026-07-31 — Admin P0 WEB-01 Public Site Copy Consumption
+
+- 新增 Web 服务端 Public Site Copy 装配层，复用已验收 Public Service/Repository，并由 request-scoped React cache 在同次渲染共享 Snapshot。
+- 将 Exact Eight Fields 映射到 Homepage 主标题、介绍、两个 CTA label、Archive/Search/Studio label 和 Footer Brand Note。
+- 保持 CTA href、导航 `/archive → /search → /studio`、Studio `work:author` capability、Footer 法务链接和既有 Guest/Reader/Author 访问合同不变。
+- 新增合法 Snapshot、单/多字段 Fallback、无记录、Repository 失败、不安全 bigint、映射锁定、metadata 隔离和 Client Component 边界测试。
+- Web 使用动态服务端请求，不设置跨请求持久缓存；下一次完整请求读取最新数据库值，读取失败安全回退 Baseline，已打开页面不实时更新。
+- 93 项 Web、54 项 Admin、70 项 services、96 项 database 和 335 项 Workspace 测试，Workspace lint/typecheck、三套 Production Build，以及 DATA-01、DB-01、并发和 Identity/Access SQL 回归通过；数据库恢复唯一 Version 1 且无身份或 Audit 污染。
+- `pnpm validate` 仍只被两份既有 Release 文档的格式问题阻挡；授权范围格式与其后全部门禁独立通过，两份文件未修改。
+- apps/admin、packages/services、packages/database、Migration、RPC、RLS、Auth、Role、Membership、capability、依赖与 lockfile 均未修改；未执行远程 Supabase、Push、PR 或部署。
+
 ## 2026-07-14 — V1 GitHub Baseline Secret Audit 安全暂停
 
 - 在未跟踪的 `docs/18_Design/UX-06D-STEP02_ACCEPTANCE.md` 第 86–87 行发现两条 localhost-only QA 密码。

@@ -2,15 +2,20 @@ import { readPublicRuntimeConfig } from "@fandom-harbor/config";
 import Link from "next/link";
 
 import { createPublicBrowseGateway } from "../lib/public-browse";
+import { readWebPublicSiteCopy } from "../lib/public-site-copy";
 import { HomepageWorkPreview } from "./homepage-content";
 import { HomepageSection, HomepageShell } from "./homepage-shell";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const browse = await createPublicBrowseGateway(
-    readPublicRuntimeConfig(),
-  ).list({ page: 1, sort: "newest" });
+  const [browse, siteCopy] = await Promise.all([
+    createPublicBrowseGateway(readPublicRuntimeConfig()).list({
+      page: 1,
+      sort: "newest",
+    }),
+    readWebPublicSiteCopy(),
+  ]);
   const latestWorks = browse.items.slice(0, 3);
 
   return (
@@ -19,20 +24,20 @@ export default async function HomePage() {
         <div className="homepage-hero">
           <p className="eyebrow">安静的文学港湾</p>
           <h1 className="homepage-title" id="homepage-title">
-            Fandom Harbor
+            {siteCopy.content.homepage_title}
           </h1>
           <p className="homepage-introduction">
-            一座为公开故事发现与长久阅读保留安静位置的文学港湾。作品在这里以清楚的作者身份被认真归档，读者可以从一部故事开始，按自己的节奏停留，再回来。
+            {siteCopy.content.homepage_introduction}
           </p>
           <nav aria-label="首页主要入口" className="homepage-actions">
             <Link
               className="homepage-action homepage-action-primary"
               href="/archive"
             >
-              浏览公开作品
+              {siteCopy.content.homepage_primary_cta_label}
             </Link>
             <Link className="homepage-action" href="/search">
-              查找作品与作者
+              {siteCopy.content.homepage_secondary_cta_label}
             </Link>
           </nav>
           <p className="homepage-orientation-note">

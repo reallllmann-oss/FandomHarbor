@@ -1,5 +1,30 @@
 # Project Status
 
+## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
+
+| 项目                         | 状态               |
+| ---------------------------- | ------------------ |
+| Mission                      | Admin P0 WEB-01    |
+| Public Site Copy Read        | LOCAL CONNECTED    |
+| Homepage / Navigation/Footer | EXACT EIGHT FIELDS |
+| Field / Full Fallback        | VERIFIED           |
+| Web Paths / Access / Legal   | PRESERVED          |
+| Admin Read / Write           | UNCHANGED          |
+| Migration / RPC / Auth       | UNCHANGED          |
+| Remote Supabase / Deployment | NOT RUN            |
+| Push / PR                    | NOT RUN            |
+| Admin Production             | PAUSED             |
+
+- Web Server Components 通过已验收的 Public Site Copy Service/Repository 读取公开投影；同一次服务端渲染由 React request cache 共享一个 Snapshot，不建立跨请求持久缓存。
+- Homepage 主标题、介绍与两个 CTA label，Archive/Search/Studio 导航 label，以及 Footer Brand Note 恰好映射八字段；公开页面不渲染 Version、Revision、Audit、actor、reason 或数据库时间。
+- CTA href、导航 `/archive → /search → /studio` 顺序/数量/显隐、既有 `work:author` Studio capability，以及 Privacy/Terms/Content Policy 链接仍由 Web 代码锁定。
+- 单字段或多字段损坏按字段独立使用 Version 1 Baseline；无记录、Repository/RPC 不可用或不安全 bigint transport 使用全量 Baseline 与 `version=null`，公开页面不因 Site Copy 读取失败进入 500。
+- Root Layout 与 Homepage 均保持动态服务端读取。Admin 保存后，下一次完整 Web 请求读取最新 Current Pointer；已打开页面不实时更新，且不依赖重新构建或部署。
+- WEB-01 定向验证、93 项 Web、54 项 Admin、70 项 services、96 项 database 和 335 项 Workspace 测试通过；Workspace lint/typecheck 与 Web/Admin/Docs Production Build 通过。
+- DATA-01、DB-01、双连接 Conflict 与 Identity/Access SQL 回归和数据库 lint 通过；结束状态为唯一 Version 1、1 Revision、1 初始化 Audit、0 Profile/Membership/Role。
+- 统一 `pnpm validate` 仍只在两份既有 Release 文档的 Prettier 检查停止；授权范围文件格式及后续 lint、typecheck、test、build 均独立通过，未修改该两份受保护文档。
+- apps/admin、packages/services、packages/database、Migration、RPC、RLS、Auth、Role、Membership、capability、依赖和 lockfile 均未修改。
+
 ## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
 
 | 项目                         | 状态              |

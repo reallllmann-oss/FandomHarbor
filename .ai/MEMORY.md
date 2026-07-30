@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
+
+- Web 公开文案链路固定为 `Server Component → request-shared Public Site Copy reader → accepted Public Service → accepted Public Repository → get_public_site_copy`；Web 不重写验证、Fallback 或 bigint transport。
+- Exact Eight Fields 只映射 Homepage 主标题/介绍/两个 CTA label、Archive/Search/Studio label 和 Footer Brand Note。CTA 路径、导航路径/顺序/数量/显隐、Studio capability 与 Footer 法务链接不进入数据库驱动配置。
+- Root Layout 与 Homepage 复用同一个 React request cache Snapshot，避免一次渲染内 Header、Hero、Footer 重复 RPC 或版本不一致；没有跨请求缓存、TTL、webhook 或部署钩子。
+- 每个新的完整动态 Web 请求读取最新 Current Pointer。已打开页面不实时更新；读取失败由 Public Service 返回安全 Baseline，不触发 Site Copy 导致的公开页面 500。
+- Public 页面只消费八字段 content，不输出 `version`，也没有 Revision/Audit/actor/reason/time；任何 Client Component 均不得导入 Site Copy Repository、RPC 或 Supabase transport。
+- WEB-01 不修改 Admin Read/Review/Save/Conflict、Migration/RPC/RLS/Auth/Role/Membership/capability、依赖或 Admin Production Paused 状态。
+
 ## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
 
 - Admin Site Copy 保存链路固定为 `strict Admin Read → exact eight-field edit → normalized Review → Server Action trusted access check → accepted Domain Save → Repository → save_site_copy`。

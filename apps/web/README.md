@@ -2,6 +2,19 @@
 
 Next.js App Router application for Visitor introduction/access, Reader Frontend and Author Dashboard. It must not contain Admin/Super Admin operations or cross-application reusable modules.
 
+Admin P0 WEB-01 connects only the eight public Site Copy fields through the
+accepted Public Service and Repository. Server Components share one
+request-scoped Snapshot across Homepage, Header and Footer; there is no
+cross-request persistent cache. Each new complete request reads the current
+database pointer, while an already open page does not update in real time.
+
+Invalid fields fall back independently to the Version 1 Baseline. No row,
+repository failure or unsafe bigint transport falls back completely without
+fabricating a Version. CTA destinations, navigation paths/order/visibility,
+the existing Studio capability, Footer legal links and all access behavior
+remain code-owned. No Site Copy RPC, Supabase transport or internal metadata
+is exposed to Client Components.
+
 Sprint 002B Step 01 provides guarded work detail, chapter reading and standalone article routes. Reader pages consume the provider-neutral Content Service through `src/lib/reader-content.ts`; the current fixture `ContentStore` is replaced at that boundary when the Supabase database is available. Structured documents render as React nodes without raw HTML.
 
 Sprint 002B Step 02 persists Light/Dark, font-size, line-height and reading-width preferences under `fandom-harbor.reader-preferences.v1`. This local browser state contains no identity or reading-history data and never writes to the database. Chapter pages expose explicit boundary states, chapter progress, a direct directory entry and an accessible current-chapter marker.

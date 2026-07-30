@@ -1,8 +1,8 @@
 # Admin P0 Site Copy Domain Contract
 
 Status: DOMAIN-01 implemented locally; ADMIN-01 connects strict Admin Read;
-ADMIN-02 connects controlled Review and Save locally. Web consumers remain
-unconnected.
+ADMIN-02 connects controlled Review and Save locally; WEB-01 connects the
+public Web consumer locally.
 
 ## Ownership and flow
 
@@ -58,7 +58,8 @@ The Public Store returns a provider-neutral candidate with exactly eight declare
 - corrupt or unsafe bigint transport fails at the Repository boundary and produces the stable full Public fallback;
 - full fallback returns `version=null`; it does not fabricate a database Version, Revision, Audit, actor, reason or time.
 
-The resulting Snapshot always contains all eight renderable fields. A later Web request may share one Snapshot across Header, Homepage and Footer, but DOMAIN-01 does not connect those consumers.
+The resulting Snapshot always contains all eight renderable fields. WEB-01
+shares one Snapshot across Header, Homepage and Footer within a server render.
 
 ## Admin read and capability
 
@@ -170,10 +171,51 @@ Content, immutable Revision, Audit and Current Pointer are still written only
 by `save_site_copy` in one database transaction. ADMIN-02 does not write an
 Audit separately.
 
+## WEB-01 public consumption
+
+The Web App uses a server-only composition path:
+
+`Server Component → request-shared Web reader → Public Site Copy Service → Public Repository → get_public_site_copy`
+
+The exact mapping is:
+
+| Field                          | Public consumer                      |
+| ------------------------------ | ------------------------------------ |
+| `homepage_title`               | Existing Homepage primary heading    |
+| `homepage_introduction`        | Existing Homepage introduction       |
+| `homepage_primary_cta_label`   | Existing `/archive` CTA label only   |
+| `homepage_secondary_cta_label` | Existing `/search` CTA label only    |
+| `navigation_archive_label`     | Existing `/archive` navigation label |
+| `navigation_search_label`      | Existing `/search` navigation label  |
+| `navigation_studio_label`      | Existing `/studio` navigation label  |
+| `footer_brand_note`            | Existing Footer brand note           |
+
+The CTA destinations remain `/archive` and `/search`. Navigation remains
+`/archive → /search → /studio`; Studio remains present only when the existing
+`work:author` capability permits it. Privacy, Terms and Content Policy links
+and targets remain code-owned. No ninth field, path, visibility value,
+capability, policy link or generic JSON setting is database-driven.
+
+Root Layout and Homepage import the same React Server `cache` reader. This
+deduplicates the Public RPC and gives Header, Hero and Footer one Snapshot
+during a render. There is no cross-request persistent cache, TTL, webhook or
+deployment invalidation. Both routes are dynamic: a new complete request reads
+the latest Current Pointer, while an already open page does not update in real
+time.
+
+The accepted Public Service still owns field-level and full fallback. One or
+several invalid fields fall back independently. No row, Repository/RPC failure
+or unsafe bigint transport returns the complete Baseline with `version=null`;
+Site Copy failure does not turn the public page into a 500. Web rendering uses
+only `snapshot.content`. It does not output Version, Revision ID, Audit ID,
+actor, reason, database time, raw error or transport data, and no Client
+Component imports the Site Copy Repository or RPC.
+
 ## Current stop boundary
 
-Admin Read, Review and Save are connected locally. Web Homepage, Header,
-Footer, SEO, metadata, Auth, capability, Migration, RLS and RPC are unchanged.
-Web still renders its existing hardcoded Baseline. No remote Migration, Push,
-PR, Preview or Production deployment is part of ADMIN-02. The next Mission
-requires separate Product Owner authorization.
+Admin Read, Review and Save are connected locally. Web Homepage, Header and
+Footer consume Public Site Copy locally with safe fallback. SEO metadata,
+Auth, capability, Migration, RLS and RPC are unchanged. No remote Migration,
+Push, PR, Preview or Production deployment is part of WEB-01. QA-01,
+DEPLOY-01 and any Admin Production change require separate Product Owner
+authorization.
