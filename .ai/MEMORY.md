@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
+
+- Site Copy Domain 固定为八个显式字段，不允许 index signature、动态 Record、额外/缺失字段或未知属性透传；Version 1 Baseline 与 DATA-01 逐字一致。
+- 字段与 reason 在 Service 边界执行 NFC、数据库一致的边界空格移除、Unicode code point 长度与控制字符/换行拒绝；reason 最终为 4–200。
+- Public Read 对文案逐字段验证并独立回退；无记录、RPC 不可用或整体 transport 损坏时返回全量 Baseline 与 `version=null`，不伪造 Revision/Audit/actor/time。
+- Admin Read/Save 在 Repository 前复用既有 `admin:operate` capability；Admin/Super Admin allow，Reader/Author/anon/suspended/revoked deny。Admin 响应严格解析且不回退。
+- `version`、`baseVersion`、`auditLogId` 的 Domain 类型为 bigint。入站只允许安全整数 number 或规范十进制 string；出站 `baseVersion` 直接 `toString(10)`，禁止不安全 number 恢复。
+- Repository 使用结构化 SQLSTATE/PostgREST code 映射稳定 Domain Error，Supabase Client、PostgREST Error、RPC transport union 与 generated Row 不越过边界。
+- DOMAIN-01 结束边界为合同可调用但 Admin UI/Web 未接入；三个既有 Commit、Migration/RPC、远程 Supabase、Push/PR/Deployment 与 Admin Production Paused 状态保持不变。
+
 ## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
 
 - DATA-01 与 DB-01 Schema 分离，通过独立 owner-only Migration 原子创建 Version 1：一条 `site_copy.initialized` Audit（actor `null`）、一条严格八字段完整 Revision 和一个 global Current Pointer。

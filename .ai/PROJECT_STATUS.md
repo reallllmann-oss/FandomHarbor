@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
+
+| 项目                         | 状态               |
+| ---------------------------- | ------------------ |
+| Mission                      | Admin P0 DOMAIN-01 |
+| Domain / Service Contract    | LOCAL IMPLEMENTED  |
+| Public / Admin Repository    | LOCAL IMPLEMENTED  |
+| Admin UI                     | NOT CONNECTED      |
+| Web Site Copy Consumer       | NOT CONNECTED      |
+| DB-01 / DB-01A / DATA-01     | PRESERVED          |
+| Remote Supabase / Deployment | NOT RUN            |
+| Push / PR                    | NOT RUN            |
+| Admin Production             | PAUSED             |
+
+- `packages/services` 提供严格八字段、Version 1 Baseline、NFC/trim/code-point 验证、4–200 reason、Diff、Public Fallback、Admin capability 与 Saved/Unchanged/Conflict 合同。
+- `packages/database` 提供三个既有 RPC 的窄 Zod Schema、Public/Admin Repository、UUID/时间严格解析、安全 number/规范十进制 string 到 bigint 的无损边界，以及稳定错误映射。
+- Public 单字段损坏仅回退该字段；无记录、RPC 整体失败或 bigint transport 数据损坏时全量回退且 `version=null`。Admin 数据损坏严格失败，不使用 Baseline 掩盖。
+- 当前合同已可由后续 App 调用，但本 Mission 未修改或接入 Admin/Web，也未修改 Migration、RPC、Auth、capability 或部署状态。
+
 ## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
 
 | 项目                         | 状态                                                 |

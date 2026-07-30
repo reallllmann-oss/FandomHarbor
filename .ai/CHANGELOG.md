@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-07-30 — Admin P0 DOMAIN-01 Service and Repository Contracts
+
+- 新增 provider-neutral Site Copy Domain：严格八字段、DATA-01 Baseline、字段/reason 规范化、UUID/requestId、Diff、Public/Admin Store、capability、错误及封闭保存结果。
+- 新增 Public Service 字段级 Fallback 与全量 Baseline Fallback；新增 Admin Read/Save 严格失败路径，复用既有 `admin:operate`。
+- 新增 Public/Admin Site Copy Repository 和三个已验收 RPC 的窄 Zod Schema，显式映射 snake_case transport、Domain 数据、Saved/Unchanged/Conflict 及结构化错误。
+- 新增安全 number/规范十进制 string 到 bigint 的统一无损解析；出站 `baseVersion` 使用十进制 string，不经过不安全 number。
+- 新增 Service、Repository、bigint、Fallback、权限、严格响应、错误、幂等结果与 public export 测试，并记录当前标准 JSON numeric transport 的安全整数上限。
+- 未修改 Admin/Web/UI/config、Migration、Schema、RLS、RPC、Auth/capability 或远程环境；未 Push、PR 或部署，Admin Production 保持 Paused。
+
 ## 2026-07-30 — Admin P0 DATA-01 Site Copy Baseline Initialization
 
 - 新增独立 DATA Migration，以当前 Web 实际渲染的八个文案值原子创建 global Version 1、actor-null `site_copy.initialized` Audit 与 Current Pointer。
