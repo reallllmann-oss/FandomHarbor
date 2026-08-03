@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-31 — Admin P0 QA-01 Remote Supabase and Browser Acceptance
+
+- 对安全确认的远程 Supabase Project 创建仓库外新鲜 Schema/Data/Role 导出，并在无破坏 dry-run 后只应用 DB-01 Foundation 与 DATA-01 Baseline；最终 Migration 历史 16/16 对齐。
+- 验证 Site Copy Schema、不可变 Revision、Current Pointer、三 RPC、RLS、最小 Grant、Public 投影及 active Super Admin allow、anon/Reader/Author deny 权限矩阵。
+- 真实浏览器完成 Admin 八字段 Read/Review/Saved、Unchanged、双会话 Conflict、草稿保留、Web 新请求消费与正常 Admin Review/Save 恢复。
+- 验证相同 request ID 重试返回原 Version/Revision/Audit，不同 reason 稳定 `INVALID_INPUT`；Unchanged、Conflict 与非法幂等请求均零写入。
+- Web 临时显示八字段的同时保持 CTA href、Archive → Search → Studio 导航合同、Studio capability 与 Footer 法务链接；HTML 和客户端 bundle 无 Site Copy 内部 metadata/RPC transport。
+- QA 后 Current Pointer 为恢复后的 Version 3；八字段与 QA 前逐字一致。只保留初始化、QA 保存、QA 恢复三组合法 Revision/Audit，Identity 与业务表计数无变化。
+- Workspace lint/typecheck、335 项测试、Web/Admin/Docs Production Build、local clean rebuild、DATA-01/DB-01/双连接/Identity-Access SQL 回归通过；Database lint 无 error，记录两条既有 DATA-01 assignment-cast warning。
+- 统一 Prettier 仍只被两份既有受保护 Release 文档阻挡；未修改保护文件。2026-08-03 现有 Reader 人工登录后，真实浏览器 `/studio` 精确跳转 `/archive` 且无 Studio 工作台，完成最终身份检查。
+
 ## 2026-07-31 — Admin P0 ADMIN-02 Review, Save and Conflict
 
 - 在 ADMIN-01 严格读取基础上新增 Exact Eight Fields 的受控编辑表单、Unicode code-point 计数、字段/reason 错误提示与 Review Changes 阶段。

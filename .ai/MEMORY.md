@@ -1,5 +1,18 @@
 # Project Memory
 
+## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
+
+- QA-01 安全目标固定为 Supabase Project `fandom-harbor` / `szfhngifsipsrxcpekti` / `ap-southeast-1`；Admin 与 Web 本地进程必须使用同一远程 URL 与 publishable key，浏览器进程禁止 Service Role Key。
+- 远程变更前必须先创建仓库外新鲜逻辑导出、验证 public/auth/storage 与 hash，并确认 dry-run 只含已验收 DB-01 Foundation 和 DATA-01 Baseline；本次最终 Migration 历史为 16/16。
+- 真实浏览器保存链路已证明 Review → Saved Version 2 → 新请求读取；无变化返回 Unchanged 且零 Audit；旧 Version 1 会话返回 Conflict、保留八字段/reason、不覆盖也不自动重试。
+- request ID 的远程重试返回原 Version/Revision/Audit；同 ID 不同规范化 reason 返回 `INVALID_INPUT`。两次检查前后 Revision/Audit/Pointer 计数完全一致。
+- Web 只渲染八字段 content；CTA `/archive`、`/search`，导航 Archive → Search → Studio 与 capability，Footer 三条法务链接继续由代码拥有。Guest 不显示 Studio，直接 `/studio` 进入既有登录边界。
+- QA 临时内容必须通过同一 Admin Review/Save 恢复，不直接移动 Pointer 或删除 Audit。本次恢复后为 Version 3，八字段与 Version 1 逐字一致；两条 QA update Revision/Audit 作为真实审计证据永久保留。
+- Profile、Membership、Role、作品、章节、文章、邀请和 Storage 均无 QA 污染；总 Audit 仅增加 DATA-01 初始化、QA 保存和 QA 恢复三条 Site Copy 事件。
+- Fallback 不在远程故障注入；继续以 WEB-01 隔离自动化证明字段级/全量回退，并只在真实浏览器证明正常远程读取不造成 500。
+- 正式 Web 未部署，Admin Production 保持 Paused；不得将 QA-01 本地验证解释为 Preview、Production、Push、PR 或 Admin 恢复授权。
+- 2026-08-03 现有 Reader 完成人工登录；真实浏览器直接访问 `/studio` 后最终 URL 精确为 `/archive`，且不存在 Studio 工作台。QA-01 最后一项身份浏览器检查通过。
+
 ## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
 
 - Web 公开文案链路固定为 `Server Component → request-shared Public Site Copy reader → accepted Public Service → accepted Public Repository → get_public_site_copy`；Web 不重写验证、Fallback 或 bigint transport。

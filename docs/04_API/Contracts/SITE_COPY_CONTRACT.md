@@ -211,6 +211,34 @@ only `snapshot.content`. It does not output Version, Revision ID, Audit ID,
 actor, reason, database time, raw error or transport data, and no Client
 Component imports the Site Copy Repository or RPC.
 
+## QA-01 remote acceptance
+
+The accepted DB, Domain, Admin and Web contracts were exercised against the
+confirmed remote Supabase project without deploying application code. A fresh
+repository-external logical export preceded the migration. The dry-run and
+applied set contained only the accepted DB-01 Foundation and DATA-01 Baseline;
+local and remote histories are now 16/16 aligned.
+
+Real browser acceptance proved strict Super Admin Read, normalized eight-field
+Review, Saved, Unchanged and stale-base Conflict. The Conflict retained the
+draft and reason and performed no automatic retry. A same-request retry returned
+the original Version, Revision and Audit; a changed normalized reason returned
+`INVALID_INPUT`, with no write in either check.
+
+A new Web request consumed the temporary values through the public flow while
+preserving CTA destinations, fixed navigation order and visibility, Studio
+capability and legal links. Guest rendering hid Studio and kept its existing
+sign-in boundary. HTML and client bundles contained no Site Copy internal
+metadata, table or RPC transport identifier.
+
+Restoration used the normal Admin Review and Save path. The Current Pointer is
+Version 3 and all eight values equal the pre-QA baseline. The two update
+Revisions and Audits—temporary save and restoration—remain as immutable audit
+evidence alongside DATA-01 initialization. Identity, access and business data
+counts are unchanged. An existing Reader completed manual sign-in on
+2026-08-03; a direct browser request to `/studio` ended at `/archive` with no
+Studio workspace, completing the final QA identity check.
+
 ## Current stop boundary
 
 Admin Read, Review and Save are connected locally. Web Homepage, Header and

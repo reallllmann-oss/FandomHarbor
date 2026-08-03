@@ -1,5 +1,31 @@
 # Project Status
 
+## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
+
+| 项目                               | 状态                 |
+| ---------------------------------- | -------------------- |
+| Mission                            | Admin P0 QA-01       |
+| Remote Migration                   | 16 / 16 ALIGNED      |
+| Remote Schema / RPC / RLS / Grant  | VERIFIED             |
+| Admin Read / Review / Save         | VERIFIED             |
+| Unchanged / Conflict / Idempotency | VERIFIED             |
+| Local Web Remote Consumption       | VERIFIED             |
+| Original Eight Fields              | RESTORED — VERSION 3 |
+| Identity / Business Data           | UNCHANGED            |
+| Reader Browser Check               | VERIFIED             |
+| Production Web Deployment          | NOT RUN              |
+| Admin Production                   | PAUSED               |
+| Push / PR / Preview / Production   | NOT RUN              |
+
+- 远程安全目标为 `fandom-harbor`（Project Ref `szfhngifsipsrxcpekti`，`ap-southeast-1`）；迁移前完成仓库外新鲜 Schema/Data/Role 导出并验证 hash、权限和必要 schema marker。
+- Dry-run 只包含 DB-01/DB-01A Foundation 与 DATA-01 Baseline 两个已验收 Migration；远程实际只应用这两个文件，最终本地/远程历史 16/16 对齐。
+- 真实 Super Admin 浏览器完成严格读取、八字段 Review、Version 2 Saved、Version 2 Unchanged、旧 Version 1 双会话 Conflict 与草稿保留；相同 request ID 重试返回原结果，不同 reason 稳定拒绝且零写入。
+- 本地 Web 新完整请求显示远程临时八字段，CTA、导航顺序/路径/显隐、Studio capability 和三条法务链接保持代码锁定；HTML/客户端 bundle 不包含 Site Copy 内部 metadata 或 RPC transport。
+- 临时文案已通过正常 Admin Review/Save 恢复为 QA 前精确八字段，Current Pointer 为 Version 3；最终只保留初始化、QA 保存、QA 恢复三条真实 Revision/Audit。
+- Auth users 37、Profiles 36、Memberships 36、Role grants 5、Works 10、Chapters 32、Articles 0、Invitations 35、Storage objects 0 均与 QA 前一致；Audit 74→77 只来自三条 Site Copy 事件。
+- Workspace lint/typecheck、335 项测试、三套 Production Build、clean rebuild、DATA-01/DB-01/双连接/Identity-Access SQL 回归通过；Database lint 无 error，有 DATA-01 函数字面量 UUID 的两条既有 assignment-cast warning。
+- `pnpm format:check` 仍只被两份既有受保护 Release 文档阻挡；未修改这些文件。2026-08-03 现有 Reader 完成人工登录，浏览器直接访问 `/studio` 后精确落到 `/archive` 且无 Studio 工作台；QA-01 本地证据可以冻结为仅文档 Commit。
+
 ## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
 
 | 项目                         | 状态               |
