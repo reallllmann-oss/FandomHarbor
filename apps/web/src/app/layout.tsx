@@ -1,4 +1,4 @@
-import { AppProviders, ReaderLayout } from "@fandom-harbor/ui";
+import { AppProviders } from "@fandom-harbor/ui";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import Link from "next/link";
@@ -6,8 +6,12 @@ import Link from "next/link";
 import "./globals.css";
 import { createGlobalShellNavigation } from "../lib/global-shell-navigation";
 import { getWebSessionSummary } from "../lib/identity-access";
+import { readWebPublicSiteCopy } from "../lib/public-site-copy";
 import { resolveSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "../lib/seo";
 import { signOut } from "./auth/actions";
+import { ReaderSiteLayout } from "./reader-site-layout";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -26,16 +30,25 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const session = await getWebSessionSummary();
+  const [session, siteCopy] = await Promise.all([
+    getWebSessionSummary(),
+    readWebPublicSiteCopy(),
+  ]);
   const navigation = createGlobalShellNavigation(
     session?.access.capabilities.has("work:author") ?? false,
+    {
+      archive: siteCopy.content.navigation_archive_label,
+      search: siteCopy.content.navigation_search_label,
+      studio: siteCopy.content.navigation_studio_label,
+    },
   );
 
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <AppProviders>
-          <ReaderLayout
+          <ReaderSiteLayout
+            footerBrandNote={siteCopy.content.footer_brand_note}
             navigation={navigation}
             headerActions={
               session ? (
@@ -65,7 +78,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             }
           >
             {children}
-          </ReaderLayout>
+          </ReaderSiteLayout>
         </AppProviders>
       </body>
     </html>

@@ -5,7 +5,7 @@ import type { PropsWithChildren } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  description: "Fandom Harbor 管理工作区基础框架。",
+  description: "Fandom Harbor 安静、可审计的站点管理工作区。",
   title: "Fandom Harbor Admin",
 };
 

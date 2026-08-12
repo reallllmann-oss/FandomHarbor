@@ -43,3 +43,15 @@ export {
   createSupabaseBrowseRepository,
   type BrowseRepositoryDataSource,
 } from "./browse-repository";
+export {
+  createAdminSiteCopyRepository,
+  createPublicSiteCopyRepository,
+  createSupabaseAdminSiteCopyRepository,
+  createSupabasePublicSiteCopyRepository,
+  mapSiteCopyRpcError,
+  parseSiteCopyBigintTransport,
+  parseSiteCopyDatabaseTime,
+  type AdminSiteCopyRepositoryDataSource,
+  type PublicSiteCopyRepositoryDataSource,
+  type SiteCopySaveRpcParameters,
+} from "./site-copy-repository";

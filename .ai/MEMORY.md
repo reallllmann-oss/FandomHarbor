@@ -1,5 +1,85 @@
 # Project Memory
 
+## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
+
+- QA-01 安全目标固定为 Supabase Project `fandom-harbor` / `szfhngifsipsrxcpekti` / `ap-southeast-1`；Admin 与 Web 本地进程必须使用同一远程 URL 与 publishable key，浏览器进程禁止 Service Role Key。
+- 远程变更前必须先创建仓库外新鲜逻辑导出、验证 public/auth/storage 与 hash，并确认 dry-run 只含已验收 DB-01 Foundation 和 DATA-01 Baseline；本次最终 Migration 历史为 16/16。
+- 真实浏览器保存链路已证明 Review → Saved Version 2 → 新请求读取；无变化返回 Unchanged 且零 Audit；旧 Version 1 会话返回 Conflict、保留八字段/reason、不覆盖也不自动重试。
+- request ID 的远程重试返回原 Version/Revision/Audit；同 ID 不同规范化 reason 返回 `INVALID_INPUT`。两次检查前后 Revision/Audit/Pointer 计数完全一致。
+- Web 只渲染八字段 content；CTA `/archive`、`/search`，导航 Archive → Search → Studio 与 capability，Footer 三条法务链接继续由代码拥有。Guest 不显示 Studio，直接 `/studio` 进入既有登录边界。
+- QA 临时内容必须通过同一 Admin Review/Save 恢复，不直接移动 Pointer 或删除 Audit。本次恢复后为 Version 3，八字段与 Version 1 逐字一致；两条 QA update Revision/Audit 作为真实审计证据永久保留。
+- Profile、Membership、Role、作品、章节、文章、邀请和 Storage 均无 QA 污染；总 Audit 仅增加 DATA-01 初始化、QA 保存和 QA 恢复三条 Site Copy 事件。
+- Fallback 不在远程故障注入；继续以 WEB-01 隔离自动化证明字段级/全量回退，并只在真实浏览器证明正常远程读取不造成 500。
+- 正式 Web 未部署，Admin Production 保持 Paused；不得将 QA-01 本地验证解释为 Preview、Production、Push、PR 或 Admin 恢复授权。
+- 2026-08-03 现有 Reader 完成人工登录；真实浏览器直接访问 `/studio` 后最终 URL 精确为 `/archive`，且不存在 Studio 工作台。QA-01 最后一项身份浏览器检查通过。
+
+## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
+
+- Web 公开文案链路固定为 `Server Component → request-shared Public Site Copy reader → accepted Public Service → accepted Public Repository → get_public_site_copy`；Web 不重写验证、Fallback 或 bigint transport。
+- Exact Eight Fields 只映射 Homepage 主标题/介绍/两个 CTA label、Archive/Search/Studio label 和 Footer Brand Note。CTA 路径、导航路径/顺序/数量/显隐、Studio capability 与 Footer 法务链接不进入数据库驱动配置。
+- Root Layout 与 Homepage 复用同一个 React request cache Snapshot，避免一次渲染内 Header、Hero、Footer 重复 RPC 或版本不一致；没有跨请求缓存、TTL、webhook 或部署钩子。
+- 每个新的完整动态 Web 请求读取最新 Current Pointer。已打开页面不实时更新；读取失败由 Public Service 返回安全 Baseline，不触发 Site Copy 导致的公开页面 500。
+- Public 页面只消费八字段 content，不输出 `version`，也没有 Revision/Audit/actor/reason/time；任何 Client Component 均不得导入 Site Copy Repository、RPC 或 Supabase transport。
+- WEB-01 不修改 Admin Read/Review/Save/Conflict、Migration/RPC/RLS/Auth/Role/Membership/capability、依赖或 Admin Production Paused 状态。
+
+## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
+
+- Admin Site Copy 保存链路固定为 `strict Admin Read → exact eight-field edit → normalized Review → Server Action trusted access check → accepted Domain Save → Repository → save_site_copy`。
+- apps/admin 不重写 Role/Membership/capability 真相或数据库保存合同；Server Action 复用 `requireSiteCopyAdmin`，Domain Service 和 RPC 继续独立复核。
+- 客户端只持有十进制 Version、Revision UUID、八字段 draft、reason 与单次 Review request UUID；不得将 bigint 转成 JavaScript number，不得接触 Supabase/RPC transport。
+- 新 Review 生成新 request ID；同一 review 的失败重试复用原 ID。返回编辑、修改内容/reason/base 后再 Review 必须使用新 ID。pending 与同步 lock 防重复提交。
+- Saved 的数据库 Version/Revision 成为继续编辑的新本地基线；Unchanged 不存在 Audit ID；Conflict 不改本地基线、不自动覆盖/重试，保留输入并要求确认后重新读取。
+- Error 只显示稳定 Domain code 与安全文案，保留输入；不得泄漏 SQL、hint、PostgREST、Token 或内部 metadata。
+- Exact Eight Fields 之外的 CTA path、导航 path/order/count/visibility、Studio capability 和 Footer 法务链接永远不进入 App save input。
+- Web 在 ADMIN-02 后仍使用编译期 Baseline；Migration/RPC/Auth/RLS/Role/Membership/capability 与 Admin Production Paused 均未改变。
+
+## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
+
+- Admin 根页面是 P0 Site Copy 的只读入口，展示当前数据库 Version 与 Homepage 4 项、Navigation 3 项、Footer 1 项；不得在 ADMIN-01 增加第九字段、动态字段、编辑、保存或发布。
+- App 通过 `loadAdminHomeData → createAdminSiteCopyService → createSupabaseAdminSiteCopyRepository → get_admin_site_copy` 读取；权限上下文来自现有 Identity/Access 边界，Repository 调用前要求 `admin:operate`。
+- 数据库 Snapshot 严格失败，不使用 Baseline 掩盖 Admin 数据损坏；现有根级 Error Boundary 负责受控失败界面。
+- Version 保持 Domain `bigint` 并直接以十进制字符串展示，不经过 JavaScript number。
+- `/access`、最后一个 Super Admin 保护、Web、Migration/RPC、Auth/Role/Membership/capability 与 packages/ui 保持不变；Admin Production 继续 Paused。
+
+## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
+
+- Site Copy Domain 固定为八个显式字段，不允许 index signature、动态 Record、额外/缺失字段或未知属性透传；Version 1 Baseline 与 DATA-01 逐字一致。
+- 字段与 reason 在 Service 边界执行 NFC、数据库一致的边界空格移除、Unicode code point 长度与控制字符/换行拒绝；reason 最终为 4–200。
+- Public Read 对文案逐字段验证并独立回退；无记录、RPC 不可用或整体 transport 损坏时返回全量 Baseline 与 `version=null`，不伪造 Revision/Audit/actor/time。
+- Admin Read/Save 在 Repository 前复用既有 `admin:operate` capability；Admin/Super Admin allow，Reader/Author/anon/suspended/revoked deny。Admin 响应严格解析且不回退。
+- `version`、`baseVersion`、`auditLogId` 的 Domain 类型为 bigint。入站只允许安全整数 number 或规范十进制 string；出站 `baseVersion` 直接 `toString(10)`，禁止不安全 number 恢复。
+- Repository 使用结构化 SQLSTATE/PostgREST code 映射稳定 Domain Error，Supabase Client、PostgREST Error、RPC transport union 与 generated Row 不越过边界。
+- DOMAIN-01 结束边界为合同可调用但 Admin UI/Web 未接入；三个既有 Commit、Migration/RPC、远程 Supabase、Push/PR/Deployment 与 Admin Production Paused 状态保持不变。
+
+## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
+
+- DATA-01 与 DB-01 Schema 分离，通过独立 owner-only Migration 原子创建 Version 1：一条 `site_copy.initialized` Audit（actor `null`）、一条严格八字段完整 Revision 和一个 global Current Pointer。
+- 基线值逐项来自当前 Web 实际渲染来源：Homepage 的标题、介绍、两个 CTA，global shell 的 Archive/Search/Studio 标签，以及 `ReaderLayout` 的 Footer 品牌说明。
+- 初始化复用 DB-01 文本 helper 和 global advisory lock；任何已有 site-copy State、Revision 或相关 Audit 都返回稳定 `SITE_COPY_ALREADY_INITIALIZED`，不做 Last Write Wins、修补或覆盖。
+- 初始化不通过 Admin `save_site_copy`，nil UUID 只作为系统 Version 1 request marker，普通 Admin 继续使用 v4 request ID 与既有幂等合同。
+- SQL 验证覆盖精确值、public projection、actor-null Audit/八字段 metadata、重复与残缺状态拒绝、强制失败原子回滚、权限矩阵、Version/Conflict/并发和 Identity/Access 回归。
+- DATA-01 不修改 Admin/Web、Auth/capability、`/access`、远程 Supabase 或部署；DB-01 与 DB-01A Commit 保持不变。
+
+## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
+
+- Product Owner 要求将普通 Admin `save_site_copy` 的 change reason 合同从错误的 1–500 修正为冻结的 4–200。
+- 最终数据库语义为 NFC → trim → Unicode code point 计数 4–200，并拒绝控制字符和换行；该限制在 RPC 内直接执行。
+- Audit 保存规范化 reason，request ID 幂等比较同样使用规范化 reason；规范化等价输入返回原结果，规范化后不同则返回稳定 `INVALID_INPUT`。
+- SQL 自动化覆盖 3/4/200/201、trim、NFC、控制字符、换行、非法输入零写入、Audit reason、幂等、Conflict、原子回滚和双连接并发。
+- DB-01 Foundation Commit `651228c0d6c76bbba92339103bafdf9090f331b9` 必须保持不变；DB-01A 形成其后的独立本地修正 Commit。
+- DATA-01、正式 Baseline、Admin/Web、远程 Supabase、Push 和 Deployment 仍未授权。
+
+## Admin P0 DB-01 Schema and Security Foundation（2026-07-30）
+
+- DB-01 在独立 `feature/admin-p0-site-copy-db-01` 分支实现，只包含 Migration、SQL 测试和获准数据库状态文档。
+- 数据合同固定为 Current Pointer + immutable full Revision；Revision 只有八个可编辑文案列，不能存储导航路径/顺序/显隐、Studio capability、CTA target 或 Footer 法务链接。
+- `save_site_copy` 的并发顺序固定为 global advisory transaction lock、`site_copy_state` row lock、锁内 request ID 复核；相同请求返回原结果，不同 payload 稳定返回 `INVALID_INPUT`，stale base 返回无副作用 conflict。
+- 每次成功变更在同一事务写入一条 `site_copy.updated` Audit、一条完整 Revision 并移动 Pointer；Audit metadata 只含变化字段。失败和 conflict 不允许部分写入。
+- `get_public_site_copy` 只返回八字段和版本；Admin Read/Save 仅允许既有 active Admin / Super Admin。Reader、Author、suspended/revoked Admin 与所有直接表访问均拒绝。
+- 文本语义固定为 NFC 归一化、首尾空白移除、按 Unicode code point 计数并拒绝控制字符；数据库约束与 RPC 使用同一 helper。
+- DB-01 不创建正式 Version 1。`site_copy.initialized`、actor null 的 Baseline 留给单独 DATA-01。
+- 本地 Migration clean rebuild、existing upgrade、事务 SQL 和真实双连接同 Base concurrency 验证通过；远程数据库、Admin/Web、Auth、`/access`、Push 和 Deployment 未执行。
+
 ## V1.0.2 Final Release Closure（2026-07-29）
 
 - V1.0.2 已正式发布：Release Status=`RELEASED`，Production Deployment=`COMPLETE`，Product Owner Final Acceptance=`PASS`，Production Functional Smoke=`PASS`，Final Release Closure=`CLOSED`。

@@ -1,25 +1,194 @@
 # Project Status
 
+## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
+
+| 项目                               | 状态                 |
+| ---------------------------------- | -------------------- |
+| Mission                            | Admin P0 QA-01       |
+| Remote Migration                   | 16 / 16 ALIGNED      |
+| Remote Schema / RPC / RLS / Grant  | VERIFIED             |
+| Admin Read / Review / Save         | VERIFIED             |
+| Unchanged / Conflict / Idempotency | VERIFIED             |
+| Local Web Remote Consumption       | VERIFIED             |
+| Original Eight Fields              | RESTORED — VERSION 3 |
+| Identity / Business Data           | UNCHANGED            |
+| Reader Browser Check               | VERIFIED             |
+| Production Web Deployment          | NOT RUN              |
+| Admin Production                   | PAUSED               |
+| Push / PR / Preview / Production   | NOT RUN              |
+
+- 远程安全目标为 `fandom-harbor`（Project Ref `szfhngifsipsrxcpekti`，`ap-southeast-1`）；迁移前完成仓库外新鲜 Schema/Data/Role 导出并验证 hash、权限和必要 schema marker。
+- Dry-run 只包含 DB-01/DB-01A Foundation 与 DATA-01 Baseline 两个已验收 Migration；远程实际只应用这两个文件，最终本地/远程历史 16/16 对齐。
+- 真实 Super Admin 浏览器完成严格读取、八字段 Review、Version 2 Saved、Version 2 Unchanged、旧 Version 1 双会话 Conflict 与草稿保留；相同 request ID 重试返回原结果，不同 reason 稳定拒绝且零写入。
+- 本地 Web 新完整请求显示远程临时八字段，CTA、导航顺序/路径/显隐、Studio capability 和三条法务链接保持代码锁定；HTML/客户端 bundle 不包含 Site Copy 内部 metadata 或 RPC transport。
+- 临时文案已通过正常 Admin Review/Save 恢复为 QA 前精确八字段，Current Pointer 为 Version 3；最终只保留初始化、QA 保存、QA 恢复三条真实 Revision/Audit。
+- Auth users 37、Profiles 36、Memberships 36、Role grants 5、Works 10、Chapters 32、Articles 0、Invitations 35、Storage objects 0 均与 QA 前一致；Audit 74→77 只来自三条 Site Copy 事件。
+- Workspace lint/typecheck、335 项测试、三套 Production Build、clean rebuild、DATA-01/DB-01/双连接/Identity-Access SQL 回归通过；Database lint 无 error，有 DATA-01 函数字面量 UUID 的两条既有 assignment-cast warning。
+- `pnpm format:check` 仍只被两份既有受保护 Release 文档阻挡；未修改这些文件。2026-08-03 现有 Reader 完成人工登录，浏览器直接访问 `/studio` 后精确落到 `/archive` 且无 Studio 工作台；QA-01 本地证据可以冻结为仅文档 Commit。
+
+## Admin P0 WEB-01 Public Site Copy Consumption（2026-07-31）
+
+| 项目                         | 状态               |
+| ---------------------------- | ------------------ |
+| Mission                      | Admin P0 WEB-01    |
+| Public Site Copy Read        | LOCAL CONNECTED    |
+| Homepage / Navigation/Footer | EXACT EIGHT FIELDS |
+| Field / Full Fallback        | VERIFIED           |
+| Web Paths / Access / Legal   | PRESERVED          |
+| Admin Read / Write           | UNCHANGED          |
+| Migration / RPC / Auth       | UNCHANGED          |
+| Remote Supabase / Deployment | NOT RUN            |
+| Push / PR                    | NOT RUN            |
+| Admin Production             | PAUSED             |
+
+- Web Server Components 通过已验收的 Public Site Copy Service/Repository 读取公开投影；同一次服务端渲染由 React request cache 共享一个 Snapshot，不建立跨请求持久缓存。
+- Homepage 主标题、介绍与两个 CTA label，Archive/Search/Studio 导航 label，以及 Footer Brand Note 恰好映射八字段；公开页面不渲染 Version、Revision、Audit、actor、reason 或数据库时间。
+- CTA href、导航 `/archive → /search → /studio` 顺序/数量/显隐、既有 `work:author` Studio capability，以及 Privacy/Terms/Content Policy 链接仍由 Web 代码锁定。
+- 单字段或多字段损坏按字段独立使用 Version 1 Baseline；无记录、Repository/RPC 不可用或不安全 bigint transport 使用全量 Baseline 与 `version=null`，公开页面不因 Site Copy 读取失败进入 500。
+- Root Layout 与 Homepage 均保持动态服务端读取。Admin 保存后，下一次完整 Web 请求读取最新 Current Pointer；已打开页面不实时更新，且不依赖重新构建或部署。
+- WEB-01 定向验证、93 项 Web、54 项 Admin、70 项 services、96 项 database 和 335 项 Workspace 测试通过；Workspace lint/typecheck 与 Web/Admin/Docs Production Build 通过。
+- DATA-01、DB-01、双连接 Conflict 与 Identity/Access SQL 回归和数据库 lint 通过；结束状态为唯一 Version 1、1 Revision、1 初始化 Audit、0 Profile/Membership/Role。
+- 统一 `pnpm validate` 仍只在两份既有 Release 文档的 Prettier 检查停止；授权范围文件格式及后续 lint、typecheck、test、build 均独立通过，未修改该两份受保护文档。
+- apps/admin、packages/services、packages/database、Migration、RPC、RLS、Auth、Role、Membership、capability、依赖和 lockfile 均未修改。
+
+## Admin P0 ADMIN-02 Review, Save and Conflict（2026-07-31）
+
+| 项目                         | 状态              |
+| ---------------------------- | ----------------- |
+| Mission                      | Admin P0 ADMIN-02 |
+| Admin Site Copy Read         | LOCAL CONNECTED   |
+| Admin Review / Save          | LOCAL IMPLEMENTED |
+| Atomic Revision / Audit      | VERIFIED          |
+| Same-base Conflict           | VERIFIED          |
+| Exact Eight Fields           | EDITABLE          |
+| Locked Product Boundaries    | PRESERVED         |
+| Existing `/access`           | PRESERVED         |
+| Web Site Copy Consumer       | NOT CONNECTED     |
+| Migration / RPC / Auth       | UNCHANGED         |
+| Remote Supabase / Deployment | NOT RUN           |
+| Push / PR                    | NOT RUN           |
+| Admin Production             | PAUSED            |
+
+- Admin 根页面继续使用严格 Admin Read，并新增 Exact Eight Fields 的编辑、规范化变更复核、reason、Saving、Saved、Unchanged、Conflict 与安全 Error 状态。
+- Server Action 重新取得可信 Access Context，并复用共享 `requireSiteCopyAdmin` 后调用已验收 Domain Save Service/Repository；不信任客户端 Role、Membership 或 capability。
+- 每次新 Review 生成非 nil request UUID；同一 reviewed payload 的安全重试复用该 ID，返回编辑后重新 Review 生成新 ID。连点由同步 submission lock 与 pending disabled 双重阻止。
+- Saved 使用数据库真实 Version、Revision、Audit、changed fields 与 time，并在继续编辑时更新本地基线；Unchanged 不显示或伪造 Audit。
+- Conflict 保留八字段和 reason，不自动覆盖或重试；旧 base 被阻止再次提交，重新读取会丢弃输入时必须经过明确确认。
+- DB-01、DATA-01、双连接并发及 Identity/Access SQL 回归通过；结束后本地数据库恢复唯一 Version 1 基线，无测试 Profile、Role 或额外 Site Copy Audit。
+- apps/web、Migration、RPC、RLS、Grant、Auth、Role、Membership、capability、packages/ui/config 均未修改。
+
+## Admin P0 ADMIN-01 Read-only Admin Surface（2026-07-30）
+
+| 项目                         | 状态                |
+| ---------------------------- | ------------------- |
+| Mission                      | Admin P0 ADMIN-01   |
+| Admin Site Copy Read         | LOCAL IMPLEMENTED   |
+| Exact Eight Fields / Version | READ-ONLY CONNECTED |
+| Edit / Save / Publish        | NOT IMPLEMENTED     |
+| Existing `/access`           | PRESERVED           |
+| Web Site Copy Consumer       | NOT CONNECTED       |
+| Migration / RPC / Auth       | UNCHANGED           |
+| Remote Supabase / Deployment | NOT RUN             |
+| Push / PR                    | NOT RUN             |
+| Admin Production             | PAUSED              |
+
+- Admin 根页面通过已验收的 `createAdminSiteCopyService` 与 `createSupabaseAdminSiteCopyRepository` 读取当前严格 Snapshot，展示数据库 Version 和恰好八项 Site Copy。
+- anon、Reader、Author、suspended/revoked 身份在 Repository 调用前拒绝；仅 active Admin / Super Admin 可读取，Domain 与数据库仍执行既有双层检查。
+- 页面明确标记只读与锁定边界，不包含 Site Copy 输入框、编辑、保存或发布操作；CTA 目标、导航合同、Studio capability 和 Footer 法务链接均未进入存储或 UI 控件。
+- `/access`、最后一个 Super Admin 保护、Web、Migration、RPC、Auth、Role、Membership、capability 与共享 UI 均未修改。
+
+## Admin P0 DOMAIN-01 Service and Repository Contracts（2026-07-30）
+
+| 项目                         | 状态               |
+| ---------------------------- | ------------------ |
+| Mission                      | Admin P0 DOMAIN-01 |
+| Domain / Service Contract    | LOCAL IMPLEMENTED  |
+| Public / Admin Repository    | LOCAL IMPLEMENTED  |
+| Admin UI                     | NOT CONNECTED      |
+| Web Site Copy Consumer       | NOT CONNECTED      |
+| DB-01 / DB-01A / DATA-01     | PRESERVED          |
+| Remote Supabase / Deployment | NOT RUN            |
+| Push / PR                    | NOT RUN            |
+| Admin Production             | PAUSED             |
+
+- `packages/services` 提供严格八字段、Version 1 Baseline、NFC/trim/code-point 验证、4–200 reason、Diff、Public Fallback、Admin capability 与 Saved/Unchanged/Conflict 合同。
+- `packages/database` 提供三个既有 RPC 的窄 Zod Schema、Public/Admin Repository、UUID/时间严格解析、安全 number/规范十进制 string 到 bigint 的无损边界，以及稳定错误映射。
+- Public 单字段损坏仅回退该字段；无记录、RPC 整体失败或 bigint transport 数据损坏时全量回退且 `version=null`。Admin 数据损坏严格失败，不使用 Baseline 掩盖。
+- 当前合同已可由后续 App 调用，但本 Mission 未修改或接入 Admin/Web，也未修改 Migration、RPC、Auth、capability 或部署状态。
+
+## Admin P0 DATA-01 Site Copy Baseline Initialization（2026-07-30）
+
+| 项目                         | 状态                                                 |
+| ---------------------------- | ---------------------------------------------------- |
+| Mission                      | Admin P0 DATA-01 — Site Copy Baseline Initialization |
+| Version 1 / Current Pointer  | LOCAL IMPLEMENTED                                    |
+| Initialization Audit         | `site_copy.initialized` / actor `null`               |
+| 基线字段                     | 当前 Web 实际渲染的严格八字段                        |
+| DB-01 / DB-01A Commits       | PRESERVED                                            |
+| Admin / Web 产品代码         | UNCHANGED                                            |
+| Remote Supabase / Deployment | NOT RUN                                              |
+| Push / PR                    | NOT RUN                                              |
+
+- 独立 DATA Migration 在单一事务中创建一条 actor-null 初始化 Audit、一条完整不可变 Version 1 Revision 和一个 global Current Pointer；不调用普通 Admin `save_site_copy`。
+- 初始化前取得与保存流程相同的 global advisory transaction lock；发现任意 site-copy State、Revision 或初始化/更新 Audit 时稳定拒绝，不覆盖、不补齐、不产生部分写入。
+- Version 1 使用保留的 nil UUID 系统 request marker，不占用普通 Admin v4 request ID 命名空间。
+- Public Projection 只返回八字段与非敏感 version；既有 active Admin/Super Admin allow 及 Reader、Author、suspended/revoked deny 权限合同保持不变。
+
+## Admin P0 DB-01A Change Reason Contract Alignment（2026-07-30）
+
+| 项目               | 状态                                                   |
+| ------------------ | ------------------------------------------------------ |
+| Mission            | DB-01A — Change Reason Contract Alignment              |
+| 修正               | `1–500` → `4–200` Unicode code points                  |
+| 数据库强制校验     | COMPLETE                                               |
+| 边界与原子性测试   | COMPLETE                                               |
+| DB-01 Commit       | PRESERVED — `651228c0d6c76bbba92339103bafdf9090f331b9` |
+| Baseline / DATA-01 | NOT RUN                                                |
+| Push / Deployment  | NOT RUN                                                |
+
+- `save_site_copy` 直接执行 NFC、trim、Unicode code point 4–200 和控制字符拒绝；不依赖未来 Admin、Service 或 Server Action。
+- 3、trim 后 3、201、控制字符及换行均稳定返回 `INVALID_INPUT` 且 Revision/Audit/Pointer 零写入；NFC + trim 后 4 与 trim 后 200 均允许。
+- Audit 保存规范化 reason；相同 request ID 的规范化等价 reason 返回原结果，不同规范化 reason 返回 `INVALID_INPUT`。
+- DB-01 数据模型、八字段、权限、Version、Conflict、锁顺序、并发和 Initialization boundary 均未改变。
+
+## Admin P0 DB-01 本地实施状态（2026-07-30）
+
+| 项目                         | 状态                                            |
+| ---------------------------- | ----------------------------------------------- |
+| Mission                      | Admin P0 DB-01 — Schema and Security Foundation |
+| 实施                         | LOCAL COMPLETE                                  |
+| Schema / RLS / RPC           | COMPLETE                                        |
+| 正式 Baseline / Version 1    | NOT CREATED — DATA-01 boundary                  |
+| Admin / Web 产品代码         | UNCHANGED                                       |
+| Remote Supabase / Deployment | NOT RUN                                         |
+| Push / PR                    | NOT RUN                                         |
+
+- 新增不可变八字段 `site_copy_revisions`、单一 `site_copy_state` Current Pointer，以及 Public Read、Admin Read、Admin Save 三个 RPC。
+- 保存采用 global advisory transaction lock → Current Pointer row lock → 锁内 request ID 复核；禁止 Last Write Wins，冲突不产生 Revision、Audit 或 Pointer 更新。
+- 字段和 reason 均按 NFC → 首尾空白移除 → Unicode code point 长度校验，并拒绝控制字符；Revision 保存完整快照，Audit metadata 只保存变化字段。
+- `anon` / `authenticated` 无内部表直读写权限；Public RPC 只暴露八字段与非敏感版本；Admin RPC 复用既有 active Admin / Super Admin 权限事实。
+- 本地 clean rebuild、upgrade path、事务权限/原子性测试和双连接同 Base 并发测试通过。未创建正式 Baseline，未修改 Auth、capability、`/access`、Admin/Web、依赖或部署状态。
+
 ## V1.0.2 当前权威状态（2026-07-29 Final Release Closure）
 
 本文后续保留的 V1.0.2 Local Only、Preview、Pending、Not Run 或 Owner Smoke Required 均为带日期的历史记录，已被本节取代。
 
-| 项目                           | 当前状态                                           |
-| ------------------------------ | -------------------------------------------------- |
-| Release Version                | V1.0.2                                             |
-| Release Commit                 | `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`         |
-| Web Production Deployment      | `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`                 |
-| Web Production Status          | READY                                              |
-| Formal Domain                  | `https://www.fandomharbor.com/`                    |
-| Product Owner Final Acceptance | PASS                                               |
-| Production Functional Smoke    | PASS                                               |
-| Release Status                 | RELEASED                                           |
-| Final Release Closure          | CLOSED                                             |
-| Admin Production Branch        | `admin-production-disabled`                        |
-| Admin Frozen Commit            | `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a`         |
-| Supabase Migration             | NONE                                               |
-| Database / Schema Change       | NONE                                               |
-| Unresolved V1.0.2 Blocker      | NONE                                               |
+| 项目                           | 当前状态                                   |
+| ------------------------------ | ------------------------------------------ |
+| Release Version                | V1.0.2                                     |
+| Release Commit                 | `9ede1c6813e658ea8d7197c74a6ab2703cd0b528` |
+| Web Production Deployment      | `dpl_GxM3T6HKB7dyyU9fYmXdpmqWpi74`         |
+| Web Production Status          | READY                                      |
+| Formal Domain                  | `https://www.fandomharbor.com/`            |
+| Product Owner Final Acceptance | PASS                                       |
+| Production Functional Smoke    | PASS                                       |
+| Release Status                 | RELEASED                                   |
+| Final Release Closure          | CLOSED                                     |
+| Admin Production Branch        | `admin-production-disabled`                |
+| Admin Frozen Commit            | `e137c31f260d761fc2fdd6ebd9f7f0e30cf5630a` |
+| Supabase Migration             | NONE                                       |
+| Database / Schema Change       | NONE                                       |
+| Unresolved V1.0.2 Blocker      | NONE                                       |
 
 - Web Production 为 GitHub `main` 的 `9ede1c6813e658ea8d7197c74a6ab2703cd0b528`，状态 READY，正式域名已更新。
 - Lint、TypeScript、193 / 193 tests、Web / Admin / Docs builds 及 Matrix A / B / C / D 全部 PASS。
