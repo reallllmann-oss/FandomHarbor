@@ -1,5 +1,29 @@
 # Project Status
 
+## Admin P0 Production Release Closure（2026-08-15）
+
+| 项目                                  | 最终状态                                          |
+| ------------------------------------- | ------------------------------------------------- |
+| Mission                               | ADMIN P0 RELEASE CLOSURE                          |
+| Web Production Deployment             | `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM`                |
+| Web Source Commit / Smoke             | `d2c31d231abe971a7266094adfc0966d6de49fa9` / PASS |
+| Admin source Preview                  | `dpl_3ayj6Rg8Y9qTk3xJ9Ef8ezn7XNHC`                |
+| Admin Production Deployment           | `dpl_FfoexkkfWCk1wb8ZkJcDsbQdF5z7`                |
+| Admin Source Commit / Smoke           | `5463032a2aa5d98c8299c8d6e3dfeaae60818042` / PASS |
+| Admin Project / Production Branch     | `paused=true` / `admin-production-disabled`       |
+| Site Copy                             | Version 7 原始八字段                              |
+| Revision / Site Copy Audit / Audit ID | 7 / 7 / 81                                        |
+| Version 8 / Release-window Save       | 不存在 / 未发生                                   |
+| Release Closure Commit                | 本地 docs-only，NO PUSH                           |
+
+- Web Production 为 READY，既有 Production Alias 保持不变；Homepage、CTA、导航、Footer、Guest/Reader/Author 边界及 Reader `/studio` → `/archive` Production Smoke 全部通过。
+- accepted Admin Preview 通过官方 Preview Promotion 创建唯一一个 READY Production Deployment；Primary Alias 为 `fandom-harbor-admin.vercel.app`，未修改 Production Branch，未 Retry、Redeploy 或 Rollback。
+- Admin Production 正常登录、Version 7 八字段读取、单字段 Review Without Save、`/access`、匿名与 Reader deny 均通过；本地 Admin 会话已退出。
+- 发布窗口从 `2026-08-15T07:24:17Z` 至 `2026-08-15T07:52:22Z`，约 28 分 04 秒；结束时 Admin 已重新 Pause，45 分钟 Guard 已卸载并清理。
+- Site Copy 保持 Version 7 原始八字段，Revision/Audit 为 7/7，Audit ID 81，Pointer 不变且无 Version 8；发布窗口没有 `save_site_copy` 请求。
+- 两次非状态变更接口校正分别返回 HTTP 400 与 HTTP 422；均未创建 Deployment、切换 Alias 或改变 Project 状态，最终仅官方 Preview Promotion 产生一个 Admin Production Deployment。
+- Closure 阶段只更新 Release 证据与 `.ai` 项目文档，不执行部署、数据、配置或远程 Git 操作；详细证据见 `docs/19_Release/ADMIN-P0-RELEASE-CLOSURE.md`。
+
 ## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
 
 | 项目                               | 状态                 |

@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P0 Production Release Closure（2026-08-15）
+
+- Web Production 已固定为 `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM` / Source `d2c31d231abe971a7266094adfc0966d6de49fa9`，Production Smoke PASS，既有 Alias 保持不变。
+- Admin Production 的唯一获准来源是 accepted Preview `dpl_3ayj6Rg8Y9qTk3xJ9Ef8ezn7XNHC`；官方 Preview Promotion 创建 `dpl_FfoexkkfWCk1wb8ZkJcDsbQdF5z7`，Source 精确为 `5463032a2aa5d98c8299c8d6e3dfeaae60818042`。
+- Admin Production Smoke 只允许登录、读取、单字段 Review Without Save、权限边界和 `/access` 验收；本次未执行 Save，最终 Version 7、Revision/Audit 7/7、Audit ID 81、Pointer 与原始八字段保持不变，Version 8 不存在。
+- Admin Project 发布后必须重新 Pause。本次 Unpause 窗口约 28 分 04 秒，`2026-08-15T07:52:22Z` 确认 `paused=true` 后才清理 Guard；Production Branch 始终为 `admin-production-disabled`。
+- 旧式 Unpause 请求的 HTTP 400 与 Preview 直接切流端点的 HTTP 422 都是零状态变更的接口校正，不得解释为 Deployment、Alias 或 Project 状态变化；最终只使用一次官方 Preview Promotion。
+- 上一稳定 Admin Production `dpl_AVTGLwSF48DoEeLSqyadUQjoMFhs` 保留为直接回滚基线。本次无 P0/P1 问题，未执行 Rollback。
+- Web 与 Admin Release 保持 Project 隔离；Admin Promotion 未改变 Web Production。Release Closure 只允许 docs-only 本地 Commit，不得 Push。
+
 ## Admin P0 QA-01 Remote Supabase and Browser Acceptance（2026-07-31）
 
 - QA-01 安全目标固定为 Supabase Project `fandom-harbor` / `szfhngifsipsrxcpekti` / `ap-southeast-1`；Admin 与 Web 本地进程必须使用同一远程 URL 与 publishable key，浏览器进程禁止 Service Role Key。

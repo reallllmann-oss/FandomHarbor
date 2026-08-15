@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-15 — Admin P0 Production Release Closure
+
+- 归档 Web Production `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM`（Source `d2c31d231abe971a7266094adfc0966d6de49fa9`）READY 与 Production Smoke PASS 证据；既有 Alias 保持不变。
+- 归档 accepted Admin Preview `dpl_3ayj6Rg8Y9qTk3xJ9Ef8ezn7XNHC` 经官方 Preview Promotion 创建唯一 Production `dpl_FfoexkkfWCk1wb8ZkJcDsbQdF5z7`（Source `5463032a2aa5d98c8299c8d6e3dfeaae60818042`）的证据。
+- 记录 Admin Production 登录、Version 7 原始八字段读取、单字段 Review Without Save、`/access`、匿名 deny 与 Reader deny 全部通过；本地 Admin 会话已退出。
+- 记录发布窗口约 28 分 04 秒，结束时 Admin Project 已重新 `paused=true`，45 分钟一次性 Guard 已卸载并清理；Production Branch 仍为 `admin-production-disabled`。
+- 再次冻结 Site Copy Version 7、Revision/Audit 7/7、Audit ID 81、原 Pointer 与原始八字段；发布窗口没有 `save_site_copy` 请求，Version 8 不存在。
+- 如实记录旧式 Unpause 请求 HTTP 400 与 Preview 直接切流端点 HTTP 422 两次零状态变更校正；未 Retry、Redeploy、Rollback、创建第二个 Production Deployment 或手工修改 Alias。
+- 新增 `docs/19_Release/ADMIN-P0-RELEASE-CLOSURE.md` 并同步 Project Status 与 Memory；本次只包含 Release Closure 文档，不修改产品代码、Migration、配置、依赖或 lockfile。
+
 ## 2026-07-31 — Admin P0 QA-01 Remote Supabase and Browser Acceptance
 
 - 对安全确认的远程 Supabase Project 创建仓库外新鲜 Schema/Data/Role 导出，并在无破坏 dry-run 后只应用 DB-01 Foundation 与 DATA-01 Baseline；最终 Migration 历史 16/16 对齐。
