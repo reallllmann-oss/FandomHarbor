@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-02 Implementation Plan and Engineering Gate Freeze（2026-08-17）
+
+- 唯一父基线为 `37694f3550607e73d766471613357845a20fdc31`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02` / `codex/admin-p1-02-implementation-plan`。
+- P1-02 规划分为 A–G：private ledger/Audit guard、read RPC、默认关闭执行权的 ordinary write RPC、Domain、Repository、Service、backend closure；每个 Step 均需 Product Owner 单独授权。
+- 数据顺序固定为 private ledger 与不可变保护先行，再建 read RPC，再建只定义但不开放 authenticated execute 的 ordinary v2 write RPC；Domain/Repository/Service 后置，避免 UI 或 transport 反向定义数据库语义。
+- P1-03 继续专属只读 Directory/Search/Detail/Audit UI；P1-04 继续专属 Review/confirm、Server Action、写入 UI 与旧 RPC 原子 cutover。P1-02 不修改 `/access` 页面或 Action。
+- 旧 `grant_role/revoke_role/set_membership_state` 在新 P1-04 入口完成前不撤权；最终 cutover 必须在一个获准原子 Gate 中先关闭旧 execute、证明 deny，再开放三个窄 v2 RPC，禁止 old/new 双入口。
+- ADR-022 Option 3 保持：Admin/Super Admin Role 和 elevated-account Membership 写入不进入实现；普通 Session、JWT `iat`、客户端 boolean、普通重复登录均不能替代 Reauth proof。
+- 本规划仅修改文档，不创建产品代码/Migration，不执行 SQL/远程写入，不 Commit/Push/PR，不登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-01 Data, Permission and Reauth Design（2026-08-17）
 
 - 唯一基线为 `b634da010755e7768043eea41c426ad499a269fb`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-01` / `codex/admin-p1-01-data-permission-design`。

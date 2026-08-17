@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02 Implementation Plan and Engineering Gate Freeze
+
+- 以 P1-01 Closure Commit `37694f3550607e73d766471613357845a20fdc31` 为唯一父基线，在独立 P1-02 Worktree/Branch 只读复核 P1 合同、ADR、当前 `/access`、Identity tables/RLS/RPC/Grant/Trigger、Auth/capability、Domain/Repository/Service 模式与 SQL/TypeScript 测试基础。
+- 按当前 Supabase Changelog、Data API/RLS、Database Functions 和 CLI 官方合同冻结安全实现约束；所有未来 CLI 命令已先通过对应 `--help` 确认，本阶段没有运行 Migration 或数据库命令。
+- 新增 P1-02 权威实施计划，将后端拆为 private ledger/Audit guard、read RPC、默认关闭 execute 的 ordinary write RPC、Domain、Repository、Service 与 closure 七个独立 Owner Gate。
+- 冻结 P1-03 只读 UI、P1-04 Review/confirm + Server Action + 写入 UI 的独立边界；P1-02 不修改 `/access`，也不提前创建隐藏 Action。
+- 冻结旧 RPC cutover：P1-02 实现期间不造成服务中断；P1-04 新入口完成后才允许单一原子撤旧开新的 cutover，禁止兼容期双写入口，远程 apply 与 rollback 仍需独立人工授权。
+- ADR-022 Option 3 不变：elevated 账户可读，Admin/Super Admin Role 与 elevated-account Membership 写入继续延期；最后 active Super Admin guard 保留，不设计 Reauth 绕过。
+- 本阶段仅六份 docs-only 文件；未修改产品代码、Migration、RLS/RPC/Auth、依赖、配置或 lockfile，未执行 SQL/远程写入，未 Commit/Push/PR/登录/Unpause/Deployment。
+
 ## 2026-08-17 — Admin P1-01 Data, Permission and Reauth Design
 
 - 以 P1-00 Closure Commit `b634da010755e7768043eea41c426ad499a269fb` 为唯一基线，在独立 P1-01 Worktree/Branch 只读审计 profiles、memberships、role_grants、audit_logs、`/access`、RLS/RPC/Grant/Trigger、权限派生和 registration-name/password Auth adapter。

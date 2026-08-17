@@ -1,5 +1,29 @@
 # Project Status
 
+## Admin P1-02 Implementation Plan and Engineering Gate Freeze（2026-08-17）
+
+| 项目                                    | 当前状态                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| Parent baseline                         | `37694f3550607e73d766471613357845a20fdc31`                               |
+| Worktree / Branch                       | `FandomHarbor-Admin-P1-02` / `codex/admin-p1-02-implementation-plan`     |
+| P1-02 plan                              | READY — implementation not authorized                                    |
+| Backend implementation slices           | P1-02A–G — each requires a separate Product Owner gate                   |
+| P1-03 / P1-04                           | Read UI / write Action + UI remain separate and not authorized           |
+| Data sequence                           | private ledger → read RPC → closed write RPC → Domain/Repository/Service |
+| Old RPC cutover                         | Reserved for an atomic P1-04 gate; no dual executable write path         |
+| ADR-022                                 | Option 3 — elevated mutations deferred                                   |
+| Product code / Migration / Remote state | UNCHANGED                                                                |
+| Admin Production                        | `paused=true`                                                            |
+| P0 Site Copy                            | Version 7 / unchanged                                                    |
+
+- P1-02 只冻结实施步骤、候选文件、依赖、测试、Owner Gate 与回滚，不授权创建产品代码、Migration 或执行 SQL。
+- 允许的未来实施范围仅为受控读取、普通账户 Membership 与 Author Role；Admin/Super Admin Role 和 elevated-account Membership 写入继续由 KI-033 延期边界拒绝。
+- 新 v2 write RPC 即使在 P1-02 后端实现完成也必须保持 authenticated execute 关闭；P1-04 获准且 Action/UI 完成后，才可在单一原子 cutover 中撤销旧 RPC 并开放新入口。
+- P1-03 只读 UI 与 P1-04 Review/confirm、Server Action、写入 UI 没有被并入 P1-02。专用 non-Production QA 仍需独立 Owner 授权，Production 不得作为测试环境。
+- 本 Mission 为 docs-only planning：未 Commit、Push、PR，未创建 Migration，未执行 SQL、远程写入、登录、Unpause 或 Deployment。
+
+权威计划：`docs/15_Sprint/Admin_P1/P1_02_IMPLEMENTATION_PLAN.md`。
+
 ## Admin P1-01 Data, Permission and Reauth Design（2026-08-17）
 
 | 项目                                    | 当前状态                                                                           |

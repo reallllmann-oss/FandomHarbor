@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-01 design closure; ADR-022 Option 3 accepted; elevated mutations deferred
+Status: Active — Admin P1-02 implementation plan ready; implementation not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,11 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-01 DESIGN CLOSURE / OPTION 3 / ELEVATED MUTATIONS DEFERRED / P1-02 NOT AUTHORIZED`。P1-01 已冻结读取模型、private request ledger、expected-state、普通治理 RPC/权限矩阵、Audit 原子性、旧 RPC cutover 与 non-Production QA 方案。现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof；Product Owner 已选择 ADR-022 Option 3，把 KI-033 记为当前 P1 `ACCEPTED DEFERRED BOUNDARY`，不把它误报为技术解决。
+状态：`P1-02 IMPLEMENTATION PLAN READY / IMPLEMENTATION NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-01 已冻结读取模型、private request ledger、expected-state、普通治理 RPC/权限矩阵、Audit 原子性、旧 RPC cutover 与 non-Production QA 方案。P1-02 进一步冻结后端实施顺序、候选文件、依赖、自动化、Owner Gate 与回滚；它不授权创建代码或 Migration。现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof；Product Owner 已选择 ADR-022 Option 3，把 KI-033 记为当前 P1 `ACCEPTED DEFERRED BOUNDARY`，不把它误报为技术解决。
 
-普通治理（搜索/分页、脱敏读取、普通账户 Membership、Author Role、幂等与 Conflict）为 `AUTHORIZED FOR FUTURE P1-02 PLANNING`，但尚未授权开始 P1-02。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭；elevated 账户只读，未来重新开放必须独立授权和新 Auth ADR，优先评估 Supabase MFA/AAL2。
+普通治理（搜索/分页、脱敏读取、普通账户 Membership、Author Role、幂等与 Conflict）已完成 P1-02 实施规划，但每个实施 Step 仍需 Product Owner 单独授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭；elevated 账户只读，未来重新开放必须独立授权和新 Auth ADR，优先评估 Supabase MFA/AAL2。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、写入 UI 与旧 RPC 原子 cutover。
 
-P1-01 仅更新设计文档并创建获准的本地 docs-only Closure Commit；没有产品代码、Migration、RLS/RPC/Auth、远程写入、Admin Unpause 或 Deployment。
+P1-02 当前仅更新实施计划与项目状态文档；没有产品代码、Migration、RLS/RPC/Auth、远程写入、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 
