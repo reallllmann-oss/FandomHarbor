@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02A Private Ledger and Audit Immutability
+
+- 以 P1-02 planning Closure Commit `e3bb16c537d064808eeed8516b90ec3874b2ab26` 为唯一父基线，在独立 P1-02A Worktree/Branch 使用 Supabase CLI 创建时间戳 Migration。
+- 新增 private request ledger，冻结 requestId 主键、ordinary-only operation、32-byte payload fingerprint、Saved/Unchanged/Conflict result snapshot、Saved-only unique Audit reference 和 indefinite append-only 约束。
+- 新增 `security invoker` 的 reason、database-derived expected-state 与 payload fingerprint 私有 helper；固定空 `search_path`，并撤销 application-role execute。
+- 将 Site Copy 专项 Audit guard 扩展为全表 UPDATE/DELETE immutability，保留既有 Site Copy 稳定错误和 INSERT 行为。
+- 新增静态 Migration contract、事务式 SQL catalog/deny/constraint/immutability tests 与 P1-02A 验收证据，并同步 Schema、RLS、Migration registry、Roadmap 和项目状态。
+- 本地 17-Migration clean reset、10 个 SQL suites、13 files / 102 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；旧 RPC grant、P0 Site Copy Version 7 与 final active Super Admin 回归未漂移。
+- 未创建 read/write RPC、Repository、Service、Action 或 UI；P1-02B–G 未授权。未 Commit/Push/PR，未执行远程 Migration/SQL/写入，未登录/Unpause/Deployment。
+
 ## 2026-08-17 — Admin P1-02 Implementation Plan and Engineering Gate Freeze
 
 - 以 P1-01 Closure Commit `37694f3550607e73d766471613357845a20fdc31` 为唯一父基线，在独立 P1-02 Worktree/Branch 只读复核 P1 合同、ADR、当前 `/access`、Identity tables/RLS/RPC/Grant/Trigger、Auth/capability、Domain/Repository/Service 模式与 SQL/TypeScript 测试基础。

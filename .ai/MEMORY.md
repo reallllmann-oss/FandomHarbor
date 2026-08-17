@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P1-02A Private Ledger and Audit Immutability（2026-08-17）
+
+- 唯一父基线为 `e3bb16c537d064808eeed8516b90ec3874b2ab26`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02A` / `codex/admin-p1-02a-private-ledger`。
+- CLI 生成本地 Migration `20260817104616_admin_p1_identity_access_ledger.sql`，实现 `private.identity_access_request_ledger`、reason/expected-state/fingerprint 私有 helper、Ledger append-only 与全局 Audit UPDATE/DELETE guard。
+- Ledger 仅接受 Author Grant/Revoke 与普通账户 Membership operation；RLS 开启、无 policy，应用角色无 table/function privilege，`private` 不在 Data API exposed schemas。
+- 本 Step 未创建 read/write RPC，未改变旧 Membership/Role RPC execute，未实现 Repository/Service/Action/UI，也未触碰 KI-033 或 elevated mutation 延期边界。
+- 本地验证通过 17-Migration clean reset、10 个 SQL suites、13 files / 102 Vitest tests、TypeScript、ESLint、database lint 与 security advisor；P0 Site Copy 和最后 active Super Admin 回归通过。
+- 未 Commit/Push/PR，未执行远程 Migration/SQL/写入，不登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。P1-02B–G 未授权。
+
 ## Admin P1-02 Implementation Plan and Engineering Gate Freeze（2026-08-17）
 
 - 唯一父基线为 `37694f3550607e73d766471613357845a20fdc31`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02` / `codex/admin-p1-02-implementation-plan`。

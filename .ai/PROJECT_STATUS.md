@@ -1,5 +1,30 @@
 # Project Status
 
+## Admin P1-02A Private Ledger and Audit Immutability（2026-08-17）
+
+| 项目                        | 当前状态                                                               |
+| --------------------------- | ---------------------------------------------------------------------- |
+| Parent baseline             | `e3bb16c537d064808eeed8516b90ec3874b2ab26`                             |
+| Worktree / Branch           | `FandomHarbor-Admin-P1-02A` / `codex/admin-p1-02a-private-ledger`      |
+| Local Migration             | `20260817104616_admin_p1_identity_access_ledger.sql`                   |
+| Private ledger              | IMPLEMENTED LOCALLY — RLS/no policies/no application grants            |
+| Private helpers             | Reason, expected-state and fingerprint foundation only                 |
+| Audit                       | Global UPDATE/DELETE immutability; Site Copy error preserved           |
+| Read/write RPC              | NONE CREATED                                                           |
+| Legacy RPC grants           | UNCHANGED                                                              |
+| KI-033 / elevated mutations | `ACCEPTED DEFERRED BOUNDARY` / DEFERRED                                |
+| Validation                  | 17-Migration reset; 10 SQL suites; 102 Vitest tests; lint/advisor pass |
+| P1-02B–G                    | NOT AUTHORIZED                                                         |
+| Commit / remote state       | NONE / UNCHANGED                                                       |
+| Admin Production            | `paused=true`                                                          |
+| P0 Site Copy                | Version 7 / unchanged                                                  |
+
+- P1-02A only establishes the private request ledger, private helper contracts and database-level Audit immutability. It creates no public RPC, application execute grant, Repository, Service, Action or UI.
+- The ledger accepts only Author Grant/Revoke and ordinary-account Membership operations. It cannot authorize Admin/Super Admin Role or elevated-account Membership mutations, and KI-033 is not technically resolved.
+- Local validation used synthetic/disposable data only. No hosted project was contacted or changed; no Commit, Push, PR, login, Unpause or Deployment occurred.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02 Implementation Plan and Engineering Gate Freeze（2026-08-17）
 
 | 项目                                    | 当前状态                                                                 |

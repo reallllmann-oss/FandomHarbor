@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access and Phase 2 / Sprint 002A content policies implemented locally; later-domain rows remain proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and the Admin P1-02A private foundation are implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -43,7 +43,7 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - `supabase/tests/phase_1c_identity_access.sql` covers catalog/RLS assertions and a transactional invite/role/membership path for execution against a disposable Supabase/PostgreSQL environment.
 - Phase 2 Auth registration does not add a second permission model: the signup trigger may create only Profile, active Membership, Redemption and audit state. It cannot create Author/Admin/Super Admin grants. `phase_2_auth_registration.sql` verifies success and rollback paths.
 
-## Admin P1 target（P1-00 frozen; not implemented）
+## Admin P1 target（P1-00 frozen; P1-02A foundation implemented）
 
 - P1 复用现有 `profiles`、`memberships`、`role_grants`、`audit_logs` 与 role helpers；不新增 role/capability 或第二套权限事实。
 - 目录/详情读模型必须字段最小化，优先使用 `security invoker` + RLS；不得暴露内部 Auth email-shaped identifier、password、Session、Token 或 invitation secret。
@@ -52,7 +52,7 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - 旧 `grant_role`、`revoke_role`、`set_membership_state` execute path 在 P1 cutover 后不得绕过 Review/idempotency/conflict；具体迁移设计属于 P1-01。
 - 远程写入验证只允许专用 non-Production Supabase QA；P1 不使用 Production 数据库进行写入测试。
 
-## Admin P1-01 design authority（not implemented）
+## Admin P1-01 design authority（P1-02A foundation implemented）
 
 - Directory/detail/Audit 读 RPC 使用 `SECURITY INVOKER` + 现有 SELECT/RLS；Guest、Reader、Author、suspended/revoked Admin deny，active Admin/Super Admin 只获得字段最小化投影。
 - expected-state 由数据库对 Membership `state/updated_at` 和排序后的 active Role Grant `id/role/granted_at` 生成规范快照与 SHA-256 token；客户端不自证状态。
@@ -63,6 +63,16 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - Product Owner 已选择 ADR-022 Option 3。KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，技术问题未解决；不得实现、grant 或暴露 Admin/Super Admin Role 或 elevated-account Membership write RPC。最后一名 active Super Admin 数据库保护保留。
 
 详细合同见 [`P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`](../../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)。
+
+## Admin P1-02A local foundation
+
+- `private.identity_access_request_ledger` remains outside the exposed Data API schemas. RLS is enabled with no policies; `PUBLIC`, `anon`, `authenticated` and `service_role` have no direct table privileges.
+- Its operation constraint accepts only Author Grant, Author Revoke and ordinary-account Membership state changes. Ledger constraints forbid an Audit reference for `unchanged`/`conflict` and require one unique Audit reference for `saved`.
+- All new private normalization, expected-state and fingerprint helpers are `security invoker`, use an empty `search_path`, reference catalog/application objects explicitly and grant no execute privilege to application roles.
+- The global immutable trigger rejects every `audit_logs` UPDATE/DELETE. The P0 site-copy stable error remains unchanged, and INSERT remains available only through existing authorized workflows.
+- P1-02A creates no public function, read/write RPC, policy or application execute grant and does not alter legacy Membership/Role RPC grants. P1-02B–G remain unauthorized.
+
+Catalog and transactional evidence are in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md).
 
 ## Admin P0 site-copy foundation
 
