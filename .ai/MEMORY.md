@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P1-02B Identity Access Read RPC Implementation（2026-08-17）
+
+- 唯一父基线为 `fc41ad153c75a326f76ca66c5219a889eb99a84e`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`。
+- CLI 创建本地 Migration `20260817121610_admin_p1_identity_access_reads.sql`：Search/Audit 为 stable invoker，Detail 为 ADR-023 唯一 stable definer read boundary；三者无重载、空 search path、authenticated-only execute。
+- Search 支持 NFKC/case registration-name、full UUID、1–50 tuple keyset；Detail 在 target lookup 前 live-authorize caller 并调用既有 snapshot/token helper；Audit 仅返回 target Membership/Role 治理摘要。
+- private helper execute deny、底层表 Grant/RLS、旧 RPC execute、单一 token 算法、Ledger/Audit immutability、ADR-022 Option 3、KI-033 与 elevated mutation 延期均不变。
+- 本地验证通过 18-Migration clean reset、11 个 SQL suites、13 files / 108 Vitest tests、TypeScript、ESLint、database lint/security advisor、权限矩阵、target non-disclosure 和全事实零写入 snapshot。
+- 未 Commit/Push/PR，未执行远程 Migration/SQL/写入，不登录/Unpause/Deployment，未开始 P1-02C；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-02B Read Authority Contract Correction（2026-08-17）
 
 - 唯一父基线为 `8f7ee546ab069c36658a1debdddbf64a7382133f`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`。

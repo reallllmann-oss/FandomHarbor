@@ -1,5 +1,31 @@
 # Project Status
 
+## Admin P1-02B Identity Access Read RPC Implementation（2026-08-17）
+
+| 项目                   | 当前状态                                                               |
+| ---------------------- | ---------------------------------------------------------------------- |
+| Parent baseline        | `fc41ad153c75a326f76ca66c5219a889eb99a84e`                             |
+| Worktree / Branch      | `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`           |
+| Local Migration        | `20260817121610_admin_p1_identity_access_reads.sql`                    |
+| Search RPC             | `STABLE SECURITY INVOKER` / bounded exact query + keyset               |
+| Detail RPC             | `STABLE SECURITY DEFINER` / live auth before target lookup             |
+| Audit RPC              | `STABLE SECURITY INVOKER` / minimized target summaries                 |
+| Execute                | authenticated-only exact signatures                                    |
+| Private helper execute | DENY unchanged for `PUBLIC/anon/authenticated/service_role`            |
+| Bottom-table Grant/RLS | UNCHANGED                                                              |
+| Zero-write proof       | PASS — Profile/Membership/Role/Audit/Ledger/Site Copy unchanged        |
+| Validation             | 18-Migration reset; 11 SQL suites; 108 Vitest tests; lint/advisor pass |
+| P1-02C–G               | NOT AUTHORIZED                                                         |
+| Commit / remote state  | NONE / UNCHANGED                                                       |
+| Admin Production       | `paused=true`                                                          |
+| P0 Site Copy           | Version 7 / unchanged                                                  |
+
+- ADR-023 mixed authority is implemented locally for exactly three read RPCs. Unauthorized callers receive target-independent denial; active Admin/Super Admin can read ordinary and elevated targets through the frozen minimum projection.
+- Detail calls the existing P1-02A expected-state helpers without exposing helper execute or duplicating the algorithm. All RPC calls preserve complete before/after snapshots of business, Audit, Ledger and Site Copy facts.
+- No write RPC, old-RPC cutover, product application code, remote apply, Commit, login, Unpause or Deployment is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02B Read Authority Contract Correction（2026-08-17）
 
 | 项目                           | 当前状态                                                     |

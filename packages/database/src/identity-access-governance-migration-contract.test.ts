@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const migrationName = "20260817104616_admin_p1_identity_access_ledger.sql";
+const readMigrationName = "20260817121610_admin_p1_identity_access_reads.sql";
 
 async function migration() {
   return readFile(
@@ -14,6 +15,13 @@ async function migration() {
 
 async function supabaseConfig() {
   return readFile(resolve(process.cwd(), "../../supabase/config.toml"), "utf8");
+}
+
+async function readMigration() {
+  return readFile(
+    resolve(process.cwd(), "../../supabase/migrations", readMigrationName),
+    "utf8",
+  );
 }
 
 describe("Admin P1-02A private ledger migration contract", () => {
@@ -140,5 +148,120 @@ describe("Admin P1-02A private ledger migration contract", () => {
     expect(sql).not.toContain("grant execute on function");
     expect(sql).not.toContain("revoke_role(uuid");
     expect(sql).not.toContain("set_membership_state(uuid");
+  });
+});
+
+describe("Admin P1-02B read RPC migration contract", () => {
+  it("creates exactly the three frozen read RPC names and signatures", async () => {
+    const sql = await readMigration();
+
+    for (const signature of [
+      "public.search_identity_access_subjects_v1(\n  p_query text default null,\n  p_cursor jsonb default null,\n  p_limit integer default 25\n)",
+      "public.get_identity_access_subject_v1(\n  p_user_id uuid\n)",
+      "public.list_identity_access_audit_v1(\n  p_user_id uuid,\n  p_before jsonb default null,\n  p_limit integer default 25\n)",
+    ]) {
+      expect(sql).toContain(`function ${signature}`);
+    }
+
+    expect(sql.match(/create or replace function public\./g)).toHaveLength(3);
+    expect(sql).not.toContain("grant_author_role_v2");
+    expect(sql).not.toContain("revoke_author_role_v2");
+    expect(sql).not.toContain("set_ordinary_membership_state_v2");
+  });
+
+  it("freezes the ADR-023 invoker-definer-invoker authority modes", async () => {
+    const sql = await readMigration();
+    const search = sql.slice(
+      sql.indexOf("function public.search_identity_access_subjects_v1"),
+      sql.indexOf("function public.get_identity_access_subject_v1"),
+    );
+    const detail = sql.slice(
+      sql.indexOf("function public.get_identity_access_subject_v1"),
+      sql.indexOf("function public.list_identity_access_audit_v1"),
+    );
+    const audit = sql.slice(
+      sql.indexOf("function public.list_identity_access_audit_v1"),
+    );
+
+    expect(search).toContain("security invoker");
+    expect(search).not.toContain("security definer");
+    expect(detail).toContain("security definer");
+    expect(detail).not.toContain("security invoker");
+    expect(audit).toContain("security invoker");
+    expect(audit).not.toContain("security definer");
+    expect(sql.match(/\nstable\n/g)).toHaveLength(3);
+    expect(sql.match(/set search_path = ''/g)).toHaveLength(3);
+  });
+
+  it("keeps the detail definer live-authorized, helper-backed, and read-only", async () => {
+    const sql = await readMigration();
+    const detail = sql.slice(
+      sql.indexOf("function public.get_identity_access_subject_v1"),
+      sql.indexOf("function public.list_identity_access_audit_v1"),
+    );
+
+    expect(detail.indexOf("v_actor_user_id uuid := auth.uid()")).toBeLessThan(
+      detail.indexOf("from public.profiles p"),
+    );
+    expect(
+      detail.indexOf("private.has_role('admin', v_actor_user_id)"),
+    ).toBeLessThan(detail.indexOf("from public.profiles p"));
+    expect(detail).toContain(
+      "private.identity_access_expected_state_snapshot(p.user_id)",
+    );
+    expect(detail).toContain("private.identity_access_state_token(p.user_id)");
+    expect(detail).not.toMatch(/\b(?:insert|update|delete)\b/i);
+    expect(detail).not.toMatch(/\n\s*execute\s+/i);
+    expect(detail).not.toContain("private.write_audit");
+    expect(detail).not.toContain("identity_access_request_ledger");
+    expect(detail).not.toContain("extensions.digest");
+  });
+
+  it("bounds search and audit with deterministic keyset cursors", async () => {
+    const sql = await readMigration();
+
+    expect(sql).toContain("v_limit not between 1 and 50");
+    expect(sql).toContain("limit v_limit + 1");
+    expect(sql).toContain("p.registration_name is null asc");
+    expect(sql).toContain("p.user_id asc");
+    expect(sql).toContain("order by audit.created_at desc, audit.id desc");
+    expect(sql).toContain(
+      "pg_catalog.\"normalize\"(p.registration_name, 'NFKC')",
+    );
+    expect(sql).not.toMatch(/\boffset\b/i);
+  });
+
+  it("uses exact function grants without exposing private helpers", async () => {
+    const sql = await readMigration();
+
+    expect(
+      sql.match(/from public, anon, authenticated, service_role;/g),
+    ).toHaveLength(3);
+    expect(sql.match(/\)\s+to authenticated;/g)).toHaveLength(3);
+    expect(sql).not.toMatch(/grant execute on function private\./);
+    expect(sql).not.toMatch(/grant .* on (?:table )?public\./);
+    expect(sql).not.toContain("create policy");
+    expect(sql).not.toContain("alter table");
+    expect(sql).not.toContain("user_metadata");
+  });
+
+  it("returns only frozen projections without Auth, ledger, or raw Audit metadata", async () => {
+    const sql = await readMigration();
+
+    for (const forbidden of [
+      "auth.users",
+      "encrypted_password",
+      "raw_user_meta_data",
+      "raw_app_meta_data",
+      "payload_fingerprint",
+      "request_id",
+      "identity_access_request_ledger",
+    ]) {
+      expect(sql).not.toContain(forbidden);
+    }
+
+    expect(sql).not.toContain("'metadata', audit.metadata");
+    expect(sql).toContain("audit.metadata ->> 'from'");
+    expect(sql).toContain("audit.metadata ->> 'to'");
   });
 });

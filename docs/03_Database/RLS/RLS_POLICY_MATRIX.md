@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and the Admin P1-02A private foundation are implemented locally; later-domain rows remain proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1-02A/B foundations are implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -74,6 +74,15 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - P1-02A creates no public function, read/write RPC, policy or application execute grant and does not alter legacy Membership/Role RPC grants. P1-02B–G remain unauthorized.
 
 Catalog and transactional evidence are in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-02B local read foundation
+
+- `search_identity_access_subjects_v1(text,jsonb,integer)` and `list_identity_access_audit_v1(uuid,jsonb,integer)` are stable invoker functions; existing SELECT grants/RLS and live role helpers remain the data boundary.
+- `get_identity_access_subject_v1(uuid)` is the sole stable definer read exception under ADR-023. It checks `auth.uid()` and live active Admin/Super Admin before target lookup, calls only the existing expected-state helpers for privileged derivation and contains no write path.
+- All three have empty search path, no overload, `PUBLIC/anon/service_role` execute deny and exact authenticated execute. Private snapshot/token helper execute remains denied to every application role.
+- No table grant, RLS policy, exposed schema, legacy RPC execute, Membership/Role/Audit/Ledger or Site Copy behavior changes.
+
+Catalog, permission-matrix and zero-write evidence are in [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md).
 
 ## Admin P0 site-copy foundation
 

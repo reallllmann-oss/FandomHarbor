@@ -1,6 +1,6 @@
 # Supabase Schema Blueprint
 
-Status: Phase 1C identity/access, Phase 2 / Sprint 002A content-domain subsets and the Admin P1-02A private foundation are implemented in local SQL migrations; remaining catalog is proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content-domain subsets and Admin P1-02A/B database foundations are implemented in local SQL migrations; remaining catalog is proposed.
 
 ## Schema separation
 
@@ -72,6 +72,8 @@ Phase 1C implements the identity/access operations as explicit functions: `creat
 Admin P1-02A locally implements the P1-01 private request ledger proposal as `private.identity_access_request_ledger`. It is not a role or Membership fact and is outside the Data API. It retains the global request UUID, actor/target/operation, SHA-256 payload fingerprint and original `saved/unchanged/conflict` result so a future controlled mutation can replay a result without a duplicate business change or Audit. The operation constraint contains only Author Grant, Author Revoke and ordinary-account Membership state change; it cannot record or authorize an elevated operation. RLS is enabled with no application policies, and `PUBLIC`, `anon`, `authenticated` and `service_role` have no direct table privileges.
 
 P1-02A also adds private `security invoker` helpers for canonical reason validation, database-derived expected-state snapshots/tokens and payload fingerprints. It replaces the narrower site-copy Audit trigger with a global `audit_logs` UPDATE/DELETE guard while preserving the stable site-copy error. No read or write RPC is created, and no existing Membership/Role RPC execute grant changes. Local acceptance evidence is in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md).
+
+P1-02B locally adds three read-only RPCs without new tables, views, policies or table grants. `search_identity_access_subjects_v1` and `list_identity_access_audit_v1` are stable invoker functions over existing SELECT/RLS; `get_identity_access_subject_v1` is the sole stable definer read boundary approved by ADR-023 and calls the unexposed P1-02A snapshot/token helpers after live caller authorization. All three use empty `search_path`, authenticated-only exact execute grants, bounded keyset pagination where applicable and field-minimized JSON projections. Evidence is in [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md).
 
 Phase 2 / Sprint 002A adds only a private `set_updated_at` trigger helper and a parameterless active-member helper for RLS. It does not add content-specific role tables, privileged workflow RPCs, editor functions or Revision functions.
 

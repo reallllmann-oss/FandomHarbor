@@ -141,7 +141,7 @@ ADR-022 Option 3 closure narrows the current P1 implementation boundary without 
 
 Authentication, membership, role, ownership, state transition, field exposure, validation, idempotency, concurrency, rate limit, audit, cache, error, retention and allow/deny tests must be answered for each implemented operation.
 
-## 8. Admin P1-01 identity governance design（not implemented）
+## 8. Admin P1 identity governance reads（P1-02B local implementation）
 
 权威细节见 [`P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`](../../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)。
 
@@ -152,6 +152,14 @@ Authentication, membership, role, ownership, state transition, field exposure, v
 - `list_identity_access_audit_v1`: 仅返回 target 的 Membership/Role 治理事件，以 `(created_at,id)` 稳定游标分页。
 - 权限模式由 [ADR-023](../../17_Architecture_Decisions/ADR-023.md) 冻结：搜索与 Audit 为 `SECURITY INVOKER`；只有详情为严格只读 `SECURITY DEFINER`。详情必须在 target lookup 前通过 `auth.uid()`、live active Membership 与未撤销 Admin/Super Admin grant 授权，只调用现有 expected-state helper，禁止 dynamic SQL 和任何写入。三者均不依赖 `user_metadata` 或 JWT role claim。
 - 三者创建后立即撤销 `PUBLIC/anon` execute，只向 `authenticated` grant；private helper execute 继续对 `PUBLIC/anon/authenticated/service_role` deny，不扩大底层表 Grant。
+
+准确数据库签名：
+
+- `search_identity_access_subjects_v1(p_query text default null, p_cursor jsonb default null, p_limit integer default 25) returns jsonb`
+- `get_identity_access_subject_v1(p_user_id uuid) returns jsonb`
+- `list_identity_access_audit_v1(p_user_id uuid, p_before jsonb default null, p_limit integer default 25) returns jsonb`
+
+Search cursor 为 `{ missingRegistrationName, normalizedRegistrationName, userId }`；Audit cursor 为 `{ createdAt, auditId }`，其中 Audit ID 使用字符串避免客户端 bigint 精度损失。两个列表返回 `{ items, nextCursor, hasMore }`，limit 为 1–50。Detail 返回 P1-01 冻结的最小投影及 `{ snapshot, token }` expected-state。准确本地证据见 [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md)。
 
 ### Mutation RPC
 

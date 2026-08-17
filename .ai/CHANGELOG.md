@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02B Identity Access Read RPC Implementation
+
+- 以 ADR-023 docs-only Commit `fc41ad153c75a326f76ca66c5219a889eb99a84e` 为唯一父基线，使用 Supabase CLI 创建本地 read Migration `20260817121610_admin_p1_identity_access_reads.sql`。
+- 新增三个无重载 stable RPC：bounded NFKC/UUID Search（invoker）、最小治理 Detail（唯一 definer）和 target Audit summary（invoker）；均为空 search path、authenticated-only exact execute。
+- Detail 在 target lookup 前使用 `auth.uid()`、live Membership/Role 完成授权，只调用既有 P1-02A snapshot/token helper；无 dynamic SQL、算法复制或写入路径。
+- 新增 6 项 Migration static contract 和事务式 P1-02B SQL suite，覆盖 catalog、7 类 caller、存在性不可区分、稳定分页、字段最小化、helper deny、旧 grant不变与全业务事实零写入。
+- 本地 18-Migration clean reset、11 个 SQL suites、13 files / 108 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；P1-02A Ledger/Audit 与 P0 Site Copy 回归通过。
+- 未创建 write RPC、修改旧 RPC、实现 elevated mutation或接触产品 UI/Action/Domain/Repository/Service；未 Commit/Push/PR、远程 apply/SQL/写入、登录/Unpause/Deployment，未开始 P1-02C。
+
 ## 2026-08-17 — Admin P1-02B Read Authority Contract Correction
 
 - 从 P1-02A Closure Commit `8f7ee546ab069c36658a1debdddbf64a7382133f` 建立独立 P1-02B Worktree/Branch；初始状态 clean。
