@@ -1,5 +1,13 @@
 # Project Memory
 
+## Admin P1-02B Read Authority Contract Correction（2026-08-17）
+
+- 唯一父基线为 `8f7ee546ab069c36658a1debdddbf64a7382133f`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`。
+- 一次性本地 rollback proof 证明：authenticated 对四张读取事实表具备 SELECT/RLS，但无法从 `SECURITY INVOKER` wrapper 调用已撤权的 P1-02A state-token helper。
+- Product Owner 选择 ADR-023 最小混合权限：搜索/Audit 为 invoker；只有详情可为严格只读 definer，且必须先 live-authorize caller、再 lookup target、只调用现有 snapshot/token helper并保持零写入。
+- private helper 对 `PUBLIC/anon/authenticated/service_role` 的 execute deny、底层表 Grant、单一 expected-state 算法、ADR-022 Option 3、KI-033 与 elevated mutation 延期均不变。
+- 本次仅授权 docs-only 合同修正与本地 Commit；不授权 RPC/Migration 实现、P1-02C、SQL、远程写入、登录、Unpause 或 Deployment。Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-02A Private Ledger and Audit Immutability（2026-08-17）
 
 - 唯一父基线为 `e3bb16c537d064808eeed8516b90ec3874b2ab26`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02A` / `codex/admin-p1-02a-private-ledger`。

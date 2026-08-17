@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02B Read Authority Contract Correction
+
+- 从 P1-02A Closure Commit `8f7ee546ab069c36658a1debdddbf64a7382133f` 建立独立 P1-02B Worktree/Branch；初始状态 clean。
+- 记录一次性本地 rollback proof：现有 SELECT/RLS 可支持 invoker search/Audit，但 authenticated 无法从 invoker wrapper 调用已撤权的 private expected-state helper。
+- 新增 ADR-023；Product Owner 批准最小混合读取权限：搜索/Audit 保持 `SECURITY INVOKER`，只有详情可使用严格只读 `SECURITY DEFINER`。
+- 冻结详情 definer 的 live actor authorization、target non-disclosure、空 search path、全限定对象、无 dynamic SQL、最小投影、existing-helper-only 与零写入合同。
+- P1-02A helper execute deny、单一 token 算法、底层表 Grant、ADR-022 Option 3、KI-033 与 elevated mutation 延期均不变。
+- 本次仅修正文档；未创建/修改 RPC、Migration、RLS、Grant、SQL、产品代码或远程状态，未开始 P1-02C。
+
 ## 2026-08-17 — Admin P1-02A Private Ledger and Audit Immutability
 
 - 以 P1-02 planning Closure Commit `e3bb16c537d064808eeed8516b90ec3874b2ab26` 为唯一父基线，在独立 P1-02A Worktree/Branch 使用 Supabase CLI 创建时间戳 Migration。

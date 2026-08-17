@@ -121,8 +121,8 @@ P1 暂不采用双人审批。P1-00 曾记录单个有效 Super Admin 在合格 
 ## 9. 数据库与 Supabase 安全基线
 
 - 复用 `profiles`、`memberships`、`role_grants` 与 `audit_logs`；不得创建第二套身份或角色真相。
-- 读模型优先使用字段最小化的 `security invoker` 投影与 RLS。
-- 只有确需原子跨表写入和绕过 direct-write revoke 的 Mutation 才可使用 `security definer`。
+- 读模型按 [ADR-023](../17_Architecture_Decisions/ADR-023.md) 使用最小混合权限：搜索/Audit 为字段最小化 `security invoker` + RLS；只有必须调用未开放 private expected-state helper 的详情 RPC 可使用严格只读 `security definer`。该例外必须先做 live caller authorization、零写入且不得扩大 helper/table grant。
+- 除 ADR-023 严格限定的只读详情 RPC 外，只有确需原子跨表写入和绕过 direct-write revoke 的 Mutation 才可使用 `security definer`；不得把详情例外扩展到搜索、Audit 或其他读取能力。
 - 每个 privileged function 必须固定空 `search_path`、使用全限定对象名、从 `PUBLIC` 撤销执行权、只向所需角色最小授权，并在函数体内重新验证 `auth.uid()` 与 live 权限。
 - 暴露 schema 中的新表必须显式 RLS；private schema 也采用无直接应用角色权限的纵深防御。
 - 新对象是否进入 Data API 必须通过 catalog/grant 验证，不依赖 Supabase 平台默认值。

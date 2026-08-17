@@ -9,6 +9,8 @@ Migration：`20260817104616_admin_p1_identity_access_ledger.sql`
 
 本文件记录 P1-02A 的本地实施与验收证据，不创建第二份产品或安全合同。权威范围仍为 [P1-00](P1_00_SCOPE_AND_SECURITY_CONTRACT.md)、[P1-01 Design](P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)、[ADR-022](../../17_Architecture_Decisions/ADR-022.md) 与 [P1-02 Plan](P1_02_IMPLEMENTATION_PLAN.md)。
 
+前向说明：P1-02B 的一次性本地 proof 证明 `SECURITY INVOKER` 详情 RPC 无法调用已对 authenticated 撤权的 expected-state helper。Product Owner 通过 [ADR-023](../../17_Architecture_Decisions/ADR-023.md) 批准仅详情 RPC 使用严格只读 definer；本文件冻结的 private helper execute deny、单一 expected-state 算法、Ledger/Audit 不可变与零应用直连权限均保持不变。
+
 ## 1. 实施结果
 
 P1-02A 只新增数据库内部安全基础：

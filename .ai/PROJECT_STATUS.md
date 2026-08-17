@@ -1,5 +1,26 @@
 # Project Status
 
+## Admin P1-02B Read Authority Contract Correction（2026-08-17）
+
+| 项目                           | 当前状态                                                     |
+| ------------------------------ | ------------------------------------------------------------ |
+| Parent baseline                | `8f7ee546ab069c36658a1debdddbf64a7382133f`                   |
+| Worktree / Branch              | `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs` |
+| ADR                            | ADR-023 — minimal hybrid read authority accepted             |
+| Search RPC                     | Future `SECURITY INVOKER`                                    |
+| Detail RPC                     | Future strict read-only `SECURITY DEFINER`                   |
+| Audit RPC                      | Future `SECURITY INVOKER`                                    |
+| Private helper execute         | DENY remains for `PUBLIC/anon/authenticated/service_role`    |
+| Bottom-table grants            | UNCHANGED                                                    |
+| RPC / Migration implementation | NOT AUTHORIZED / NOT CREATED                                 |
+| KI-033 / elevated mutations    | `ACCEPTED DEFERRED BOUNDARY` / DEFERRED                      |
+| Admin Production               | `paused=true`                                                |
+| P0 Site Copy                   | Version 7 / unchanged                                        |
+
+- Local rollback proof showed base SELECT/RLS is sufficient for invoker search/Audit, while an invoker detail wrapper cannot call the revoked P1-02A expected-state helper.
+- ADR-023 approves only one privileged read boundary: detail must live-authorize the caller before target lookup, return the frozen minimum projection, call the existing helper without exposing it, and perform zero writes.
+- This docs-only decision does not authorize P1-02B implementation, P1-02C, SQL, remote QA, login, Unpause or Deployment.
+
 ## Admin P1-02A Private Ledger and Audit Immutability（2026-08-17）
 
 | 项目                        | 当前状态                                                               |

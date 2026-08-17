@@ -148,9 +148,10 @@ Authentication, membership, role, ownership, state transition, field exposure, v
 ### Read RPC
 
 - `search_identity_access_subjects_v1`: active Admin/Super Admin only；注册名精确匹配或完整 UUID；1–50 keyset pagination；不返回 Auth email/phone/metadata。
-- `get_identity_access_subject_v1`: 最小 Profile/Membership/active grant/effective role/关键时间投影，附数据库生成 expected-state token。
+- `get_identity_access_subject_v1`: 最小 Profile/Membership/active grant/effective role/关键时间投影，附 P1-02A helper 生成的 expected-state token。
 - `list_identity_access_audit_v1`: 仅返回 target 的 Membership/Role 治理事件，以 `(created_at,id)` 稳定游标分页。
-- 三者均为 `SECURITY INVOKER`，依赖现有 grant + RLS 和实时 active Admin/Super Admin，不依赖 `user_metadata` 或 JWT role claim。
+- 权限模式由 [ADR-023](../../17_Architecture_Decisions/ADR-023.md) 冻结：搜索与 Audit 为 `SECURITY INVOKER`；只有详情为严格只读 `SECURITY DEFINER`。详情必须在 target lookup 前通过 `auth.uid()`、live active Membership 与未撤销 Admin/Super Admin grant 授权，只调用现有 expected-state helper，禁止 dynamic SQL 和任何写入。三者均不依赖 `user_metadata` 或 JWT role claim。
+- 三者创建后立即撤销 `PUBLIC/anon` execute，只向 `authenticated` grant；private helper execute 继续对 `PUBLIC/anon/authenticated/service_role` deny，不扩大底层表 Grant。
 
 ### Mutation RPC
 

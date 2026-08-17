@@ -113,7 +113,8 @@ Option 3 下不存在当前 P1 proof issuer、proof consumer 或 elevated succes
 ## 8. Catalog 与安全断言
 
 - private ledger 不在 exposed schema；RLS enabled；`PUBLIC/anon/authenticated/service_role` 无 table/sequence privilege。
-- read RPC 为 `SECURITY INVOKER`，只授予 authenticated execute。
+- read RPC 按 ADR-023 使用最小混合权限：搜索/Audit 为 `SECURITY INVOKER`；只有详情为严格只读 `SECURITY DEFINER`。三者只授予 authenticated execute，均先做 live Admin/Super Admin authorization；详情必须额外证明未授权 target non-disclosure、零写入、无 dynamic SQL、空 search path 和最小投影。
+- P1-02A snapshot/token helper 对 `PUBLIC/anon/authenticated/service_role` 的 execute deny 保持不变；详情只从 definer 内调用现有 helper，不复制算法或扩大底层表 Grant。
 - 当前三个低风险 write RPC 设计为 `SECURITY DEFINER`：空 search path、全限定对象、PUBLIC/anon deny、authenticated 精确 grant；catalog 中不得存在 elevated v2 write RPC。
 - parameterized private authorization/helper/ledger function 不向 authenticated 暴露。
 - 三个旧 RPC cutover 后 authenticated execute 为 false，回滚也不得恢复为普通应用入口。

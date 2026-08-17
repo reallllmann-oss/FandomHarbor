@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-02A local foundation complete; closure commit not authorized; elevated mutations deferred
+Status: Active — Admin P1-02B read authority contract approved; implementation not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,11 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-02A LOCAL FOUNDATION COMPLETE / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-01 已冻结读取模型、private request ledger、expected-state、普通治理 RPC/权限矩阵、Audit 原子性、旧 RPC cutover 与 non-Production QA 方案。P1-02A 已仅在独立本地 Worktree 实现 private request ledger、reason/expected-state/fingerprint helper 与全局 Audit immutability guard；它未创建 read/write RPC，未开放 authenticated execute，也未改变旧 RPC。现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof；Product Owner 已选择 ADR-022 Option 3，把 KI-033 记为当前 P1 `ACCEPTED DEFERRED BOUNDARY`，不把它误报为技术解决。
+状态：`P1-02B READ AUTHORITY CONTRACT APPROVED / IMPLEMENTATION NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A private ledger/helper/Audit foundation 已形成独立本地 Commit。P1-02B proof 证明全 invoker 与 expected-state helper deny 冲突；Product Owner 通过 ADR-023 批准最小混合读取权限：搜索/Audit 保持 invoker，只有详情可使用严格只读 definer，private helper execute deny、单一 token 算法和底层表 Grant 不变。该决定只修正合同，不授权 RPC 或 Migration 实现。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
 
-普通治理（搜索/分页、脱敏读取、普通账户 Membership、Author Role、幂等与 Conflict）仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02B–G 未授权；Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭；elevated 账户只读，未来重新开放必须独立授权和新 Auth ADR，优先评估 Supabase MFA/AAL2。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、写入 UI 与旧 RPC 原子 cutover。
+普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02B 实现与 P1-02C–G 均未授权；Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、写入 UI 与旧 RPC 原子 cutover。
 
-P1-02A 当前变更仅包含一份本地 Migration、隔离测试及权威文档；没有产品应用代码、public RPC、远程写入、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02A_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md)。
+P1-02B 当前只修正 ADR 与权威合同；没有 RPC、Migration、数据库/产品代码或远程状态变化。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，权限决定见 [`ADR-023`](../17_Architecture_Decisions/ADR-023.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 

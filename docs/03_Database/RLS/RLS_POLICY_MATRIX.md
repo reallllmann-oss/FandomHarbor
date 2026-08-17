@@ -46,15 +46,16 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 ## Admin P1 target（P1-00 frozen; P1-02A foundation implemented）
 
 - P1 复用现有 `profiles`、`memberships`、`role_grants`、`audit_logs` 与 role helpers；不新增 role/capability 或第二套权限事实。
-- 目录/详情读模型必须字段最小化，优先使用 `security invoker` + RLS；不得暴露内部 Auth email-shaped identifier、password、Session、Token 或 invitation secret。
+- 目录/详情读模型必须字段最小化；ADR-023 规定搜索/Audit 使用 `security invoker` + RLS，只有详情可使用严格只读 definer 调用未开放的 expected-state helper。不得暴露内部 Auth email-shaped identifier、password、Session、Token 或 invitation secret。
 - Mutation 目标合同包括 UUID requestId、expected-state、Saved/Unchanged/Conflict、单一成功 Audit 与 stale/重复请求零部分写入。
-- 必要 privileged Mutation function 才可使用 `security definer`；必须空 `search_path`、全限定对象名、撤销 PUBLIC、最小 execute grant，并在函数内复核 `auth.uid()`、active Membership、live Role Grant、target boundary 与 final active Super Admin。
+- 除 ADR-023 详情读取例外外，只有必要 privileged Mutation function 才可使用 `security definer`；必须空 `search_path`、全限定对象名、撤销 PUBLIC、最小 execute grant，并在函数内复核 `auth.uid()` 与对应 live authorization。详情例外不得写入；Mutation 仍须复核 target boundary 与 final active Super Admin。
 - 旧 `grant_role`、`revoke_role`、`set_membership_state` execute path 在 P1 cutover 后不得绕过 Review/idempotency/conflict；具体迁移设计属于 P1-01。
 - 远程写入验证只允许专用 non-Production Supabase QA；P1 不使用 Production 数据库进行写入测试。
 
 ## Admin P1-01 design authority（P1-02A foundation implemented）
 
-- Directory/detail/Audit 读 RPC 使用 `SECURITY INVOKER` + 现有 SELECT/RLS；Guest、Reader、Author、suspended/revoked Admin deny，active Admin/Super Admin 只获得字段最小化投影。
+- ADR-023 冻结最小混合读取权限：Directory search 与 Audit 使用 `SECURITY INVOKER` + 现有 SELECT/RLS；只有详情为严格只读 `SECURITY DEFINER`，先实时验证 caller active Membership 与未撤销 Admin/Super Admin grant，再读取 target 并调用 P1-02A expected-state helper。Guest、Reader、Author、suspended/revoked Admin deny，active Admin/Super Admin 只获得字段最小化投影。
+- 三个 read RPC 仅向 authenticated grant execute；详情 definer 为空 search path、全限定对象、禁止 dynamic SQL 和写入。P1-02A helper execute deny、底层表 Grant/RLS 与 exposed schema 均保持不变。
 - expected-state 由数据库对 Membership `state/updated_at` 和排序后的 active Role Grant `id/role/granted_at` 生成规范快照与 SHA-256 token；客户端不自证状态。
 - 幂等需要 `private.identity_access_request_ledger`；private schema 不暴露到 Data API，无应用角色 policy/grant，只由受控 Mutation 插入/读取。
 - 当前 P1 三个低风险 write RPC（Author Grant/Revoke、普通账户 Membership）确有跨 Membership/Role/Audit/private ledger 原子写入需求时才可使用 `SECURITY DEFINER`，并必须空 `search_path`、全限定对象、撤销 PUBLIC/anon、精确 authenticated grant 与实时 `auth.uid()`/角色/目标检查。

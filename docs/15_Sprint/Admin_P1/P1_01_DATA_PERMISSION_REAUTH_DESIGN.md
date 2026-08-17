@@ -102,15 +102,16 @@ P1-01 已依据 P1-00 合同、当前代码、16 份有序 Migration、现有 SQ
 
 ### 4.1 调用者
 
-三个读 RPC 均仅授予 `authenticated` execute，并使用 `SECURITY INVOKER`。底层现有 SELECT grant + RLS 再次要求 active Admin/Super Admin；应用 Service 仍在调用前要求 `admin:operate`。Guest、Reader、Author、suspended/revoked Admin 均为 deny。
+三个读 RPC 均仅授予 `authenticated` execute。Product Owner 通过 [ADR-023](../../17_Architecture_Decisions/ADR-023.md) 冻结最小混合权限模型：搜索与 Audit 使用 `SECURITY INVOKER`；详情因必须调用不向应用角色开放的 P1-02A expected-state helper，允许使用一个严格只读的 `SECURITY DEFINER` boundary。三者都必须通过数据库实时要求 active Admin/Super Admin；应用 Service 仍在调用前要求 `admin:operate`。Guest、Reader、Author、suspended/revoked Admin 均为 deny。
 
-读函数不需要访问 private ledger，因此没有使用 `SECURITY DEFINER` 的理由。若实现时发现 invoker 权限错误，必须修正最小 SELECT/grant/RLS，而不是直接切换 definer。
+搜索与 Audit 不需要访问 private helper 或 ledger，因此没有使用 `SECURITY DEFINER` 的理由。详情 definer 仅可调用 P1-02A snapshot/token helper，必须在读取 target 前用 `auth.uid()`、live active Membership 和未撤销 Admin/Super Admin grant 完成授权；空 `search_path`、全限定对象、禁止 dynamic SQL、字段最小化且零写入。private helper execute deny 和底层表 Grant 均不得扩大，expected-state 算法不得复制。
 
 ### 4.2 RPC 清单
 
 #### `search_identity_access_subjects_v1`
 
 - 输入：`query?: text`、`cursor?: { missingRegistrationName, normalizedRegistrationName, userId }`、`limit: integer`。
+- Security mode：`SECURITY INVOKER`，复用现有 SELECT/RLS。
 - query 为空时浏览目录；非空只接受规范化注册名精确匹配或完整 UUID，不提供 contains/prefix 枚举。
 - limit 默认 25、最小 1、最大 50；拒绝 offset。
 - 排序：`registration_name is null asc, lower(registration_name) asc, user_id asc`；cursor 使用同一 tuple，结果在未变化数据集内稳定。
@@ -119,6 +120,7 @@ P1-01 已依据 P1-00 合同、当前代码、16 份有序 Migration、现有 SQ
 #### `get_identity_access_subject_v1`
 
 - 输入：完整 `userId`。
+- Security mode：严格只读 `SECURITY DEFINER`；完整安全合同见 ADR-023。未认证/无权限错误必须先于 target lookup，不能泄露目标是否存在；只有已授权 caller 可获得 NotFound。
 - 返回字段：Profile created/updated；Membership state 与 admitted/suspended/revoked/updated；全部 active Role Grant 的 `grantId/role/grantedAt/grantedBy`；effective roles；是否 elevated account；是否当前唯一 active Super Admin；数据库生成的 `expectedState`。
 - `activeRoleGrants` 与 `effectiveRoles` 分开：suspended/revoked target 可保留未撤销 grant，但 effective roles 必须为空。
 - 不返回 Auth email/phone、password hash、Auth metadata、Session、Token、Cookie、邀请 secret 或无关业务资料。
@@ -126,6 +128,7 @@ P1-01 已依据 P1-00 合同、当前代码、16 份有序 Migration、现有 SQ
 #### `list_identity_access_audit_v1`
 
 - 输入：完整 `userId`、`before?: { createdAt, auditId }`、`limit` 1–50。
+- Security mode：`SECURITY INVOKER`，复用现有 SELECT/RLS。
 - 排序：`created_at desc, id desc`；keyset cursor，不使用 offset。
 - 只投影与 target Membership、该用户 Role Grant 有关的治理事件；Role 事件通过 `role_grants.id = audit_logs.target_id` 关联，不向客户端暴露任意 metadata。
 - 返回：`auditId`、action、actor 的注册名/User ID、目标 role/state、规范化 reason、允许的 before/after 摘要、createdAt。

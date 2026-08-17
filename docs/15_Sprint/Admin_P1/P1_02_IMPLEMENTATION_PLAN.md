@@ -18,6 +18,7 @@
 - [P1-01 Data, Permission and Reauth Design](P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)
 - [P1-01 Non-Production QA Matrix](P1_01_NON_PRODUCTION_QA_MATRIX.md)
 - [ADR-022 Option 3](../../17_Architecture_Decisions/ADR-022.md)
+- [ADR-023 Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 
 交叉检查结论：`PASS`。
 
@@ -167,7 +168,7 @@ private schema 被暴露、应用角色获得 ledger 权限、需保存完整 pa
 
 ### Scope
 
-- read RPC 优先 `SECURITY INVOKER`，只向 `authenticated` grant execute。
+- read RPC 按 ADR-023 使用最小混合权限：搜索/Audit 为 `SECURITY INVOKER`；只有详情可为严格只读 `SECURITY DEFINER`，以调用不向应用角色开放的 P1-02A expected-state helper。三者只向 `authenticated` grant execute。
 - 数据库/RLS 实时要求 active Admin 或 active Super Admin；Guest、Reader、Author、inactive/revoked actor fail closed。
 - 搜索默认 25、范围 1–50，稳定 tuple keyset：missing registration name、normalized registration name、user ID。
 - 详情分开返回 active grants 与 effective roles；elevated target 可读。
@@ -186,15 +187,15 @@ UI、缓存、prefix/contains 搜索、精确总数、write RPC、service role�
 
 ### Dependencies
 
-P1-02A helper、现有 SELECT grants/RLS、registration-name index。若 invoker 失败，只修正最小 grant/RLS；不得直接切换 definer。
+P1-02A helper、现有 SELECT grants/RLS、registration-name index。ADR-023 已证明全 invoker 与 helper deny 冲突并批准详情的唯一 definer 例外；不得把该例外扩展到搜索/Audit，不得开放 helper、复制 token 算法或扩大底层表 Grant。
 
 ### Acceptance
 
-三个 RPC 的输入、稳定排序、最大结果、nullable registration name、脱敏字段、Not Found/Forbidden/Unavailable 语义与 P1-01 一致；客户端不能生成 expected-state。
+三个 RPC 的输入、稳定排序、最大结果、nullable registration name、脱敏字段、Not Found/Forbidden/Unavailable 语义与 P1-01 一致；客户端不能生成 expected-state。详情 definer 必须先 live-authorize caller 再读取 target，且通过 read-before/read-after 证明零写入。
 
 ### Validation
 
-Migration contract、RLS/execute catalog、Guest/Reader/Author/inactive deny、Admin/Super Admin allow、NFKC/case exact search、UUID、cursor 边界、同 timestamp Audit pagination、无敏感字段快照。
+Migration contract、RLS/execute catalog、Guest/Reader/Author/inactive deny、Admin/Super Admin allow、NFKC/case exact search、UUID、cursor 边界、同 timestamp Audit pagination、无敏感字段快照。额外证明搜索/Audit invoker、详情 definer、helper execute deny、空 search path、全限定对象、无 dynamic SQL、未授权 target non-disclosure 与全表零写入。
 
 ### Product Owner gate
 
@@ -202,7 +203,7 @@ Migration contract、RLS/execute catalog、Guest/Reader/Author/inactive deny、A
 
 ### Stop conditions
 
-需要 definer 才能绕过权限、返回 email/phone/Auth metadata、使用 offset/无上限查询、或 RLS 无法区分 active Admin。
+搜索/Audit 需要 definer、详情无法先 live-authorize caller、详情需要 helper 之外的 privileged access、返回 email/phone/Auth metadata、使用 offset/无上限查询，或 RLS 无法区分 active Admin。
 
 ### Rollback
 
