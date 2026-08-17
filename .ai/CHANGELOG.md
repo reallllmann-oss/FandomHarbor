@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-16 — Admin P1-00 Scope and Security Contract
+
+- 冻结 Admin P1 为 Identity & Access Governance Console，Membership 与 Role Governance 同时纳入，不扩展 role/capability 或建立第二套权限真相。
+- 冻结成员目录、注册名/User ID 搜索、详情、Role/Membership 历史与相关 Audit 只读范围，并限制私密字段暴露。
+- 冻结所有 Mutation 的 4–200 code-point 原因、Review/confirm、requestId、expected-state、Saved/Unchanged/Conflict、幂等、Conflict 与 Audit 合同。
+- 冻结 elevated role / elevated Membership 的单次 registration-name/password reauth；记录当前 Supabase email/phone nonce 能力不适用，并建立 KI-033 P1-01 设计门槛。
+- 记录暂不采用双人审批的残余风险接受，同时保留 final active Super Admin、普通 Admin 权限矩阵和 server + database 双层授权。
+- 邀请管理延期；Web Admin 入口保持关闭；远程写入 QA 限定专用非 Production Supabase；Admin Production 保持 paused。
+- 新增 Admin P1 文档包、Admin governance 合同与 ADR-021，更新 Roadmap、Admin/Super Admin 索引、Admin Guide、Decision/Status/Memory/Known Issues 并修正 P0 文档漂移。
+- 本次为 docs-only P1-00；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Supabase、Vercel 或 Production；P1-01 未授权。
+
 ## 2026-08-15 — Admin P0 Production Release Closure
 
 - 归档 Web Production `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM`（Source `d2c31d231abe971a7266094adfc0966d6de49fa9`）READY 与 Production Smoke PASS 证据；既有 Alias 保持不变。

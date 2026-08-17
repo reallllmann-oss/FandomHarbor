@@ -36,3 +36,4 @@ ADRs explain why durable decisions were made, alternatives/trade-offs and conseq
 | ADR-018 | Phase 1C Identity, Admission and Manual Roles                     | D-003, D-005, D-011, D-033       |
 | ADR-019 | `works + chapters + articles` Content Domain Model                | D-003, D-006, D-007, D-034       |
 | ADR-020 | Registration-name Credentials and Atomic Invitation Signup        | D-003, D-005, D-011, D-037       |
+| ADR-021 | Admin Identity & Access Governance Contract                       | D-005, D-011, D-039              |

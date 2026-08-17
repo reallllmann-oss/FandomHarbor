@@ -20,6 +20,14 @@ Each action documents owning app/domain, input/output contract, authorization, c
 - Input: registration name and password.
 - Authorization: Web routes by active Membership capability; Admin additionally requires `admin:operate` and signs out unauthorized identities.
 
+### `grantRole` / `revokeRole` / `setMembershipState`
+
+- Owner: `apps/admin` / Identity Access.
+- Current P0 input: User ID、role/state 与 reason；Server Action 复核 Session 与 `admin:operate`，数据库函数再次授权并审计。
+- Current permission: Admin 仅管理 Author 与普通成员 Membership；Super Admin 可管理 elevated roles/accounts；final active Super Admin 受保护。
+- Current limitation: 直接提交，无成员搜索/详情、Review、requestId、expected-state 或 stale Conflict。
+- P1-00 target（not implemented）: 所有写操作进入 reason + Review/confirm + requestId + expected-state 合同；elevated role/elevated Membership 额外执行当前 actor password reauth。P1-01 必须定义 v2/cutover，旧入口不得在 cutover 后绕过新合同。
+
 ### `createWorkDraft`
 
 - Owner: `apps/web` / Author Studio.

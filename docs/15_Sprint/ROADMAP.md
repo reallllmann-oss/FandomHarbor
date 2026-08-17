@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Phase 3 Completed; RR-1C PASS / Beta Ready
+Status: Active — Admin P1-00 Scope Frozen; implementation not started
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -115,6 +115,18 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 访问 Studio 自动重定向 Archive；Mission 已正式关闭。
 
 证据见 [`Release_Readiness`](Release_Readiness/README.md)。
+
+## Admin P1 — Identity & Access Governance（Independent）
+
+文档包：[`Admin_P1`](Admin_P1/README.md)
+
+目标：将现有 `/access` 直接写入表单升级为成员目录、搜索、详情、审计上下文和受控 Membership / Role Governance，同时保持 Phase 1C 权限模型不变。
+
+P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
+
+状态：`P1-00 COMPLETE / P1-01 NOT AUTHORIZED`。P1-00 只完成合同和文档漂移修正，不包含 Migration、Auth/RLS/RPC 变更、产品代码、远程写入、Admin Unpause 或 Deployment。
+
+Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 
 ## Phase 4 — Archive
 

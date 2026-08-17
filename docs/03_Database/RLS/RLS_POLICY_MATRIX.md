@@ -43,6 +43,15 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - `supabase/tests/phase_1c_identity_access.sql` covers catalog/RLS assertions and a transactional invite/role/membership path for execution against a disposable Supabase/PostgreSQL environment.
 - Phase 2 Auth registration does not add a second permission model: the signup trigger may create only Profile, active Membership, Redemption and audit state. It cannot create Author/Admin/Super Admin grants. `phase_2_auth_registration.sql` verifies success and rollback paths.
 
+## Admin P1 target（P1-00 frozen; not implemented）
+
+- P1 复用现有 `profiles`、`memberships`、`role_grants`、`audit_logs` 与 role helpers；不新增 role/capability 或第二套权限事实。
+- 目录/详情读模型必须字段最小化，优先使用 `security invoker` + RLS；不得暴露内部 Auth email-shaped identifier、password、Session、Token 或 invitation secret。
+- Mutation 目标合同包括 UUID requestId、expected-state、Saved/Unchanged/Conflict、单一成功 Audit 与 stale/重复请求零部分写入。
+- 必要 privileged Mutation function 才可使用 `security definer`；必须空 `search_path`、全限定对象名、撤销 PUBLIC、最小 execute grant，并在函数内复核 `auth.uid()`、active Membership、live Role Grant、target boundary 与 final active Super Admin。
+- 旧 `grant_role`、`revoke_role`、`set_membership_state` execute path 在 P1 cutover 后不得绕过 Review/idempotency/conflict；具体迁移设计属于 P1-01。
+- 远程写入验证只允许专用 non-Production Supabase QA；P1 不使用 Production 数据库进行写入测试。
+
 ## Admin P0 site-copy foundation
 
 - `site_copy_revisions` and `site_copy_state` have RLS enabled and grant no direct table privilege to `anon` or `authenticated`.

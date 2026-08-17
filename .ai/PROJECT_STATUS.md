@@ -1,5 +1,30 @@
 # Project Status
 
+## Admin P1-00 Scope and Security Contract（2026-08-16）
+
+| 项目                                    | 当前状态                                                  |
+| --------------------------------------- | --------------------------------------------------------- |
+| Program                                 | ADMIN P1 — Identity & Access Governance Console           |
+| P1-00                                   | SCOPE FREEZE COMPLETE                                     |
+| Membership + Role Governance            | IN SCOPE                                                  |
+| High-risk control                       | password reauth + normalized reason + second confirmation |
+| Dual approval                           | DEFERRED — residual risk accepted                         |
+| Invitation management                   | DEFERRED                                                  |
+| Web Admin entry                         | DISABLED / OUT OF SCOPE                                   |
+| Remote write QA                         | NON-PRODUCTION ONLY                                       |
+| P1-01                                   | NOT AUTHORIZED                                            |
+| Product code / Migration / Remote state | UNCHANGED                                                 |
+| Admin Production                        | `paused=true`                                             |
+
+- P1 复用 Phase 1C active Membership、live `role_grants` 与 capability，不新增 role、capability 或第二套权限真相。
+- 所有 Mutation 冻结为原因、Review/confirm、UUID requestId、expected-state、`Saved | Unchanged | Conflict` 与 Audit 合同；elevated role / elevated Membership 额外要求当前 actor 的单次 registration-name/password reauth。
+- 普通 Admin / Super Admin 权限矩阵、suspended/revoked fail-closed 与最后一个有效 Super Admin 保护保持不变。
+- 邀请管理延期，Web 不增加 Admin 链接；远程写入测试不得使用 Production，Admin Production 不因 P1 开发 Resume。
+- P1-00 只更新文档与架构决定；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Vercel 或 Supabase。
+- P1-01 必须独立授权，并先关闭 KI-033 reauth proof、expected-state、request ledger 与旧 RPC cutover 设计。
+
+权威文档：`docs/15_Sprint/Admin_P1/P1_00_SCOPE_AND_SECURITY_CONTRACT.md`、`docs/11_Admin/IDENTITY_ACCESS_GOVERNANCE.md`、`docs/17_Architecture_Decisions/ADR-021.md`。
+
 ## Admin P0 Production Release Closure（2026-08-15）
 
 | 项目                                  | 最终状态                                          |

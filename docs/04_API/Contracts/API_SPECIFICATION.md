@@ -66,6 +66,14 @@ Phase 1C implementation notes:
 - Reader access is an active-membership capability. Author/Admin/Super Admin are explicit grants, and every elevated mutation is re-authorized inside the database transaction.
 - Provider/database errors are normalized at server action boundaries; raw Supabase `User`, `Session` and client objects are not public business contracts.
 
+Admin P1 target contract（P1-00 frozen; not implemented）:
+
+- Membership 与 Role Mutation 保持 Server Action ownership，不新增公开 REST 写接口。
+- 所有写操作要求规范化 4–200 code-point reason、独立 Review/confirm、UUID requestId、expected-state 与 `Saved | Unchanged | Conflict`。
+- Admin/Super Admin grant/revoke 与 elevated-account Membership 变更要求当前 actor 的 registration-name/password reauth；证明必须绑定单次 Review payload，客户端布尔值无效。
+- 邀请管理不属于 Admin P1；现有 Admin/Super Admin capability matrix 与 final active Super Admin guard 不变。
+- 具体 request ledger、expected-state transport、v2 function signature 与旧 function cutover 必须在 P1-01 独立设计/授权后进入实现。
+
 ### Pen names, works, chapters and series
 
 | Resource/action                        | Permission                                        | Concurrency/audit                                       |

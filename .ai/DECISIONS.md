@@ -295,6 +295,14 @@ Accepted decisions are authoritative until explicitly superseded. New entries in
   produces one engineering report, Product Handoff and manual acceptance checklist,
   then stops before the next Mission.
 
+## D-039 — Admin P1 Identity & Access Governance scope
+
+- Date: 2026-08-16
+- Status: Accepted as an explicit Product Owner Level 3 product and security decision
+- Related ADR: `docs/17_Architecture_Decisions/ADR-021.md`
+- Decision: Admin P1 同时治理 Membership 与 Role Grant，复用现有 active Membership、live `role_grants` 与 capability 模型，不创建新 role、capability 或第二套权限真相。所有 Mutation 要求规范化原因和独立 Review/confirm；Admin/Super Admin grant/revoke 与 elevated-account Membership 变更还要求当前 actor 的单次 registration-name/password reauth。P1 暂不采用双人审批；邀请管理延期；Web Admin 入口保持关闭；远程写入 QA 禁止使用 Production。
+- Consequence: P1 必须提供成员搜索/详情/审计上下文、requestId 幂等、expected-state、`Saved | Unchanged | Conflict`、server + database 双层授权、最后一个有效 Super Admin 防护与旧写入口 cutover。Reauth 只能先复用现有 Auth provider adapter；如需 email/phone OTP、MFA、Auth 配置或 Auth 架构变化，必须停止并取得新授权。P1-00 只冻结合同，不授权 P1-01、Migration、远程写入、Admin Unpause、Web 入口或 Deployment。
+
 ## Pending decisions
 
 Pending matters are not decisions. They are tracked in `KNOWN_ISSUES.md` and move here only after approval.

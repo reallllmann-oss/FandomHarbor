@@ -1,19 +1,19 @@
 # Fandom Harbor V1 Admin 使用教程
 
-状态：Admin 流程文档已完成；线上 Admin URL 与真实账号 Smoke 待部署门禁解除
+状态：Admin P0 Production Smoke 已通过；Admin Project 当前 `paused=true`；P1-00 合同已冻结但未实施
 
 ## 1. Admin 入口
 
 Admin 使用独立 `apps/admin`、独立 Admin Shell 与独立部署边界。
 
-- 本地开发入口：`http://127.0.0.1:3001/auth/sign-in`
-- 线上入口：`https://<Admin 独立域名>/auth/sign-in`
+- 本地开发入口：以 Admin dev server 输出的实际 `Local:` URL 加 `/auth/sign-in` 为准，不假定固定端口。
+- 受控线上入口：`https://fandom-harbor-admin.vercel.app/auth/sign-in`。
 
-本轮没有确认 Admin Vercel Project 或线上域名，因此不得把模板地址替换成猜测 URL。正式地址必须由 Product Owner 从 Vercel Project 确认后补充。
+Admin Project 当前处于 Pause，普通访问应由平台在应用前返回暂停状态。未经独立 Release 授权不得 Resume、登录或把该 URL 作为日常可用入口。Admin 与 Web 是独立 Vercel Project；两边会话不能假定共享。
 
 登录后：
 
-- `/`：Admin Dashboard 概览。
+- `/`：Admin P0 Site Copy 八字段 Read / Review / Save 工作台。
 - `/access`：Membership 与 Role Grant。
 - `/auth/sign-in`：Admin 专用登录页。
 
@@ -25,7 +25,7 @@ Web Homepage、Archive、Search、Reader 页面与 Author Studio 都不属于 Ad
 2. 确认该账号 Membership 为 active，并具有未撤销的 `admin` 或 `super_admin` Role Grant。
 3. 打开 Admin 独立域名的 `/auth/sign-in`。
 4. 输入与普通 Web 相同账号体系的注册名和密码。
-5. 成功后会进入 Admin Dashboard；页面会显示 Membership、角色与当前能力。
+5. 成功后会进入 Admin Site Copy 工作台；`/access` 继续承担 Membership 与 Role Grant。
 
 登录失败时检查：
 
@@ -42,7 +42,7 @@ Web Homepage、Archive、Search、Reader 页面与 Author Studio 都不属于 Ad
 
 ### Admin
 
-- 可以进入 Admin Dashboard 与 `/access`。
+- 可以进入 Admin Site Copy 工作台与 `/access`。
 - 可以授予 / 撤销 Author。
 - 可以修改普通成员 Membership 状态。
 - 不能授予或撤销 Admin / Super Admin。
@@ -97,13 +97,14 @@ V1 已存在受控 Admin 授权 UI，但只有 Super Admin 可以执行。
 
 ## 8. 当前限制与 Release Follow-up
 
-- Admin 线上域名尚未确认。
-- Local QA Fixture 没有 Admin / Super Admin 测试账号。
-- 本轮没有执行真实 Admin 授权、撤销或远程写入。
+- Admin 线上域名已确认，但 Project 当前 `paused=true`，不属于日常可用入口。
+- Admin P0 Production 已完成受控登录与只读/Review Without Save Smoke；Production `/access` 验收未执行身份或权限写入。
 - Admin UI 没有用户搜索，只接受 User ID。
 - Admin 没有自助管理邀请码、内容审核或后台配置的完整 UI。
+- 当前 `/access` 没有对象详情、当前状态 Review、requestId、expected-state 或 stale Conflict；P1-00 已冻结治理合同，尚未实施。
+- Web 当前没有 Admin 入口；P1 明确保持不启用。
 
-需要 Product Owner 决策：为后续 Preview / Production Smoke 安全提供一个 Admin 与一个 Super Admin 验收账号，或授权建立独立的非生产 Admin QA Fixture。该事项不得通过新增 Migration、修改 Role / RLS / RPC 或直接远程 SQL 临时解决。
+后续 P1 远程写入验收必须使用专用非 Production Supabase QA 环境；禁止使用 Production。任何 Preview、Production、Admin Resume、Migration、Role/RLS/RPC 或身份数据操作都需要对应 Step/Release 的独立授权。
 
 ## 9. 安全要求
 
@@ -111,5 +112,6 @@ V1 已存在受控 Admin 授权 UI，但只有 Super Admin 可以执行。
 - 不公开 Admin 链接给无关人员。
 - 只在正确的独立 Admin 域名操作。
 - 授权 Admin 属于高风险操作，必须由 Super Admin 受控执行并记录原因。
+- P1 实施后，Admin/Super Admin grant/revoke 与 elevated-account Membership 变更还必须执行当前操作者 password reauth 和独立二次确认。
 - 普通 Admin 不允许直接修改数据库。
 - 若授权需要新增字段、修改角色模型、RLS、RPC、远程 SQL 或生产数据，立即停止并申请 Product Owner 明确授权。

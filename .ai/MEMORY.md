@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-00 Scope Freeze（2026-08-16）
+
+- Product Owner 批准 Admin P1 为 Identity & Access Governance Console，Membership 与 Role Grant 同时纳入；不新增 role、capability 或第二套权限模型。
+- 所有写操作要求规范化原因与二阶段 Review/confirm；Admin/Super Admin grant/revoke 和 elevated-account Membership 变更还要求当前 actor 单次 registration-name/password reauth。
+- P1 暂不采用双人审批并接受当前残余风险；最后一个有效 Super Admin 防护、普通 Admin 权限限制、server + database 双层授权继续强制。
+- P1 Mutation 目标合同为 UUID requestId、expected-state、`Saved | Unchanged | Conflict`、相同 payload replay、stale Conflict、Saved 单一 Audit 与旧写入口不可绕过。
+- 邀请管理延期；Web Admin 入口保持关闭；远程写入 QA 只允许专用非 Production Supabase；Admin Production 保持 `paused=true`。
+- 当前用户没有可投递 email/phone，Supabase nonce `reauthenticate()` 不能直接作为 Admin step-up；P1-01 必须先验证既有 registration-name/password adapter 能否提供 server-verifiable 单次 proof，不能则升级 Auth 决策。
+- P1-00 只完成文档冻结与漂移修正。P1-01 未授权；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Supabase、Vercel 或 Production。
+
 ## Admin P0 Production Release Closure（2026-08-15）
 
 - Web Production 已固定为 `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM` / Source `d2c31d231abe971a7266094adfc0966d6de49fa9`，Production Smoke PASS，既有 Alias 保持不变。
