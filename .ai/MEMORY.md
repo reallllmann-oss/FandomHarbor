@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-02C Ordinary Governance Write Definitions（2026-08-17）
+
+- 唯一父基线为 `64bba75360e9f303819c42d1c08a2d6ec545983d`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02C` / `codex/admin-p1-02c-write-rpcs`。
+- CLI 创建本地 Migration `20260817125140_admin_p1_identity_access_writes.sql`，定义 Author Grant/Revoke 与 ordinary Membership 三个 narrow v2 RPC；均为 postgres-owned volatile definer、空 search path、无重载，全部应用角色 execute deny。
+- owner-only private executor 使用 requestId lock → replay/mismatch → global governance lock → legacy final-Super-Admin lock → target row locks → elevated deny → P1-02A state token → Saved/Unchanged/Conflict；不复制 fingerprint/expected-state 算法。
+- Saved 精确一次 business/Audit/Ledger；Unchanged/Conflict 零 Audit；same payload replay 原结果，actor/target/operation/payload mismatch 稳定拒绝；Audit/Ledger 强制失败均证明全事务回滚。
+- dblink 双连接证明同 request exactly-once、不同 request 同 target 串行 Saved + Conflict，并完整清理合成数据；P1-02A/B、旧 RPC、RLS/Grant 与 P0 Site Copy 不变。
+- 本地验证通过 19-Migration clean reset、13 个 SQL suites、13 files / 114 Vitest tests、TypeScript、ESLint、database lint/security advisor；未 Commit/Push/PR、远程 Migration/SQL/写入、开放 execute、cutover、登录/Unpause/Deployment或开始 P1-02D。
+- Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7；ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY` 与 elevated mutation 延期不变。
+
 ## Admin P1-02B Identity Access Read RPC Implementation（2026-08-17）
 
 - 唯一父基线为 `fc41ad153c75a326f76ca66c5219a889eb99a84e`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`。

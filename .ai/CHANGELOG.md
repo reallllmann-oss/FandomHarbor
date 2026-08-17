@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02C Ordinary Governance Write RPC Foundation
+
+- 以 P1-02B Closure Commit `64bba75360e9f303819c42d1c08a2d6ec545983d` 为唯一父基线，使用 Supabase CLI 创建本地 Migration `20260817125140_admin_p1_identity_access_writes.sql`。
+- 新增三个 ordinary-only、execute-closed、postgres-owned volatile definer RPC 与 owner-only private executor；Role 接口不接受 role，Membership 拒绝 pending/elevated target，全部应用角色无 execute。
+- 实现 P1-02A helper-backed reason/fingerprint/state、request/global/final-Super-Admin/row lock、Saved/Unchanged/Conflict、exact replay、mismatch、原子 Audit/Ledger 和失败回滚；没有算法复制或 dynamic SQL。
+- 新增 6 项 static Migration contract、事务式 semantic suite 与 dblink 双连接 concurrency suite；覆盖权限矩阵、三操作三结果、stale token、same/different requestId、elevated denial、无 role overload、强制 Audit/Ledger failure 与完整 cleanup。
+- 本地 19-Migration clean reset、13 个 SQL suites、13 files / 114 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；P1-02A/B、旧 RPC、P0 Site Copy 与 final active Super Admin 回归通过。
+- 未修改 `/access`、Action、Domain、Repository、Service、依赖、配置、lockfile、旧 RPC execute 或 P1-02B read grants；未 Commit/Push/PR、远程 apply/SQL/写入、开放 execute、cutover、登录/Unpause/Deployment，未开始 P1-02D。
+
 ## 2026-08-17 — Admin P1-02B Identity Access Read RPC Implementation
 
 - 以 ADR-023 docs-only Commit `fc41ad153c75a326f76ca66c5219a889eb99a84e` 为唯一父基线，使用 Supabase CLI 创建本地 read Migration `20260817121610_admin_p1_identity_access_reads.sql`。

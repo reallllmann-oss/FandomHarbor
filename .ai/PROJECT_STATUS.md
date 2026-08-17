@@ -1,5 +1,32 @@
 # Project Status
 
+## Admin P1-02C Ordinary Governance Write Definitions（2026-08-17）
+
+| 项目                  | 当前状态                                                               |
+| --------------------- | ---------------------------------------------------------------------- |
+| Parent baseline       | `64bba75360e9f303819c42d1c08a2d6ec545983d`                             |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02C` / `codex/admin-p1-02c-write-rpcs`          |
+| Local Migration       | `20260817125140_admin_p1_identity_access_writes.sql`                   |
+| New write definitions | Author Grant/Revoke + ordinary Membership only                         |
+| Authority             | 3 × `VOLATILE SECURITY DEFINER`; owner `postgres`; empty search path   |
+| Execute               | CLOSED — `PUBLIC/anon/authenticated/service_role` all deny             |
+| Result                | Saved / Unchanged / Conflict + exact replay/mismatch                   |
+| Elevated writes       | DENY before Ledger/Audit; ADR-022 Option 3 unchanged                   |
+| Atomicity             | business + one Audit + one Saved Ledger / full rollback                |
+| Concurrency           | same-request exactly-once; same-target Saved + Conflict                |
+| Legacy/read/RLS       | UNCHANGED                                                              |
+| Validation            | 19-Migration reset; 13 SQL suites; 114 Vitest tests; lint/advisor pass |
+| P1-02D–G              | NOT AUTHORIZED                                                         |
+| Commit / remote state | NONE / UNCHANGED                                                       |
+| Admin Production      | `paused=true`                                                          |
+| P0 Site Copy          | Version 7 / unchanged                                                  |
+
+- P1-02C defines exactly three ordinary-only v2 writes and one owner-only private executor. No application role can execute them before P1-04 atomic cutover.
+- Locks, P1-02A helpers and immutable Ledger/Audit provide replay, mismatch, expected-state, Saved/Unchanged/Conflict and rollback semantics without duplicating algorithms.
+- No `/access`, Action, Domain, Repository, Service, dependency, config, legacy RPC grant, remote apply, Commit, login, Unpause or Deployment change is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02B Identity Access Read RPC Implementation（2026-08-17）
 
 | 项目                   | 当前状态                                                               |

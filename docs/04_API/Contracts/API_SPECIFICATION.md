@@ -163,9 +163,16 @@ Search cursor 为 `{ missingRegistrationName, normalizedRegistrationName, userId
 
 ### Mutation RPC
 
-- 当前 P1 只设计 `grant_author_role_v2`、`revoke_author_role_v2`、`set_ordinary_membership_state_v2`。它们使用 UUID requestId、target、desired state（仅 Membership）、opaque expected-state token 与 NFC/trim 4–200 code-point reason；没有 role 或 Reauth proof 参数可用于表达 elevated 操作。
+- P1-02C 已在本地实现并保持 execute 关闭的准确签名：
+  - `grant_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
+  - `revoke_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
+  - `set_ordinary_membership_state_v2(p_request_id uuid, p_target_user_id uuid, p_state membership_state, p_expected_state_token text, p_reason text) returns jsonb`
+- 三者均为 `VOLATILE SECURITY DEFINER`、owner `postgres`、空 `search_path`；`PUBLIC/anon/authenticated/service_role` 全部 execute deny。P1-04 原子 cutover 前不得由应用、Server Action 或客户端调用。
+- Role 方法没有 role 参数；Membership 只接受 `active | suspended | revoked`，没有 Reauth proof、actor、capability 或 dormant elevated 参数。
 - 同 requestId/同规范 payload 返回 private ledger 原结果；同 ID 不同 payload/actor 稳定拒绝。
 - 结果只为 `Saved | Unchanged | Conflict`；Saved 精确一次业务变化与一条 Audit，Unchanged/Conflict 零业务 Audit。
 - 所有 v2 写入使用固定顺序全局治理事务锁；在锁内重算 expected-state、实时权限和 target 边界。Membership RPC 对任何存在未撤销 Admin/Super Admin grant 的 target fail closed。
 - Product Owner 已选择 ADR-022 Option 3：KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，但技术问题未解决。Admin/Super Admin Role 与 elevated-account Membership 没有当前 P1 write RPC 或 grant；不得使用 Session age、JWT `iat`、客户端 boolean、再次普通登录或新建 `aal1` Session 代替 step-up。
 - cutover 必须先撤销旧 `grant_role`、`revoke_role`、`set_membership_state` 的 authenticated execute；正常回滚不得恢复这些绕过入口。最后一名 active Super Admin 数据库保护保留。
+
+P1-02C 的 wire result 使用小写 `saved | unchanged | conflict`。三者都返回 requestId、targetUserId、数据库生成的 current state/token；Saved 额外返回 Audit/changed time，Role Saved 返回 grant ID；Conflict 返回安全原因与最新快照。准确本地证据见 [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md)。

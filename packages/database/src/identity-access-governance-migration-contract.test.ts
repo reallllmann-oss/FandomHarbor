@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 const migrationName = "20260817104616_admin_p1_identity_access_ledger.sql";
 const readMigrationName = "20260817121610_admin_p1_identity_access_reads.sql";
+const writeMigrationName = "20260817125140_admin_p1_identity_access_writes.sql";
 
 async function migration() {
   return readFile(
@@ -20,6 +21,13 @@ async function supabaseConfig() {
 async function readMigration() {
   return readFile(
     resolve(process.cwd(), "../../supabase/migrations", readMigrationName),
+    "utf8",
+  );
+}
+
+async function writeMigration() {
+  return readFile(
+    resolve(process.cwd(), "../../supabase/migrations", writeMigrationName),
     "utf8",
   );
 }
@@ -263,5 +271,116 @@ describe("Admin P1-02B read RPC migration contract", () => {
     expect(sql).not.toContain("'metadata', audit.metadata");
     expect(sql).toContain("audit.metadata ->> 'from'");
     expect(sql).toContain("audit.metadata ->> 'to'");
+  });
+});
+
+describe("Admin P1-02C execute-closed write RPC migration contract", () => {
+  it("creates only the three frozen ordinary write signatures", async () => {
+    const sql = await writeMigration();
+
+    for (const signature of [
+      "public.grant_author_role_v2(\n  p_request_id uuid,\n  p_target_user_id uuid,\n  p_expected_state_token text,\n  p_reason text\n)",
+      "public.revoke_author_role_v2(\n  p_request_id uuid,\n  p_target_user_id uuid,\n  p_expected_state_token text,\n  p_reason text\n)",
+      "public.set_ordinary_membership_state_v2(\n  p_request_id uuid,\n  p_target_user_id uuid,\n  p_state public.membership_state,\n  p_expected_state_token text,\n  p_reason text\n)",
+    ]) {
+      expect(sql).toContain(`function ${signature}`);
+    }
+
+    expect(sql.match(/create or replace function public\./g)).toHaveLength(3);
+    expect(sql).not.toContain("p_role public.elevated_role");
+    expect(sql).not.toContain("reauth");
+    expect(sql).not.toContain("grant_admin_role");
+    expect(sql).not.toContain("grant_super_admin_role");
+  });
+
+  it("keeps every application execute grant closed", async () => {
+    const sql = await writeMigration();
+
+    expect(sql.match(/security definer/g)).toHaveLength(3);
+    expect(sql.match(/set search_path = ''/g)).toHaveLength(4);
+    expect(
+      sql.match(/from public, anon, authenticated, service_role;/g),
+    ).toHaveLength(4);
+    expect(sql).not.toMatch(/grant execute/i);
+    expect(sql).not.toMatch(/grant .* on (?:table )?public\./i);
+    expect(sql).not.toContain("create policy");
+    expect(sql).not.toContain("alter table");
+  });
+
+  it("reuses the P1-02A reason, fingerprint, snapshot, and token authorities", async () => {
+    const sql = await writeMigration();
+
+    expect(sql).toContain("private.require_identity_access_reason(p_reason)");
+    expect(sql).toContain("private.identity_access_payload_fingerprint(");
+    expect(sql).toContain(
+      "private.identity_access_expected_state_snapshot(\n    p_target_user_id",
+    );
+    expect(sql).toContain(
+      "private.identity_access_state_token(\n    p_target_user_id",
+    );
+    expect(sql).not.toContain("extensions.digest");
+    expect(sql).not.toContain("activeRoleGrants', coalesce");
+    expect(sql).not.toContain(
+      "create table private.identity_access_request_ledger",
+    );
+  });
+
+  it("freezes request, global, final-super-admin, target, and state lock order", async () => {
+    const sql = await writeMigration();
+    const requestLock = sql.indexOf("fandom-harbor:identity-access-request:");
+    const ledgerLookup = sql.indexOf(
+      "from private.identity_access_request_ledger ledger",
+    );
+    const globalLock = sql.indexOf("fandom-harbor:identity-access-governance");
+    const superAdminLock = sql.indexOf("fandom-harbor:super-admin-role");
+    const targetLock = sql.indexOf("for update of membership");
+    const elevatedBoundary = sql.indexOf("ELEVATED_MUTATION_DEFERRED");
+    const stateToken = sql.indexOf(
+      "v_current_state_token := private.identity_access_state_token",
+    );
+
+    expect(requestLock).toBeGreaterThan(0);
+    expect(requestLock).toBeLessThan(ledgerLookup);
+    expect(ledgerLookup).toBeLessThan(globalLock);
+    expect(globalLock).toBeLessThan(superAdminLock);
+    expect(superAdminLock).toBeLessThan(targetLock);
+    expect(targetLock).toBeLessThan(elevatedBoundary);
+    expect(elevatedBoundary).toBeLessThan(stateToken);
+    expect(
+      sql.match(/private\.has_role\('admin', v_actor_user_id\)/g),
+    ).toHaveLength(3);
+  });
+
+  it("closes replay, mismatch, result, audit, and ledger atomic semantics", async () => {
+    const sql = await writeMigration();
+
+    expect(sql).toContain("return v_existing_result;");
+    expect(sql).toContain("detail = 'REQUEST_ID_MISMATCH'");
+    for (const status of ["saved", "unchanged", "conflict"]) {
+      expect(sql).toContain(`'status', '${status}'`);
+    }
+    expect(sql).toContain("private.write_audit(");
+    expect(sql).toContain("insert into private.identity_access_request_ledger");
+    expect(sql).toContain("'role.granted'");
+    expect(sql).toContain("'role.revoked'");
+    expect(sql).toContain("'membership.state_changed'");
+    expect(sql).toContain("'target_membership_not_active'");
+    expect(sql).toContain("'expected_state_mismatch'");
+    expect(sql).not.toMatch(/\bcommit\b/i);
+    expect(sql).not.toMatch(/\brollback\b/i);
+    expect(sql).not.toMatch(/\bexecute\s+(?:format|immediate)/i);
+  });
+
+  it("does not alter legacy writes, read RPCs, tables, policies, or application code", async () => {
+    const sql = await writeMigration();
+
+    expect(sql).not.toContain("function public.grant_role(");
+    expect(sql).not.toContain("function public.revoke_role(");
+    expect(sql).not.toContain("function public.set_membership_state(");
+    expect(sql).not.toContain("search_identity_access_subjects_v1");
+    expect(sql).not.toContain("get_identity_access_subject_v1");
+    expect(sql).not.toContain("list_identity_access_audit_v1");
+    expect(sql).not.toContain("user_metadata");
+    expect(sql).not.toContain("auth.users");
   });
 });

@@ -59,12 +59,14 @@ begin
     join pg_catalog.pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.proname in (
-        'grant_author_role_v2',
-        'revoke_author_role_v2',
-        'set_ordinary_membership_state_v2'
+        'grant_admin_role_v2',
+        'revoke_admin_role_v2',
+        'grant_super_admin_role_v2',
+        'revoke_super_admin_role_v2',
+        'set_elevated_membership_state_v2'
       )
   ) then
-    raise exception 'P1-02A unexpectedly created a public governance write RPC';
+    raise exception 'P1 ordinary governance added an elevated write RPC';
   end if;
 
   if not pg_catalog.has_function_privilege(

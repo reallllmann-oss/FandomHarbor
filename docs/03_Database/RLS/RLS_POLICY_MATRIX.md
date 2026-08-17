@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1-02A/B foundations are implemented locally; later-domain rows remain proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1-02A/B/C foundations are implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -83,6 +83,16 @@ Catalog and transactional evidence are in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../.
 - No table grant, RLS policy, exposed schema, legacy RPC execute, Membership/Role/Audit/Ledger or Site Copy behavior changes.
 
 Catalog, permission-matrix and zero-write evidence are in [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-02C local write definitions
+
+- `grant_author_role_v2(uuid,uuid,text,text)`, `revoke_author_role_v2(uuid,uuid,text,text)` and `set_ordinary_membership_state_v2(uuid,uuid,membership_state,text,text)` are volatile definer definitions with owner `postgres`, empty search path and no overload.
+- `PUBLIC`, `anon`, `authenticated` and `service_role` have no execute on any P1-02C write or its private executor. No application role can call the new writes before the separately authorized P1-04 cutover.
+- The private executor rechecks `auth.uid()` and live active Admin/Super Admin, serializes request/global/final-Super-Admin/target state, rejects any target with an unrevoked Admin/Super Admin grant before writing a result, and only calls P1-02A fingerprint/snapshot/token helpers.
+- Saved performs exactly one ordinary business change, one Audit and one Saved Ledger insert in the same transaction. Unchanged/Conflict write only one Ledger result. Replay returns the stored result; mismatch/elevated/error paths write nothing.
+- P1-02A helper/table denies, P1-02B read grants, bottom-table grants/RLS, exposed schemas and legacy RPC execute remain unchanged. No elevated write function, role/proof parameter, policy or table grant exists.
+
+Catalog, semantic, rollback and concurrency evidence are in [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md).
 
 ## Admin P0 site-copy foundation
 
