@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-01 Data, Permission and Reauth Design
+
+- 以 P1-00 Closure Commit `b634da010755e7768043eea41c426ad499a269fb` 为唯一基线，在独立 P1-01 Worktree/Branch 只读审计 profiles、memberships、role_grants、audit_logs、`/access`、RLS/RPC/Grant/Trigger、权限派生和 registration-name/password Auth adapter。
+- 冻结精确注册名/完整 UUID 读取、稳定 keyset pagination、字段最小化详情/Audit 投影和数据库 canonical expected-state SHA-256 token。
+- 确定新增未暴露的 `private.identity_access_request_ledger`，为 Saved/Unchanged/Conflict 保存最小 payload fingerprint 与原结果，支持同 requestId 完整幂等重放。
+- 冻结三个低风险窄 v2 Mutation：Author Grant/Revoke 与普通账户 Membership 状态治理；固定全局治理锁、最后 active Super Admin 保护、Saved 单 Audit 与旧 RPC 无双入口 cutover/回滚顺序。
+- 按 2026-08-17 Supabase Changelog 与官方 Auth/Session/RLS/Function/Data API 合同完成 KI-033 proof：`reauthenticate()` 是 email/phone nonce，`signInWithPassword()` 只创建普通 `aal1` Session；现有代码仍缺少数据库可验证的 operation-bound proof issuer/consumer。
+- Product Owner 选择 ADR-022 Option 3：KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，全部 elevated mutations `DEFERRED`，普通治理 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。elevated 账户保持只读；旧 RPC、隐藏入口和客户端直写不得绕过延期边界。
+- 新增专用 non-Production QA Matrix，移除当前 P1 elevated success case 并保留读取、拒绝与最后 active Super Admin guard 回归。本阶段仅文档；未修改产品代码、Migration、RLS/RPC/Auth、依赖或远程状态，未 Push/PR/Unpause/Deployment。
+
 ## 2026-08-16 — Admin P1-00 Scope and Security Contract
 
 - 冻结 Admin P1 为 Identity & Access Governance Console，Membership 与 Role Governance 同时纳入，不扩展 role/capability 或建立第二套权限真相。

@@ -1,5 +1,36 @@
 # Project Status
 
+## Admin P1-01 Data, Permission and Reauth Design（2026-08-17）
+
+| 项目                                    | 当前状态                                                                           |
+| --------------------------------------- | ---------------------------------------------------------------------------------- |
+| Baseline                                | `b634da010755e7768043eea41c426ad499a269fb`                                         |
+| Worktree / Branch                       | `FandomHarbor-Admin-P1-01` / `codex/admin-p1-01-data-permission-design`            |
+| Data + permission design                | COMPLETE                                                                           |
+| Membership + Role Governance            | COVERED                                                                            |
+| Read model                              | Exact registration name/full UUID + bounded keyset pagination + minimal projection |
+| Expected-state                          | DB canonical Membership + active-grant snapshot / SHA-256 token                    |
+| requestId ledger                        | REQUIRED — private, unexposed, append-only, indefinite retention                   |
+| Mutation result                         | `Saved \| Unchanged \| Conflict`                                                   |
+| Last active Super Admin                 | DB global-lock enforcement designed                                                |
+| Old RPC cutover                         | Atomic authenticated execute revoke; no dual-entry compatibility                   |
+| KI-033                                  | `ACCEPTED DEFERRED BOUNDARY` — technical feasibility unresolved                    |
+| Elevated mutations                      | `DEFERRED` — no Role or elevated-account Membership write path                     |
+| Ordinary governance                     | `AUTHORIZED FOR FUTURE P1-02 PLANNING`                                             |
+| P1-01 Closure Commit                    | AUTHORIZED — docs-only                                                             |
+| P1-02 implementation                    | NOT AUTHORIZED                                                                     |
+| Product code / Migration / Remote state | UNCHANGED                                                                          |
+| Admin Production                        | `paused=true`                                                                      |
+| P0 Site Copy                            | Version 7 / unchanged                                                              |
+
+- 现有 registration-name/password adapter 能调用 Supabase `signInWithPassword()`，但成功只建立普通 `aal1` Session；数据库无法验证密码检查是否由受信 Server Action 执行，也无法绑定原 Admin Session 和单次 Review payload。
+- Supabase `reauthenticate()` 是安全密码变更的 confirmed email/phone nonce 流程，不是本项目的 registration-name/password step-up。
+- Product Owner 已选择 ADR-022 Option 3：当前 P1 不建立自定义 issuer 或 MFA/AAL2；elevated 账户可读但不可写，普通治理只包含 Author Role 与普通账户 Membership。
+- 延期不表示 KI-033 技术解决，也不降低 Reauth 要求。未来重新开放 elevated mutations 必须独立授权并建立新 Auth ADR，优先评估 Supabase MFA/AAL2。
+- P1-01 仅生成/更新设计文档；没有产品代码、Migration、SQL、RLS/RPC/Auth、依赖、远程 Supabase、Vercel、Push、PR 或 Deployment 变更。
+
+权威文档：`docs/15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`、`docs/15_Sprint/Admin_P1/P1_01_NON_PRODUCTION_QA_MATRIX.md`、`docs/17_Architecture_Decisions/ADR-022.md`。
+
 ## Admin P1-00 Scope and Security Contract（2026-08-16）
 
 | 项目                                    | 当前状态                                                  |
@@ -12,7 +43,7 @@
 | Invitation management                   | DEFERRED                                                  |
 | Web Admin entry                         | DISABLED / OUT OF SCOPE                                   |
 | Remote write QA                         | NON-PRODUCTION ONLY                                       |
-| P1-01                                   | NOT AUTHORIZED                                            |
+| P1-01                                   | DESIGN CLOSURE / OPTION 3 / ELEVATED MUTATIONS DEFERRED   |
 | Product code / Migration / Remote state | UNCHANGED                                                 |
 | Admin Production                        | `paused=true`                                             |
 
@@ -21,7 +52,7 @@
 - 普通 Admin / Super Admin 权限矩阵、suspended/revoked fail-closed 与最后一个有效 Super Admin 保护保持不变。
 - 邀请管理延期，Web 不增加 Admin 链接；远程写入测试不得使用 Production，Admin Production 不因 P1 开发 Resume。
 - P1-00 只更新文档与架构决定；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Vercel 或 Supabase。
-- P1-01 必须独立授权，并先关闭 KI-033 reauth proof、expected-state、request ledger 与旧 RPC cutover 设计。
+- P1-01 已证明 KI-033 技术缺口并由 ADR-022 Option 3 接受延期边界；普通治理的 expected-state、request ledger 与旧 RPC cutover 设计已冻结。P1-02 仍需独立授权。
 
 权威文档：`docs/15_Sprint/Admin_P1/P1_00_SCOPE_AND_SECURITY_CONTRACT.md`、`docs/11_Admin/IDENTITY_ACCESS_GOVERNANCE.md`、`docs/17_Architecture_Decisions/ADR-021.md`。
 

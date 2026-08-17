@@ -1,8 +1,11 @@
 # Admin Identity & Access Governance
 
-状态：`ADMIN P1-00 SCOPE FROZEN`
+状态：`ADMIN P1-01 DESIGN CLOSED — OPTION 3 / ELEVATED MUTATIONS DEFERRED`
 批准日期：2026-08-16
-实施状态：尚未开始；本文只冻结产品、安全与验收合同
+设计日期：2026-08-17
+实施状态：尚未开始；P1-01 仅完成数据、权限、幂等、并发与 Reauth 可行性设计
+
+P1-01 权威设计见 [Data, Permission and Reauth Design](../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)；专用非 Production 验收边界见 [QA Matrix](../15_Sprint/Admin_P1/P1_01_NON_PRODUCTION_QA_MATRIX.md)；KI-033 威胁证明与 Product Owner Option 3 决定见 [ADR-022](../17_Architecture_Decisions/ADR-022.md)。
 
 ## 1. 目标
 
@@ -14,16 +17,17 @@ Admin P1 将现有 `/access` 的三个直接写入表单升级为可审查、可
 
 运行期授权继续由 active Membership 与未撤销的 `role_grants` 派生，客户端显示不构成安全边界。
 
-| 操作者                  | 可读范围                                                | 可写范围                                                                   |
-| ----------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Guest / Reader / Author | 无 Admin 身份治理访问                                   | 无                                                                         |
-| active Admin            | 运营所需成员投影、普通成员状态、Author Grant 与相关审计 | 授予/撤销 Author；修改普通成员 Membership                                  |
-| active Super Admin      | Admin 范围及 elevated account 所需投影                  | Admin 范围；授予/撤销 Admin、Super Admin；管理 elevated account Membership |
+| 操作者                  | 可读范围                                                          | 当前 P1 可写范围                          |
+| ----------------------- | ----------------------------------------------------------------- | ----------------------------------------- |
+| Guest / Reader / Author | 无 Admin 身份治理访问                                             | 无                                        |
+| active Admin            | 运营所需脱敏投影，包含普通与 elevated 账户、Role/Membership/Audit | 授予/撤销 Author；修改普通账户 Membership |
+| active Super Admin      | 与 active Admin 相同的必要脱敏投影                                | 授予/撤销 Author；修改普通账户 Membership |
 
 以下既有保护不得改变：
 
 - 普通 Admin 不得授予或撤销 Admin / Super Admin。
 - 普通 Admin 不得修改受保护 elevated account 的 Membership。
+- 当前 P1 中 Super Admin 同样不得执行 Admin/Super Admin Role 写入或 elevated-account Membership 写入；这些操作状态为 `DEFERRED`，不存在可执行控件或 RPC。
 - 最后一个有效 Super Admin 不得被撤销或停用。
 - suspended / revoked Membership 必须使旧 Session 与历史 Role Grant 立即失去管理能力。
 - `user_metadata`、客户端提交的 role/capability 或界面显隐不得成为授权事实。
@@ -37,7 +41,7 @@ P1 的读路径采用“目录 → 搜索/筛选 → 成员详情 → Review”�
 - 当前 active roles。
 - Role Grant / Revoke 历史。
 - 与该成员相关且允许操作者查看的身份访问审计事件。
-- 结果总量、分页游标或明确的有界分页状态。
+- 分页游标、`hasMore` 或其他明确的有界分页状态；不要求返回全库精确总量。
 
 搜索至少支持规范化注册名与精确 User ID。结果必须字段最小化，不得暴露内部不可投递 Auth email-shaped identifier、密码、password hash、Session、Token、Cookie、邀请码明文、Service Role key 或未批准的私密身份字段。
 
@@ -45,11 +49,13 @@ P1 的读路径采用“目录 → 搜索/筛选 → 成员详情 → Review”�
 
 ## 4. Mutation 合同
 
-P1 只治理现有操作族：
+P1-00 识别了三类既有操作族；ADR-022 Option 3 将当前可实施集合收窄为：
 
-1. Grant Role：`author | admin | super_admin`。
-2. Revoke Role：`author | admin | super_admin`。
-3. Set Membership State：`active | suspended | revoked`。
+1. Grant Author Role。
+2. Revoke Author Role。
+3. Set ordinary-account Membership State：`active | suspended | revoked`。
+
+Admin/Super Admin Role Grant/Revoke 与任何存在未撤销 Admin/Super Admin grant 的目标账号 Membership 变更全部延期。elevated 目标可以只读展示，但写控件必须不可执行并显示需要未来 Reauth/MFA 阶段。
 
 每个 Mutation 必须满足：
 
@@ -62,6 +68,7 @@ P1 只治理现有操作族：
 - 结果关闭为 `Saved | Unchanged | Conflict`；未知内部错误映射为安全错误。
 - `Saved` 恰好写入一条对应 Audit；`Unchanged` 与 `Conflict` 不写业务变更 Audit。
 - 旧写接口在 P1 cutover 后不得继续成为绕过 Review、幂等或 Conflict 合同的可执行后门。
+- 当前低风险 RPC 的输入形状不得接受 role 或 proof 参数；普通 Membership RPC 必须在数据库实时拒绝 elevated target。
 
 P1-01 必须在实现前冻结 expected-state 的具体形态：Membership 至少包含当前 state 与 `updated_at`；Role Grant 至少区分“无 active grant”与目标 active grant ID。
 
@@ -103,9 +110,11 @@ P1-01 必须在实现前冻结 expected-state 的具体形态：Membership 至�
 
 Supabase `auth.reauthenticate()` 当前是向已确认 email/phone 发送 nonce 的密码变更辅助能力，不适用于本项目不可投递内部标识；P1 不将其误当作已可用的 Admin step-up 认证。
 
+P1-01 证明现有 adapter 只能创建新的普通 `aal1` Session，无法生成数据库可验证、绑定原 Admin Session 与单次 Review payload 的一次性 proof。Product Owner 已选择 ADR-022 Option 3：KI-033 当前 P1 状态为 `ACCEPTED DEFERRED BOUNDARY`，但技术问题没有解决；全部 elevated mutations 为 `DEFERRED`，普通治理为 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。延期不降低 Reauth 要求，也不表示 elevated mutations 已验收。未来重新开放必须独立授权并建立新 Auth ADR，优先评估 Supabase MFA/AAL2。
+
 ## 8. 双人审批风险接受
 
-P1 暂不采用双人审批。Product Owner 接受单个有效 Super Admin 在重新认证、原因填写、二次确认、数据库复核和完整审计后执行 elevated role 与 elevated Membership 操作的残余风险。
+P1 暂不采用双人审批。P1-00 曾记录单个有效 Super Admin 在合格 Reauth、原因填写、二次确认、数据库复核和完整审计后执行 elevated 操作的残余风险；Option 3 下这些操作并未开放，因此该风险接受不是当前执行授权。
 
 该风险接受不取消最后一个有效 Super Admin 防护，也不授权批量高风险操作。出现管理员数量扩大、运营分工、合规要求、账号共享风险或高风险误操作时，必须重新评审双人审批。
 
@@ -119,7 +128,7 @@ P1 暂不采用双人审批。Product Owner 接受单个有效 Super Admin 在�
 - 新对象是否进入 Data API 必须通过 catalog/grant 验证，不依赖 Supabase 平台默认值。
 - Migration 必须同时包含 grant/RLS/function/rollback-remediation，并通过 clean rebuild、upgrade、允许/拒绝和并发测试。
 
-如 P1-01 采用 request ledger，它必须位于 private schema 或其他未暴露边界，默认无 `anon` / `authenticated` 直接权限，只能通过受控函数访问。
+P1-01 已确定需要 request ledger。它必须位于 private schema 或其他未暴露边界，默认无 `anon` / `authenticated` 直接权限，只能通过受控函数访问；operation 只包含 Author Grant/Revoke 与普通账户 Membership。
 
 ## 10. Web → Admin 入口
 
@@ -150,7 +159,7 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 ## 12. 测试与发布边界
 
 - 单元与集成测试覆盖 Guest、Reader、Author、Admin、Super Admin、suspended、revoked、stale state、重复 requestId 与并发。
-- SQL 必须同时验证允许和拒绝路径、零部分写入、Audit 数量、最后一个 Super Admin 保护与旧接口不可绕过。
+- SQL 必须同时验证普通治理允许路径，以及 elevated 写入拒绝、零部分写入、Audit 数量、最后一个 Super Admin 保护未弱化与旧接口不可绕过；当前 P1 不执行 elevated mutation success case。
 - 远程写入测试只能使用专用非 Production Supabase QA 环境；禁止使用 Production。
 - Preview 验收只能使用受保护的 Admin Preview；不得把 Admin Production Resume 当作 P1 测试步骤。
 - P1-00 不执行 SQL、Migration、远程写入、登录、Deployment、Unpause、Push 或 Merge。
@@ -160,9 +169,9 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 P1 实施完成前必须证明：
 
 - 目录、搜索、详情与审计读取字段最小化且权限正确。
-- Membership 与 Role 治理均进入同一工作台并保持现有能力矩阵。
+- Membership 与 Role 治理均进入同一工作台；普通账户与 Author 可写，elevated 账户只读且明确延期。
 - 所有写操作具备原因、Review、requestId、expected-state、Unchanged/Conflict 与 Audit 合同。
-- 高风险操作具备当前 actor 的单次 password reauth。
+- 高风险操作无当前 P1 可执行入口；未来重新开放时必须满足新的 Auth ADR 和操作绑定 step-up，不得用普通 Session 替代。
 - 普通 Admin 不能越权，最后一个有效 Super Admin 不能被移除或停用。
 - 旧写路径不能绕过新合同。
 - Production 数据、Version 7、Web 入口与 paused Admin 状态未被测试或实施流程改变。

@@ -37,3 +37,4 @@ ADRs explain why durable decisions were made, alternatives/trade-offs and conseq
 | ADR-019 | `works + chapters + articles` Content Domain Model                | D-003, D-006, D-007, D-034       |
 | ADR-020 | Registration-name Credentials and Atomic Invitation Signup        | D-003, D-005, D-011, D-037       |
 | ADR-021 | Admin Identity & Access Governance Contract                       | D-005, D-011, D-039              |
+| ADR-022 | Admin Step-up Reauthentication Trust Boundary — Option 3 Accepted | D-039, KI-033                    |

@@ -74,6 +74,8 @@ Admin P1 target contract（P1-00 frozen; not implemented）:
 - 邀请管理不属于 Admin P1；现有 Admin/Super Admin capability matrix 与 final active Super Admin guard 不变。
 - 具体 request ledger、expected-state transport、v2 function signature 与旧 function cutover 必须在 P1-01 独立设计/授权后进入实现。
 
+ADR-022 Option 3 closure narrows the current P1 implementation boundary without lowering that Reauth requirement: only Author Grant/Revoke and ordinary-account Membership mutations may be planned. Admin/Super Admin Role and elevated-account Membership mutations are deferred and have no callable current P1 contract. Elevated subjects remain readable through the minimal projection. Future reopening requires separate Product Owner authorization and a new Auth ADR.
+
 ### Pen names, works, chapters and series
 
 | Resource/action                        | Permission                                        | Concurrency/audit                                       |
@@ -138,3 +140,23 @@ Admin P1 target contract（P1-00 frozen; not implemented）:
 ## 7. Contract review checklist
 
 Authentication, membership, role, ownership, state transition, field exposure, validation, idempotency, concurrency, rate limit, audit, cache, error, retention and allow/deny tests must be answered for each implemented operation.
+
+## 8. Admin P1-01 identity governance design（not implemented）
+
+权威细节见 [`P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`](../../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)。
+
+### Read RPC
+
+- `search_identity_access_subjects_v1`: active Admin/Super Admin only；注册名精确匹配或完整 UUID；1–50 keyset pagination；不返回 Auth email/phone/metadata。
+- `get_identity_access_subject_v1`: 最小 Profile/Membership/active grant/effective role/关键时间投影，附数据库生成 expected-state token。
+- `list_identity_access_audit_v1`: 仅返回 target 的 Membership/Role 治理事件，以 `(created_at,id)` 稳定游标分页。
+- 三者均为 `SECURITY INVOKER`，依赖现有 grant + RLS 和实时 active Admin/Super Admin，不依赖 `user_metadata` 或 JWT role claim。
+
+### Mutation RPC
+
+- 当前 P1 只设计 `grant_author_role_v2`、`revoke_author_role_v2`、`set_ordinary_membership_state_v2`。它们使用 UUID requestId、target、desired state（仅 Membership）、opaque expected-state token 与 NFC/trim 4–200 code-point reason；没有 role 或 Reauth proof 参数可用于表达 elevated 操作。
+- 同 requestId/同规范 payload 返回 private ledger 原结果；同 ID 不同 payload/actor 稳定拒绝。
+- 结果只为 `Saved | Unchanged | Conflict`；Saved 精确一次业务变化与一条 Audit，Unchanged/Conflict 零业务 Audit。
+- 所有 v2 写入使用固定顺序全局治理事务锁；在锁内重算 expected-state、实时权限和 target 边界。Membership RPC 对任何存在未撤销 Admin/Super Admin grant 的 target fail closed。
+- Product Owner 已选择 ADR-022 Option 3：KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，但技术问题未解决。Admin/Super Admin Role 与 elevated-account Membership 没有当前 P1 write RPC 或 grant；不得使用 Session age、JWT `iat`、客户端 boolean、再次普通登录或新建 `aal1` Session 代替 step-up。
+- cutover 必须先撤销旧 `grant_role`、`revoke_role`、`set_membership_state` 的 authenticated execute；正常回滚不得恢复这些绕过入口。最后一名 active Super Admin 数据库保护保留。

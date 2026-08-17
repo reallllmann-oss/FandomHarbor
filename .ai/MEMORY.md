@@ -1,5 +1,17 @@
 # Project Memory
 
+## Admin P1-01 Data, Permission and Reauth Design（2026-08-17）
+
+- 唯一基线为 `b634da010755e7768043eea41c426ad499a269fb`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-01` / `codex/admin-p1-01-data-permission-design`。
+- 读模型冻结为 active Admin/Super Admin 的精确注册名/完整 UUID 查询、1–50 keyset pagination、字段最小化详情和 target 治理 Audit；Guest/Reader/Author/inactive Admin fail closed。
+- expected-state 由数据库对 Membership `state/updated_at` 和全部 active Role Grant `id/role/granted_at` 生成规范快照/SHA-256 token；所有 v2 写入在固定顺序全局治理事务锁内重算。
+- P1 需要 `private.identity_access_request_ledger`，以 request UUID 主键保存 actor/target/operation、32-byte payload fingerprint、封闭结果快照和 Saved Audit 引用；不保存 password/完整 payload，不暴露 Data API，indefinite 保留。
+- v2 结果为 `Saved | Unchanged | Conflict`；同 requestId/同 payload 原样 replay，同 ID 不同 payload 拒绝；只有 Saved 产生精确一次业务变化和一条 Audit。
+- 旧 `grant_role/revoke_role/set_membership_state` 不能承载新合同；cutover 必须原子撤销 authenticated execute 再 grant v2，不存在可绕过的双入口兼容期。
+- KI-033 技术结论仍未解决：现有 registration-name/password adapter 只能新建普通 `aal1` Session，不能向数据库证明与原 Admin Session/单次 Review payload 绑定的一次性 step-up。Product Owner 已选择 ADR-022 Option 3；当前 P1 状态为 `ACCEPTED DEFERRED BOUNDARY`，elevated mutations `DEFERRED`，普通治理 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。
+- 当前 P1 只允许 Author Role Grant/Revoke 与普通账户 Membership 状态治理；elevated 账户只读，任何 Admin/Super Admin Role 写入、elevated-account Membership 写入、旧 RPC/隐藏入口/客户端直写均禁止。未来重新开放必须独立授权并建立新 Auth ADR，优先评估 Supabase MFA/AAL2。
+- 本 Mission 未 Commit/Push/PR，未创建 Migration，未执行 SQL/远程写入/登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-00 Scope Freeze（2026-08-16）
 
 - Product Owner 批准 Admin P1 为 Identity & Access Governance Console，Membership 与 Role Grant 同时纳入；不新增 role、capability 或第二套权限模型。

@@ -52,6 +52,18 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - 旧 `grant_role`、`revoke_role`、`set_membership_state` execute path 在 P1 cutover 后不得绕过 Review/idempotency/conflict；具体迁移设计属于 P1-01。
 - 远程写入验证只允许专用 non-Production Supabase QA；P1 不使用 Production 数据库进行写入测试。
 
+## Admin P1-01 design authority（not implemented）
+
+- Directory/detail/Audit 读 RPC 使用 `SECURITY INVOKER` + 现有 SELECT/RLS；Guest、Reader、Author、suspended/revoked Admin deny，active Admin/Super Admin 只获得字段最小化投影。
+- expected-state 由数据库对 Membership `state/updated_at` 和排序后的 active Role Grant `id/role/granted_at` 生成规范快照与 SHA-256 token；客户端不自证状态。
+- 幂等需要 `private.identity_access_request_ledger`；private schema 不暴露到 Data API，无应用角色 policy/grant，只由受控 Mutation 插入/读取。
+- 当前 P1 三个低风险 write RPC（Author Grant/Revoke、普通账户 Membership）确有跨 Membership/Role/Audit/private ledger 原子写入需求时才可使用 `SECURITY DEFINER`，并必须空 `search_path`、全限定对象、撤销 PUBLIC/anon、精确 authenticated grant 与实时 `auth.uid()`/角色/目标检查。
+- 普通 Membership RPC 必须在数据库拒绝任何存在未撤销 Admin/Super Admin grant 的 target；elevated 账户仍可由受控 read RPC 展示。
+- 三个旧 RPC 无法兼容新参数；cutover 必须在同一 Migration 事务内先撤销旧 authenticated execute，再 grant 仅 Author/普通 Membership v2，不允许双入口，回滚也不得恢复旧应用入口。
+- Product Owner 已选择 ADR-022 Option 3。KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，技术问题未解决；不得实现、grant 或暴露 Admin/Super Admin Role 或 elevated-account Membership write RPC。最后一名 active Super Admin 数据库保护保留。
+
+详细合同见 [`P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`](../../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)。
+
 ## Admin P0 site-copy foundation
 
 - `site_copy_revisions` and `site_copy_state` have RLS enabled and grant no direct table privilege to `anon` or `authenticated`.

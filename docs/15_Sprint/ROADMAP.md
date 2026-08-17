@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-00 Scope Frozen; implementation not started
+Status: Active — Admin P1-01 design closure; ADR-022 Option 3 accepted; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,7 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-00 COMPLETE / P1-01 NOT AUTHORIZED`。P1-00 只完成合同和文档漂移修正，不包含 Migration、Auth/RLS/RPC 变更、产品代码、远程写入、Admin Unpause 或 Deployment。
+状态：`P1-01 DESIGN CLOSURE / OPTION 3 / ELEVATED MUTATIONS DEFERRED / P1-02 NOT AUTHORIZED`。P1-01 已冻结读取模型、private request ledger、expected-state、普通治理 RPC/权限矩阵、Audit 原子性、旧 RPC cutover 与 non-Production QA 方案。现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof；Product Owner 已选择 ADR-022 Option 3，把 KI-033 记为当前 P1 `ACCEPTED DEFERRED BOUNDARY`，不把它误报为技术解决。
+
+普通治理（搜索/分页、脱敏读取、普通账户 Membership、Author Role、幂等与 Conflict）为 `AUTHORIZED FOR FUTURE P1-02 PLANNING`，但尚未授权开始 P1-02。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭；elevated 账户只读，未来重新开放必须独立授权和新 Auth ADR，优先评估 Supabase MFA/AAL2。
+
+P1-01 仅更新设计文档并创建获准的本地 docs-only Closure Commit；没有产品代码、Migration、RLS/RPC/Auth、远程写入、Admin Unpause 或 Deployment。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 
