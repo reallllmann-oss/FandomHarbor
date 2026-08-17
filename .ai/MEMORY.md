@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-02E Strict Repository（2026-08-18）
+
+- 从 P1-02D Closure Commit `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3` 建立独立 P1-02E Worktree/Branch；P1-02D 与受保护 release 工作区未修改。
+- `@fandom-harbor/database` 新增严格 Governance Repository，实现 P1-02D 三读三写 Port，只调用 P1-02B/C 六个冻结 RPC；无 direct table、private helper 或旧 RPC fallback。
+- 所有 provider result 保持 unknown，经过 exact-key Domain parser；null/extra/malformed/未知 enum/result、响应 ID 不一致与超限 page 均 fail closed 为 `DATA_CORRUPTION`。
+- 错误只按 stable code 与 `REQUEST_ID_MISMATCH` / `ELEVATED_MUTATION_DEFERRED` safe detail 映射，raw message/hint/details/object 不进入 Domain。
+- 当前官方 Supabase 合同说明 `.rpc()` 具备默认 retry 能力；三个 mutation builder 均逐请求显式关闭 retry，Repository 不自动重放不确定写入。
+- P1-02C write execute 继续对 `PUBLIC/anon/authenticated/service_role` closed；本阶段不声称 authenticated mutation success，也不修改 Migration/RPC/RLS/Grant。
+- 未 Commit/Push/PR，未开始 P1-02F，未执行远程 SQL/Migration/QA、登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-02D Provider-Neutral Identity Access Domain（2026-08-17）
 
 - 唯一父基线为 `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02D` / `codex/admin-p1-02d-domain`。

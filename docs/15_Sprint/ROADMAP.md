@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-02D local provider-neutral Domain complete; closure commit not authorized; elevated mutations deferred
+Status: Active — Admin P1-02E local strict Repository complete; closure commit not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,11 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-02D LOCAL PROVIDER-NEUTRAL DOMAIN COMPLETE / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A/B/C 已形成独立本地 Commit；P1-02C 三个 ordinary write 与 private executor 对全部应用角色继续 execute closed。P1-02D 已在 `@fandom-harbor/services` 建立 strict provider-neutral Domain：bounded read models/cursors、opaque expected-state、三种 ordinary Command、Saved/Unchanged/Conflict、安全错误和 read/write Port interface。Domain 无 Supabase/PostgREST/Next.js/React、Repository、Service、Action 或 UI；不存在 Admin/Super Admin mutation Command。旧 RPC grant、P1-02B read、底层 RLS/Grant、`/access` 和 P0 Site Copy 不变。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
+状态：`P1-02E LOCAL STRICT REPOSITORY COMPLETE / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A–D 已形成独立本地 Commit；P1-02C 三个 ordinary write 与 private executor 对全部应用角色继续 execute closed。P1-02E 已在 `@fandom-harbor/database` 建立 strict Governance Repository：六方法 Port 只调用冻结六 RPC，所有 provider result 经 P1-02D strict parser，stable code/safe detail 映射为 provider-neutral Error，三个 mutation transport 显式关闭 retry。Repository 无直接 identity table/private helper、旧 RPC fallback、Service/Action/UI 或 elevated mutation。底层 Migration/RPC/RLS/Grant、`/access` 和 P0 Site Copy 不变。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
 
-普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02D 仅完成本地 Domain，未提交；P1-02E–G 未授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、write execute grant 与旧 RPC 原子 cutover。
+普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02E 仅完成本地 Repository，未提交；P1-02F–G 未授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、write execute grant 与旧 RPC 原子 cutover。
 
-P1-02D 当前变更仅包含 provider-neutral Domain、单元测试、package export 与必要权威文档；没有数据库、应用页面、可调用新 write、远程状态变化、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02D_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02D_ACCEPTANCE_EVIDENCE.md)。
+P1-02E 当前变更仅包含 strict Repository、单元测试、package export 与必要权威文档；没有数据库、应用页面、可调用新 write、远程状态变化、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02E_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02E_ACCEPTANCE_EVIDENCE.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 

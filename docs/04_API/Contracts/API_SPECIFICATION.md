@@ -188,3 +188,17 @@ P1-02D 在 `@fandom-harbor/services` 中建立六个 RPC 的唯一 provider-neut
 - Domain error 只暴露冻结的安全 code 与固定消息；不得包含 SQLSTATE、Supabase/PostgREST object、表/函数名、Token、Cookie、Session 或 provider metadata。
 
 所有 unknown object parser 拒绝额外 privileged 字段。elevated role 仅存在于读取模型及 `ELEVATED_MUTATION_DEFERRED` 安全错误；当前 Domain 没有 Admin/Super Admin mutation Command、generic role mutation、proof、actor 或 capability 注入点。P1-02E 才可在独立授权下把 snake_case RPC transport 严格映射到这些 Domain 类型。
+
+## 10. Admin P1 strict governance Repository（P1-02E local implementation）
+
+P1-02E 在 `@fandom-harbor/database` 中实现 P1-02D 六方法 Port，不修改 Domain 或数据库合同：
+
+- Read 方法只调用 `search_identity_access_subjects_v1`、`get_identity_access_subject_v1` 与 `list_identity_access_audit_v1`。
+- ordinary write 方法只调用 `grant_author_role_v2`、`revoke_author_role_v2` 与 `set_ordinary_membership_state_v2`；这些函数在独立授权的 P1-04 原子 cutover 前继续 execute closed。
+- Request transport 把 Domain 值映射到准确 `p_*` RPC 参数。Repository 不提供 actor、role、capability、proof 或自动生成的 requestId。
+- 所有成功数据保持 `unknown`，直至 strict Domain parser 通过。未知 key、非法 UUID/time/token/enum/cursor/result、response ID 不一致和超出 limit 的 page 均 fail closed 为 `DATA_CORRUPTION`。
+- 结构化错误只按 stable code 与两个冻结 safe detail allowlist 映射；自然语言 provider message、SQL 内部信息和 raw error object 不进入 Domain 输出。
+- 每个 mutation RPC builder 显式关闭自动 retry。transport uncertainty 返回安全错误；只有上层在重新 Review 后才能显式重放同一 requestId。
+- 不存在 direct table read/write、private helper、旧 RPC fallback、mutation retry loop 或 elevated write interface。
+
+实施证据见 [`P1_02E_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02E_ACCEPTANCE_EVIDENCE.md)。

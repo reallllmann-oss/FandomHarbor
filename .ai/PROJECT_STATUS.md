@@ -1,5 +1,32 @@
 # Project Status
 
+## Admin P1-02E Strict Identity Access Repository（2026-08-18）
+
+| 项目                  | 当前状态                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| Parent baseline       | `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3`                           |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02E` / `codex/admin-p1-02e-repository`        |
+| Repository package    | `@fandom-harbor/database`                                            |
+| Port implementation   | 3 read + 3 ordinary write                                            |
+| RPC allowlist         | exactly 3 P1-02B reads + 3 P1-02C ordinary writes                    |
+| Provider parsing      | unknown → strict P1-02D parser → Domain                              |
+| Error boundary        | stable code/safe detail allowlist; no raw provider leakage           |
+| Mutation retry        | disabled per RPC request; no Repository retry loop                   |
+| Direct/legacy access  | NONE — no table/private helper/old RPC fallback                      |
+| Elevated writes       | ABSENT; ADR-022 Option 3 unchanged                                   |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                            |
+| Validation            | Repository 24; Database 138; Domain 53; Services 123; all gates pass |
+| P1-02F–G              | NOT AUTHORIZED                                                       |
+| Commit / remote state | NONE / UNCHANGED                                                     |
+| Admin Production      | `paused=true`                                                        |
+| P0 Site Copy          | Version 7 / unchanged                                                |
+
+- P1-02E maps exact request parameters and strictly validates page/detail/Audit/Saved/Unchanged/Conflict provider results, including response ID and page-bound consistency.
+- Supabase 2.102+ retry behavior was rechecked against current official documentation; each mutation builder explicitly uses retry disabled and tests prove one transport call only.
+- No P1-02F Service, Server Action, `/access` UI, dependency, Migration/RPC/RLS/Grant, execute, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02E_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02D Provider-Neutral Identity Access Domain（2026-08-17）
 
 | 项目                  | 当前状态                                                          |

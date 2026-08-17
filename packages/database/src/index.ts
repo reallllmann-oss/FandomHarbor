@@ -5,6 +5,10 @@ export {
   type AccessContextRepository,
 } from "./access-context-repository";
 export { createSupabaseIdentityAccessStore } from "./identity-access-adapter";
+export {
+  createIdentityAccessGovernanceRepository,
+  createSupabaseIdentityAccessGovernanceRepository,
+} from "./identity-access-governance-repository";
 export { createServerSupabaseClient } from "./server-client";
 export {
   createAuthorWorkDraftRepository,

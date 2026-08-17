@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-18 — Admin P1-02E Strict Identity Access Repository
+
+- 以 P1-02D Closure Commit `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3` 为唯一父基线建立独立 P1-02E Worktree/Branch；未修改 P1-02D 或受保护 release 工作区。
+- 在 `@fandom-harbor/database` 新增 strict Governance Repository、测试与最小 export，完整实现 P1-02D 三个 read Port 与三个 ordinary write Port。
+- transport 只允许 P1-02B/C 六个 RPC，精确映射 snake_case 参数；无 direct identity table、private helper、legacy RPC fallback、Service/Action/UI 或 elevated mutation。
+- provider success 以 unknown 进入 strict Domain parser；额外/缺失字段、UUID/time/token/enum/cursor/result、page bound 与 response ID 不一致均 fail closed。
+- stable SQL/PostgREST code 与两个 safe detail 映射为固定 provider-neutral Error；不依赖或泄漏 raw message/hint/details/provider object。
+- 复核当前 Supabase Changelog、RPC、error 与 retry 官方合同；三个 mutation RPC 逐请求显式关闭 retry，测试证明 Repository 不自动重放 transport uncertainty。
+- Repository 24 项、Database 14 files / 138 tests、Domain 53 项、Services 10 files / 123 tests、TypeScript/ESLint/Prettier、架构/链接/敏感/scope 门禁通过；P1-02C 12 个应用角色 ACL 组合继续 false。
+- 未 Commit/Push/PR，未修改 Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute 或远程状态，未登录/Unpause/Deployment，未开始 P1-02F。
+
 ## 2026-08-17 — Admin P1-02D Provider-Neutral Identity Access Domain
 
 - 以 P1-02C Closure Commit `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35` 为唯一父基线，建立独立 P1-02D Worktree/Branch；未修改 P1-02C 或受保护 release 工作区。
