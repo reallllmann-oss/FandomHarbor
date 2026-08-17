@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-02C local ordinary write definitions complete with execute closed; closure commit not authorized; elevated mutations deferred
+Status: Active — Admin P1-02D local provider-neutral Domain complete; closure commit not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,11 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-02C LOCAL ORDINARY WRITE DEFINITIONS COMPLETE / EXECUTE CLOSED / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A/B 已形成独立本地 Commit。P1-02C 已在本地实现三个 ordinary-only v2 write definitions：requestId replay/mismatch、锁内 expected-state、Saved/Unchanged/Conflict、原子 Audit/Ledger、elevated target fail-closed 与双连接并发均通过；三个 write 及 private executor 对全部应用角色无 execute。旧 RPC grant、P1-02B read、底层 RLS/Grant、`/access` 和 P0 Site Copy 不变。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
+状态：`P1-02D LOCAL PROVIDER-NEUTRAL DOMAIN COMPLETE / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A/B/C 已形成独立本地 Commit；P1-02C 三个 ordinary write 与 private executor 对全部应用角色继续 execute closed。P1-02D 已在 `@fandom-harbor/services` 建立 strict provider-neutral Domain：bounded read models/cursors、opaque expected-state、三种 ordinary Command、Saved/Unchanged/Conflict、安全错误和 read/write Port interface。Domain 无 Supabase/PostgREST/Next.js/React、Repository、Service、Action 或 UI；不存在 Admin/Super Admin mutation Command。旧 RPC grant、P1-02B read、底层 RLS/Grant、`/access` 和 P0 Site Copy 不变。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
 
-普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02C 仅完成本地 execute-closed 数据库定义，未提交或远程应用；P1-02D–G 未授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、write execute grant 与旧 RPC 原子 cutover。
+普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02D 仅完成本地 Domain，未提交；P1-02E–G 未授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、write execute grant 与旧 RPC 原子 cutover。
 
-P1-02C 当前变更仅包含一份本地 write-definition Migration、数据库静态/语义/并发测试和必要权威文档；没有产品应用代码、可调用新 write、远程状态变化、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02C_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md)。
+P1-02D 当前变更仅包含 provider-neutral Domain、单元测试、package export 与必要权威文档；没有数据库、应用页面、可调用新 write、远程状态变化、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02D_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02D_ACCEPTANCE_EVIDENCE.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 

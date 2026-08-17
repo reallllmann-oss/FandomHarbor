@@ -176,3 +176,15 @@ Search cursor 为 `{ missingRegistrationName, normalizedRegistrationName, userId
 - cutover 必须先撤销旧 `grant_role`、`revoke_role`、`set_membership_state` 的 authenticated execute；正常回滚不得恢复这些绕过入口。最后一名 active Super Admin 数据库保护保留。
 
 P1-02C 的 wire result 使用小写 `saved | unchanged | conflict`。三者都返回 requestId、targetUserId、数据库生成的 current state/token；Saved 额外返回 Audit/changed time，Role Saved 返回 grant ID；Conflict 返回安全原因与最新快照。准确本地证据见 [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md)。
+
+## 9. Admin P1 provider-neutral governance Domain（P1-02D local implementation）
+
+P1-02D 在 `@fandom-harbor/services` 中建立六个 RPC 的唯一 provider-neutral 业务合同，但不实现任何 RPC mapper、Repository、Service、Server Action 或 UI：
+
+- Read Port 只表达 Subject search、Subject detail 与 target Audit list；使用 NFKC registration-name/full UUID search、1–50 page limit、稳定 Subject/Audit cursor、脱敏 Profile、Membership、active/effective roles、Audit summary 和 database-issued expected-state。
+- Write Port 只有 `grantAuthorRole`、`revokeAuthorRole` 与 `setOrdinaryMembershipState` 三个方法。Role Command 没有 role 字段；Membership Command 只接受 `active | suspended | revoked`。
+- requestId、User ID、expected-state token、normalized reason、registration-name query 与 page limit 必须先通过 Domain parser。expected-state token 是 64 位 lowercase hex opaque value；Domain 不解析、重算或生成 token。
+- Mutation result 是可穷尽的 `saved | unchanged | conflict` discriminated union。Conflict 必须携带数据库返回的 current snapshot/token；Unchanged/Conflict 不能携带 Audit ID。
+- Domain error 只暴露冻结的安全 code 与固定消息；不得包含 SQLSTATE、Supabase/PostgREST object、表/函数名、Token、Cookie、Session 或 provider metadata。
+
+所有 unknown object parser 拒绝额外 privileged 字段。elevated role 仅存在于读取模型及 `ELEVATED_MUTATION_DEFERRED` 安全错误；当前 Domain 没有 Admin/Super Admin mutation Command、generic role mutation、proof、actor 或 capability 注入点。P1-02E 才可在独立授权下把 snake_case RPC transport 严格映射到这些 Domain 类型。

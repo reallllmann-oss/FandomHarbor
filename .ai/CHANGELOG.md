@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-17 — Admin P1-02D Provider-Neutral Identity Access Domain
+
+- 以 P1-02C Closure Commit `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35` 为唯一父基线，建立独立 P1-02D Worktree/Branch；未修改 P1-02C 或受保护 release 工作区。
+- 在 `@fandom-harbor/services` 新增 strict provider-neutral Domain 与 export，覆盖脱敏 Subject summary/detail、Membership、active/effective Role、Audit、stable cursor 和 opaque database expected-state。
+- 新增 canonical non-nil User/request UUID、NFKC registration-name search、NFC 4–200 code-point reason、1–50 page limit、cursor/date/role/state/result exact-key parser；unknown privileged field fail closed。
+- 新增 Grant Author、Revoke Author 与 Set ordinary Membership 三个独立 Command，以及可穷尽 Saved/Unchanged/Conflict、安全 provider-neutral error 和六方法 read/write Port interface。
+- Admin/Super Admin 仅可在 read model 中出现；不存在 generic/elevated mutation、proof、actor/capability 注入或 escape hatch。Domain 无 Supabase/PostgREST/Next.js/React/env/database dependency。
+- 定向 Domain 53 项、Services 10 files / 123 tests、Database 13 files / 114 tests 与 P1-02A/B/C/P0 7 个 SQL suites 通过；TypeScript、ESLint、Prettier、架构边界、链接、敏感信息与范围门禁通过。
+- 未实现 P1-02E Repository、P1-02F Service、Server Action 或 UI；未修改 Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute、旧 RPC 或远程状态，未 Commit/Push/PR/登录/Unpause/Deployment。
+
 ## 2026-08-17 — Admin P1-02C Ordinary Governance Write RPC Foundation
 
 - 以 P1-02B Closure Commit `64bba75360e9f303819c42d1c08a2d6ec545983d` 为唯一父基线，使用 Supabase CLI 创建本地 Migration `20260817125140_admin_p1_identity_access_writes.sql`。

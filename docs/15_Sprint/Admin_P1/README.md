@@ -1,22 +1,22 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-02C LOCAL ORDINARY WRITE DEFINITIONS COMPLETE — EXECUTE CLOSED / CLOSURE COMMIT NOT AUTHORIZED`
+状态：`P1-02D LOCAL PROVIDER-NEUTRAL DOMAIN COMPLETE — CLOSURE COMMIT NOT AUTHORIZED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
 
 ## 执行切片
 
-| Step  | 目标                                         | 当前状态                                                                                    |
-| ----- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| P1-00 | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                                                                                    |
-| P1-01 | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted                                                       |
-| P1-02 | Backend Data / Domain / Repository / Service | P1-02A/B committed; P1-02C local write definitions complete/closed; P1-02D–G not authorized |
-| P1-03 | Read-only Directory / Search / Detail        | Not authorized                                                                              |
-| P1-04 | Controlled Membership / Role Mutations       | Not authorized                                                                              |
-| P1-05 | Local + dedicated non-Production remote QA   | Not authorized                                                                              |
-| P1-06 | Protected Preview Acceptance                 | Not authorized                                                                              |
-| P1-07 | Production Release Review                    | Not authorized                                                                              |
+| Step  | 目标                                         | 当前状态                                                                    |
+| ----- | -------------------------------------------- | --------------------------------------------------------------------------- |
+| P1-00 | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                                                                    |
+| P1-01 | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted                                       |
+| P1-02 | Backend Data / Domain / Repository / Service | P1-02A/B/C committed; P1-02D local Domain complete; P1-02E–G not authorized |
+| P1-03 | Read-only Directory / Search / Detail        | Not authorized                                                              |
+| P1-04 | Controlled Membership / Role Mutations       | Not authorized                                                              |
+| P1-05 | Local + dedicated non-Production remote QA   | Not authorized                                                              |
+| P1-06 | Protected Preview Acceptance                 | Not authorized                                                              |
+| P1-07 | Production Release Review                    | Not authorized                                                              |
 
 权威合同：
 
@@ -27,9 +27,10 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
 - [P1-02C Local Acceptance Evidence](P1_02C_ACCEPTANCE_EVIDENCE.md)
+- [P1-02D Local Acceptance Evidence](P1_02D_ACCEPTANCE_EVIDENCE.md)
 - [Admin Identity & Access Governance](../../11_Admin/IDENTITY_ACCESS_GOVERNANCE.md)
 - [ADR-021](../../17_Architecture_Decisions/ADR-021.md)
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 
-P1-02A/B 已形成独立本地 Commit。P1-02C 已本地实现三个 ordinary-only v2 write definitions：requestId replay/mismatch、锁内 expected-state、Saved/Unchanged/Conflict、原子 Audit/Ledger 与 elevated target 数据库拒绝均通过语义和双连接并发验证。三个 write RPC 及其 private executor 对全部应用角色保持 execute closed；旧 RPC grants、P1-02B reads、底层 RLS/Grant 和 `/access` 均不变。本状态不授权 Closure Commit、P1-02D、远程 apply 或 P1-04 cutover。ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY` 与全部 elevated mutations `DEFERRED` 保持不变；P1-02D–G、P1-03 和 P1-04 仍未授权。
+P1-02A/B/C 已形成独立本地 Commit。P1-02D 在 `@fandom-harbor/services` 中实现 provider-neutral strict Domain：三条读取模型、opaque expected-state、三种 ordinary-only Command、封闭 Saved/Unchanged/Conflict、安全错误与六方法 Port interface。Domain 不依赖 Supabase/PostgREST/Next.js/React，不包含 Repository/Service/Action/UI；Admin/Super Admin 只可在 read model 中表达，没有 elevated mutation Command 或隐藏 proof/role 入口。P1-02C 三个 write RPC 及 private helper 对应用角色继续 execute closed；旧 RPC、P1-02B reads、RLS/Grant、`/access` 和 P0 均不变。本状态不授权 Closure Commit、P1-02E、远程 apply 或 P1-04 cutover。ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY` 与全部 elevated mutations `DEFERRED` 保持不变；P1-02E–G、P1-03 和 P1-04 仍未授权。

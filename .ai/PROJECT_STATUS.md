@@ -1,5 +1,33 @@
 # Project Status
 
+## Admin P1-02D Provider-Neutral Identity Access Domain（2026-08-17）
+
+| 项目                  | 当前状态                                                          |
+| --------------------- | ----------------------------------------------------------------- |
+| Parent baseline       | `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35`                        |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02D` / `codex/admin-p1-02d-domain`         |
+| Domain package        | `@fandom-harbor/services`                                         |
+| Read models           | Subject summary/detail + Membership/Role/Audit + stable cursors   |
+| Ordinary Commands     | Grant Author / Revoke Author / Set ordinary Membership            |
+| Expected-state        | database-issued opaque token; format validation only              |
+| Result                | Saved / Unchanged / Conflict exhaustive union                     |
+| Errors                | fixed provider-neutral codes/messages; no raw provider details    |
+| Ports                 | 3 read + 3 write interfaces; no Repository/Service implementation |
+| Elevated writes       | TYPE-LEVEL ABSENT; read-only expression + deferred error only     |
+| Provider boundary     | no Supabase/PostgREST/Next.js/React/env/database dependency       |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                         |
+| Validation            | 53 targeted; Services 123; Database 114; 7 SQL; all gates pass    |
+| P1-02E–G              | NOT AUTHORIZED                                                    |
+| Commit / remote state | NONE / UNCHANGED                                                  |
+| Admin Production      | `paused=true`                                                     |
+| P0 Site Copy          | Version 7 / unchanged                                             |
+
+- P1-02D strictly parses UUIDs, requestId, expected-state token, NFKC search, NFC reason, 1–50 limits, stable cursors, desensitized reads, Commands and results without unsafe provider casts.
+- Role write Commands have no role input; ordinary Membership rejects `pending`; exact-key parsing rejects Admin/Super Admin/proof/actor/capability injection.
+- No P1-02E Repository, P1-02F Service, P1-03/P1-04 UI/Action, dependency, database, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02D_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02C Ordinary Governance Write Definitions（2026-08-17）
 
 | 项目                  | 当前状态                                                               |

@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-02D Provider-Neutral Identity Access Domain（2026-08-17）
+
+- 唯一父基线为 `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02D` / `codex/admin-p1-02d-domain`。
+- `@fandom-harbor/services` 新增 strict provider-neutral governance Domain：User/request ID、opaque expected-state、NFKC search、NFC reason、1–50 limit、两个稳定 cursor、Subject/Detail/Audit read models 与六方法 Port。
+- 写入类型只包含 Grant Author、Revoke Author、Set ordinary Membership；Role Command 没有 role，Membership 不接受 pending；exact-key parser 拒绝 Admin/Super Admin/proof/actor/capability 注入。
+- Mutation result 为可穷尽 Saved/Unchanged/Conflict；Conflict 保留数据库 current snapshot/token；安全错误使用固定 code/message，不接收或泄漏 provider error、SQLSTATE、Token、Cookie、Session 或 metadata。
+- Domain 源码无 Supabase/PostgREST/Next.js/React/env/database import，不实现 Repository、Service、Action 或 UI；P1-02C execute、旧 RPC、P1-02B read、RLS/Grant、P0 与 Admin pause 不变。
+- 定向 Domain 53 项、Services 10 files / 123 tests、Database 13 files / 114 tests 与 P1-02A/B/C/P0 7 个 SQL suites 全部通过；TypeScript、ESLint、Prettier、架构与静态门禁通过。
+- P1-02D 未 Commit/Push/PR，未开始 P1-02E，未修改数据库/依赖/配置/lockfile，未执行远程操作、登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-02C Ordinary Governance Write Definitions（2026-08-17）
 
 - 唯一父基线为 `64bba75360e9f303819c42d1c08a2d6ec545983d`；独立 Worktree/Branch 为 `FandomHarbor-Admin-P1-02C` / `codex/admin-p1-02c-write-rpcs`。
