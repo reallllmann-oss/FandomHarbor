@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1-02F Live-Access Governance Service（2026-08-18）
+
+- 从 P1-02E Closure Commit `cadb81053720a2e1885abe3e6f63a1b5196a64e1` 建立独立 P1-02F Worktree/Branch；P1-02E 与受保护 release 工作区未修改。
+- `@fandom-harbor/services` 新增六用例 Governance Service、fake Port 测试和最小 export；只依赖 P1-02D Ports 与 injected live-access checker，无具体 Repository/provider/framework 依赖。
+- 每个用例先解析调用者输入，再精确取得一次 fresh Trusted Access Context；只有 active Admin/Super Admin 可调用 Port，Guest/Reader/Author/inactive Admin 均零 Port。
+- 三个普通 mutation 先读取 target detail 做 elevated precheck，再最多调用一次对应 write Port；数据库继续负责最终分类、并发和权限。不存在 elevated mutation method 或 KI-033 placeholder。
+- requestId、target、expected-state、normalized reason 与 Saved/Unchanged/Conflict 保持；Conflict 不抛错/覆盖/重放，Service 不生成 requestId、token、Audit/Ledger 或 retry mutation。
+- Domain Error 原样保留；unknown checker/Port failure 清洗为固定 `UNKNOWN_REPOSITORY_ERROR`，无 raw message/cause/payload/provider metadata。
+- P1-02C write execute 继续对 `PUBLIC/anon/authenticated/service_role` closed；未 Commit/Push/PR，未开始 P1-02G，未执行远程操作、UI wiring、登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Site Copy 仍 Version 7。
+
 ## Admin P1-02E Strict Repository（2026-08-18）
 
 - 从 P1-02D Closure Commit `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3` 建立独立 P1-02E Worktree/Branch；P1-02D 与受保护 release 工作区未修改。

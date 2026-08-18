@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-18 — Admin P1-02F Live-Access Identity Governance Service
+
+- 以 P1-02E Closure Commit `cadb81053720a2e1885abe3e6f63a1b5196a64e1` 为唯一父基线建立独立 P1-02F Worktree/Branch；未修改 P1-02E 或受保护 release 工作区。
+- 在 `@fandom-harbor/services` 新增六用例 Governance Service、57 项 fake/in-memory Port 单元测试与最小 export；不接入具体 Repository、App composition、Action 或 UI。
+- 所有用例按 strict input parser → fresh live-access checker → read/target precheck → exact Port 顺序执行；active Admin/Super Admin allow，Guest/Reader/Author/inactive Admin 在 Port 前 deny。
+- ordinary mutation 对 elevated target defense-in-depth deny，对普通 target 最多调用一次对应 write Port；数据库继续为竞态和最终权限权威，Service API 无 elevated method 或 Reauth placeholder。
+- requestId/expected-state/normalized reason 与 Saved/Unchanged/Conflict 原样保留；无 requestId/token 生成、Conflict 自动覆盖、mutation retry、Audit/Ledger 或敏感日志。
+- provider-neutral Domain Error 保留；unknown checker/Port failure 固定清洗且不保留 raw cause/message/provider metadata。源码无 Supabase/PostgREST/Next.js/React/database/RPC/wire 依赖。
+- Service 57 项、Services 11 files / 180 tests、Domain 53 项、Repository 24 项、Database 14 files / 138 tests、TypeScript/ESLint/Prettier、架构/链接/敏感/scope 门禁通过；P1-02C 12 个应用角色 ACL 组合继续 false。
+- 未 Commit/Push/PR，未修改 Domain/Repository/Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute 或远程状态，未接入 UI、登录/Unpause/Deployment，未开始 P1-02G。
+
 ## 2026-08-18 — Admin P1-02E Strict Identity Access Repository
 
 - 以 P1-02D Closure Commit `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3` 为唯一父基线建立独立 P1-02E Worktree/Branch；未修改 P1-02D 或受保护 release 工作区。

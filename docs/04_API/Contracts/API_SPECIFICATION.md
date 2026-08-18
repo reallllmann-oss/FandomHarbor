@@ -202,3 +202,17 @@ P1-02E 在 `@fandom-harbor/database` 中实现 P1-02D 六方法 Port，不修改
 - 不存在 direct table read/write、private helper、旧 RPC fallback、mutation retry loop 或 elevated write interface。
 
 实施证据见 [`P1_02E_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02E_ACCEPTANCE_EVIDENCE.md)。
+
+## 11. Admin P1 live-access Governance Service（P1-02F local implementation）
+
+P1-02F 在 `@fandom-harbor/services` 中编排 P1-02D Ports，不接触 RPC、Supabase client 或具体 Repository：
+
+- 六个公开用例为 Search subjects、Get subject detail、List target Audit、Grant Author、Revoke Author 与 Set ordinary Membership。
+- 调用顺序固定为：strict input parser → 单次 injected live-access check → ordinary mutation 的只读 target classification → 对应 Port 最多一次。
+- live-access check 必须返回本次调用重新读取的可信 context；只有 active Membership 且拥有 live Admin/Super Admin role 与 `admin:operate` capability 才可继续。Guest/null、Reader、Author 与 inactive Admin 在 Port 前 fail closed。
+- 输入 parser 只验证调用者已提交的 UUID/query/cursor/limit/requestId/token/reason/state，不查询目标，因此采用 input-first 顺序不会泄漏目标是否存在。未授权 target lookup 不会发生。
+- 写入 target classification 是 defense-in-depth UX/security guard；若 target 当前为 elevated，Service 返回 `ELEVATED_MUTATION_DEFERRED` 且不调用 mutation Port。classification 后发生竞态时，数据库仍重新分类并最终拒绝。
+- requestId、target、opaque expected-state 与 normalized reason 原样进入对应 Command。Service 不生成 requestId、不重算 token、不自动 retry transport failure，也不把 Conflict 转为异常、Saved 或二次 mutation。
+- 已清洗的 P1-02D Domain Error 原样保留；任何非 Domain 异常统一成为固定 `UNKNOWN_REPOSITORY_ERROR`，不保留原始 cause/message/provider metadata。
+
+未来 P1-03/P1-04 composition root 必须注入 live-access checker 与 P1-02E Repository Ports。Server Action 负责取得请求级 Auth/cookie 边界和序列化安全结果，但不得跳过 Service 直接调用 Repository。P1-02F 不创建 Action、FormData parser、UI、cache invalidation 或 write execute grant。实施证据见 [`P1_02F_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md)。

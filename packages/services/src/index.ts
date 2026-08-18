@@ -79,6 +79,12 @@ export {
   type UnchangedIdentityAccessMutationResult,
 } from "./identity-access-governance-domain";
 export {
+  createIdentityAccessGovernanceService,
+  type IdentityAccessGovernanceLiveAccessChecker,
+  type IdentityAccessGovernanceService,
+  type IdentityAccessGovernanceServiceDependencies,
+} from "./identity-access-governance-service";
+export {
   generateInvitationCode,
   INVITATION_CODE_LENGTH,
   INVITATION_CODE_PATTERN,

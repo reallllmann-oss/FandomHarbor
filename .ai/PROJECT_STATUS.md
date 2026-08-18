@@ -1,5 +1,32 @@
 # Project Status
 
+## Admin P1-02F Live-Access Identity Governance Service（2026-08-18）
+
+| 项目                  | 当前状态                                                              |
+| --------------------- | --------------------------------------------------------------------- |
+| Parent baseline       | `cadb81053720a2e1885abe3e6f63a1b5196a64e1`                            |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02F` / `codex/admin-p1-02f-governance-service` |
+| Service package       | `@fandom-harbor/services`                                             |
+| Use cases             | 3 read + 3 ordinary write                                             |
+| Live authorization    | fresh checker exactly once per public call                            |
+| Allowed actors        | active Admin / active Super Admin                                     |
+| Input order           | strict parser → live access → optional target precheck → exact Port   |
+| Mutation semantics    | requestId/expected-state/result preserved; no retry                   |
+| Elevated writes       | precheck deny + database final authority; no elevated method          |
+| Provider boundary     | no concrete Repository/Supabase/PostgREST/RPC/wire/framework import   |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                             |
+| Validation            | Service 57; Services 180; Domain 53; Database 138; all gates pass     |
+| P1-02G                | NOT AUTHORIZED                                                        |
+| Commit / remote state | NONE / UNCHANGED                                                      |
+| Admin Production      | `paused=true`                                                         |
+| P0 Site Copy          | Version 7 / unchanged                                                 |
+
+- Invalid caller input fails before the checker; this step performs no target lookup. Guest/Reader/Author/inactive Admin fail before all Ports, and unknown checker/Port errors are cleaned to a fixed provider-neutral error.
+- Ordinary mutations perform a read-only elevated-target precheck and call the one matching write Port at most once. Conflict remains a normal result with current snapshot/token; explicit replay rechecks live access.
+- No P1-02G, composition root, Server Action, `/access` UI, dependency, Migration/RPC/RLS/Grant, execute, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02E Strict Identity Access Repository（2026-08-18）
 
 | 项目                  | 当前状态                                                             |
