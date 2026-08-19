@@ -84,15 +84,32 @@ Catalog and transactional evidence are in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../.
 
 Catalog, permission-matrix and zero-write evidence are in [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md).
 
-## Admin P1-02C local write definitions
+## Admin P1-02C local write definitions（historical pre-cutover state）
 
 - `grant_author_role_v2(uuid,uuid,text,text)`, `revoke_author_role_v2(uuid,uuid,text,text)` and `set_ordinary_membership_state_v2(uuid,uuid,membership_state,text,text)` are volatile definer definitions with owner `postgres`, empty search path and no overload.
-- `PUBLIC`, `anon`, `authenticated` and `service_role` have no execute on any P1-02C write or its private executor. No application role can call the new writes before the separately authorized P1-04 cutover.
+- The P1-02C definition Migration revokes execute from `PUBLIC`, `anon`, `authenticated` and `service_role` for all three writes and its private executor. That pre-cutover state is preserved by the original Migration contract; the current composed local ACL is recorded in P1-04A below.
 - The private executor rechecks `auth.uid()` and live active Admin/Super Admin, serializes request/global/final-Super-Admin/target state, rejects any target with an unrevoked Admin/Super Admin grant before writing a result, and only calls P1-02A fingerprint/snapshot/token helpers.
 - Saved performs exactly one ordinary business change, one Audit and one Saved Ledger insert in the same transaction. Unchanged/Conflict write only one Ledger result. Replay returns the stored result; mismatch/elevated/error paths write nothing.
-- P1-02A helper/table denies, P1-02B read grants, bottom-table grants/RLS, exposed schemas and legacy RPC execute remain unchanged. No elevated write function, role/proof parameter, policy or table grant exists.
+- At P1-02C acceptance, P1-02A helper/table denies, P1-02B read grants, bottom-table grants/RLS, exposed schemas and legacy RPC execute remained unchanged. No elevated write function, role/proof parameter, policy or table grant exists.
 
 Catalog, semantic, rollback and concurrency evidence are in [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-04A local atomic write cutover
+
+- `grant_role(uuid,elevated_role,text)`, `revoke_role(uuid,elevated_role,text)` and
+  `set_membership_state(uuid,membership_state,text)` now have no execute grant for
+  `PUBLIC`, `anon`, `authenticated` or `service_role` in the local migration graph.
+- Only `authenticated` can execute the exact three ordinary v2 signatures. PUBLIC,
+  anon and service_role remain denied; there is no broad function or schema grant.
+- All nine P1 private helpers/executor remain denied to all four application roles
+  (`0/36`). The read RPC matrix remains authenticated-only (`3/12`).
+- The cutover is one fail-closed atomic statement: exact preconditions → legacy
+  revoke → deny assertion → exact v2 grant → final/private assertions.
+- Failure rollback and recovery are rehearsed locally in a nested subtransaction;
+  operational rollback revokes v2 and stays read-only rather than reopening legacy
+  RPCs.
+
+Evidence is in [`P1_04A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md).
 
 ## Admin P0 site-copy foundation
 

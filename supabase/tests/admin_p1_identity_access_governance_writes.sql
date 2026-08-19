@@ -63,12 +63,15 @@ begin
       raise exception '% has unsafe authority/catalog properties', v_function;
     end if;
 
-    foreach v_role in array array[
-      'public',
-      'anon',
+    if not pg_catalog.has_function_privilege(
       'authenticated',
-      'service_role'
-    ] loop
+      v_function,
+      'execute'
+    ) then
+      raise exception 'authenticated cannot execute % after cutover', v_function;
+    end if;
+
+    foreach v_role in array array['public', 'anon', 'service_role'] loop
       if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
         raise exception '% unexpectedly has execute on %', v_role, v_function;
       end if;
@@ -102,21 +105,24 @@ begin
     end if;
   end loop;
 
-  if not pg_catalog.has_function_privilege(
-    'authenticated',
-    'public.grant_role(uuid,public.elevated_role,text)',
-    'execute'
-  ) or not pg_catalog.has_function_privilege(
-    'authenticated',
-    'public.revoke_role(uuid,public.elevated_role,text)',
-    'execute'
-  ) or not pg_catalog.has_function_privilege(
-    'authenticated',
-    'public.set_membership_state(uuid,public.membership_state,text)',
-    'execute'
-  ) then
-    raise exception 'P1-02C changed the legacy RPC execute state';
-  end if;
+  foreach v_function in array array[
+    'public.grant_role(uuid,public.elevated_role,text)'::regprocedure,
+    'public.revoke_role(uuid,public.elevated_role,text)'::regprocedure,
+    'public.set_membership_state(uuid,public.membership_state,text)'::regprocedure
+  ] loop
+    foreach v_role in array array[
+      'public',
+      'anon',
+      'authenticated',
+      'service_role'
+    ] loop
+      if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
+        raise exception 'cutover left legacy execute for % on %',
+          v_role,
+          v_function;
+      end if;
+    end loop;
+  end loop;
 
   if not pg_catalog.has_function_privilege(
     'authenticated',
@@ -347,17 +353,27 @@ select pg_catalog.set_config(
 );
 
 do $$
+declare
+  v_result jsonb;
 begin
   begin
-    perform public.grant_author_role_v2(
+    v_result := public.grant_author_role_v2(
       'c3020000-0000-4000-8000-000000000002',
       'c1020000-0000-4000-8000-000000000011',
       repeat('0', 64),
-      'Active Admin execute must stay closed'
+      'Active Admin authenticated execute proof'
     );
-    raise exception 'authenticated executed a P1-02C write RPC';
-  exception when insufficient_privilege then
-    null;
+
+    if v_result ->> 'status' <> 'conflict' then
+      raise exception 'authenticated v2 result drift: %', v_result;
+    end if;
+
+    raise exception 'P1_04A_AUTHENTICATED_EXECUTE_ROLLBACK';
+  exception
+    when raise_exception then
+      if sqlerrm <> 'P1_04A_AUTHENTICATED_EXECUTE_ROLLBACK' then
+        raise;
+      end if;
   end;
 end;
 $$;
@@ -1208,12 +1224,15 @@ begin
     'public.revoke_author_role_v2(uuid,uuid,text,text)'::regprocedure,
     'public.set_ordinary_membership_state_v2(uuid,uuid,public.membership_state,text,text)'::regprocedure
   ] loop
-    foreach v_role in array array[
-      'public',
-      'anon',
+    if not pg_catalog.has_function_privilege(
       'authenticated',
-      'service_role'
-    ] loop
+      v_function,
+      'execute'
+    ) then
+      raise exception 'authenticated lost execute on % during tests', v_function;
+    end if;
+
+    foreach v_role in array array['public', 'anon', 'service_role'] loop
       if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
         raise exception '% gained execute on % during tests', v_role, v_function;
       end if;

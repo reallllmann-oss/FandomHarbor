@@ -163,17 +163,17 @@ Search cursor 为 `{ missingRegistrationName, normalizedRegistrationName, userId
 
 ### Mutation RPC
 
-- P1-02C 已在本地实现并保持 execute 关闭的准确签名：
+- P1-02C 已在本地实现、P1-04A 已完成本地原子 cutover 的准确签名：
   - `grant_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
   - `revoke_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
   - `set_ordinary_membership_state_v2(p_request_id uuid, p_target_user_id uuid, p_state membership_state, p_expected_state_token text, p_reason text) returns jsonb`
-- 三者均为 `VOLATILE SECURITY DEFINER`、owner `postgres`、空 `search_path`；`PUBLIC/anon/authenticated/service_role` 全部 execute deny。P1-04 原子 cutover 前不得由应用、Server Action 或客户端调用。
+- 三者均为 `VOLATILE SECURITY DEFINER`、owner `postgres`、空 `search_path`；本地 cutover 后仅 `authenticated` 拥有准确签名 execute，`PUBLIC/anon/service_role` 继续 deny。此 ACL 只存在于未提交、未远程应用的 P1-04A 本地 migration graph，不代表 UI、Action 或 Production 已启用。
 - Role 方法没有 role 参数；Membership 只接受 `active | suspended | revoked`，没有 Reauth proof、actor、capability 或 dormant elevated 参数。
 - 同 requestId/同规范 payload 返回 private ledger 原结果；同 ID 不同 payload/actor 稳定拒绝。
 - 结果只为 `Saved | Unchanged | Conflict`；Saved 精确一次业务变化与一条 Audit，Unchanged/Conflict 零业务 Audit。
 - 所有 v2 写入使用固定顺序全局治理事务锁；在锁内重算 expected-state、实时权限和 target 边界。Membership RPC 对任何存在未撤销 Admin/Super Admin grant 的 target fail closed。
 - Product Owner 已选择 ADR-022 Option 3：KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，但技术问题未解决。Admin/Super Admin Role 与 elevated-account Membership 没有当前 P1 write RPC 或 grant；不得使用 Session age、JWT `iat`、客户端 boolean、再次普通登录或新建 `aal1` Session 代替 step-up。
-- cutover 必须先撤销旧 `grant_role`、`revoke_role`、`set_membership_state` 的 authenticated execute；正常回滚不得恢复这些绕过入口。最后一名 active Super Admin 数据库保护保留。
+- P1-04A 本地 cutover 已在一个原子 statement 内先撤销旧 `grant_role`、`revoke_role`、`set_membership_state` 的 authenticated execute、证明 deny，再只 grant 三个 v2；正常回滚不得恢复旧绕过入口。最后一名 active Super Admin 数据库保护保留。
 
 P1-02C 的 wire result 使用小写 `saved | unchanged | conflict`。三者都返回 requestId、targetUserId、数据库生成的 current state/token；Saved 额外返回 Audit/changed time，Role Saved 返回 grant ID；Conflict 返回安全原因与最新快照。准确本地证据见 [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md)。
 
@@ -194,7 +194,7 @@ P1-02D 在 `@fandom-harbor/services` 中建立六个 RPC 的唯一 provider-neut
 P1-02E 在 `@fandom-harbor/database` 中实现 P1-02D 六方法 Port，不修改 Domain 或数据库合同：
 
 - Read 方法只调用 `search_identity_access_subjects_v1`、`get_identity_access_subject_v1` 与 `list_identity_access_audit_v1`。
-- ordinary write 方法只调用 `grant_author_role_v2`、`revoke_author_role_v2` 与 `set_ordinary_membership_state_v2`；这些函数在独立授权的 P1-04 原子 cutover 前继续 execute closed。
+- ordinary write 方法只调用 `grant_author_role_v2`、`revoke_author_role_v2` 与 `set_ordinary_membership_state_v2`；P1-04A 本地 cutover 后 authenticated Session 可到达这三个准确 RPC，但应用仍未接入写 Action/UI，且没有远程 apply。
 - Request transport 把 Domain 值映射到准确 `p_*` RPC 参数。Repository 不提供 actor、role、capability、proof 或自动生成的 requestId。
 - 所有成功数据保持 `unknown`，直至 strict Domain parser 通过。未知 key、非法 UUID/time/token/enum/cursor/result、response ID 不一致和超出 limit 的 page 均 fail closed 为 `DATA_CORRUPTION`。
 - 结构化错误只按 stable code 与两个冻结 safe detail allowlist 映射；自然语言 provider message、SQL 内部信息和 raw error object 不进入 Domain 输出。

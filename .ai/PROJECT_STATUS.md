@@ -1,5 +1,35 @@
 # Project Status
 
+## Admin P1-04A Ordinary Write RPC Atomic Cutover（2026-08-19）
+
+| 项目                  | 当前状态                                                            |
+| --------------------- | ------------------------------------------------------------------- |
+| Baseline              | `9caac4a9affbd3ea9d13cbae266696f9c853490e`                          |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-04` / `codex/admin-p1-04-ordinary-mutations` |
+| Migration             | `20260819225318_admin_p1_identity_access_cutover.sql`               |
+| Legacy write ACL      | `0/12` execute=true                                                 |
+| Ordinary v2 write ACL | authenticated only: `3/12` execute=true                             |
+| Private helpers       | nine helpers/executor: `0/36` execute=true                          |
+| Read RPC ACL          | unchanged; authenticated only: `3/12`                               |
+| Rebuild / SQL         | two clean 20-Migration rebuilds / 14 SQL suites PASS                |
+| Application tests     | Service 57; Services 180; Database/Repository 142 PASS              |
+| UI / Action           | UNCHANGED / NOT STARTED                                             |
+| P1-04B / P1.1         | NOT STARTED / NOT AUTHORIZED                                        |
+| Commit / remote state | NONE / UNCHANGED                                                    |
+| Admin Production      | `paused=true`                                                       |
+| P0 Site Copy          | Production authority Version 7 / unchanged                          |
+
+- One atomic `DO` statement holds the global governance lock, validates the exact
+  catalog and before-state, revokes legacy execute, proves deny, grants only the
+  three narrow v2 signatures to authenticated, and re-proves final/private ACLs.
+- Local rollback rehearsal reconstructs the prior ACL in an outer transaction,
+  forces a failure after legacy revoke, proves subtransaction recovery, rehearses
+  the full cutover, then rolls back all rehearsal changes.
+- ADR-022 Option 3 and KI-033 remain unchanged. No elevated RPC, UI, Action, Auth,
+  remote database operation, login, Unpause, Deployment or Commit occurred.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-03 Read-only Access UI（2026-08-19）
 
 | 项目                  | 当前状态                                                             |

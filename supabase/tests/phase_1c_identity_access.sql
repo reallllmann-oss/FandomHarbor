@@ -132,10 +132,28 @@ select set_config(
 
 do $$
 begin
+  perform public.revoke_role(auth.uid(), 'super_admin', 'Legacy deny proof');
+  raise exception 'authenticated executed a legacy Role RPC';
+exception
+  when insufficient_privilege then
+    null;
+end;
+$$;
+
+reset role;
+
+select set_config(
+  'request.jwt.claim.sub',
+  '10000000-0000-4000-8000-000000000001',
+  true
+);
+
+do $$
+begin
   perform public.revoke_role(
     auth.uid(),
     'super_admin',
-    'Final Super Admin revocation must fail'
+    'Final Super Admin protection regression'
   );
   raise exception using
     errcode = 'XX000',
@@ -146,13 +164,14 @@ exception
 end;
 $$;
 
-select public.grant_role(
+select public.grant_author_role_v2(
+  '11000000-0000-4000-8000-000000000001',
   '10000000-0000-4000-8000-000000000002',
-  'author',
-  'Phase 1C author test grant'
+  private.identity_access_state_token(
+    '10000000-0000-4000-8000-000000000002'
+  ),
+  'Phase 1C v2 Author test grant'
 );
-
-reset role;
 
 set local role authenticated;
 select set_config(
@@ -288,39 +307,49 @@ $$;
 
 reset role;
 
-set local role authenticated;
 select set_config(
   'request.jwt.claim.sub',
   '10000000-0000-4000-8000-000000000001',
   true
 );
 
-select public.revoke_role(
+select public.revoke_author_role_v2(
+  '11000000-0000-4000-8000-000000000002',
   '10000000-0000-4000-8000-000000000002',
-  'author',
-  'Phase 1C author test revocation'
+  private.identity_access_state_token(
+    '10000000-0000-4000-8000-000000000002'
+  ),
+  'Phase 1C v2 Author test revocation'
 );
 
-select public.grant_role(
+insert into public.role_grants (
+  user_id,
+  role,
+  granted_by,
+  grant_reason
+) values (
   '10000000-0000-4000-8000-000000000003',
   'admin',
+  '10000000-0000-4000-8000-000000000001',
   'Phase 1C admin test grant'
 );
 
-reset role;
-
-set local role authenticated;
 select set_config(
   'request.jwt.claim.sub',
   '10000000-0000-4000-8000-000000000003',
   true
 );
 
-select public.grant_role(
+select public.grant_author_role_v2(
+  '11000000-0000-4000-8000-000000000003',
   '10000000-0000-4000-8000-000000000002',
-  'author',
-  'Admin may grant Author'
+  private.identity_access_state_token(
+    '10000000-0000-4000-8000-000000000002'
+  ),
+  'Admin may grant Author through v2'
 );
+
+set local role authenticated;
 
 do $$
 begin
@@ -338,24 +367,43 @@ $$;
 
 reset role;
 
-set local role authenticated;
 select set_config(
   'request.jwt.claim.sub',
   '10000000-0000-4000-8000-000000000001',
   true
 );
 
-select public.set_membership_state(
-  '10000000-0000-4000-8000-000000000003',
-  'suspended',
-  'Phase 1C suspension test'
-);
+do $$
+begin
+  perform public.set_ordinary_membership_state_v2(
+    '11000000-0000-4000-8000-000000000004',
+    '10000000-0000-4000-8000-000000000003',
+    'suspended',
+    private.identity_access_state_token(
+      '10000000-0000-4000-8000-000000000003'
+    ),
+    'Elevated Membership mutation must stay deferred'
+  );
+  raise exception 'v2 changed an elevated Membership unexpectedly';
+exception
+  when insufficient_privilege then
+    null;
+end;
+$$;
 
-reset role;
+select public.set_ordinary_membership_state_v2(
+  '11000000-0000-4000-8000-000000000005',
+  '10000000-0000-4000-8000-000000000002',
+  'suspended',
+  private.identity_access_state_token(
+    '10000000-0000-4000-8000-000000000002'
+  ),
+  'Phase 1C ordinary Membership suspension test'
+);
 
 do $$
 begin
-  if private.is_active_member('10000000-0000-4000-8000-000000000003') then
+  if private.is_active_member('10000000-0000-4000-8000-000000000002') then
     raise exception 'suspended membership retained active capability';
   end if;
 

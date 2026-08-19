@@ -6,6 +6,8 @@ import { describe, expect, it } from "vitest";
 const migrationName = "20260817104616_admin_p1_identity_access_ledger.sql";
 const readMigrationName = "20260817121610_admin_p1_identity_access_reads.sql";
 const writeMigrationName = "20260817125140_admin_p1_identity_access_writes.sql";
+const cutoverMigrationName =
+  "20260819225318_admin_p1_identity_access_cutover.sql";
 
 async function migration() {
   return readFile(
@@ -28,6 +30,13 @@ async function readMigration() {
 async function writeMigration() {
   return readFile(
     resolve(process.cwd(), "../../supabase/migrations", writeMigrationName),
+    "utf8",
+  );
+}
+
+async function cutoverMigration() {
+  return readFile(
+    resolve(process.cwd(), "../../supabase/migrations", cutoverMigrationName),
     "utf8",
   );
 }
@@ -382,5 +391,76 @@ describe("Admin P1-02C execute-closed write RPC migration contract", () => {
     expect(sql).not.toContain("list_identity_access_audit_v1");
     expect(sql).not.toContain("user_metadata");
     expect(sql).not.toContain("auth.users");
+  });
+});
+
+describe("Admin P1-04A atomic write RPC cutover migration contract", () => {
+  it("revokes the exact legacy signatures before granting the exact v2 signatures", async () => {
+    const sql = await cutoverMigration();
+    const legacyRevoke = sql.indexOf(
+      "revoke execute on function public.grant_role(\n    uuid,",
+    );
+    const legacyAssertion = sql.indexOf("IDENTITY_ACCESS_LEGACY_REVOKE_FAILED");
+    const v2Grant = sql.indexOf(
+      "grant execute on function public.grant_author_role_v2(",
+    );
+
+    expect(legacyRevoke).toBeGreaterThan(0);
+    expect(legacyRevoke).toBeLessThan(legacyAssertion);
+    expect(legacyAssertion).toBeLessThan(v2Grant);
+    expect(sql.match(/revoke execute on function public\./g)).toHaveLength(3);
+    expect(sql.match(/grant execute on function public\./g)).toHaveLength(3);
+  });
+
+  it("uses one atomic statement with a governance lock and fail-closed assertions", async () => {
+    const sql = await cutoverMigration();
+
+    expect(sql.match(/^do \$\$/gm)).toHaveLength(1);
+    expect(sql).toContain("fandom-harbor:identity-access-governance");
+    expect(sql).toContain("IDENTITY_ACCESS_CUTOVER_SIGNATURE_DRIFT");
+    expect(sql).toContain("IDENTITY_ACCESS_V2_CATALOG_DRIFT");
+    expect(sql).toContain("IDENTITY_ACCESS_V2_GRANT_FAILED");
+    expect(sql).not.toMatch(/\b(?:begin|commit|rollback)\s*;/i);
+    expect(sql).not.toMatch(/\bexecute\s+(?:format|immediate)/i);
+  });
+
+  it("grants only authenticated access to the three narrow v2 writes", async () => {
+    const sql = await cutoverMigration();
+
+    expect(sql).toContain(
+      "grant execute on function public.grant_author_role_v2(\n    uuid,\n    uuid,\n    text,\n    text\n  ) to authenticated;",
+    );
+    expect(sql).toContain(
+      "grant execute on function public.revoke_author_role_v2(\n    uuid,\n    uuid,\n    text,\n    text\n  ) to authenticated;",
+    );
+    expect(sql).toContain(
+      "grant execute on function public.set_ordinary_membership_state_v2(\n    uuid,\n    uuid,\n    public.membership_state,\n    text,\n    text\n  ) to authenticated;",
+    );
+    expect(sql).not.toMatch(/grant execute on all functions/i);
+    expect(sql).not.toMatch(/grant .* on schema/i);
+    expect(sql).not.toMatch(/\bto\s+(?:public|anon|service_role)\s*;/i);
+  });
+
+  it("keeps every private helper and executor in the deny assertions", async () => {
+    const sql = await cutoverMigration();
+
+    for (const helper of [
+      "normalize_identity_access_reason(text)",
+      "identity_access_reason_is_valid(text)",
+      "require_identity_access_reason(text)",
+      "identity_access_expected_state_snapshot(uuid)",
+      "identity_access_state_token(uuid)",
+      "identity_access_payload_fingerprint(text,uuid,text,text,text)",
+      "prevent_identity_access_ledger_mutation()",
+      "prevent_audit_log_mutation()",
+      "execute_identity_access_ordinary_mutation(text,uuid,uuid,text,text,text)",
+    ]) {
+      expect(sql).toContain(`private.${helper}`);
+    }
+
+    expect(sql).not.toMatch(/grant execute on function private\./i);
+    expect(sql).not.toMatch(/create (?:or replace )?function/i);
+    expect(sql).not.toMatch(/\b(?:create|alter|drop)\s+table\b/i);
+    expect(sql).not.toContain("user_metadata");
   });
 });

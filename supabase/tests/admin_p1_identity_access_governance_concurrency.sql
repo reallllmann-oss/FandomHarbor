@@ -555,12 +555,15 @@ begin
     'public.revoke_author_role_v2(uuid,uuid,text,text)'::regprocedure,
     'public.set_ordinary_membership_state_v2(uuid,uuid,public.membership_state,text,text)'::regprocedure
   ] loop
-    foreach v_role in array array[
-      'public',
-      'anon',
+    if not pg_catalog.has_function_privilege(
       'authenticated',
-      'service_role'
-    ] loop
+      v_function,
+      'execute'
+    ) then
+      raise exception 'authenticated lost execute on %', v_function;
+    end if;
+
+    foreach v_role in array array['public', 'anon', 'service_role'] loop
       if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
         raise exception '% gained execute on %', v_role, v_function;
       end if;

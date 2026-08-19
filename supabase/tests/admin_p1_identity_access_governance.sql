@@ -69,21 +69,46 @@ begin
     raise exception 'P1 ordinary governance added an elevated write RPC';
   end if;
 
-  if not pg_catalog.has_function_privilege(
-    'authenticated',
+  foreach v_function in array array[
     'public.grant_role(uuid,public.elevated_role,text)',
-    'execute'
-  ) or not pg_catalog.has_function_privilege(
-    'authenticated',
     'public.revoke_role(uuid,public.elevated_role,text)',
-    'execute'
-  ) or not pg_catalog.has_function_privilege(
-    'authenticated',
-    'public.set_membership_state(uuid,public.membership_state,text)',
-    'execute'
-  ) then
-    raise exception 'P1-02A changed the legacy RPC cutover state';
-  end if;
+    'public.set_membership_state(uuid,public.membership_state,text)'
+  ] loop
+    foreach v_role in array array[
+      'public',
+      'anon',
+      'authenticated',
+      'service_role'
+    ] loop
+      if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
+        raise exception 'cutover left legacy execute for % on %',
+          v_role,
+          v_function;
+      end if;
+    end loop;
+  end loop;
+
+  foreach v_function in array array[
+    'public.grant_author_role_v2(uuid,uuid,text,text)',
+    'public.revoke_author_role_v2(uuid,uuid,text,text)',
+    'public.set_ordinary_membership_state_v2(uuid,uuid,public.membership_state,text,text)'
+  ] loop
+    if not pg_catalog.has_function_privilege(
+      'authenticated',
+      v_function,
+      'execute'
+    ) then
+      raise exception 'cutover did not open v2 execute on %', v_function;
+    end if;
+
+    foreach v_role in array array['public', 'anon', 'service_role'] loop
+      if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
+        raise exception 'cutover broadened v2 execute for % on %',
+          v_role,
+          v_function;
+      end if;
+    end loop;
+  end loop;
 end;
 $$;
 

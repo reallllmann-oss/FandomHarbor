@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-19 — Admin P1-04A Ordinary Write RPC Atomic Cutover
+
+- Added one local-only atomic cutover Migration that validates exact signatures and ACL preconditions, revokes the three legacy Membership/Role RPCs, proves deny, then grants only the three ordinary v2 RPCs to authenticated.
+- Added static migration contracts and a transaction/subtransaction rollback rehearsal; updated Phase 1C, P1 read/write/governance and concurrency SQL assertions to the post-cutover matrix.
+- Final local catalog: legacy `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12`, nine private helpers/executor `0/36`; no broad grant or elevated write function.
+- Two clean 20-Migration rebuilds and all 14 SQL suites pass, including idempotency, mismatch, expected-state Conflict, concurrency, Audit/Ledger rollback, elevated zero-write, final Super Admin and P0 Site Copy regression.
+- Service 57, Services 180, Database/Repository 142, workspace TypeScript/ESLint, targeted Prettier and security/scope gates pass.
+- No UI/Action/Auth/schema redesign, Commit, Push/PR, remote Migration/SQL/write, Production login, Unpause or Deployment; Admin Production remains `paused=true`, P1-04B/P1.1 not started.
+
 ## 2026-08-19 — Admin P1-03 Read-only Access UI
 
 - 以 P1-02G Closure Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 为唯一基线建立独立 P1-03 Worktree/Branch。

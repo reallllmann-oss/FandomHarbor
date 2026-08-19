@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P1-04A Ordinary Write RPC Atomic Cutover（2026-08-19）
+
+- Product Owner accepted the P1-04 ACL blocker and authorized only a local atomic cutover Migration, ACL/rollback tests and documentation on P1-03 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`.
+- Migration `20260819225318_admin_p1_identity_access_cutover.sql` is one fail-closed `DO` statement under the global governance transaction lock: exact catalog/before-state → revoke legacy → prove deny → grant three v2 to authenticated → final/private assertions.
+- Final local ACL is legacy `0/12`, ordinary v2 authenticated-only `3/12`, read authenticated-only `3/12`, and nine private helpers/executor `0/36`; no broad/PUBLIC/anon/service-role grant exists.
+- Local failure rehearsal restores the pre-cutover ACL after a forced mid-cutover failure, rehearses the complete switch and rolls back all rehearsal changes. Operational rollback stays read-only and never reopens legacy RPCs.
+- Two clean 20-Migration rebuilds, 14 SQL suites, Service 57, Services 180 and Database/Repository 142 pass. Idempotency, mismatch, expected-state Conflict, concurrency, Audit/Ledger rollback, elevated zero-write, final Super Admin and P0 Site Copy remain intact.
+- No UI/Action/Service/Repository/Domain/Auth change, Commit, Push/PR, remote apply/SQL/write, login, Unpause or Deployment occurred. Admin Production remains `paused=true`; P1-04B and P1.1 were not started.
+
 ## Admin P1-03 Read-only Access UI（2026-08-19）
 
 - 从已验收 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 建立独立 P1-03 Worktree/Branch；不回退基线，不修改其他 P1 或受保护 release 工作区。
