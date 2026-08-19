@@ -15,6 +15,7 @@ import {
   type AccessGovernanceReadError,
   type AccessGovernanceSearchParams,
 } from "../../lib/access-governance-data";
+import { AccessMutationPanel } from "./mutation-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -157,7 +158,7 @@ function DetailPanel({ detail }: { detail: IdentityAccessSubjectDetail }) {
             </p>
           </div>
           <span className="rounded-full border border-border bg-surface-muted px-3 py-1 text-xs font-medium">
-            只读
+            读取 + 普通治理
           </span>
         </div>
 
@@ -273,7 +274,8 @@ function DetailPanel({ detail }: { detail: IdentityAccessSubjectDetail }) {
       <article className="rounded-card border border-border bg-surface-muted p-5 sm:p-6">
         <p className="eyebrow">Expected state</p>
         <p className="mt-3 text-sm text-muted-foreground">
-          数据库生成的只读状态指纹。P1-03 不使用它提交任何变更。
+          数据库生成的状态指纹。普通治理 Review 会绑定此基线；状态变化时返回
+          Conflict。
         </p>
         <code className="mt-3 block overflow-x-auto rounded-control border border-border bg-background p-3 text-xs">
           {detail.expectedState.token.value}
@@ -426,7 +428,7 @@ export function AccessGovernanceView({
         <div className="flex flex-wrap items-center gap-3">
           <p className="eyebrow">Identity &amp; Access Governance</p>
           <span className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-            只读目录
+            受控治理
           </span>
         </div>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -434,7 +436,8 @@ export function AccessGovernanceView({
         </h1>
         <p className="mt-4 max-w-3xl text-muted-foreground">
           查询脱敏身份、Membership、有效 Role
-          与相关治理记录。每次读取都会重新验证当前后台访问权限。
+          与相关治理记录，并对普通账户执行受控 Membership / Author
+          治理。每次调用都会重新验证当前后台访问权限。
         </p>
       </section>
 
@@ -521,7 +524,21 @@ export function AccessGovernanceView({
         </section>
 
         {data.selectedSubject ? (
-          <DetailPanel detail={data.selectedSubject} />
+          <div className="site-stack">
+            <DetailPanel detail={data.selectedSubject} />
+            <AccessMutationPanel
+              authorActive={data.selectedSubject.activeRoleGrants.some(
+                (grant) => grant.role === "author",
+              )}
+              expectedStateToken={
+                data.selectedSubject.expectedState.token.value
+              }
+              isElevatedAccount={data.selectedSubject.isElevatedAccount}
+              membershipState={data.selectedSubject.membership.state}
+              registrationName={data.selectedSubject.profile.registrationName}
+              targetUserId={data.selectedSubject.profile.userId.value}
+            />
+          </div>
         ) : (
           <section className="empty-state" aria-label="身份详情">
             <p className="eyebrow">Subject detail</p>
@@ -537,12 +554,12 @@ export function AccessGovernanceView({
       <AuditPanel data={data} />
 
       <section className="rounded-card border border-border bg-surface-muted p-5 sm:p-6">
-        <p className="eyebrow">Unavailable capabilities</p>
-        <h2 className="mt-2 text-xl font-semibold">治理写入尚未开放</h2>
+        <p className="eyebrow">Deferred capabilities</p>
+        <h2 className="mt-2 text-xl font-semibold">Elevated 治理仍未开放</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-          P1-03 不提供 Membership 变更、Author Role 授予或撤销，也不提供 Admin /
-          Super Admin 或 elevated-account 写入。普通写入仍等待 P1-04
-          独立授权；elevated 写入继续受 KI-033 延期边界保护。
+          当前只允许 ordinary-account Membership 与 Author Role 治理。Admin /
+          Super Admin Role 及 elevated-account Membership 写入继续受 KI-033
+          延期边界保护， 不存在可执行控件或旧 RPC 绕过路径。
         </p>
       </section>
     </div>

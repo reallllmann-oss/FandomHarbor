@@ -1977,3 +1977,12 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 - Desktop、Tablet and Mobile typography/reflow checks pass without horizontal overflow.
 - Default-closed、open / adjust / close、preference persistence and theme compatibility checks pass.
 - No database、Supabase、Migration、Auth、permission or business-logic change was introduced.
+
+## 2026-08-20 — Admin P1-04B Ordinary Governance UI
+
+- Added ordinary Membership and Author Grant/Revoke reason/Review/confirm UI and a
+  narrow Server Action using the existing Governance Service/Repository/v2 RPC chain.
+- Added stable requestId retry, expected-state Conflict, safe result/error display,
+  Detail/Audit refresh, elevated no-control boundary and targeted tests/evidence.
+- No Migration/RPC/RLS/Grant/Auth/dependency/config change, Commit, Push/PR, remote
+  operation, login, Unpause or Deployment; P1-05/P1.1 not started.

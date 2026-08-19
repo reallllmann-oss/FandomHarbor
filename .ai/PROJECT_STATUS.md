@@ -1304,3 +1304,13 @@ V1 Release Deployment — BLOCKED（Local gates PASS / Preview 未执行）
 - UX-06C Step 02 is Product Owner accepted and formally closed. Step 03 remains unauthorized.
 - Chapter Reading now combines the accepted responsive typography rhythm with progressive disclosure: the complete existing settings controls are hidden by default behind one accessible `Aa / 阅读设置` entry.
 - Reader preference values、local storage、theme behavior、published-only access、navigation、history and bookmark contracts remain unchanged.
+
+## Admin P1-04B Ordinary Governance UI（2026-08-20）
+
+- Baseline `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`; branch/worktree unchanged.
+- `/access` now implements ordinary Membership and Author Grant/Revoke through
+  normalized reason, server-prepared Review, stable requestId, separate confirm and
+  `Saved | Unchanged | Conflict`; Action calls only the P1-02F Service.
+- Elevated targets render read-only deferred guidance; KI-033 remains unresolved.
+- No Commit/Push/PR, database/Auth/config change, remote side effect, login, Unpause
+  or Deployment. Admin Production remains `paused=true`; P1-05/P1.1 not started.

@@ -16,7 +16,9 @@ export type AdminIdentityAccessGovernanceReads = Pick<
   "getSubjectDetail" | "listSubjectAudit" | "searchSubjects"
 >;
 
-export async function createAdminIdentityAccessGovernanceReads(): Promise<AdminIdentityAccessGovernanceReads> {
+export type AdminIdentityAccessGovernance = IdentityAccessGovernanceService;
+
+export async function createAdminIdentityAccessGovernance(): Promise<AdminIdentityAccessGovernance> {
   const cookieStore = await cookies();
   const cookieAdapter = {
     getAll: () => cookieStore.getAll(),
@@ -40,7 +42,7 @@ export async function createAdminIdentityAccessGovernanceReads(): Promise<AdminI
     runtime,
     cookieAdapter,
   );
-  const service = createIdentityAccessGovernanceService({
+  return createIdentityAccessGovernanceService({
     access: {
       async getCurrent() {
         const session = await auth.getSession();
@@ -52,7 +54,10 @@ export async function createAdminIdentityAccessGovernanceReads(): Promise<AdminI
     read: repository,
     write: repository,
   });
+}
 
+export async function createAdminIdentityAccessGovernanceReads(): Promise<AdminIdentityAccessGovernanceReads> {
+  const service = await createAdminIdentityAccessGovernance();
   return {
     getSubjectDetail: (input) => service.getSubjectDetail(input),
     listSubjectAudit: (input) => service.listSubjectAudit(input),

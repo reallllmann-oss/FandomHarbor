@@ -29,25 +29,27 @@ describe("P1-03 /access read-only route contract", () => {
     expect(page).toContain("暂无相关治理记录");
     expect(page).toContain("ReadErrorState");
     expect(page).toContain('role="alert"');
-    expect(page).toContain("Unavailable capabilities");
+    expect(page).toContain("Deferred capabilities");
     expect(loading).toContain('role="status"');
     expect(loading).toContain("正在读取身份与权限");
   });
 
-  it("uses only a GET search control and has no mutation UI or Action", async () => {
-    const page = await source("./page.tsx");
+  it("keeps GET search while mounting only the ordinary governance panel", async () => {
+    const [page, panel] = await Promise.all([
+      source("./page.tsx"),
+      source("./mutation-panel.tsx"),
+    ]);
 
     expect(page).toContain('method="get"');
     expect(page).toContain('type="search"');
     expect(page).toContain('type="submit"');
-    expect(page.match(/<button/gu)).toHaveLength(1);
-    expect(page).not.toContain("action={");
-    expect(page).not.toContain('from "./actions"');
-    expect(page).not.toContain("<textarea");
-    expect(page).not.toContain("<select");
-    expect(page).not.toMatch(
-      /name="(?:reason|requestId|role|state|membershipState)"/u,
-    );
+    expect(page).toContain("<AccessMutationPanel");
+    expect(panel).toContain("governOrdinaryAccessAction");
+    expect(panel).toContain('operation="grantAuthorRole"');
+    expect(panel).toContain('operation="revokeAuthorRole"');
+    expect(panel).toContain('operation="setOrdinaryMembershipState"');
+    expect(panel).not.toMatch(/adminRole|superAdminRole|genericRole/u);
+    expect(panel).not.toContain('name="requestId"');
   });
 
   it("uses the exact three approved read methods without direct database access", async () => {
@@ -70,6 +72,16 @@ describe("P1-03 /access read-only route contract", () => {
     expect(adapter).toContain('"listSubjectAudit"');
     expect(adapter).toContain('"searchSubjects"');
     expect(adapter).not.toContain("client.rpc");
+  });
+
+  it("renders no executable mutation controls for elevated accounts", async () => {
+    const panel = await source("./mutation-panel.tsx");
+
+    expect(panel).toContain("if (props.isElevatedAccount)");
+    expect(panel).toContain("此处没有可执行控件或隐藏入口");
+    expect(panel.indexOf("if (props.isElevatedAccount)")).toBeLessThan(
+      panel.indexOf("<MutationForm"),
+    );
   });
 
   it("displays only the frozen minimal governance fields", async () => {

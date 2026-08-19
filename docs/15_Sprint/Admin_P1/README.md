@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-04A LOCAL ATOMIC CUTOVER COMPLETE — COMMIT NOT AUTHORIZED`
+状态：`P1-04B LOCAL ORDINARY GOVERNANCE UI COMPLETE — COMMIT NOT AUTHORIZED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -13,8 +13,8 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted                |
 | P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed                        |
 | P1-03  | Read-only Directory / Search / Detail        | Complete — committed                                 |
-| P1-04A | Ordinary write RPC atomic cutover            | Local implementation complete; Commit not authorized |
-| P1-04B | Controlled Membership / Author Role UI       | Not started / not authorized                         |
+| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                                 |
+| P1-04B | Controlled Membership / Author Role UI       | Local implementation complete; Commit not authorized |
 | P1-05  | Local + dedicated non-Production remote QA   | Not authorized                                       |
 | P1-06  | Protected Preview Acceptance                 | Not authorized                                       |
 | P1-07  | Production Release Review                    | Not authorized                                       |
@@ -34,6 +34,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-02G Backend Closure and UI Handoff](P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)
 - [P1-03 Local Acceptance Evidence](P1_03_ACCEPTANCE_EVIDENCE.md)
 - [P1-04A Local Acceptance Evidence](P1_04A_ACCEPTANCE_EVIDENCE.md)
+- [P1-04B Local Acceptance Evidence](P1_04B_ACCEPTANCE_EVIDENCE.md)
 - [Admin Identity & Access Governance](../../11_Admin/IDENTITY_ACCESS_GOVERNANCE.md)
 - [ADR-021](../../17_Architecture_Decisions/ADR-021.md)
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
@@ -45,4 +46,4 @@ P1-02A–F 已形成独立本地 Commit。P1-02G 在父提交 `edd78c190002340ea
 
 P1-03 基于 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 完成并形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：`/access` 使用 Search、Detail 与 Audit 三个既有 Governance Service read，按调用执行 fresh live-access check，展示冻结的最小身份、Membership、Role、expected-state 与治理 Audit。页面只有 GET 查询和链接导航；旧 mutation Action 不再被页面引用。P1-03 Closure 时 write execute 仍为 0/12、旧 RPC 尚未 cutover；其后的本地 ACL 状态由 P1-04A 段落取代。Loading、loaded、empty、unauthorized、recoverable error 与 unavailable/deferred 状态均已覆盖。
 
-P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04 初始审计确认 write ACL blocker 后，Product Owner 单独授权 P1-04A：本地 Migration 已原子撤销三个旧 RPC 的全部应用角色 execute，并只向 `authenticated` grant 三个窄 v2 RPC。最终 old `0/12`、v2 `3/12`、private helper/executor `0/36`、read `3/12`；两次 20-Migration rebuild、14 个 SQL suite、Service 57、Services 180、Database 142 与回滚演练通过。P1-04A 未 Commit/远程 apply；P1-04B UI/Action 与 P1.1 均未开始。证据见 [`P1_04A_ACCEPTANCE_EVIDENCE.md`](P1_04A_ACCEPTANCE_EVIDENCE.md)。
+P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在该本地 ACL 基线上完成 ordinary Membership 与 Author Grant/Revoke 的 reason → Review → 独立确认 → `Saved | Unchanged | Conflict` UI/Action。每次 Review 通过 Service 重新读取并绑定数据库 expected-state，Action 生成稳定 requestId；确认只调用一次 Service mutation，安全显式重试复用同一 ID，Conflict 强制刷新与新 Review。Elevated 账户只有读取与延期说明，无写控件。未修改数据库/Auth/依赖或远程状态，P1.1 仍未开始。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](P1_04B_ACCEPTANCE_EVIDENCE.md)。

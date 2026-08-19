@@ -1138,3 +1138,13 @@ AO3 核心功能：
 - 2026-06-28: Added the initial language policy and made it mandatory startup context.
 - 2026-06-28: Phase 0.6 completed final documentation architecture, registries, ADRs, Phase packages and AI behavior contract. No application code or packages introduced.
 - 2026-07-12: Product Owner accepted UX-06C Step 02. Reading typography, rhythm and progressive Reading controls are frozen; existing preference values, storage and theme behavior remain unchanged. Step 03 is not authorized.
+
+## Admin P1-04B Ordinary Governance UI（2026-08-20）
+
+- P1-04B adds only ordinary Membership state and Author Grant/Revoke to the P1-03
+  read UI. Review re-reads through Service, normalizes reason, binds expected-state
+  and creates a server-owned stable requestId; confirm invokes at most one mutation.
+- Safe explicit retry reuses the same requestId; Conflict retains current snapshot/
+  token, clears the executable Review and requires refresh/new Review.
+- Elevated writes remain non-executable and deferred by KI-033. No database, remote,
+  Production or release action occurred; no Commit is authorized yet.

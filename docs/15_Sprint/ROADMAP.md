@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-03 local read-only Access UI complete; commit not authorized; elevated mutations deferred
+Status: Active — Admin P1-04B local ordinary governance UI complete; commit not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -133,6 +133,8 @@ P1-03 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐�
 P1-02A–G 已 Commit。P1-03 只读 `/access` 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：通过 P1-02F Service 的 Search/Detail/Audit 三个 read 和逐调用 live-access check 展示最小治理信息，覆盖稳定分页、loading、empty、unauthorized、safe read error 与延期提示。页面仍无写表单、mutation Action 绑定或 direct database/RPC，Web Admin 入口继续关闭。P1-03 Closure 当时的 write-closed/legacy-open ACL 已由随后单独授权的 P1-04A 本地 cutover 取代。证据见 [`P1_03_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md)。
 
 P1-04A 仅完成本地数据库权限切换，不修改 `/access`、Action、Service、Repository、Auth 或业务 schema。原子顺序为 exact preconditions → revoke old → prove deny → grant three v2 → final/private assertions；本地失败回滚演练证明不会留下半切换 ACL。P1-04B ordinary Review/Action/UI 仍需单独授权，P1.1 elevated governance 继续延期。证据见 [`P1_04A_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md)。
+
+P1-04A 已 Commit。P1-04B 已在 `/access` 本地实现 ordinary Membership 与 Author Role 的规范化 reason、Review、独立确认、稳定 requestId、expected-state 与 `Saved | Unchanged | Conflict`；调用链保持 Action → P1-02F Service → strict Repository → v2 RPC，elevated 账户无可执行控件。未 Commit、未远程 apply，P1-05/P1.1 未开始。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 
