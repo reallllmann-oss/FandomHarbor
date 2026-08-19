@@ -1,5 +1,37 @@
 # Project Status
 
+## Admin P1-02G Backend Closure and UI Handoff（2026-08-18）
+
+| 项目                  | 当前状态                                                                 |
+| --------------------- | ------------------------------------------------------------------------ |
+| Parent baseline       | `edd78c190002340eaa2091860e5eb997785b7528`                               |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02G` / `codex/admin-p1-02g-backend-closure`       |
+| Backend slices        | P1-02A–F committed; P1-02G local validation complete                     |
+| Database rebuild      | 19 migrations / 13 SQL suites PASS                                       |
+| Read RPC ACL          | exact authenticated execute; PUBLIC/anon/service_role denied             |
+| Write RPC ACL         | 12/12 application-role combinations `execute=false`                      |
+| Immutability / RLS    | Ledger + Audit guards PASS; private schema unexposed; no grant expansion |
+| Semantic regression   | Saved/Unchanged/Conflict, replay, concurrency, rollback PASS             |
+| Application tests     | Domain 53; Repository 24; Service 57; Services 180; Database 138         |
+| Static/security gates | TypeScript, ESLint, database lint, security advisor PASS                 |
+| P1-03 / P1-04         | handoff frozen / NOT AUTHORIZED                                          |
+| Elevated / KI-033     | DEFERRED / `ACCEPTED DEFERRED BOUNDARY`                                  |
+| Commit / remote state | NONE / UNCHANGED                                                         |
+| Admin Production      | `paused=true`                                                            |
+| P0 Site Copy          | Production authority Version 7 / unchanged                               |
+
+- P1-03 is read-only `/access`: three read Service use cases, per-read live access,
+  no write controls, no P1-02C execute, and no Web Admin entry.
+- P1-04 remains a separate Owner Gate for ordinary Membership/Author Role
+  Edit/Review/reason/confirm, Action-generated fixed requestId, latest expected-state,
+  exact result handling, and atomic revoke-old/prove-deny/grant-v2 cutover. Rollback
+  is read-only and must not reopen old RPCs.
+- P1.1 Elevated Access Governance requires a future independent Auth ADR and Product
+  Owner authorization after P1. No MFA/AAL2, proof, elevated mutation, remote action,
+  UI wiring, cutover, login, Unpause, Deployment, or Commit occurred in P1-02G.
+
+Closure and handoff: `docs/15_Sprint/Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`.
+
 ## Admin P1-02F Live-Access Identity Governance Service（2026-08-18）
 
 | 项目                  | 当前状态                                                              |

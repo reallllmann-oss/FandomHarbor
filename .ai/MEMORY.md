@@ -1,5 +1,16 @@
 # Project Memory
 
+## Admin P1-02G Backend Closure and UI Handoff（2026-08-18）
+
+- 从 P1-02F Closure Commit `edd78c190002340eaa2091860e5eb997785b7528` 建立独立 P1-02G Worktree/Branch；P1-00–F 与受保护 release 工作区未修改。
+- clean local reset 依序应用全部 19 个 Migration；P1-02A/B/C、Identity、P0 Site Copy 与两个并发 suite 等 13 个 SQL suite 全部通过。Database lint 无 error（仅两个既有 P0 cast warning），security advisor 无 issue。
+- 最终 Catalog 保持 Search/Audit stable invoker、Detail 严格只读 stable definer；三个 read 仅向 authenticated 开放准确签名。三个 ordinary write 的 12 项应用角色 ACL 全部 false；private helper/executor deny、RLS、private schema 非暴露、Ledger/Audit 不可变和最后 active Super Admin guard 不变。
+- Saved/Unchanged/Conflict、same-request replay、mismatch、同/异 request 并发、Audit/Ledger 原子回滚与 elevated-target 零写入回归通过；旧 RPC execute 不变且未 cutover。
+- Domain 53、Repository 24、Service 57、Services 180、Database 138 测试与全工作区 TypeScript/ESLint 通过。Domain → strict Repository → live-access Service 继续保持 provider-neutral、strict unknown parsing、错误清洗、mutation no-retry 和单次 live-access/Port 边界。
+- P1-03 handoff 仅允许 `/access` read UI 与三个读取 Service，不开放写 RPC、不显示写控件、不启用 Web Admin 入口。P1-04 handoff 只冻结 ordinary Membership/Author Role Review/Action/result 与原子 cutover；两者均未授权实施。
+- ADR-022 Option 3 与 KI-033 未解决边界不变；elevated mutations 继续延期。P1.1 Elevated Access Governance 与邀请管理分别等待未来 Product Owner 明确授权，不得互相隐式扩围。
+- P1-02G 仅六份 docs，未 Commit/Push/PR、远程数据库操作、UI wiring、execute 开放、cutover、登录/Unpause/Deployment；Admin Production 仍 `paused=true`，P0 Production 权威记录仍 Version 7。
+
 ## Admin P1-02F Live-Access Governance Service（2026-08-18）
 
 - 从 P1-02E Closure Commit `cadb81053720a2e1885abe3e6f63a1b5196a64e1` 建立独立 P1-02F Worktree/Branch；P1-02E 与受保护 release 工作区未修改。

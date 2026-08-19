@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-18 — Admin P1-02G Backend Closure and UI Handoff
+
+- 以 P1-02F Closure Commit `edd78c190002340eaa2091860e5eb997785b7528` 为唯一父基线建立独立 P1-02G Worktree/Branch；其他 P1 Worktree 与受保护 release 工作区未变化。
+- 完成 19-Migration clean local reset、13 个 SQL suite、最终 Catalog/ACL/RLS/Data API exposure、Ledger/Audit immutability、最后 active Super Admin 和 P0 Site Copy 回归。
+- 证明三个 read RPC 保持 ADR-023 权限模式，三个 ordinary write 对四个应用角色的 12 项 execute 全部 false；private helper/executor deny 和旧 RPC ACL 保持，无 cutover。
+- Saved/Unchanged/Conflict、幂等 replay/mismatch、同/异 request 并发、Audit/Ledger 原子回滚和 elevated-target 零写入通过。
+- Domain 53、Repository 24、Service 57、Services 180、Database 138、全工作区 TypeScript/ESLint、database lint 与 security advisor 通过。
+- 新增 P1-02G Closure 文档，冻结 P1-03 read-only `/access` 和 P1-04 ordinary Review/Action/write/cutover 交接；Web Admin 入口、write execute、UI 与 Action 仍关闭。
+- ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY`、elevated mutation 延期与未来独立 P1.1 Owner Gate 不变；邀请管理仍独立延期。
+- 本次仅六份 docs，未 Commit/Push/PR、修改产品实现或数据库对象、远程 Migration/SQL/写入、开放 execute、cutover、登录/Unpause/Deployment，也未开始 P1-03、P1-04 或 P1.1。
+
 ## 2026-08-18 — Admin P1-02F Live-Access Identity Governance Service
 
 - 以 P1-02E Closure Commit `cadb81053720a2e1885abe3e6f63a1b5196a64e1` 为唯一父基线建立独立 P1-02F Worktree/Branch；未修改 P1-02E 或受保护 release 工作区。

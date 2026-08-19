@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-02F local live-access Service complete; closure commit not authorized; elevated mutations deferred
+Status: Active — Admin P1-02G local backend closure and UI handoff complete; commit not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,11 +124,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-02F LOCAL LIVE-ACCESS SERVICE COMPLETE / CLOSURE COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A–E 已形成独立本地 Commit；P1-02C 三个 ordinary write 与 private executor 对全部应用角色继续 execute closed。P1-02F 已在 `@fandom-harbor/services` 建立六用例 live-access Service：输入先经 P1-02D parser，每次调用重新取得 active Admin/Super Admin context，普通 mutation 先执行 elevated target precheck，再最多调用一次对应 Port。Service 不缓存权限、不生成 requestId、不重算 expected-state、不 retry mutation、不转换 Conflict，也不依赖具体 Repository、Supabase/PostgREST、RPC/wire、Next.js/React 或 UI。底层 Domain/Repository/Migration/RPC/RLS/Grant、`/access` 和 P0 Site Copy 不变。现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。
+状态：`P1-02G LOCAL BACKEND CLOSURE AND UI HANDOFF COMPLETE / COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-02A–F 已形成独立本地 Commit。P1-02G 在 clean local database 上完成 19 个 Migration、13 个 SQL suite、Catalog/ACL/RLS/不可变性、P0 Site Copy 以及 Domain/Repository/Service 的完整回归。三个 read RPC 保持 ADR-023 最小混合权限；P1-02C 三个 ordinary write 与全部 private executor/helper 对应用角色继续 execute closed，12 项 write ACL 均为 false。旧 Membership/Role RPC execute 未变且没有 cutover。
 
-普通治理仍按 P1-02A–G 逐步实施，每一步需 Product Owner 单独授权。P1-02F 仅完成本地 Service，未提交；P1-02G 未授权。Admin/Super Admin Role 与 elevated-account Membership 写入保持关闭。P1-03 只负责读取 UI；P1-04 才负责 Review/confirm、Server Action、write execute grant 与旧 RPC 原子 cutover。
+P1-03 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐读取 live-access check；不显示写控件、不开放 write execute，Web Admin 入口继续关闭。P1-04 保持独立 Owner Gate，只能覆盖 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Server Action、`Saved | Unchanged | Conflict` 展示和先撤旧、证明 deny、再开三个 v2 的单一原子 cutover；回滚不得重开旧 RPC。
 
-P1-02F 当前变更仅包含 provider-neutral Service、fake Port 单元测试、package export 与必要权威文档；没有数据库、具体 Repository、Action/UI、可调用新 write、远程状态变化、Commit、Admin Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，本地证据见 [`P1_02F_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md)。
+现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。Admin/Super Admin Role 与 elevated-account Membership 写入继续延期；P1.1 Elevated Access Governance 只能在整个 P1 完成后由 Product Owner 独立评估。邀请管理继续独立延期。P1-02G 仅修改六份 Closure/Handoff 文档，不授权 Commit、P1-03、P1-04、P1.1、远程数据库、登录、Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 
