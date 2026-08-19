@@ -1,5 +1,38 @@
 # Project Status
 
+## Admin P1-03 Read-only Access UI（2026-08-19）
+
+| 项目                  | 当前状态                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| Baseline              | `370d7b0541a51ed63dd4076e4d912b2309c9d072`                           |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-03` / `codex/admin-p1-03-read-only-access-ui` |
+| Route                 | Admin `/access` read-only                                            |
+| Service integration   | Search + Detail + Audit reads only                                   |
+| Authorization         | fresh P1-02F live-access check per Service call                      |
+| UI states             | loading / loaded / empty / unauthorized / safe error / deferred      |
+| Mutation surface      | NONE — GET search and links only                                     |
+| Write ACL / old RPC   | 0/12 application execute / unchanged, no cutover                     |
+| Database/Auth changes | NONE                                                                 |
+| Tests                 | P1-03 16; Admin 70; Service 57; Services 180; Database 138 PASS      |
+| Build / static gates  | Admin production build; workspace TypeScript/ESLint PASS             |
+| Local smoke           | anonymous `/access` → sign-in redirect contract PASS                 |
+| P1-04 / P1.1          | NOT AUTHORIZED / NOT AUTHORIZED                                      |
+| Commit / remote state | NONE / UNCHANGED                                                     |
+| Admin Production      | `paused=true`                                                        |
+| Web Admin entry       | disabled / unchanged                                                 |
+| P0 Site Copy          | Production authority Version 7 / unchanged                           |
+
+- `/access` no longer imports the legacy mutation Actions. A narrow server facade
+  exposes only `searchSubjects`, `getSubjectDetail`, and `listSubjectAudit`; the
+  Service and strict Repository remain the authorization and parsing authorities.
+- The page displays only frozen desensitized identity, Membership, Role Grant,
+  expected-state/protection flags, and governance Audit. It has no reason,
+  requestId, write result, Review/confirm, mutation method, or direct database path.
+- P1-04 ordinary write UI/cutover and P1.1 elevated governance were not started.
+  No Commit, Push, PR, remote database operation, login, Unpause, or Deployment.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md`.
+
 ## Admin P1-02G Backend Closure and UI Handoff（2026-08-18）
 
 | 项目                  | 当前状态                                                                 |

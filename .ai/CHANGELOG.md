@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-19 — Admin P1-03 Read-only Access UI
+
+- 以 P1-02G Closure Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 为唯一基线建立独立 P1-03 Worktree/Branch。
+- 将 Admin `/access` 旧 mutation 表单替换为只读身份目录、Search、Detail、Membership/Role/expected-state/protection 和 governance Audit 页面；新增 responsive、accessible loading/empty/error/deferred 状态与稳定分页导航。
+- 新增窄三读 server facade 与 page-data loader，只调用 P1-02F Search/Detail/Audit Service；每次调用保持 live-access，严格 Repository/Domain parsing 与 safe error 边界不变。
+- 页面不再引用旧 mutation Actions，只有 GET Search 和链接；无 direct database/RPC、write method、reason/requestId、Review/confirm、result 或 disabled mutation control。
+- 新增 2 files / 16 tests，覆盖三读集成、unauthorized/forbidden、empty/loading/read error、cursor fail-closed、无 mutation UI 与 provider boundary；Admin 70、Service 57、Services 180、Database 138、Admin production build、全工作区 TypeScript/ESLint 与本地匿名 redirect smoke 回归通过。
+- ordinary write ACL 仍 0/12，旧 RPC ACL 不变且无 cutover；未修改 Migration/RPC/RLS/Grant/Auth、Web Admin 入口或 Production 配置，未开始 P1-04/P1.1。
+- 本阶段未 Commit/Push/PR、远程数据库操作、Production login、Unpause 或 Deployment；Admin Production 仍 `paused=true`，P0 Production Site Copy 仍 Version 7。
+
 ## 2026-08-18 — Admin P1-02G Backend Closure and UI Handoff
 
 - 以 P1-02F Closure Commit `edd78c190002340eaa2091860e5eb997785b7528` 为唯一父基线建立独立 P1-02G Worktree/Branch；其他 P1 Worktree 与受保护 release 工作区未变化。

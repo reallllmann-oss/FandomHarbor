@@ -1,5 +1,16 @@
 # Project Memory
 
+## Admin P1-03 Read-only Access UI（2026-08-19）
+
+- 从已验收 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 建立独立 P1-03 Worktree/Branch；不回退基线，不修改其他 P1 或受保护 release 工作区。
+- 将 Admin `/access` 从旧 mutation 表单替换为只读目录、Search、Detail、active Role Grant、expected-state/protection flags 与治理 Audit 展示；响应式复用现有 Admin shell/styles。
+- 新 server facade 只向页面暴露 P1-02F `searchSubjects/getSubjectDetail/listSubjectAudit`；初始 Search 先完成 auth gate，Detail 成功后才读取 Audit，每次 Service 调用均重新检查 verified Session、active Membership、live Admin/Super Admin 与 `admin:operate`。
+- 页面无 direct table/RPC、provider error、`user_metadata`/JWT role auth 或业务逻辑复制；Repository 继续 unknown → strict Domain parser。Search/Audit/Detail 原 RPC 与最小字段合同不变。
+- Loading/loaded/subject-empty/Audit-empty/unauthorized/safe read error/deferred capability 状态完整；stable cursor 仅做 URL-safe transport，仍由 Domain parser 校验，非法/超长输入 fail closed。
+- 页面只含一个 GET Search 与链接；不引用旧 `access/actions.ts`，不调用三项 write Service，不包含 reason/requestId/Review/confirm/result 或 disabled mutation UI。旧 Action 文件与 RPC ACL 均未修改。
+- P1-03 16、Admin 70、Service 57、Services 180、Database 138 测试通过；Admin production build、全工作区 TypeScript/ESLint 与本地匿名 `/access` → sign-in redirect smoke 通过。普通 write ACL 仍为 0/12，P1-04/P1.1 未开始。
+- 未 Commit/Push/PR、Migration/RPC/RLS/Grant/Auth、远程数据库、Production login、Unpause 或 Deployment；Admin Production 仍 `paused=true`，Web Admin 入口关闭，P0 Production Site Copy 仍 Version 7。
+
 ## Admin P1-02G Backend Closure and UI Handoff（2026-08-18）
 
 - 从 P1-02F Closure Commit `edd78c190002340eaa2091860e5eb997785b7528` 建立独立 P1-02G Worktree/Branch；P1-00–F 与受保护 release 工作区未修改。
