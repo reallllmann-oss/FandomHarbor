@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1 ordinary governance local complete; P1-05A pass; P1-05B awaits execution authorization
+Status: Active — Admin P1 local complete; P1-05B Attempt 1 failed; R1 local ACL correction pass
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -136,9 +136,11 @@ P1-04A 仅完成本地数据库权限切换，不修改 `/access`、Action、Ser
 
 P1-04B 已形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。`/access` 本地实现 ordinary Membership 与 Author Role 的规范化 reason、Review、独立确认、稳定 requestId、expected-state 与 `Saved | Unchanged | Conflict`；调用链保持 Action → P1-02F Service → strict Repository → v2 RPC，elevated 账户无可执行控件。至此 ordinary governance 本地实现完成。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-P1 尚不具备 Closure 条件。P1-05 `Local + Dedicated Non-Production Remote QA` 是 `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` 的 P1 Closure blocker，负责在隔离的非 Production Supabase 验证 ordinary chain 与 Migrations A–D；Production 禁止作为测试环境。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。当前无 remote Migration/SQL/ACL apply、Production mutation、登录、Unpause 或 Deployment；Admin Production 保持 paused，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+P1 尚不具备 Closure 条件。P1-05 `Local + Dedicated Non-Production Remote QA` 仍是 P1 Closure blocker：Attempt 1 的 bootstrap 在 D 失败并完成 emergency fail-closed；R1 本地合同修正已通过但未 Commit，新的 clean QA retry 未授权。Production 禁止作为测试环境。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。R1 无 remote 或 Production 操作；Admin Production 保持 paused，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
-P1-05A preparation 已冻结 synthetic fixture、credential、write window、emergency close-writes、cleanup/retention、20-Migration apply、ACL/QA matrix 与 evidence 合同。P1-05A2 已创建 Free/Nano dedicated non-Production Project `fandom-harbor-admin-p1-qa`，并以非敏感 metadata 证明 ref、API/database host、Auth tenant 与 Production 隔离；region 同为 `ap-southeast-1`。P1-05A 为 `PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`；P1-05B 为 `READY FOR PRODUCT OWNER EXECUTION AUTHORIZATION / NOT AUTHORIZED / NOT STARTED`，不得因环境已创建而自动执行 Migration、fixture 或 QA。
+P1-05A preparation 已形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。P1-05B Attempt 1 的 fresh QA bootstrap 在 Migration D 因 Hosted legacy direct `anon` execute 与本地前置假设不一致而失败；1–19 已应用、D 未应用，未创建 fixture 或执行业务 QA。授权的 emergency fail-closed 已关闭全部六个 write RPC 的四角色 execute；该部分 QA 环境不得继续使用。
+
+P1-05B-1R1 本地修正保持 20-Migration 顺序和最终 ACL 不变：D 现在先验证 hard catalog/v2/private contracts，再原子收敛 legacy `PUBLIC/anon/authenticated/service_role` ACL，最终 old `0/12`、v2 `3/12`、read `3/12`、private `0/36`。Hosted direct/PUBLIC fixture、两次 clean rebuild、15 个 SQL suite 与全部应用回归通过。R1 等待独立 Closure Commit；新的 clean QA reprovision、Attempt 2、P1-05B-2、P1-06、P1-07 和 P1.1 均需 Product Owner 另行授权。证据见 [`P1_05B1_BOOTSTRAP_FAILURE_AND_FIX.md`](Admin_P1/P1_05B1_BOOTSTRAP_FAILURE_AND_FIX.md)。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 

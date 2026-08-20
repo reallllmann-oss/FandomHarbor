@@ -418,10 +418,24 @@ describe("Admin P1-04A atomic write RPC cutover migration contract", () => {
     expect(sql.match(/^do \$\$/gm)).toHaveLength(1);
     expect(sql).toContain("fandom-harbor:identity-access-governance");
     expect(sql).toContain("IDENTITY_ACCESS_CUTOVER_SIGNATURE_DRIFT");
+    expect(sql).toContain("IDENTITY_ACCESS_LEGACY_CATALOG_DRIFT");
     expect(sql).toContain("IDENTITY_ACCESS_V2_CATALOG_DRIFT");
     expect(sql).toContain("IDENTITY_ACCESS_V2_GRANT_FAILED");
+    expect(sql).not.toContain("IDENTITY_ACCESS_LEGACY_PRECONDITION_FAILED");
     expect(sql).not.toMatch(/\b(?:begin|commit|rollback)\s*;/i);
     expect(sql).not.toMatch(/\bexecute\s+(?:format|immediate)/i);
+  });
+
+  it("normalizes hosted direct and PUBLIC-inherited legacy execute before asserting the cutover", async () => {
+    const sql = await cutoverMigration();
+    const legacyRevoke = sql.indexOf(
+      "revoke execute on function public.grant_role(\n    uuid,",
+    );
+    const legacyAssertion = sql.indexOf("IDENTITY_ACCESS_LEGACY_REVOKE_FAILED");
+
+    expect(sql).toContain(") from public, anon, authenticated, service_role;");
+    expect(legacyRevoke).toBeGreaterThan(0);
+    expect(legacyRevoke).toBeLessThan(legacyAssertion);
   });
 
   it("grants only authenticated access to the three narrow v2 writes", async () => {

@@ -1,10 +1,19 @@
 # Project Memory
 
+## Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction（2026-08-20）
+
+- Attempt 1 on dedicated QA is historical failure evidence: Migrations 1–19 applied, D failed on `anon grant_role`, no fixtures/business QA, emergency fail-closed completed, Production untouched. The 19/20 Project is not reusable for continued P1-05B.
+- Root cause is direct-versus-effective ACL drift. PostgreSQL grants function execute through `PUBLIC`; existing Supabase Hosted defaults additionally create direct `anon/authenticated/service_role` grants. The owning legacy Migration revoked `PUBLIC` only, so the Hosted `anon=true` seen by D was a remaining direct grant. Local reset had no such direct `anon/service_role` aclitems.
+- Repository policy requires ordered Migration workflow and clean rebuilds but does not prohibit an explicitly authorized correction to a P1 Migration that remains unapplied to Production. R1 therefore minimally modifies D rather than adding a QA workaround or E.
+- D retains exact catalog, legacy/v2 owner/security/search-path, v2 execute-closed and private deny hard gates. Legacy application ACL is now normalizable: exact revokes from `PUBLIC/anon/authenticated/service_role`, prove old `0/12`, then grant v2 authenticated-only and prove `3/12` plus private `0/36` in the same atomic `DO`.
+- Hosted direct/PUBLIC regression, two clean 20-Migration rebuilds, 15 SQL suites, Database 143, Repository 24, Service 57, Services 180, Admin 82, TypeScript, ESLint and database lint pass. Read ACL/modes, elevated zero-write, rollback, final Super Admin and P0 remain unchanged.
+- R1 performed no remote QA or Production operation. It is `LOCAL PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`; clean QA reprovision/Attempt 2 and P1-05B-2 remain separate Owner gates.
+
 ## Admin P1-05A Dedicated QA Preparation（2026-08-20）
 
-- P1-05A preparation is `PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`. P1-05A2 created Free/Nano Project `fandom-harbor-admin-p1-qa` (`gqtchjrmpuxibxmurvfd`) in `ap-southeast-1`; non-sensitive metadata proves its ref, API/database host and Auth tenant differ from Production.
+- P1-05A preparation is complete in Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`. P1-05A2 created Free/Nano Project `fandom-harbor-admin-p1-qa` (`gqtchjrmpuxibxmurvfd`) in `ap-southeast-1`; non-sensitive metadata proves its ref, API/database host and Auth tenant differ from Production.
 - The preparation contract is complete for synthetic fixtures, credential handling, write window, emergency revoke of the three exact v2 signatures, cleanup/retention, all 20 Migrations with A–D last, expected ACLs, the full QA matrix and sanitized evidence.
-- P1-05B is `READY FOR PRODUCT OWNER EXECUTION AUTHORIZATION / NOT AUTHORIZED / NOT STARTED`; environment readiness is not execution permission.
+- P1-05B Attempt 1 later failed at Migration D and was fail-closed; R1 is now the current authority. The preparation-time environment readiness did not itself authorize execution.
 - The only remote side effect was one dedicated QA Project provisioning. No QA data-plane access, remote Migration/SQL/Auth/ACL/fixture/write, Production access, stage, Commit, Push/PR, login, Unpause or Deployment occurred. P1-06/P1-07/P1.1 remain unauthorized.
 
 ## Admin P1 Final Status Reconciliation（2026-08-20）

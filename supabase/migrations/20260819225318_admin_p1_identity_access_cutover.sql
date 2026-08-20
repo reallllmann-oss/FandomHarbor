@@ -33,22 +33,16 @@ begin
     'public.revoke_role(uuid,public.elevated_role,text)'::regprocedure,
     'public.set_membership_state(uuid,public.membership_state,text)'::regprocedure
   ] loop
-    if not pg_catalog.has_function_privilege(
-      'authenticated',
-      v_function,
-      'execute'
+    if not (
+      select procedure.prosecdef
+        and procedure.provolatile = 'v'
+        and procedure.proowner::regrole::text = 'postgres'
+        and procedure.proconfig @> array['search_path=""']::text[]
+      from pg_catalog.pg_proc procedure
+      where procedure.oid = v_function
     ) then
-      raise exception 'IDENTITY_ACCESS_LEGACY_PRECONDITION_FAILED: %',
-        v_function;
+      raise exception 'IDENTITY_ACCESS_LEGACY_CATALOG_DRIFT: %', v_function;
     end if;
-
-    foreach v_role in array array['public', 'anon', 'service_role'] loop
-      if pg_catalog.has_function_privilege(v_role, v_function, 'execute') then
-        raise exception 'IDENTITY_ACCESS_LEGACY_PRECONDITION_FAILED: % %',
-          v_role,
-          v_function;
-      end if;
-    end loop;
   end loop;
 
   foreach v_function in array array[

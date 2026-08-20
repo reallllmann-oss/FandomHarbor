@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-20 — Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction
+
+- Preserved dedicated QA Attempt 1 as failed evidence: Migrations 1–19 applied, D failed on effective `anon` legacy execute, emergency fail-closed completed, and no fixtures, business QA or Production side effect occurred.
+- Proved the ACL drift precisely: PostgreSQL `PUBLIC` inheritance is separate from Supabase Hosted direct `anon/authenticated/service_role` function grants; the owning Migration revoked only `PUBLIC`, so D encountered a remaining direct Hosted grant.
+- Corrected D locally to retain hard catalog/v2/private preconditions while atomically normalizing all legacy application ACLs before the old `0/12` assertion and v2 authenticated-only `3/12` grant.
+- Added a transactional Hosted-default regression that distinguishes direct aclitems from effective PUBLIC inheritance and replays the real D Migration; no expected-state or mutation algorithm was copied.
+- Two clean 20-Migration rebuilds, all 15 SQL suites, final old/v2/read/private ACL matrices, rollback/concurrency/idempotency/elevated/P0 regressions, Database 143, Repository 24, Service 57, Services 180, Admin 82, TypeScript, ESLint and database lint pass.
+- No remote access occurred in R1; the failed QA Project remains partial/fail-closed and cannot be reused. No Commit, Push/PR/Merge, Production login/write, Unpause, Deployment, P1-05B-2, P1-06, P1-07 or P1.1 occurred.
+
 ## 2026-08-20 — Admin P1-05A Dedicated QA Preparation
 
 - Added the P1-05A preparation authority for dedicated QA identification/isolation, synthetic fixtures, credential handling, write window, emergency close-writes, cleanup/retention, the 20-Migration apply order, expected ACLs, the complete QA matrix and sanitized evidence.

@@ -7,18 +7,18 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 
 ## 执行切片
 
-| Step   | 目标                                         | 当前状态                                |
-| ------ | -------------------------------------------- | --------------------------------------- |
-| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                                |
-| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted   |
-| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed           |
-| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                    |
-| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                    |
-| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                    |
-| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified  |
-| P1-05B | Local + Dedicated Non-Production Remote QA   | Ready for Owner execution authorization |
-| P1-06  | Protected Admin Preview Acceptance           | Not authorized                          |
-| P1-07  | Production Release Review                    | Not authorized                          |
+| Step   | 目标                                         | 当前状态                               |
+| ------ | -------------------------------------------- | -------------------------------------- |
+| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                               |
+| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted  |
+| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed          |
+| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                   |
+| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                   |
+| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
+| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
+| P1-05B | Local + Dedicated Non-Production Remote QA   | Attempt 1 failed; R1 local fix PASS    |
+| P1-06  | Protected Admin Preview Acceptance           | Not authorized                         |
+| P1-07  | Production Release Review                    | Not authorized                         |
 
 权威合同：
 
@@ -26,6 +26,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-01 Data, Permission and Reauth Design](P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)
 - [P1-01 Dedicated Non-Production QA Matrix](P1_01_NON_PRODUCTION_QA_MATRIX.md)
 - [P1-05A Dedicated Non-Production QA Preparation](P1_05A_QA_PREPARATION.md)
+- [P1-05B-1 Attempt 1 Failure and ACL Correction](P1_05B1_BOOTSTRAP_FAILURE_AND_FIX.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -50,6 +51,8 @@ P1-03 基于 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 完成并�
 
 P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在该本地 ACL 基线上完成 ordinary Membership 与 Author Grant/Revoke 的 reason → Review → 独立确认 → `Saved | Unchanged | Conflict` UI/Action，并形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。每次 Review 通过 Service 重新读取并绑定数据库 expected-state，Action 生成稳定 requestId；确认只调用一次 Service mutation，安全显式重试复用同一 ID，Conflict 强制刷新与新 Review。Elevated 账户只有读取与延期说明，无写控件。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-Ordinary governance 的本地实现链现已完成，但这不等于 P1 Closure 或任何远程发布。P1-05 `Local + Dedicated Non-Production Remote QA` 是 `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` 的 P1 Closure blocker，必须在隔离的非 Production Supabase 上验证 ordinary chain 与 Migrations A–D；Production 不得作为 fallback。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后，经新的 Product Owner 授权与 Auth/Access ADR 重新评估，优先考虑 MFA/AAL2。当前没有 remote Migration/SQL/ACL apply 或 Production mutation；Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+Ordinary governance 的本地实现链现已完成，但这不等于 P1 Closure 或任何远程发布。P1-05 `Local + Dedicated Non-Production Remote QA` 仍是 P1 Closure blocker：Attempt 1 已失败并 fail-closed，R1 本地修正已通过但尚未 Commit，clean QA retry 未授权。Production 不得作为 fallback。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后，经新的 Product Owner 授权与 Auth/Access ADR 重新评估，优先考虑 MFA/AAL2。R1 没有任何 remote/Production 操作；Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
-P1-05A 已完成 fixture、credential、write-window、emergency close-writes、cleanup/retention、20-Migration apply、ACL、QA matrix 与 evidence 计划。P1-05A2 创建了 Free/Nano dedicated Project `fandom-harbor-admin-p1-qa`，其 ref、API/database host 与 Auth tenant 均与 Production 不同，region 同为 `ap-southeast-1`；未读取 secret 或 data plane，未执行 Migration/SQL/Auth/fixture。P1-05A 当前为 `PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`，P1-05B 为 `READY FOR PRODUCT OWNER EXECUTION AUTHORIZATION / NOT AUTHORIZED / NOT STARTED`。
+P1-05A 已完成 fixture、credential、write-window、emergency close-writes、cleanup/retention、20-Migration apply、ACL、QA matrix 与 evidence 计划，并形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。Attempt 1 在 dedicated QA 的 Migration D 检测到 Hosted direct `anon` legacy execute 后失败；Migration 1–19 已应用，D 未应用，fixture/业务 QA 未开始，紧急 fail-closed 后 6 个 write RPC × 4 个应用角色均为 deny。该 Project 固定为 `FAILED BOOTSTRAP EVIDENCE / FAIL-CLOSED`，不得继续用于 P1-05B。
+
+P1-05B-1R1 已在本地修正 D 的 fresh-bootstrap ACL 合同：保留 catalog/v2/private hard gates，把 legacy Hosted/PUBLIC ACL 改为事务内 exact revoke normalization，再断言 old `0/12` 与 v2 `3/12`。新增 Hosted direct/PUBLIC regression；两次 clean 20-Migration rebuild、15 个 SQL suite、Database 143、Repository 24、Service 57、Services 180、Admin 82 及 TypeScript/ESLint 通过。R1 为 `LOCAL PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`；新的 clean QA reprovision/retry、P1-05B-2、P1-06、P1-07 与 P1.1 均未授权。

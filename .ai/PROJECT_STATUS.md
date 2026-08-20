@@ -1,23 +1,53 @@
 # Project Status
 
+## Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction（2026-08-20）
+
+| 项目                      | 当前状态                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| Baseline                  | `4990440cb0a6e341ce242380480a06fe0c62ea14`                                      |
+| Attempt 1                 | FAILED AT MIGRATION D / EMERGENCY FAIL-CLOSED                                   |
+| Current QA                | PARTIAL 19/20 / NOT VALID FOR CONTINUED P1-05B                                  |
+| Root cause                | Hosted direct app-role function grants were treated as hard ACL preconditions   |
+| R1 strategy               | Modify D; normalize legacy ACL atomically; retain hard catalog/v2/private gates |
+| Rebuild / SQL             | two clean 20-Migration rebuilds / 15 SQL suites PASS                            |
+| Final ACL                 | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                              |
+| Application tests         | Database 143; Repository 24; Service 57; Services 180; Admin 82                 |
+| R1                        | LOCAL PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION                     |
+| Clean QA retry / P1-05B-2 | NOT AUTHORIZED / NOT STARTED                                                    |
+| Current QA modified in R1 | NO                                                                              |
+| Production side effect    | NO                                                                              |
+| Admin Production          | `paused=true`                                                                   |
+
+- Attempt 1 applied Migrations 1–19 and failed D on effective `anon` execute for
+  the legacy `grant_role`; no fixture or business QA ran. Emergency fail-closed
+  verified all six write RPCs closed to all four application roles.
+- PostgreSQL `PUBLIC` inheritance and Supabase Hosted direct grants are now
+  separately covered. The Hosted failure was direct `anon`, because the owning
+  Migration had already revoked `PUBLIC` but not the separate Hosted aclitem.
+- R1 changes only D, its static/Hosted regression tests and authorized status
+  documents. No remote access occurred after the failure. The failed QA Project
+  remains evidence only and cannot be resumed.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_05B1_BOOTSTRAP_FAILURE_AND_FIX.md`.
+
 ## Admin P1-05A Dedicated QA Preparation（2026-08-20）
 
-| 项目                                       | 当前状态                                              |
-| ------------------------------------------ | ----------------------------------------------------- |
-| Baseline                                   | `10056a8101720e948b1de3cceef96112623c0fec`            |
-| P1-05A                                     | PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION |
-| Dedicated QA Project                       | `fandom-harbor-admin-p1-qa` / `gqtchjrmpuxibxmurvfd`  |
-| Safety/fixture/Migration/QA/evidence plans | READY                                                 |
-| P1-05B                                     | READY FOR OWNER AUTHORIZATION / NOT STARTED           |
-| QA provisioning side effect                | YES — one Free/Nano non-Production Project            |
-| QA database / Production side effect       | NONE / NONE                                           |
-| P1-06 / P1-07                              | NOT AUTHORIZED / NOT AUTHORIZED                       |
-| P1.1                                       | DEFERRED / NOT AUTHORIZED                             |
-| Admin Production                           | `paused=true`                                         |
+| 项目                                       | 当前状态                                                        |
+| ------------------------------------------ | --------------------------------------------------------------- |
+| Baseline                                   | `10056a8101720e948b1de3cceef96112623c0fec`                      |
+| P1-05A                                     | COMPLETE / COMMITTED `4990440cb0a6e341ce242380480a06fe0c62ea14` |
+| Dedicated QA Project                       | `fandom-harbor-admin-p1-qa` / `gqtchjrmpuxibxmurvfd`            |
+| Safety/fixture/Migration/QA/evidence plans | READY                                                           |
+| P1-05B                                     | ATTEMPT 1 FAILED / R1 LOCAL CORRECTION PASS                     |
+| QA provisioning side effect                | YES — one Free/Nano non-Production Project                      |
+| QA database / Production side effect       | NONE / NONE                                                     |
+| P1-06 / P1-07                              | NOT AUTHORIZED / NOT AUTHORIZED                                 |
+| P1.1                                       | DEFERRED / NOT AUTHORIZED                                       |
+| Admin Production                           | `paused=true`                                                   |
 
 - Management metadata found no reusable QA Project, so P1-05A2 created one Free/Nano dedicated Project in `ap-southeast-1`. QA and Production ref, API/database host and Auth tenant are different; no data plane or secret was read.
 - `P1_05A_QA_PREPARATION.md` freezes project identification/isolation, synthetic fixtures, credential handling, write window, exact v2 close-writes, cleanup/retention, the 20-Migration apply order, ACL/QA matrices and sanitized evidence.
-- P1-05A entry gates now pass. Product Owner must separately authorize the P1-05A docs-only Commit and P1-05B execution window. No fixture, remote Migration/SQL/Auth/ACL, Production access, stage or Commit occurred.
+- P1-05A entry gates passed and its docs-only Closure Commit is `4990440cb0a6e341ce242380480a06fe0c62ea14`. The later P1-05B Attempt 1 and R1 status are authoritative in the section above; this preparation record did not itself create fixtures or access the data plane.
 
 ## Admin P1 Final Status Reconciliation（2026-08-20）
 
