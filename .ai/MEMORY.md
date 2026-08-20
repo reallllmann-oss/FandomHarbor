@@ -1,5 +1,14 @@
 # Project Memory
 
+## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
+
+- R1 is committed at `4f93db9a834843da7640bdf52a31817f2ff528e1`. R2 paused Attempt 1 `gqtchjrmpuxibxmurvfd` to `INACTIVE` without deleting, resetting, patching or reusing it.
+- A new Free/Nano Attempt 2 `fandom-harbor-admin-p1-qa-2` / `hicfnlwzmnbxhimyeviy` was created in `ap-southeast-1`. Its ref, API/database host and Auth tenant differ from Production and Attempt 1; no source data, Auth, schema or credential was copied.
+- Pre-apply state was clean: Auth 0, no public application objects, no private schema and no Migration catalog. The current HEAD's exact 20 Migration chain applied in order; remote catalog is exact and A/B/C/D are applied.
+- Hosted default function execute grants to application roles were observed. Corrected D normalized the real Hosted state and finished with legacy `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12` and P1 private `0/36`, for both direct and effective/PUBLIC-inherited checks.
+- Read security modes/owner/search path, Data API non-exposure of private, Ledger/Audit RLS and immutable triggers pass. QA P0 remains the formal Version 1 seed; Auth/profile/Membership/Role/Ledger/non-P0 Audit counts remain zero.
+- No fixture, business QA, emergency close-write or Production operation occurred. Creation output parsing did not retain the first Attempt 2 database password, and one Attempt 2-only password rotation was used before Migration. No secret was exposed. Product Owner accepted the event as `QA-ONLY OPERATIONAL CREDENTIAL RECOVERY`; it remains explicit and is not a precedent for wider remote scope. P1-05B-2 is ready for separate authorization but not started; P1-06/P1-07/P1.1 remain unauthorized.
+
 ## Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction（2026-08-20）
 
 - Attempt 1 on dedicated QA is historical failure evidence: Migrations 1–19 applied, D failed on `anon grant_role`, no fixtures/business QA, emergency fail-closed completed, Production untouched. The 19/20 Project is not reusable for continued P1-05B.

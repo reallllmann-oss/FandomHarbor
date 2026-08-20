@@ -1,5 +1,39 @@
 # Project Status
 
+## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
+
+| 项目                     | 当前状态                                                                 |
+| ------------------------ | ------------------------------------------------------------------------ |
+| Baseline                 | `4f93db9a834843da7640bdf52a31817f2ff528e1`                               |
+| Attempt 1                | `gqtchjrmpuxibxmurvfd` / `INACTIVE` / preserved / not deleted            |
+| Attempt 2                | `hicfnlwzmnbxhimyeviy` / Free Nano / `ap-southeast-1` / `ACTIVE_HEALTHY` |
+| Clean initial state      | PASS — Auth 0; no application schema or Migration catalog                |
+| Remote Migration         | 20/20 PASS / catalog exact                                               |
+| Hosted ACL normalization | privilege difference YES / D PASS                                        |
+| Final ACL                | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                       |
+| Fixtures / business QA   | NONE / NOT STARTED                                                       |
+| P1-05B-2                 | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                      |
+| Production side effect   | NO                                                                       |
+| Admin Production         | `paused=true`                                                            |
+
+- Attempt 2 is isolated from Production and Attempt 1 by ref, API/database host
+  and Auth tenant. No Production or Attempt 1 credential, data, Auth or schema was
+  copied.
+- Search/Audit remain stable invoker and Detail controlled stable definer; all
+  three are owner `postgres`, fixed empty search path and authenticated-only.
+  Private is absent from Data API schemas; Ledger/Audit RLS and immutable triggers
+  are present.
+- P0 QA is the formal Migration seed Version 1, not Production Version 7. No
+  fixture, business mutation QA, emergency close-write, Commit, Push/PR/Merge,
+  Deployment, P1-05B-2, P1-06, P1-07 or P1.1 occurred.
+- The clean bootstrap is a technical PASS. Project creation output parsing did
+  not retain the initial Attempt 2 database password, so one Attempt 2-only
+  password rotation was used before Migration. No secret or Production state was
+  exposed. Product Owner accepted this as `QA-ONLY OPERATIONAL CREDENTIAL
+RECOVERY`; it remains recorded and does not expand future remote authorization.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_05B1_ATTEMPT2_BOOTSTRAP_EVIDENCE.md`.
+
 ## Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction（2026-08-20）
 
 | 项目                      | 当前状态                                                                        |

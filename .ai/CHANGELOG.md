@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-20 — Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2
+
+- Paused but did not delete/reuse Attempt 1, preserving its 19/20 fail-closed evidence while releasing the Free Project slot.
+- Created isolated Free/Nano Attempt 2 `hicfnlwzmnbxhimyeviy` in `ap-southeast-1`; verified zero Auth/application state and inequality from Production and Attempt 1 before apply.
+- Applied the exact current 20-Migration chain from empty state. Remote catalog is exact and A/B/C/D are applied; Hosted default privilege drift was observed and corrected D normalized it successfully.
+- Verified direct/effective ACLs: old `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12`, P1 private `0/36`; broad target grants are absent and read modes/owner/search path are exact.
+- Verified private is outside Data API schemas, Ledger/Audit RLS and immutable triggers are present, and QA P0 is the formal Version 1 Migration seed.
+- Recorded Product Owner acceptance of the Attempt 2-only database-password rotation as `QA-ONLY OPERATIONAL CREDENTIAL RECOVERY`. The secret was not exposed, Production/Attempt 1 were untouched, and the accepted deviation is not a precedent for expanding future remote authorization.
+- Created no fixture and ran no business QA. Production credentials/data/side effects, emergency close-writes, Commit, Push/PR/Merge, Deployment, P1-05B-2, P1-06, P1-07 and P1.1 remain none/not started.
+
 ## 2026-08-20 — Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction
 
 - Preserved dedicated QA Attempt 1 as failed evidence: Migrations 1–19 applied, D failed on effective `anon` legacy execute, emergency fail-closed completed, and no fixtures, business QA or Production side effect occurred.
