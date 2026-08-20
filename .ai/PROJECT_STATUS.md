@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P1-05A Dedicated QA Preparation（2026-08-20）
+
+| 项目                                       | 当前状态                                              |
+| ------------------------------------------ | ----------------------------------------------------- |
+| Baseline                                   | `10056a8101720e948b1de3cceef96112623c0fec`            |
+| P1-05A                                     | PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION |
+| Dedicated QA Project                       | `fandom-harbor-admin-p1-qa` / `gqtchjrmpuxibxmurvfd`  |
+| Safety/fixture/Migration/QA/evidence plans | READY                                                 |
+| P1-05B                                     | READY FOR OWNER AUTHORIZATION / NOT STARTED           |
+| QA provisioning side effect                | YES — one Free/Nano non-Production Project            |
+| QA database / Production side effect       | NONE / NONE                                           |
+| P1-06 / P1-07                              | NOT AUTHORIZED / NOT AUTHORIZED                       |
+| P1.1                                       | DEFERRED / NOT AUTHORIZED                             |
+| Admin Production                           | `paused=true`                                         |
+
+- Management metadata found no reusable QA Project, so P1-05A2 created one Free/Nano dedicated Project in `ap-southeast-1`. QA and Production ref, API/database host and Auth tenant are different; no data plane or secret was read.
+- `P1_05A_QA_PREPARATION.md` freezes project identification/isolation, synthetic fixtures, credential handling, write window, exact v2 close-writes, cleanup/retention, the 20-Migration apply order, ACL/QA matrices and sanitized evidence.
+- P1-05A entry gates now pass. Product Owner must separately authorize the P1-05A docs-only Commit and P1-05B execution window. No fixture, remote Migration/SQL/Auth/ACL, Production access, stage or Commit occurred.
+
 ## Admin P1 Final Status Reconciliation（2026-08-20）
 
 | 项目                     | 当前状态                                                                            |

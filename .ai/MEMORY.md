@@ -1,5 +1,12 @@
 # Project Memory
 
+## Admin P1-05A Dedicated QA Preparation（2026-08-20）
+
+- P1-05A preparation is `PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION`. P1-05A2 created Free/Nano Project `fandom-harbor-admin-p1-qa` (`gqtchjrmpuxibxmurvfd`) in `ap-southeast-1`; non-sensitive metadata proves its ref, API/database host and Auth tenant differ from Production.
+- The preparation contract is complete for synthetic fixtures, credential handling, write window, emergency revoke of the three exact v2 signatures, cleanup/retention, all 20 Migrations with A–D last, expected ACLs, the full QA matrix and sanitized evidence.
+- P1-05B is `READY FOR PRODUCT OWNER EXECUTION AUTHORIZATION / NOT AUTHORIZED / NOT STARTED`; environment readiness is not execution permission.
+- The only remote side effect was one dedicated QA Project provisioning. No QA data-plane access, remote Migration/SQL/Auth/ACL/fixture/write, Production access, stage, Commit, Push/PR, login, Unpause or Deployment occurred. P1-06/P1-07/P1.1 remain unauthorized.
+
 ## Admin P1 Final Status Reconciliation（2026-08-20）
 
 - Current authority: P1-02G `370d7b0541a51ed63dd4076e4d912b2309c9d072`, P1-03 `9caac4a9affbd3ea9d13cbae266696f9c853490e`, P1-04A `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` and P1-04B `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` are complete local commits.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-20 — Admin P1-05A Dedicated QA Preparation
+
+- Added the P1-05A preparation authority for dedicated QA identification/isolation, synthetic fixtures, credential handling, write window, emergency close-writes, cleanup/retention, the 20-Migration apply order, expected ACLs, the complete QA matrix and sanitized evidence.
+- P1-05A2 found no reusable QA Project and created one Free/Nano dedicated Project in the Production-matching `ap-southeast-1` region. Non-sensitive metadata proves QA ref, API/database host and Auth tenant differ from Production; secrets were not read or exposed.
+- P1-05A is PASS and P1-05B is ready for separate Product Owner execution authorization but remains not authorized/not started. The only remote side effect was Project provisioning; no data-plane access, Migration, SQL, RPC, RLS, Grant, Auth fixture, product/config change, stage, Commit, Push/PR, Production access, login, Unpause or Deployment occurred.
+
 ## 2026-08-20 — Admin P1 Final Status Reconciliation
 
 - Reconciled the current P1 authority across the P1 README/Roadmap, Server Action/API/Admin governance contracts and AI status records without rewriting point-in-time history.
