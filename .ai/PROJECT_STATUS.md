@@ -1,5 +1,34 @@
 # Project Status
 
+## Admin P1 Final Status Reconciliation（2026-08-20）
+
+| 项目                     | 当前状态                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| Branch / HEAD            | `codex/admin-p1-04-ordinary-mutations` / `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` |
+| P1-02G                   | Complete / committed `370d7b0541a51ed63dd4076e4d912b2309c9d072`                     |
+| P1-03                    | Complete / committed `9caac4a9affbd3ea9d13cbae266696f9c853490e`                     |
+| P1-04A                   | Complete / committed `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`                     |
+| P1-04B                   | Complete / committed `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`                     |
+| Ordinary governance      | LOCAL COMPLETE                                                                      |
+| P1-05                    | REQUIRED / NOT AUTHORIZED / NOT EXECUTED — P1 CLOSURE BLOCKER                       |
+| P1-06 / P1-07            | NOT AUTHORIZED / NOT AUTHORIZED                                                     |
+| P1                       | NOT READY FOR CLOSURE                                                               |
+| P1.1 elevated governance | DEFERRED / NOT AUTHORIZED                                                           |
+| Remote apply             | NO                                                                                  |
+| Admin Production         | `paused=true`                                                                       |
+| Web Admin entry          | CLOSED                                                                              |
+| P0 Site Copy             | Production authority Version 7 / unchanged                                          |
+
+- P1-05 is `Local + Dedicated Non-Production Remote QA`. It must use an isolated
+  non-Production Supabase environment to validate the ordinary chain and Migrations
+  A–D; it has not been authorized or executed and Production is not a fallback.
+- P1-06 Protected Admin Preview Acceptance and P1-07 Production Release Review are
+  future independent gates. Neither is authorized by the local implementation.
+- P1.1 requires P1 Closure, separate Product Owner authorization and a new
+  Auth/Access ADR; MFA/AAL2 should be reconsidered before elevated mutations reopen.
+- No remote Migration/SQL/ACL apply, Production mutation, login, Unpause or
+  Deployment occurred. Older entries below remain point-in-time historical records.
+
 ## Admin P1-04A Ordinary Write RPC Atomic Cutover（2026-08-19）
 
 | 项目                  | 当前状态                                                            |

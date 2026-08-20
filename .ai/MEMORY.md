@@ -1,5 +1,15 @@
 # Project Memory
 
+## Admin P1 Final Status Reconciliation（2026-08-20）
+
+- Current authority: P1-02G `370d7b0541a51ed63dd4076e4d912b2309c9d072`, P1-03 `9caac4a9affbd3ea9d13cbae266696f9c853490e`, P1-04A `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` and P1-04B `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` are complete local commits.
+- Ordinary Identity & Access Governance is locally complete. This does not mean P1 Closure or remote/Production release.
+- P1-05 `Local + Dedicated Non-Production Remote QA` is `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` and is the current P1 Closure blocker. It must validate the ordinary chain and Migrations A–D in an isolated non-Production Supabase environment.
+- P1-06 Protected Admin Preview Acceptance and P1-07 Production Release Review remain unauthorized. P1 is `NOT READY FOR CLOSURE`.
+- P1.1 Elevated Access Governance remains `DEFERRED / NOT AUTHORIZED`; it requires P1 Closure, separate Product Owner authorization and a new Auth/Access ADR, with MFA/AAL2 reconsidered first. KI-033 is not technically resolved.
+- No remote Migration/SQL/ACL apply, Production mutation, login, Unpause or Deployment occurred. Admin Production remains `paused=true`, Web Admin entry remains closed and P0 Production Site Copy remains Version 7.
+- Earlier entries below are preserved as point-in-time history; their then-current “not started/not committed” statements are not the current project state.
+
 ## Admin P1-04A Ordinary Write RPC Atomic Cutover（2026-08-19）
 
 - Product Owner accepted the P1-04 ACL blocker and authorized only a local atomic cutover Migration, ACL/rollback tests and documentation on P1-03 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`.

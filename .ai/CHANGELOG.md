@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-20 — Admin P1 Final Status Reconciliation
+
+- Reconciled the current P1 authority across the P1 README/Roadmap, Server Action/API/Admin governance contracts and AI status records without rewriting point-in-time history.
+- Recorded P1-04A Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` and P1-04B Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`; ordinary governance is locally complete.
+- Marked P1-05 `Local + Dedicated Non-Production Remote QA` as `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` and the current P1 Closure blocker; P1-06/P1-07 remain unauthorized.
+- Kept P1.1 Elevated Access Governance `DEFERRED / NOT AUTHORIZED`; KI-033 is not technically resolved and future reopening requires P1 Closure, separate Product Owner authorization and a new Auth/Access ADR, with MFA/AAL2 reconsidered.
+- No code, Migration, RPC, ACL, RLS, Grant, Auth or test implementation changed. No remote Migration/SQL/ACL apply, Production mutation, login, Unpause, Deployment or Web Admin entry enablement occurred; Admin Production remains paused and P0 Site Copy remains Version 7.
+
 ## 2026-08-19 — Admin P1-04A Ordinary Write RPC Atomic Cutover
 
 - Added one local-only atomic cutover Migration that validates exact signatures and ACL preconditions, revokes the three legacy Membership/Role RPCs, proves deny, then grants only the three ordinary v2 RPCs to authenticated.

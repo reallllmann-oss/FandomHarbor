@@ -1,11 +1,13 @@
 # Admin Identity & Access Governance
 
-状态：`ADMIN P1-01 DESIGN CLOSED — OPTION 3 / ELEVATED MUTATIONS DEFERRED`
+状态：`ORDINARY GOVERNANCE LOCAL COMPLETE — P1 NOT READY FOR CLOSURE`
 批准日期：2026-08-16
 设计日期：2026-08-17
-实施状态：尚未开始；P1-01 仅完成数据、权限、幂等、并发与 Reauth 可行性设计
+实施状态：P1-02A–G、P1-03、P1-04A 与 P1-04B 已完成本地实现并 Commit；P1-05 是未授权、未执行的 Closure blocker
 
 P1-01 权威设计见 [Data, Permission and Reauth Design](../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)；专用非 Production 验收边界见 [QA Matrix](../15_Sprint/Admin_P1/P1_01_NON_PRODUCTION_QA_MATRIX.md)；KI-033 威胁证明与 Product Owner Option 3 决定见 [ADR-022](../17_Architecture_Decisions/ADR-022.md)。
+
+P1-04A 原子 cutover 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`；P1-04B ordinary Review/confirm Action/UI 已形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。这些结论仅代表本地实现链完成：没有 remote Migration/SQL/ACL apply 或 Production mutation。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 ## 1. 目标
 
@@ -154,7 +156,7 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 - Web 后台入口启用。
 - Admin Production Unpause、Deployment、Promotion 或 Release。
 
-邀请管理延期至独立 P1.1 或后续 Mission；Phase 7 Admin Intelligence 保持独立 Planned 范围。
+邀请管理延期至独立后续 Mission，不归入 P1.1；Phase 7 Admin Intelligence 保持独立 Planned 范围。
 
 ## 12. 测试与发布边界
 
@@ -162,11 +164,13 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 - SQL 必须同时验证普通治理允许路径，以及 elevated 写入拒绝、零部分写入、Audit 数量、最后一个 Super Admin 保护未弱化与旧接口不可绕过；当前 P1 不执行 elevated mutation success case。
 - 远程写入测试只能使用专用非 Production Supabase QA 环境；禁止使用 Production。
 - Preview 验收只能使用受保护的 Admin Preview；不得把 Admin Production Resume 当作 P1 测试步骤。
-- P1-00 不执行 SQL、Migration、远程写入、登录、Deployment、Unpause、Push 或 Merge。
+- 历史 P1-00 阶段不执行 SQL、Migration、远程写入、登录、Deployment、Unpause、Push 或 Merge；后续本地实现与 Commit 不改变这一时点记录，也不构成远程授权。
+- P1-05 `Local + Dedicated Non-Production Remote QA` 为 `REQUIRED / NOT AUTHORIZED / NOT EXECUTED`，必须验证 ordinary chain 与 Migrations A–D，是当前 P1 Closure blocker。
+- P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。
 
 ## 13. 完成定义
 
-P1 实施完成前必须证明：
+P1 Closure 前必须证明：
 
 - 目录、搜索、详情与审计读取字段最小化且权限正确。
 - Membership 与 Role 治理均进入同一工作台；普通账户与 Author 可写，elevated 账户只读且明确延期。
@@ -175,3 +179,6 @@ P1 实施完成前必须证明：
 - 普通 Admin 不能越权，最后一个有效 Super Admin 不能被移除或停用。
 - 旧写路径不能绕过新合同。
 - Production 数据、Version 7、Web 入口与 paused Admin 状态未被测试或实施流程改变。
+- P1-05 在专用非 Production Supabase 完成已批准的 local + remote QA；P1-06/P1-07 只能在各自独立授权后进入。
+
+P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。它依赖 P1 Closure、独立 Product Owner 授权及新的 Auth/Access ADR；重新开放 elevated mutations 时优先评估 Supabase MFA/AAL2，不得把延期误述为 KI-033 技术解决。

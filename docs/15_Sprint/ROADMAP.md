@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-04B local ordinary governance UI complete; commit not authorized; elevated mutations deferred
+Status: Active — Admin P1 ordinary governance local complete; P1-05 closure QA not authorized; elevated mutations deferred
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -124,17 +124,19 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-03 COMMITTED / P1-04A LOCAL CUTOVER COMPLETE / COMMIT NOT AUTHORIZED / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 在该基线上完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal 通过；未 Commit、未远程 apply。
+状态：`ORDINARY GOVERNANCE LOCAL COMPLETE / P1 NOT READY FOR CLOSURE / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`，完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal 通过；未远程 apply。
 
-P1-03 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐读取 live-access check；不显示写控件、不开放 write execute，Web Admin 入口继续关闭。P1-04 保持独立 Owner Gate，只能覆盖 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Server Action、`Saved | Unchanged | Conflict` 展示和先撤旧、证明 deny、再开三个 v2 的单一原子 cutover；回滚不得重开旧 RPC。
+P1-03 的历史 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐读取 live-access check。随后独立授权的 P1-04 只覆盖 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Server Action、`Saved | Unchanged | Conflict` 展示和先撤旧、证明 deny、再开三个 v2 的单一原子 cutover；回滚不得重开旧 RPC。Web Admin 入口继续关闭。
 
-现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。Admin/Super Admin Role 与 elevated-account Membership 写入继续延期；P1.1 Elevated Access Governance 只能在整个 P1 完成后由 Product Owner 独立评估。邀请管理继续独立延期。P1-02G 当时不授权后续实施；Product Owner 随后单独授权 P1-03 read-only UI，但仍不授权 P1-04、P1.1、远程数据库、登录、Unpause 或 Deployment。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
+现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。Admin/Super Admin Role 与 elevated-account Membership 写入继续延期。P1.1 Elevated Access Governance 为 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后经 Product Owner 独立授权与新的 Auth/Access ADR 重新评估，并优先考虑 MFA/AAL2。邀请管理继续独立延期且不归入 P1.1。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
 
 P1-02A–G 已 Commit。P1-03 只读 `/access` 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：通过 P1-02F Service 的 Search/Detail/Audit 三个 read 和逐调用 live-access check 展示最小治理信息，覆盖稳定分页、loading、empty、unauthorized、safe read error 与延期提示。页面仍无写表单、mutation Action 绑定或 direct database/RPC，Web Admin 入口继续关闭。P1-03 Closure 当时的 write-closed/legacy-open ACL 已由随后单独授权的 P1-04A 本地 cutover 取代。证据见 [`P1_03_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md)。
 
-P1-04A 仅完成本地数据库权限切换，不修改 `/access`、Action、Service、Repository、Auth 或业务 schema。原子顺序为 exact preconditions → revoke old → prove deny → grant three v2 → final/private assertions；本地失败回滚演练证明不会留下半切换 ACL。P1-04B ordinary Review/Action/UI 仍需单独授权，P1.1 elevated governance 继续延期。证据见 [`P1_04A_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md)。
+P1-04A 仅完成本地数据库权限切换，不修改 `/access`、Action、Service、Repository、Auth 或业务 schema。原子顺序为 exact preconditions → revoke old → prove deny → grant three v2 → final/private assertions；本地失败回滚演练证明不会留下半切换 ACL。该阶段的独立 Commit 为 `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。证据见 [`P1_04A_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md)。
 
-P1-04A 已 Commit。P1-04B 已在 `/access` 本地实现 ordinary Membership 与 Author Role 的规范化 reason、Review、独立确认、稳定 requestId、expected-state 与 `Saved | Unchanged | Conflict`；调用链保持 Action → P1-02F Service → strict Repository → v2 RPC，elevated 账户无可执行控件。未 Commit、未远程 apply，P1-05/P1.1 未开始。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
+P1-04B 已形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。`/access` 本地实现 ordinary Membership 与 Author Role 的规范化 reason、Review、独立确认、稳定 requestId、expected-state 与 `Saved | Unchanged | Conflict`；调用链保持 Action → P1-02F Service → strict Repository → v2 RPC，elevated 账户无可执行控件。至此 ordinary governance 本地实现完成。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
+
+P1 尚不具备 Closure 条件。P1-05 `Local + Dedicated Non-Production Remote QA` 是 `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` 的 P1 Closure blocker，负责在隔离的非 Production Supabase 验证 ordinary chain 与 Migrations A–D；Production 禁止作为测试环境。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。当前无 remote Migration/SQL/ACL apply、Production mutation、登录、Unpause 或 Deployment；Admin Production 保持 paused，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 Admin P1 不属于 Phase 7 Admin Intelligence。Phase 7 的 analytics、metric、retention/export 与 audit explorer 仍保持 Planned，不能借 P1 扩大。
 

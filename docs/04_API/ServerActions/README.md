@@ -20,13 +20,17 @@ Each action documents owning app/domain, input/output contract, authorization, c
 - Input: registration name and password.
 - Authorization: Web routes by active Membership capability; Admin additionally requires `admin:operate` and signs out unauthorized identities.
 
-### `grantRole` / `revokeRole` / `setMembershipState`
+### `governOrdinaryAccessAction`
 
-- Owner: `apps/admin` / Identity Access.
-- Current P0 input: User ID、role/state 与 reason；Server Action 复核 Session 与 `admin:operate`，数据库函数再次授权并审计。
-- Current permission: Admin 仅管理 Author 与普通成员 Membership；Super Admin 可管理 elevated roles/accounts；final active Super Admin 受保护。
-- Current limitation: 直接提交，无成员搜索/详情、Review、requestId、expected-state 或 stale Conflict。
-- P1 ordinary action contract（UI/Action not implemented）: 当前 P1 只允许 Author Grant/Revoke 与普通账户 Membership 三个窄 v2 action，分别接受 requestId、target、必要的 desired state、database-issued expected-state token 与规范 reason；没有 role/proof 参数可表达 elevated 操作。wire `saved/unchanged/conflict` 映射到 Domain `Saved | Unchanged | Conflict`。Server Action 从可信 Session 取 actor，不接受客户端 actor/capability。普通 Membership action 必须在数据库拒绝存在未撤销 Admin/Super Admin grant 的 target。P1-04A 已在本地 migration graph 原子撤销旧三 RPC authenticated execute并只开放三个 v2；未 Commit、未远程 apply，也未授权 Action/UI。回滚不得恢复旧入口。Product Owner 已选择 [ADR-022 Option 3](../../17_Architecture_Decisions/ADR-022.md)：elevated action 延期，KI-033 技术问题仍未解决。
+- Owner: `apps/admin` / Identity Access Governance.
+- Scope: only Author Grant/Revoke and ordinary-account Membership `active | suspended | revoked`; no generic role input, elevated mutation or Reauth bypass can be expressed.
+- Review: parses the operation/target/reason, re-reads target detail through the live-access Governance Service, normalizes reason, binds the database-issued expected-state token and creates a server-owned stable requestId.
+- Confirm: accepts only the server-prepared Review state, performs the fresh Service live-access/target checks and invokes at most one matching mutation method. It never accepts client actor/capability, recomputes expected-state, retries automatically or resolves Conflict.
+- Result: preserves `Saved | Unchanged | Conflict`; safe explicit retry reuses the same requestId, while Conflict clears the executable Review and requires refresh plus a new Review.
+- Authorization: the Action uses the request Session boundary; the Service requires active Membership, a live Admin/Super Admin role and `admin:operate`; the v2 RPC repeats live authorization and target protection in the transaction.
+- Cutover: P1-04A Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` locally revokes authenticated execute from legacy `grant_role` / `revoke_role` / `set_membership_state` and grants only the three ordinary v2 signatures. P1-04B Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` connects the Review/confirm UI and Action. Normal rollback must not reopen the legacy entry points.
+- Release boundary: this is a committed local implementation only. No remote Migration/SQL/ACL apply or Production mutation has occurred; P1-05 dedicated non-Production QA remains required and not authorized.
+- Elevated boundary: [ADR-022 Option 3](../../17_Architecture_Decisions/ADR-022.md) and KI-033 remain unresolved/deferred. Admin/Super Admin Role changes and elevated-account Membership changes have no executable Action or RPC.
 
 ### `createWorkDraft`
 

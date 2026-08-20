@@ -66,13 +66,13 @@ Phase 1C implementation notes:
 - Reader access is an active-membership capability. Author/Admin/Super Admin are explicit grants, and every elevated mutation is re-authorized inside the database transaction.
 - Provider/database errors are normalized at server action boundaries; raw Supabase `User`, `Session` and client objects are not public business contracts.
 
-Admin P1 target contract（P1-00 frozen; not implemented）:
+Admin P1 contract（P1-00 frozen; ordinary subset locally implemented）:
 
 - Membership 与 Role Mutation 保持 Server Action ownership，不新增公开 REST 写接口。
 - 所有写操作要求规范化 4–200 code-point reason、独立 Review/confirm、UUID requestId、expected-state 与 `Saved | Unchanged | Conflict`。
-- Admin/Super Admin grant/revoke 与 elevated-account Membership 变更要求当前 actor 的 registration-name/password reauth；证明必须绑定单次 Review payload，客户端布尔值无效。
+- Admin/Super Admin grant/revoke 与 elevated-account Membership 变更仍要求 operation-bound step-up proof，但 ADR-022 Option 3 已将其全部延期；当前没有可调用合同，客户端布尔值无效。
 - 邀请管理不属于 Admin P1；现有 Admin/Super Admin capability matrix 与 final active Super Admin guard 不变。
-- 具体 request ledger、expected-state transport、v2 function signature 与旧 function cutover 必须在 P1-01 独立设计/授权后进入实现。
+- request ledger、expected-state transport、三个 ordinary v2 signature 与旧 function cutover 已在 P1-01 至 P1-04A 的独立 Gate 中冻结并完成本地实现；P1-04B 已完成本地 Review/confirm Action/UI。该本地状态不代表 remote apply 或 Production release。
 
 ADR-022 Option 3 closure narrows the current P1 implementation boundary without lowering that Reauth requirement: only Author Grant/Revoke and ordinary-account Membership mutations may be planned. Admin/Super Admin Role and elevated-account Membership mutations are deferred and have no callable current P1 contract. Elevated subjects remain readable through the minimal projection. Future reopening requires separate Product Owner authorization and a new Auth ADR.
 
@@ -167,7 +167,7 @@ Search cursor 为 `{ missingRegistrationName, normalizedRegistrationName, userId
   - `grant_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
   - `revoke_author_role_v2(p_request_id uuid, p_target_user_id uuid, p_expected_state_token text, p_reason text) returns jsonb`
   - `set_ordinary_membership_state_v2(p_request_id uuid, p_target_user_id uuid, p_state membership_state, p_expected_state_token text, p_reason text) returns jsonb`
-- 三者均为 `VOLATILE SECURITY DEFINER`、owner `postgres`、空 `search_path`；本地 cutover 后仅 `authenticated` 拥有准确签名 execute，`PUBLIC/anon/service_role` 继续 deny。此 ACL 只存在于未提交、未远程应用的 P1-04A 本地 migration graph，不代表 UI、Action 或 Production 已启用。
+- 三者均为 `VOLATILE SECURITY DEFINER`、owner `postgres`、空 `search_path`；本地 cutover 后仅 `authenticated` 拥有准确签名 execute，`PUBLIC/anon/service_role` 继续 deny。此 ACL 已由 P1-04A Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` 固定在本地 migration graph，但尚未远程应用，不代表 Production 已启用。
 - Role 方法没有 role 参数；Membership 只接受 `active | suspended | revoked`，没有 Reauth proof、actor、capability 或 dormant elevated 参数。
 - 同 requestId/同规范 payload 返回 private ledger 原结果；同 ID 不同 payload/actor 稳定拒绝。
 - 结果只为 `Saved | Unchanged | Conflict`；Saved 精确一次业务变化与一条 Audit，Unchanged/Conflict 零业务 Audit。
@@ -194,7 +194,7 @@ P1-02D 在 `@fandom-harbor/services` 中建立六个 RPC 的唯一 provider-neut
 P1-02E 在 `@fandom-harbor/database` 中实现 P1-02D 六方法 Port，不修改 Domain 或数据库合同：
 
 - Read 方法只调用 `search_identity_access_subjects_v1`、`get_identity_access_subject_v1` 与 `list_identity_access_audit_v1`。
-- ordinary write 方法只调用 `grant_author_role_v2`、`revoke_author_role_v2` 与 `set_ordinary_membership_state_v2`；P1-04A 本地 cutover 后 authenticated Session 可到达这三个准确 RPC，但应用仍未接入写 Action/UI，且没有远程 apply。
+- ordinary write 方法只调用 `grant_author_role_v2`、`revoke_author_role_v2` 与 `set_ordinary_membership_state_v2`；P1-04A 本地 cutover 后 authenticated Session 可到达这三个准确 RPC，P1-04B Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` 已通过 Service 接入窄 Review/confirm Action/UI。没有远程 apply。
 - Request transport 把 Domain 值映射到准确 `p_*` RPC 参数。Repository 不提供 actor、role、capability、proof 或自动生成的 requestId。
 - 所有成功数据保持 `unknown`，直至 strict Domain parser 通过。未知 key、非法 UUID/time/token/enum/cursor/result、response ID 不一致和超出 limit 的 page 均 fail closed 为 `DATA_CORRUPTION`。
 - 结构化错误只按 stable code 与两个冻结 safe detail allowlist 映射；自然语言 provider message、SQL 内部信息和 raw error object 不进入 Domain 输出。
@@ -215,4 +215,4 @@ P1-02F 在 `@fandom-harbor/services` 中编排 P1-02D Ports，不接触 RPC、Su
 - requestId、target、opaque expected-state 与 normalized reason 原样进入对应 Command。Service 不生成 requestId、不重算 token、不自动 retry transport failure，也不把 Conflict 转为异常、Saved 或二次 mutation。
 - 已清洗的 P1-02D Domain Error 原样保留；任何非 Domain 异常统一成为固定 `UNKNOWN_REPOSITORY_ERROR`，不保留原始 cause/message/provider metadata。
 
-未来 P1-03/P1-04 composition root 必须注入 live-access checker 与 P1-02E Repository Ports。Server Action 负责取得请求级 Auth/cookie 边界和序列化安全结果，但不得跳过 Service 直接调用 Repository。P1-02F 不创建 Action、FormData parser、UI、cache invalidation 或 write execute grant。实施证据见 [`P1_02F_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md)。
+P1-03/P1-04 composition root 已注入 live-access checker 与 P1-02E Repository Ports。Server Action 取得请求级 Auth/cookie 边界并序列化安全结果，不跳过 Service 直接调用 Repository。P1-02F 本身仍不包含 Action、FormData parser、UI、cache invalidation 或 write execute grant；这些应用接入由后续独立 Commit 完成。实施证据见 [`P1_02F_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md)、[`P1_03_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md) 与 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
