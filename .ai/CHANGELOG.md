@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-22 — Admin P1-05B-2 Read Authorization and Denial QA
+
+- Provisioned 14 A–N synthetic QA identities and one non-login bootstrap control
+  identity in dedicated Attempt 2 only; revoked the temporary invitation and kept
+  all credential material outside the repository and browser.
+- Verified local `/access` Admin and Super Admin Search/Detail/Audit through the
+  live-access Service and strict Repository, including masked identity,
+  Membership/Role, expected-state, protection metadata and Audit rendering.
+- Verified Reader, Author-only, suspended Admin, revoked Admin, anonymous and
+  post-login authorization-loss denial without target-data exposure.
+- Verified protected Admin, Super Admin, elevated Membership and only-active-Super-
+  Admin mutation denial; all three legacy RPCs remain authenticated privilege
+  denied. Review-to-Confirm permission loss also denied.
+- Final business, Ledger and Audit deltas are zero; fixture and non-fixture hashes
+  equal baseline. ACL remains old `0/12`, v2 `3/12`, read `3/12`, private `0/36`.
+- Signed out the browser and confirmed zero synthetic sessions/refresh tokens. No
+  ordinary successful mutation, Production credential/data/operation, Commit,
+  Push/PR/Merge, Unpause, Deployment, P1-05B-3, P1-06, P1-07 or P1.1 occurred.
+
 ## 2026-08-20 — Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2
 
 - Paused but did not delete/reuse Attempt 1, preserving its 19/20 fail-closed evidence while releasing the Free Project slot.

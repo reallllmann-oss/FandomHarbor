@@ -1,5 +1,35 @@
 # Project Status
 
+## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22）
+
+| 项目                            | 当前状态                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------ |
+| Baseline                        | `75efba48e57381f13398b63c0cadc44c4b9b2e17`                               |
+| QA Attempt 2                    | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY`                                |
+| Synthetic fixtures              | 14 A–N + one non-login bootstrap controller                              |
+| Admin / Super Admin reads       | Search / Detail / Audit PASS                                             |
+| Caller denials                  | Reader / Author / inactive Admin / revoked Admin / anonymous PASS        |
+| Live authorization              | next protected read denied after Membership loss; restored               |
+| Elevated/protected denials      | Admin / Super Admin / elevated Membership / last active Super Admin PASS |
+| Legacy RPC                      | authenticated `42501` deny for all three                                 |
+| Review → Confirm access loss    | DENY / zero write                                                        |
+| Business / Ledger / Audit delta | `0 / 0 / 0`                                                              |
+| Final ACL                       | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                       |
+| Sessions                        | browser signed out; synthetic sessions/refresh tokens zero               |
+| P1-05B-2                        | PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION                    |
+| P1-05B-3                        | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                      |
+| Production side effect          | NO                                                                       |
+| Admin Production                | `paused=true`                                                            |
+
+- The local Admin used only Attempt 2's API URL, publishable key and synthetic
+  credentials. Service-role use was server-side fixture setup only and was never
+  exposed to the browser or repository.
+- The fixture and non-fixture hashes returned to baseline after temporary
+  live-access and only-active-Super-Admin control changes. No ordinary successful
+  mutation was executed.
+- P1-06, P1-07 and P1.1 remain not authorized. Evidence:
+  `docs/15_Sprint/Admin_P1/P1_05B2_READ_DENIAL_QA_EVIDENCE.md`.
+
 ## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
 
 | 项目                     | 当前状态                                                                 |

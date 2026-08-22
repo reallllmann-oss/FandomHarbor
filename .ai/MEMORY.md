@@ -1,5 +1,31 @@
 # Project Memory
 
+## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22）
+
+- Dedicated QA Attempt 2 `hicfnlwzmnbxhimyeviy` now contains 14 named A–N
+  synthetic fixtures plus one non-login invitation bootstrap controller. The
+  temporary invitation is revoked; fixture credentials remain only in the local
+  secure secret path for a separately authorized B-3.
+- Local `/access` bound only to Attempt 2 proved Admin and Super Admin
+  Search/Detail/Audit through page/loader → Service live-access → strict Repository
+  → read RPC. Reader, Author, suspended Admin, revoked Admin and anonymous callers
+  were denied without target-data exposure.
+- Suspending an already signed-in Admin via fixture control caused the next
+  protected read to deny. Suspending the actor between ordinary Review and Confirm
+  also denied with zero business/Ledger/Audit delta. Both fixtures were restored.
+- Elevated Admin, Super Admin and Membership targets were read-only in the UI and
+  exact v2 calls returned `42501 / ELEVATED_MUTATION_DEFERRED`. With the other two
+  Super Admin Memberships temporarily suspended, the last-active fixture rendered
+  its protection flag and the attempted disable was denied; all control state was
+  restored.
+- All three legacy RPCs remained authenticated privilege denied. Post-test ACL is
+  old `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12`, private
+  `0/36`; fixture/non-fixture hashes equal baseline, Audit remains 16 and Ledger 0.
+- The privileged browser session was signed out and final synthetic session and
+  refresh-token counts are zero. No ordinary successful mutation, Production
+  credential/data/operation, Commit, Push/PR/Merge, Unpause or Deployment occurred.
+  P1-05B-2 is PASS awaiting commit authorization; B-3 is ready but not started.
+
 ## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
 
 - R1 is committed at `4f93db9a834843da7640bdf52a31817f2ff528e1`. R2 paused Attempt 1 `gqtchjrmpuxibxmurvfd` to `INACTIVE` without deleting, resetting, patching or reusing it.
