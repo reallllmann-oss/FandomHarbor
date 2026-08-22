@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-05B-3R2 PASS — WAITING FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`
+状态：`P1-05 FINAL CLOSURE AUDIT PASS — WAITING FOR PRODUCT OWNER CLOSURE COMMIT AUTHORIZATION`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -16,8 +16,8 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                   |
 | P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
 | P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
-| P1-05B | Local + Dedicated Non-Production Remote QA   | B-3R2 PASS; final closure audit gated  |
-| P1-06  | Protected Admin Preview Acceptance           | Not authorized                         |
+| P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — final closure audit PASS    |
+| P1-06  | Protected Admin Preview Acceptance           | Ready for authorization; not started   |
 | P1-07  | Production Release Review                    | Not authorized                         |
 
 权威合同：
@@ -30,6 +30,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-05B-1R2 Clean QA Attempt 2 Bootstrap Evidence](P1_05B1_ATTEMPT2_BOOTSTRAP_EVIDENCE.md)
 - [P1-05B-2 Read and Denial QA Evidence](P1_05B2_READ_DENIAL_QA_EVIDENCE.md)
 - [P1-05B-3 Mutation and Cleanup QA Evidence](P1_05B3_MUTATION_AND_CLEANUP_QA_EVIDENCE.md)
+- [P1-05 Final Closure Audit](P1_05_FINAL_CLOSURE_AUDIT.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -54,7 +55,7 @@ P1-03 基于 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 完成并�
 
 P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在该本地 ACL 基线上完成 ordinary Membership 与 Author Grant/Revoke 的 reason → Review → 独立确认 → `Saved | Unchanged | Conflict` UI/Action，并形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。每次 Review 通过 Service 重新读取并绑定数据库 expected-state，Action 生成稳定 requestId；确认只调用一次 Service mutation，安全显式重试复用同一 ID，Conflict 强制刷新与新 Review。Elevated 账户只有读取与延期说明，无写控件。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-Ordinary governance 的本地实现链现已完成，但这不等于 P1 Closure 或任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 已恢复零 synthetic state 并关闭 write。P1-05 当前 `READY FOR FINAL CLOSURE AUDIT`，该 Audit 仍需 Product Owner 单独授权。Production 不得作为 fallback。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+Ordinary governance 的本地实现链现已完成，但这不等于任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 已恢复零 synthetic state 并关闭 write。当前 HEAD 的完整本地回归和安全复核均通过，P1-05 Final Closure Audit 为 `PASS / READY TO CLOSE`，docs-only Closure evidence 等待 Product Owner Commit 授权。`REMOTE FAILURE INJECTION` 的准确状态是 `NOT AVAILABLE BY CURRENT CONTRACT`；原子回滚证据来自当前权威本地测试。P1-06 Protected Admin Preview Acceptance 为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`，P1-07 仍未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 P1-05A 已完成 fixture、credential、write-window、emergency close-writes、cleanup/retention、20-Migration apply、ACL、QA matrix 与 evidence 计划，并形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。Attempt 1 在 dedicated QA 的 Migration D 检测到 Hosted direct `anon` legacy execute 后失败；Migration 1–19 已应用，D 未应用，fixture/业务 QA 未开始，紧急 fail-closed 后 6 个 write RPC × 4 个应用角色均为 deny。该 Project 固定为 `FAILED BOOTSTRAP EVIDENCE / FAIL-CLOSED`，不得继续用于 P1-05B。
 
@@ -62,4 +63,4 @@ P1-05B-1R1 已在本地修正 D 的 fresh-bootstrap ACL 合同并 Commit。R2 �
 
 P1-05B-2 已在 Attempt 2 建立 14 个 A–N 合成业务夹具和一个不可登录 bootstrap control identity。Admin 与 Super Admin 的本地 `/access` Search/Detail/Audit 通过；Reader、Author、inactive/revoked Admin、匿名、live-access 失效与 Review→Confirm 权限丢失全部拒绝。Admin、Super Admin、elevated Membership 与唯一 active Super Admin 保护测试均为 `ELEVATED_MUTATION_DEFERRED`；旧 RPC 为 authenticated privilege denied。业务、Ledger、Audit 零增量，post-test ACL 仍为 old `0/12`、v2 `3/12`、read `3/12`、private `0/36`，合成会话已关闭。P1-05B-2 已形成 Commit `3f45ce7459e67e7f6b8844024bfd64181a1a8374`；其当时的 B-3 ready handoff 已由下述 B-3 实际结果取代。P1-06、P1-07 与 P1.1 均未授权。
 
-P1-05B-3 Attempt 1 的 `INVALID_INPUT`、零写入和 fail-closed cleanup 继续作为历史证据保留。R1 Commit `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63` 修正 Action raw request → Service parser 组合边界后，R2 的正式 UI `active -> suspended` 返回 Saved 且 Detail/Audit 一致。完整矩阵得到 17 个唯一 Ledger（11 Saved、4 Unchanged、2 Conflict）和 11 个业务 Audit，无重复或孤儿记录；三类并发、requestId replay/mismatch、stale Conflict、elevated 与 legacy deny 均通过。本地权威 atomicity/rollback 与 dblink concurrency suites 通过。最终 synthetic Auth/Session/Profile/Membership/Role/Audit/Ledger/requestId/邀请均为零，ACL 为 old `0/12`、v2 `0/12`、read `3/12`、private `0/36`，20/20 Migration 与非 fixture 基线不变。P1-05B-3R2 为 `PASS / WAITING FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`；P1-05 为 `READY FOR FINAL CLOSURE AUDIT`，不得自动开始。
+P1-05B-3 Attempt 1 的 `INVALID_INPUT`、零写入和 fail-closed cleanup 继续作为历史证据保留。R1 Commit `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63` 修正 Action raw request → Service parser 组合边界后，R2 的正式 UI `active -> suspended` 返回 Saved 且 Detail/Audit 一致。完整矩阵得到 17 个唯一 Ledger（11 Saved、4 Unchanged、2 Conflict）和 11 个业务 Audit，无重复或孤儿记录；三类并发、requestId replay/mismatch、stale Conflict、elevated 与 legacy deny 均通过。本地权威 atomicity/rollback 与 dblink concurrency suites 通过。最终 synthetic Auth/Session/Profile/Membership/Role/Audit/Ledger/requestId/邀请均为零，ACL 为 old `0/12`、v2 `0/12`、read `3/12`、private `0/36`，20/20 Migration 与非 fixture 基线不变。Final Closure Audit 在当前 HEAD 重跑 Admin 88、P1-03 17、P1-04B 17、composition 7、Service 57、Services 180、Repository 24、Database 143、Migration contract 23 及本地 SQL/静态/构建门禁后通过。P1-05 为 `PASS / READY TO CLOSE`，等待 Product Owner docs-only Closure Commit 授权；不得自动开始 P1-06。

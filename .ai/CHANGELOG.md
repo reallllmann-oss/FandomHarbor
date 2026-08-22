@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-22 — Admin P1-05 Final Closure Audit
+
+- Audited the exact P1-05 Git ancestry and preserved both failed-attempt histories,
+  the Hosted ACL correction, fresh Attempt 2 bootstrap, accepted QA-only credential
+  recovery, B-2 denials, R1 composition fix, R2 functional evidence, cleanup and
+  final QA safety state.
+- Re-ran current-HEAD local regression: Admin 88, P1-03 17, P1-04B 17,
+  composition 7, Service 57, Services 180, Repository 24, Database 143, Migration
+  contract 23, ordinary governance/Hosted ACL/rollback/dblink SQL, TypeScript,
+  ESLint, targeted Prettier, security scan and Admin production build all pass.
+- Recorded the exact atomicity boundary:
+  `REMOTE FAILURE INJECTION: NOT AVAILABLE BY CURRENT CONTRACT`. No remote
+  injection PASS is claimed. Current local rollback, Audit/Ledger atomicity and
+  concurrency tests pass.
+- Confirmed the final QA safety ACL old `0/12`, v2 `0/12`, read `3/12`, private
+  `0/36` is distinct from Migration D's desired normal v2 authenticated-only
+  `3/12` contract.
+- Marked P1-05 `PASS / READY TO CLOSE`, with docs-only closure evidence awaiting
+  Product Owner Commit authorization. P1-06 is ready for separate authorization
+  but not started; P1-07 remains unauthorized and P1.1 remains deferred.
+- Performed no remote/Production operation, stage, Commit, Push/PR/Merge, Admin
+  Unpause, Web Admin entry enablement or deployment. Admin Production remains
+  `paused=true` and P0 Production Site Copy remains Version 7.
+
 ## 2026-08-22 — Admin P1-05B-3R2 Final Functional QA
 
 - Verified the committed Action raw-request → Service parser composition fix

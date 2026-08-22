@@ -1,5 +1,23 @@
 # Project Memory
 
+- 2026-08-22: P1-05 Final Closure Audit passed at
+  `065e7626119789845471351cfbc1e71329c5735e`. All seven required P1-05 commits
+  are exact ancestors. P1-05A, hosted ACL R1, clean Attempt 2, B-2 and B-3R2 are
+  PASS; both Attempt 1 failures and the accepted `QA-ONLY OPERATIONAL CREDENTIAL
+RECOVERY` deviation remain explicit. Current-HEAD local regression passed Admin
+  88, P1-03 17, P1-04B 17, composition 7, Service 57, Services 180, Repository 24,
+  Database 143, Migration contract 23, governance/rollback/Hosted/dblink SQL,
+  TypeScript, ESLint, Prettier, security and Admin production build. `REMOTE
+FAILURE INJECTION` remains `NOT AVAILABLE BY CURRENT CONTRACT`; authoritative
+  local rollback and atomicity tests pass. Dedicated QA final safety state remains old
+  `0/12`, v2 `0/12`, read `3/12`, private `0/36`, synthetic zero; normal Migration
+  D desired v2 ACL remains authenticated-only `3/12`. P1-05 is
+  `PASS / READY TO CLOSE`, awaiting docs-only Closure Commit authorization. P1-06 is ready for
+  separate Product Owner authorization but not started; P1-07 is not authorized;
+  P1.1 remains deferred. No remote or Production operation occurred. Admin
+  Production remains `paused=true`, Web Admin entry closed and P0 Site Copy
+  Version 7.
+
 - 2026-08-22: P1-05B-3R2 passed against dedicated QA2 at baseline
   `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63`. The current local UI → Action raw
   request → Service parser → live authorization → strict Repository → v2 RPC path

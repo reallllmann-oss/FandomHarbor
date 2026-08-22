@@ -1,6 +1,40 @@
 # Project Status
 
-## Admin P1-05B-3R2 Final Functional QA（2026-08-22）
+## Admin P1-05 Final Closure Audit（2026-08-22）
+
+| 项目                              | 当前状态                                                                                                                                 |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch / HEAD                     | `codex/admin-p1-04-ordinary-mutations` / `065e7626119789845471351cfbc1e71329c5735e`                                                      |
+| Git evidence ancestry             | seven required P1-05 commits exact / PASS                                                                                                |
+| P1-05A                            | COMPLETE                                                                                                                                 |
+| Bootstrap Attempt 1               | FAILED historical evidence preserved                                                                                                     |
+| Hosted ACL correction / Attempt 2 | PASS / fresh 20/20                                                                                                                       |
+| Read, denial and mutation QA      | PASS                                                                                                                                     |
+| Mutation Attempt 1 / R1 / R2      | BLOCKED history preserved / fix PASS / retry PASS                                                                                        |
+| Atomicity                         | remote injection NOT AVAILABLE; authoritative local rollback PASS                                                                        |
+| Final QA safety state             | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`; synthetic zero                                                                       |
+| Current local ACL                 | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                                                                                       |
+| Latest regression                 | Admin 88; P1-03 17; P1-04B 17; composition 7; Service 57; Services 180; Repository 24; Database 143; Migration 23; SQL/static/build PASS |
+| P1-05                             | PASS / READY TO CLOSE                                                                                                                    |
+| Closure evidence                  | READY FOR PRODUCT OWNER COMMIT AUTHORIZATION                                                                                             |
+| P1-06                             | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                                                                      |
+| P1-07                             | NOT AUTHORIZED / NOT STARTED                                                                                                             |
+| P1.1                              | DEFERRED / NOT AUTHORIZED                                                                                                                |
+| Production                        | untouched; Admin `paused=true`; Web Admin entry closed; Site Copy Version 7                                                              |
+
+- This audit used committed remote evidence and current local tests only. It did
+  not access either QA Project or Production and created no remote evidence.
+- `REMOTE FAILURE INJECTION: NOT AVAILABLE BY CURRENT CONTRACT`; no remote
+  Audit/Ledger failure-injection PASS is claimed. Local transaction rollback,
+  atomicity and dblink concurrency suites are the authority.
+- Desired formal Migration D ACL remains old `0/12`, v2 authenticated-only
+  `3/12`, read authenticated-only `3/12`, private `0/36`. The final QA v2 `0/12`
+  value is a separate safety-closure state.
+- Attempt 1 bootstrap failure, the accepted Attempt 2-only credential recovery,
+  and B-3 Attempt 1 composition failure remain explicit historical evidence.
+- Evidence: `docs/15_Sprint/Admin_P1/P1_05_FINAL_CLOSURE_AUDIT.md`.
+
+## Admin P1-05B-3R2 Final Functional QA（2026-08-22 historical snapshot）
 
 | 项目                        | 当前状态                                                         |
 | --------------------------- | ---------------------------------------------------------------- |
@@ -22,8 +56,10 @@
 
 - Attempt 1's fail-closed `INVALID_INPUT` history remains in the evidence; R1's
   committed Action raw-request composition fix is what R2 verified.
-- Remote failure injection is `NOT APPLICABLE BY CURRENT CONTRACT` and was not
-  created; existing local authoritative rollback tests supplied the approved
+- At that historical evidence gate, remote failure injection was recorded as
+  `NOT APPLICABLE BY CURRENT CONTRACT` and was not created. The current closure
+  authority above uses the Mission-defined status
+  `NOT AVAILABLE BY CURRENT CONTRACT`; existing local authoritative rollback tests supply the approved
   evidence.
 - QA2 is sanitized and write-closed. P1-06, P1-07 and P1.1 remain not authorized.
   Admin Production remains `paused=true`; Web Admin entry remains closed; P0

@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-05B-3R2 passed; final P1-05 closure audit gated
+Status: Active — Admin P1-05 final closure audit passed; closure commit gated
 Roadmap type: Product Phase Roadmap
 
 ## Phase and Sprint model
@@ -136,7 +136,7 @@ P1-04A 仅完成本地数据库权限切换，不修改 `/access`、Action、Ser
 
 P1-04B 已形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。`/access` 本地实现 ordinary Membership 与 Author Role 的规范化 reason、Review、独立确认、稳定 requestId、expected-state 与 `Saved | Unchanged | Conflict`；调用链保持 Action → P1-02F Service → strict Repository → v2 RPC，elevated 账户无可执行控件。至此 ordinary governance 本地实现完成。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-P1 尚未完成 Closure。P1-05 `Local + Dedicated Non-Production Remote QA` 的 B-3R2 functional QA 已 PASS：R1 后的正式 UI/Action/Service/Repository/v2 RPC chain、Membership/Author Saved 与 Unchanged、requestId、Conflict、三类并发、Detail/Audit、local atomicity、elevated/legacy deny 和精确 cleanup 均通过。QA2 最终无 synthetic Auth/Session/业务/Audit/Ledger/credential，v2 write 已关闭到 `0/12`；20/20 Migration、read `3/12`、old `0/12`、private `0/36` 与非 fixture 基线保持。P1-05 现在 `READY FOR FINAL CLOSURE AUDIT`，但该 Audit 尚未授权；证据见 [`P1_05B3_MUTATION_AND_CLEANUP_QA_EVIDENCE.md`](Admin_P1/P1_05B3_MUTATION_AND_CLEANUP_QA_EVIDENCE.md)。Production 禁止作为测试环境。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。Admin Production 保持 paused，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+P1-05 `Local + Dedicated Non-Production Remote QA` 的 B-3R2 functional QA 已 PASS：R1 后的正式 UI/Action/Service/Repository/v2 RPC chain、Membership/Author Saved 与 Unchanged、requestId、Conflict、三类并发、Detail/Audit、local atomicity、elevated/legacy deny 和精确 cleanup 均通过。QA2 最终无 synthetic Auth/Session/业务/Audit/Ledger/credential，v2 write 已关闭到 `0/12`；20/20 Migration、read `3/12`、old `0/12`、private `0/36` 与非 fixture 基线保持。当前 HEAD 的完整本地回归、安全扫描与历史证据审计均通过，P1-05 Final Closure Audit 为 `PASS / READY TO CLOSE`，等待 Product Owner docs-only Closure Commit 授权；证据见 [`P1_05_FINAL_CLOSURE_AUDIT.md`](Admin_P1/P1_05_FINAL_CLOSURE_AUDIT.md)。P1-06 Protected Admin Preview Acceptance 为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`，不得自动开始；P1-07 仍未授权。Production 禁止作为测试环境，Admin Production 保持 paused，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 P1-05A preparation 已形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。P1-05B Attempt 1 的 fresh QA bootstrap 在 Migration D 因 Hosted legacy direct `anon` execute 与本地前置假设不一致而失败；1–19 已应用、D 未应用，未创建 fixture 或执行业务 QA。授权的 emergency fail-closed 已关闭全部六个 write RPC 的四角色 execute；该部分 QA 环境不得继续使用。
 
