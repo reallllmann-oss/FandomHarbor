@@ -1,4 +1,6 @@
+import { createTrustedAccessContext } from "@fandom-harbor/auth";
 import {
+  createIdentityAccessGovernanceService,
   IdentityAccessGovernanceDomainError,
   parseIdentityAccessGovernanceAuditPage,
   parseIdentityAccessMutationResult,
@@ -11,6 +13,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   executeAccessGovernanceMutation,
   INITIAL_ACCESS_GOVERNANCE_MUTATION_STATE,
+  type AccessGovernanceReview,
   type AccessGovernanceMutationActionState,
   type AccessGovernanceMutationDependencies,
 } from "./access-governance-mutation";
@@ -129,6 +132,46 @@ function dependencies(
   };
 }
 
+function composedService() {
+  const access = {
+    getCurrent: vi.fn(async () =>
+      createTrustedAccessContext({
+        identity: { id: "90000000-0000-4000-8000-000000000001" },
+        membershipState: "active",
+        roles: ["admin"],
+      }),
+    ),
+  };
+  const read = {
+    getSubjectDetail: vi.fn(async () => detail()),
+    listSubjectAudit: vi.fn(async () =>
+      parseIdentityAccessGovernanceAuditPage({
+        hasMore: false,
+        items: [],
+        nextCursor: null,
+      }),
+    ),
+    searchSubjects: vi.fn(async () =>
+      parseIdentityAccessSubjectPage({
+        hasMore: false,
+        items: [],
+        nextCursor: null,
+      }),
+    ),
+  };
+  const write = {
+    grantAuthorRole: vi.fn(async () => result("saved")),
+    revokeAuthorRole: vi.fn(async () => result("unchanged")),
+    setOrdinaryMembershipState: vi.fn(async () => result("saved")),
+  };
+  return {
+    access,
+    read,
+    service: createIdentityAccessGovernanceService({ access, read, write }),
+    write,
+  };
+}
+
 function reviewForm(operation = "grantAuthorRole") {
   const form = new FormData();
   form.set("intent", "review");
@@ -145,7 +188,112 @@ function confirmForm() {
   return form;
 }
 
+function preparedReview(
+  operation: AccessGovernanceReview["operation"],
+  overrides: Partial<AccessGovernanceReview> = {},
+): AccessGovernanceMutationActionState {
+  return {
+    review: {
+      authorActive: operation === "revokeAuthorRole",
+      currentMembershipState: "active",
+      expectedStateToken: token,
+      operation,
+      reason: "Govern ordinary access safely",
+      registrationName: "HarborReader",
+      requestId,
+      ...(operation === "setOrdinaryMembershipState"
+        ? { state: "suspended" as const }
+        : {}),
+      targetUserId,
+      ...overrides,
+    },
+    status: "review",
+  };
+}
+
 describe("P1-04B access governance Action state", () => {
+  it("passes raw Membership input through the Service parser exactly once", async () => {
+    const composed = composedService();
+    const deps = dependencies(composed.service);
+    const form = reviewForm("setOrdinaryMembershipState");
+    form.set("state", "suspended");
+    const review = await executeAccessGovernanceMutation(
+      INITIAL_ACCESS_GOVERNANCE_MUTATION_STATE,
+      form,
+      deps,
+    );
+    vi.clearAllMocks();
+
+    await expect(
+      executeAccessGovernanceMutation(review, confirmForm(), deps),
+    ).resolves.toMatchObject({ requestId, status: "saved" });
+    expect(composed.access.getCurrent).toHaveBeenCalledOnce();
+    expect(composed.read.getSubjectDetail).toHaveBeenCalledOnce();
+    expect(composed.write.setOrdinaryMembershipState).toHaveBeenCalledOnce();
+    expect(composed.write.setOrdinaryMembershipState).toHaveBeenCalledWith({
+      expectedStateToken: { value: token },
+      operation: "setOrdinaryMembershipState",
+      reason: { value: "Grant Café Author" },
+      requestId: { value: requestId },
+      state: "suspended",
+      targetUserId: { value: targetUserId },
+    });
+  });
+
+  it.each([
+    ["Grant Author", "grantAuthorRole", "saved"],
+    ["Revoke Author", "revokeAuthorRole", "unchanged"],
+  ] as const)(
+    "passes raw %s input through the Service parser exactly once",
+    async (_name, operation, status) => {
+      const composed = composedService();
+      const deps = dependencies(composed.service);
+
+      await expect(
+        executeAccessGovernanceMutation(
+          preparedReview(operation),
+          confirmForm(),
+          deps,
+        ),
+      ).resolves.toMatchObject({ requestId, status });
+      expect(composed.access.getCurrent).toHaveBeenCalledOnce();
+      expect(composed.read.getSubjectDetail).toHaveBeenCalledOnce();
+      expect(composed.write[operation]).toHaveBeenCalledOnce();
+      expect(composed.write[operation]).toHaveBeenCalledWith(
+        expect.objectContaining({
+          expectedStateToken: { value: token },
+          operation,
+          reason: { value: "Govern ordinary access safely" },
+          requestId: { value: requestId },
+          targetUserId: { value: targetUserId },
+        }),
+      );
+    },
+  );
+
+  it.each([
+    ["reason", { reason: "bad" }],
+    ["requestId", { requestId: "not-a-uuid" }],
+    ["expected-state", { expectedStateToken: "not-a-token" }],
+  ] as const)(
+    "keeps invalid raw %s input at the canonical Service parser",
+    async (_name, overrides) => {
+      const composed = composedService();
+      const deps = dependencies(composed.service);
+
+      await expect(
+        executeAccessGovernanceMutation(
+          preparedReview("grantAuthorRole", overrides),
+          confirmForm(),
+          deps,
+        ),
+      ).resolves.toMatchObject({ code: "INVALID_INPUT", status: "error" });
+      expect(composed.access.getCurrent).not.toHaveBeenCalled();
+      expect(composed.read.getSubjectDetail).not.toHaveBeenCalled();
+      expect(composed.write.grantAuthorRole).not.toHaveBeenCalled();
+    },
+  );
+
   it("prepares a normalized ordinary Review without invoking a mutation", async () => {
     const current = service();
     const deps = dependencies(current);
@@ -190,7 +338,7 @@ describe("P1-04B access governance Action state", () => {
     });
     expect(current.grantAuthorRole).toHaveBeenCalledOnce();
     expect(current.grantAuthorRole).toHaveBeenCalledWith(
-      expect.objectContaining({ requestId: { value: requestId } }),
+      expect.objectContaining({ requestId }),
     );
     expect(deps.refresh).toHaveBeenCalledOnce();
   });
@@ -221,7 +369,7 @@ describe("P1-04B access governance Action state", () => {
     await executeAccessGovernanceMutation(failed, confirmForm(), deps);
     expect(current.grantAuthorRole).toHaveBeenCalledTimes(2);
     expect(current.grantAuthorRole).toHaveBeenLastCalledWith(
-      expect.objectContaining({ requestId: { value: requestId } }),
+      expect.objectContaining({ requestId }),
     );
   });
 

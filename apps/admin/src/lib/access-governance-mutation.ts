@@ -2,8 +2,6 @@ import {
   IdentityAccessGovernanceDomainError,
   IdentityAccessNormalizedReason,
   IdentityAccessRequestId,
-  parseGrantAuthorRoleCommand,
-  parseRevokeAuthorRoleCommand,
   parseSetOrdinaryMembershipStateCommand,
   type IdentityAccessGovernanceErrorCode,
   type IdentityAccessGovernanceService,
@@ -152,7 +150,7 @@ function safeError(
   };
 }
 
-function commandFor(review: AccessGovernanceReview) {
+function requestFor(review: AccessGovernanceReview) {
   const base = {
     expectedStateToken: review.expectedStateToken,
     reason: review.reason,
@@ -161,14 +159,13 @@ function commandFor(review: AccessGovernanceReview) {
   };
   switch (review.operation) {
     case "grantAuthorRole":
-      return parseGrantAuthorRoleCommand(base);
     case "revokeAuthorRole":
-      return parseRevokeAuthorRoleCommand(base);
+      return base;
     case "setOrdinaryMembershipState":
-      return parseSetOrdinaryMembershipStateCommand({
+      return {
         ...base,
         state: review.state,
-      });
+      };
   }
 }
 
@@ -247,17 +244,17 @@ async function confirmReview(
   const review = reviewFromState(previousState);
   if (!review) throw new IdentityAccessGovernanceDomainError("INVALID_INPUT");
   const service = await dependencies.createService();
-  const command = commandFor(review);
+  const request = requestFor(review);
   let result: IdentityAccessMutationResult;
-  switch (command.operation) {
+  switch (review.operation) {
     case "grantAuthorRole":
-      result = await service.grantAuthorRole(command);
+      result = await service.grantAuthorRole(request);
       break;
     case "revokeAuthorRole":
-      result = await service.revokeAuthorRole(command);
+      result = await service.revokeAuthorRole(request);
       break;
     case "setOrdinaryMembershipState":
-      result = await service.setOrdinaryMembershipState(command);
+      result = await service.setOrdinaryMembershipState(request);
       break;
   }
   dependencies.refresh();
