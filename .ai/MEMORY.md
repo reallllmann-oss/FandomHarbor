@@ -1,6 +1,20 @@
 # Project Memory
 
-- 2026-08-22: P1-05B-3 stopped at its first formal ordinary Membership Confirm.
+- 2026-08-22: P1-05B-3R2 passed against dedicated QA2 at baseline
+  `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63`. The current local UI → Action raw
+  request → Service parser → live authorization → strict Repository → v2 RPC path
+  returned Saved for the original Membership scenario. Membership and Author
+  Saved/Unchanged, replay/mismatch, stale Conflict, concurrency A/B/C,
+  exactly-once, Detail/Audit and elevated/legacy denial all passed. Pre-cleanup
+  proof was 17 unique Ledger rows (11 Saved, four Unchanged, two Conflict) and 11
+  business Audits with no duplicate or orphan. Local authoritative rollback and
+  dblink suites passed; no remote failure injector was created. Exact cleanup
+  restored zero synthetic Auth/session/business/Audit/Ledger/invitation state;
+  final ACL is old `0/12`, v2 `0/12`, read `3/12`, private `0/36`, with QA2
+  `ACTIVE_HEALTHY`, 20/20 Migration and non-fixture baseline unchanged. P1-05B-3R2
+  is PASS and P1-05 is ready for a separately authorized final closure audit.
+
+- Historical Attempt 1 (2026-08-22): P1-05B-3 stopped at its first formal ordinary Membership Confirm.
   Review bound the database token, but Confirm returned sanitized `INVALID_INPUT`
   before any v2 RPC; target state, Audit and Ledger remained unchanged. Read-only
   trace shows the Action adapter passes an already-parsed branded command into the
@@ -9,7 +23,8 @@
   synthetic Auth/session/profile/membership/role/Audit/Ledger/request/invitation
   and local temporary credentials are zero; final ACL old `0/12`, v2 `0/12`, read
   `3/12`, private `0/36`; 20/20 Migration and non-fixture baseline unchanged.
-  P1-05B-3 is BLOCKED and P1-05 is not ready for closure.
+  At that historical point P1-05B-3 was BLOCKED and P1-05 was not ready for
+  closure.
 
 ## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22 historical snapshot）
 

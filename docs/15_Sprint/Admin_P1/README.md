@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-05B-3 BLOCKED — ACTION/SERVICE COMMAND BOUNDARY DECISION REQUIRED`
+状态：`P1-05B-3R2 PASS — WAITING FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -16,7 +16,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                   |
 | P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
 | P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
-| P1-05B | Local + Dedicated Non-Production Remote QA   | B-2 PASS; B-3 BLOCKED and fail-closed  |
+| P1-05B | Local + Dedicated Non-Production Remote QA   | B-3R2 PASS; final closure audit gated  |
 | P1-06  | Protected Admin Preview Acceptance           | Not authorized                         |
 | P1-07  | Production Release Review                    | Not authorized                         |
 
@@ -54,7 +54,7 @@ P1-03 基于 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 完成并�
 
 P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在该本地 ACL 基线上完成 ordinary Membership 与 Author Grant/Revoke 的 reason → Review → 独立确认 → `Saved | Unchanged | Conflict` UI/Action，并形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。每次 Review 通过 Service 重新读取并绑定数据库 expected-state，Action 生成稳定 requestId；确认只调用一次 Service mutation，安全显式重试复用同一 ID，Conflict 强制刷新与新 Review。Elevated 账户只有读取与延期说明，无写控件。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-Ordinary governance 的本地实现链现已完成，但这不等于 P1 Closure 或任何 Production 发布。P1-05 `Local + Dedicated Non-Production Remote QA` 仍是 P1 Closure blocker：Attempt 1 已失败并 fail-closed；R1 已形成 Commit `4f93db9a834843da7640bdf52a31817f2ff528e1`；R2 已在新的 clean Hosted QA 完成 20/20 bootstrap 与 catalog/ACL/security inspection；P1-05B-2 已完成读取与拒绝矩阵并等待独立 Closure Commit 授权。Product Owner 已接受 Attempt 2-only 数据库密码旋转为 `QA-ONLY OPERATIONAL CREDENTIAL RECOVERY`，不构成未来扩大远程范围的先例。P1-05B-3 ordinary 成功写入矩阵仍未授权。Production 不得作为 fallback。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+Ordinary governance 的本地实现链现已完成，但这不等于 P1 Closure 或任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 已恢复零 synthetic state 并关闭 write。P1-05 当前 `READY FOR FINAL CLOSURE AUDIT`，该 Audit 仍需 Product Owner 单独授权。Production 不得作为 fallback。P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 P1-05A 已完成 fixture、credential、write-window、emergency close-writes、cleanup/retention、20-Migration apply、ACL、QA matrix 与 evidence 计划，并形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。Attempt 1 在 dedicated QA 的 Migration D 检测到 Hosted direct `anon` legacy execute 后失败；Migration 1–19 已应用，D 未应用，fixture/业务 QA 未开始，紧急 fail-closed 后 6 个 write RPC × 4 个应用角色均为 deny。该 Project 固定为 `FAILED BOOTSTRAP EVIDENCE / FAIL-CLOSED`，不得继续用于 P1-05B。
 
@@ -62,11 +62,4 @@ P1-05B-1R1 已在本地修正 D 的 fresh-bootstrap ACL 合同并 Commit。R2 �
 
 P1-05B-2 已在 Attempt 2 建立 14 个 A–N 合成业务夹具和一个不可登录 bootstrap control identity。Admin 与 Super Admin 的本地 `/access` Search/Detail/Audit 通过；Reader、Author、inactive/revoked Admin、匿名、live-access 失效与 Review→Confirm 权限丢失全部拒绝。Admin、Super Admin、elevated Membership 与唯一 active Super Admin 保护测试均为 `ELEVATED_MUTATION_DEFERRED`；旧 RPC 为 authenticated privilege denied。业务、Ledger、Audit 零增量，post-test ACL 仍为 old `0/12`、v2 `3/12`、read `3/12`、private `0/36`，合成会话已关闭。P1-05B-2 已形成 Commit `3f45ce7459e67e7f6b8844024bfd64181a1a8374`；其当时的 B-3 ready handoff 已由下述 B-3 实际结果取代。P1-06、P1-07 与 P1.1 均未授权。
 
-P1-05B-3 的首个正式 UI `active -> suspended` Confirm 返回安全的
-`INVALID_INPUT`，且未调用 v2 write RPC；目标 Membership、Audit 与 Ledger 均零变化。
-只读代码追踪定位为 Action adapter 将已解析的 branded Domain command 再交给
-Service 的 unknown-input parser，导致组合边界二次解析失败。Mission Stop Gate 已触发，
-后续 mutation/concurrency 矩阵未继续。Attempt 2 已精确清除全部 synthetic
-Auth/业务/Audit/Ledger/邀请/credential，并关闭 v2 write 至 `0/12`；read 保持
-`3/12`，old/private 保持 `0/12`、`0/36`，20/20 Migration 与非 fixture 基线不变。
-P1-05B-3 为 `BLOCKED / WAITING FOR PRODUCT OWNER DECISION`；P1-05 不可 Closure。
+P1-05B-3 Attempt 1 的 `INVALID_INPUT`、零写入和 fail-closed cleanup 继续作为历史证据保留。R1 Commit `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63` 修正 Action raw request → Service parser 组合边界后，R2 的正式 UI `active -> suspended` 返回 Saved 且 Detail/Audit 一致。完整矩阵得到 17 个唯一 Ledger（11 Saved、4 Unchanged、2 Conflict）和 11 个业务 Audit，无重复或孤儿记录；三类并发、requestId replay/mismatch、stale Conflict、elevated 与 legacy deny 均通过。本地权威 atomicity/rollback 与 dblink concurrency suites 通过。最终 synthetic Auth/Session/Profile/Membership/Role/Audit/Ledger/requestId/邀请均为零，ACL 为 old `0/12`、v2 `0/12`、read `3/12`、private `0/36`，20/20 Migration 与非 fixture 基线不变。P1-05B-3R2 为 `PASS / WAITING FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`；P1-05 为 `READY FOR FINAL CLOSURE AUDIT`，不得自动开始。

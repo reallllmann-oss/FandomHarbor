@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-22 — Admin P1-05B-3R2 Final Functional QA
+
+- Verified the committed Action raw-request → Service parser composition fix
+  through the current local `/access` UI against dedicated QA Attempt 2 only. The
+  original Membership `active -> suspended` returned Saved and refreshed Detail;
+  `INVALID_INPUT` did not recur.
+- Completed Membership and Author Saved/Unchanged, revoked ordinary, requestId
+  replay/mismatch, stale Conflict, concurrency A/B/C, exactly-once, live-access,
+  Detail/Audit and elevated/legacy denial checks. Evidence was 17 unique Ledger
+  rows (11 Saved, four Unchanged, two Conflict) and 11 business Audits with no
+  duplicate or orphan.
+- Recorded remote failure injection as `NOT APPLICABLE BY CURRENT CONTRACT` and
+  created none; reran the existing local authoritative transaction rollback and
+  dblink concurrency suites successfully.
+- Removed the exact synthetic fixture inventory, sessions, credentials, Audit,
+  Ledger, requests, invitation and redemption. QA2 is `ACTIVE_HEALTHY`, zero
+  synthetic state, 20/20 exact and write-closed: old `0/12`, v2 `0/12`, read
+  `3/12`, private `0/36`.
+- Production and Attempt 1 were untouched. No product/database contract change,
+  stage, Commit, Push/PR/Merge, Deployment, Unpause, P1-06, P1-07 or P1.1
+  occurred. P1-05B-3R2 is PASS; P1-05 is ready only for a separately authorized
+  final closure audit.
+
 ## 2026-08-22 — Admin P1-05B-3 Fail-Closed Mutation Attempt and Cleanup
 
 - Ran the first formal ordinary Membership Review/Confirm against dedicated QA2.
