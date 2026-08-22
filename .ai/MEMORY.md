@@ -1,6 +1,17 @@
 # Project Memory
 
-## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22）
+- 2026-08-22: P1-05B-3 stopped at its first formal ordinary Membership Confirm.
+  Review bound the database token, but Confirm returned sanitized `INVALID_INPUT`
+  before any v2 RPC; target state, Audit and Ledger remained unchanged. Read-only
+  trace shows the Action adapter passes an already-parsed branded command into the
+  Service's unknown-input parser, which rejects the branded fields on the second
+  parse. No fix was authorized. QA2 was emergency write-closed and fully sanitized:
+  synthetic Auth/session/profile/membership/role/Audit/Ledger/request/invitation
+  and local temporary credentials are zero; final ACL old `0/12`, v2 `0/12`, read
+  `3/12`, private `0/36`; 20/20 Migration and non-fixture baseline unchanged.
+  P1-05B-3 is BLOCKED and P1-05 is not ready for closure.
+
+## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22 historical snapshot）
 
 - Dedicated QA Attempt 2 `hicfnlwzmnbxhimyeviy` now contains 14 named A–N
   synthetic fixtures plus one non-login invitation bootstrap controller. The
@@ -24,7 +35,9 @@
 - The privileged browser session was signed out and final synthetic session and
   refresh-token counts are zero. No ordinary successful mutation, Production
   credential/data/operation, Commit, Push/PR/Merge, Unpause or Deployment occurred.
-  P1-05B-2 is PASS awaiting commit authorization; B-3 is ready but not started.
+  This was the B-2 handoff state. B-2 was later committed at
+  `3f45ce7459e67e7f6b8844024bfd64181a1a8374`; the current B-3 result above
+  supersedes its former ready/not-started statement.
 
 ## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
 

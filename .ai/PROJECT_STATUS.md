@@ -1,6 +1,31 @@
 # Project Status
 
-## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22）
+## Admin P1-05B-3 Mutation and Cleanup QA（2026-08-22）
+
+| 项目                      | 当前状态                                                             |
+| ------------------------- | -------------------------------------------------------------------- |
+| Baseline                  | `3f45ce7459e67e7f6b8844024bfd64181a1a8374`                           |
+| QA Attempt 2              | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY`                            |
+| First formal mutation     | `active -> suspended` Review PASS; Confirm `INVALID_INPUT`           |
+| Business / Audit / Ledger | zero change / zero / zero                                            |
+| Root cause                | parsed branded command is reparsed at Service unknown-input boundary |
+| Remaining B-3 matrix      | not run after mandatory stop gate                                    |
+| Remote failure injection  | safely blocked; no approved remote mechanism                         |
+| Cleanup                   | all synthetic Auth/data/Audit/Ledger/invitation/credentials zero     |
+| Final ACL                 | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`                   |
+| Migration / non-fixture   | 20/20 exact; baseline unchanged                                      |
+| P1-05B-3                  | BLOCKED / WAITING FOR PRODUCT OWNER DECISION                         |
+| Production / Attempt 1    | untouched / untouched                                                |
+
+- The formal UI path failed closed before the write Port. No product code or
+  database contract was changed under the remote-QA-only authorization.
+- QA2 is sanitized and write-closed. P1-05 is not ready for closure; a separate
+  local fix/regression authorization and a fresh-fixture QA rerun are required.
+- P1-06, P1-07 and P1.1 remain not authorized. Admin Production remains
+  `paused=true`; Web Admin entry remains closed; P0 Production Site Copy remains
+  Version 7.
+
+## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22 historical snapshot）
 
 | 项目                            | 当前状态                                                                 |
 | ------------------------------- | ------------------------------------------------------------------------ |
@@ -16,8 +41,8 @@
 | Business / Ledger / Audit delta | `0 / 0 / 0`                                                              |
 | Final ACL                       | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                       |
 | Sessions                        | browser signed out; synthetic sessions/refresh tokens zero               |
-| P1-05B-2                        | PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION                    |
-| P1-05B-3                        | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                      |
+| P1-05B-2                        | PASS / COMMITTED at `3f45ce7459e67e7f6b8844024bfd64181a1a8374`           |
+| P1-05B-3                        | historical handoff; superseded by the current B-3 section above          |
 | Production side effect          | NO                                                                       |
 | Admin Production                | `paused=true`                                                            |
 

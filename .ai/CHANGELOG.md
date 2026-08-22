@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-22 — Admin P1-05B-3 Fail-Closed Mutation Attempt and Cleanup
+
+- Ran the first formal ordinary Membership Review/Confirm against dedicated QA2.
+  Confirm returned sanitized `INVALID_INPUT` before the v2 write Port; Membership,
+  Audit and Ledger remained unchanged, so the mandatory Mission stop gate fired.
+- Read-only source tracing identified an Action-to-Service command-boundary defect:
+  an already-parsed branded Domain command is parsed a second time as raw unknown
+  input. No implementation, test, Migration or schema change was made.
+- Did not continue Saved/Unchanged, Author, idempotency, Conflict, concurrency or
+  elevated-recheck tests. Remote Audit/Ledger failure injection was safely skipped
+  because the repository has no approved remote injector and temporary triggers
+  are forbidden.
+- Revoked authenticated execute from the three v2 write RPCs, signed out, deleted
+  the exact synthetic fixture inventory and temporary credentials, and verified
+  zero Auth/session/profile/membership/role/Audit/Ledger/request/invitation residue.
+- Final QA2 state is ACTIVE_HEALTHY, 20/20 Migration, old `0/12`, v2 `0/12`, read
+  `3/12`, private `0/36`, with the non-fixture baseline unchanged. Production and
+  Attempt 1 were untouched; no stage, Commit, Push/PR/Merge or Deployment occurred.
+
 ## 2026-08-22 — Admin P1-05B-2 Read Authorization and Denial QA
 
 - Provisioned 14 A–N synthetic QA identities and one non-login bootstrap control
