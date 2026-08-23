@@ -75,7 +75,7 @@ function accessHref(input: {
 
 function MembershipBadge({ state }: { state: IdentityAccessMembershipState }) {
   return (
-    <span className="inline-flex rounded-full border border-border bg-surface-muted px-2.5 py-1 text-xs font-medium">
+    <span className="inline-flex shrink-0 rounded-full border border-border bg-surface-muted px-2.5 py-1 text-xs font-medium">
       {membershipLabels[state]}
     </span>
   );
@@ -109,18 +109,18 @@ function SubjectSummary({
   subject: IdentityAccessSubjectSummary;
 }) {
   return (
-    <li>
+    <li className="min-w-0">
       <a
-        className="block rounded-card border border-border bg-surface p-4 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        className="block min-w-0 rounded-card border border-border bg-surface p-4 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
         href={accessHref({
           query,
           searchCursor: searchCursor ?? undefined,
           subject: subject.userId.value,
         })}
       >
-        <span className="flex flex-wrap items-start justify-between gap-3">
-          <span>
-            <span className="block font-semibold">
+        <span className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+          <span className="min-w-0 flex-1">
+            <span className="block break-words font-semibold [overflow-wrap:anywhere]">
               {displayRegistrationName(subject.registrationName)}
             </span>
             <span className="mt-1 block break-all font-mono text-xs text-muted-foreground">
@@ -142,13 +142,16 @@ function SubjectSummary({
 
 function DetailPanel({ detail }: { detail: IdentityAccessSubjectDetail }) {
   return (
-    <section aria-labelledby="identity-detail-heading" className="site-stack">
+    <section
+      aria-labelledby="identity-detail-heading"
+      className="site-stack min-w-0"
+    >
       <div className="rounded-card border border-border bg-surface p-5 sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
             <p className="eyebrow">Identity / account summary</p>
             <h2
-              className="mt-2 text-2xl font-semibold"
+              className="mt-2 break-words text-2xl font-semibold [overflow-wrap:anywhere]"
               id="identity-detail-heading"
             >
               {displayRegistrationName(detail.profile.registrationName)}
@@ -157,7 +160,7 @@ function DetailPanel({ detail }: { detail: IdentityAccessSubjectDetail }) {
               {detail.profile.userId.value}
             </p>
           </div>
-          <span className="rounded-full border border-border bg-surface-muted px-3 py-1 text-xs font-medium">
+          <span className="shrink-0 rounded-full border border-border bg-surface-muted px-3 py-1 text-xs font-medium">
             读取 + 普通治理
           </span>
         </div>
@@ -473,8 +476,8 @@ export function AccessGovernanceView({
         </form>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.5fr)]">
-        <section aria-labelledby="identity-results-heading">
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)]">
+        <section aria-labelledby="identity-results-heading" className="min-w-0">
           <div className="flex items-end justify-between gap-3">
             <div>
               <p className="eyebrow">Subjects</p>
@@ -524,7 +527,7 @@ export function AccessGovernanceView({
         </section>
 
         {data.selectedSubject ? (
-          <div className="site-stack">
+          <div className="site-stack min-w-0">
             <DetailPanel detail={data.selectedSubject} />
             <AccessMutationPanel
               authorActive={data.selectedSubject.activeRoleGrants.some(
@@ -540,7 +543,7 @@ export function AccessGovernanceView({
             />
           </div>
         ) : (
-          <section className="empty-state" aria-label="身份详情">
+          <section className="empty-state min-w-0" aria-label="身份详情">
             <p className="eyebrow">Subject detail</p>
             <h2 className="mt-3 text-xl font-semibold">选择一个身份查看详情</h2>
             <p className="mt-2 text-sm text-muted-foreground">

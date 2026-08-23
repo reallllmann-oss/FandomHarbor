@@ -102,4 +102,22 @@ describe("P1-03 /access read-only route contract", () => {
     }
     expect(page).not.toMatch(/email|phone|password|user_metadata/iu);
   });
+
+  it("keeps long identity values inside a shrink-safe responsive grid", async () => {
+    const page = await source("./page.tsx");
+
+    expect(page).toContain(
+      "grid min-w-0 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)]",
+    );
+    expect(page).not.toContain("minmax(18rem,0.8fr)");
+    expect(page).toContain('className="site-stack min-w-0"');
+    expect(page).toContain('className="min-w-0 flex-1"');
+    expect(page.match(/\[overflow-wrap:anywhere\]/gu)).toHaveLength(2);
+    expect(page).toContain(
+      'className="mt-1 block break-all font-mono text-xs text-muted-foreground"',
+    );
+    expect(page).toContain("<RoleList roles={subject.effectiveRoles} />");
+    expect(page).toContain("选择一个身份查看详情");
+    expect(page).toContain("<DetailPanel detail={data.selectedSubject} />");
+  });
 });
