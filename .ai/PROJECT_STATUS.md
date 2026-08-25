@@ -1,6 +1,32 @@
 # Project Status
 
-## Admin P1-05 Final Closure Audit（2026-08-22）
+## Admin P1-06A Dedicated Protected Preview Acceptance（2026-08-23）
+
+| 项目                          | 当前状态                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| Branch / HEAD                 | `codex/admin-p1-04-ordinary-mutations` / `b0148e051c622e0a0fce0141be8cbcbccee9401d` |
+| Canonical Preview             | `dpl_84CzqyvoypWY213ESquzM9B6Ekap` / READY / preview                                |
+| Protection                    | Vercel Authentication PASS / automation bypass `0`                                  |
+| QA2 runtime / human smoke     | `hicfnlwzmnbxhimyeviy` / Login + `/access` PASS                                     |
+| Responsive fix                | human accepted; no overflow or overlap                                              |
+| Smoke cleanup                 | Auth/identity/session/refresh/Profile/Membership/Role/Audit/Ledger/request `0`      |
+| QA ACL                        | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`; writes closed                   |
+| Incorrect Production incident | routes removed; `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2` deleted                          |
+| Formal Admin Production       | unchanged / `paused=true`; Site Copy Version 7; Web entry closed                    |
+| P1-06A                        | PASS / READY FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION                        |
+| P1-06B                        | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                 |
+| P1-07 / P1.1                  | NOT STARTED / DEFERRED AND NOT AUTHORIZED                                           |
+
+- Direct remote executor browser scanning remained unavailable due executor
+  network. Equivalent Preview allowlist, local static-build/runtime-source scans,
+  accepted QA2 human runtime evidence and zero automation bypass passed; no false
+  remote browser scan PASS is claimed.
+- Pre-fix Preview `dpl_HgXQHJPQ8i5eVUHweTAnZMrCqKeV` is retained as
+  READY/preview. The canonical fixed Preview remains protected and unpromoted.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`.
+
+## Admin P1-05 Final Closure Audit（2026-08-22 historical snapshot）
 
 | 项目                              | 当前状态                                                                                                                                 |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-23 — Admin P1-06A Dedicated Protected Preview Acceptance
+
+- Recorded Product Owner human acceptance of Vercel Authentication, QA2 Admin
+  login, Admin overview, `/access` read-only data and the responsive overflow fix
+  on canonical Preview `dpl_84CzqyvoypWY213ESquzM9B6Ekap` sourced from
+  `b0148e051c622e0a0fce0141be8cbcbccee9401d`.
+- Preserved the full blocked/recovery history: paused formal Project, first
+  Deployment Production classification, Preview recovery, unauthorized bypass
+  creation and revocation, executor network limit, human smoke, password-policy
+  correction, responsive defect, local fix and fixed Preview deployment.
+- Revoked the exact smoke user's two sessions and two refresh tokens, then removed
+  its Auth/identity/Profile/Membership/Admin fixture and local Keychain credential.
+  Synthetic state is zero; non-fixture Audit 1, Ledger 0 and Migration 20 remain.
+- Re-proved QA ACL old `0/12`, v2 `0/12`, read `3/12`, private `0/36`; QA writes
+  remain closed and no ACL/schema/function/Migration changed.
+- Removed the two exact Production aliases from incorrect deployment
+  `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2`, verified zero active routes, then deleted the
+  deployment. Canonical and pre-fix Previews remain READY/preview and protected;
+  no promotion or new Deployment occurred.
+- Recorded the exact client-secret boundary: direct remote executor browser scan
+  was unavailable due network, while equivalent Preview configuration, local
+  browser-build/runtime-source scans, accepted QA2 human runtime and zero bypass
+  passed. Formal Admin Production remains unchanged and `paused=true`; P1-06B is
+  ready for separate authorization but not started.
+
 ## 2026-08-22 — Admin P1-05 Final Closure Audit
 
 - Audited the exact P1-05 Git ancestry and preserved both failed-attempt histories,

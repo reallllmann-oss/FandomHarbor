@@ -1,5 +1,27 @@
 # Project Memory
 
+- 2026-08-23: P1-06A dedicated protected Preview acceptance passed at
+  `b0148e051c622e0a0fce0141be8cbcbccee9401d`. Canonical Preview
+  `dpl_84CzqyvoypWY213ESquzM9B6Ekap` is READY/preview, protected by Vercel
+  Authentication and has zero automation bypass. The Product Owner completed
+  human Vercel protection, QA2 Admin login, `/access` read-only and responsive
+  visual acceptance; QA database Version 1 and the smoke-only identity proved
+  QA2 `hicfnlwzmnbxhimyeviy`, not Production. The initial overflow defect and all
+  deployment/bypass/network failures remain preserved in
+  `P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`. R1R7 revoked two sessions and two refresh
+  tokens, deleted the exact smoke Auth/Profile/Membership/Admin fixture and
+  Keychain credential, and returned synthetic state to zero. QA ACL remains old
+  `0/12`, v2 `0/12`, read `3/12`, private `0/36`; writes are closed. Both aliases
+  on incorrect Production deployment `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2` were
+  removed before that deployment was deleted; the dedicated project has no active
+  Production route. Canonical and pre-fix Previews remain READY/preview. Formal
+  Admin Production remains unchanged and `paused=true`, Web Admin entry closed,
+  and Production Site Copy Version 7. Direct executor browser scanning remained
+  unavailable; equivalent configuration, local build/source and human runtime
+  evidence passed. P1-06A awaits a docs-only evidence Commit; P1-06B is ready for
+  separate Product Owner authorization but not started. P1-07 and P1.1 remain
+  unauthorized.
+
 - 2026-08-22: P1-05 Final Closure Audit passed at
   `065e7626119789845471351cfbc1e71329c5735e`. All seven required P1-05 commits
   are exact ancestors. P1-05A, hosted ACL R1, clean Attempt 2, B-2 and B-3R2 are
