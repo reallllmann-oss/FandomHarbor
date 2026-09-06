@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-06 — Admin P1-07A Preview Deployment Governance
+
+- Kept formal Vercel Project `fandom-harbor-admin` paused and disabled its
+  automatic Git Preview deployment creation without changing its repository
+  link, `apps/admin` Root Directory, Production branch, environment, deployments
+  or aliases.
+- Connected `fandom-harbor-admin-p1-preview` to
+  `reallllmann-oss/FandomHarbor` at `apps/admin`, retained QA2 Preview-only
+  environment, Vercel Authentication and zero bypass, and set its Production
+  Branch to the existing `admin-production-disabled` sentinel. It has no
+  Production deployment.
+- Defined Admin Production release as a separately authorized explicit operation
+  from an immutable release SHA. PR checks, Preview readiness and merge do not
+  authorize Production deployment, Admin resume or Web Admin entry enablement.
+- Added a real docs-only governance change so PR #3 can obtain a new head and run
+  Web plus dedicated Admin Preview checks without changing runtime from
+  `a62a260b2f578105ba797a991613ad275a5f4d16`.
+- Changed no runtime code, tests, packages, Migration, database, Auth, RLS, ACL,
+  fixture, QA2 data or Production state. Merge and P1.1 remain unauthorized.
+
 ## 2026-09-06 — Admin P1-06C UI Polish Closure
 
 - Recorded Product Owner PASS for P1-06B Manual Preview Acceptance and P1-06C

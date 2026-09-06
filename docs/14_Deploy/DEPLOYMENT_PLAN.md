@@ -23,6 +23,24 @@ Status: Architecture baseline accepted by D-031 / ADR-017; external deployment e
 
 Production 使用独占的 Supabase 项目与凭据。Staging 必须与 Production 隔离。Preview 可使用隔离的非生产项目、branch 或 mock，但只能包含合成数据，且必须明确阻断生产凭据。
 
+## Admin Git 部署治理
+
+- 正式 Admin Vercel Project `fandom-harbor-admin` 保持 `paused=true`，并设置
+  `previewDeploymentsDisabled=true`；它不承担 GitHub PR 或 feature branch 的自动
+  Preview deployment。现有 Git link、`apps/admin` Root Directory、Production
+  环境和既有 Production deployment/alias 不因此改变。
+- 专用 Project `fandom-harbor-admin-p1-preview` 连接
+  `reallllmann-oss/FandomHarbor`，Root Directory 为 `apps/admin`，只承载 Admin
+  PR / QA Preview。它只使用 Preview target 的 QA2 环境变量，连接
+  `hicfnlwzmnbxhimyeviy`，启用 Vercel Authentication 且 automation bypass 为
+  `0`。
+- 两个 Admin Project 的 Production Branch 均为现有哨兵分支
+  `admin-production-disabled`。专用 Preview Project 不把 `main` 视为 Production
+  branch，并保持零 Production deployment，防止 merge 后意外产生正式用户入口。
+- Admin Production release 必须在 Product Owner 单独授权后，从冻结且不可变的
+  release SHA 显式执行。PR check、Preview READY 或 merge 本身均不授权 Production
+  deployment、正式 Admin resume、Web Admin 入口开放或任何数据库操作。
+
 ## 当前 Vercel + Supabase 责任分配
 
 | 能力            | 当前实现                                      | 不可越过的边界                                                             |

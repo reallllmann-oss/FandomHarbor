@@ -1,5 +1,32 @@
 # Project Status
 
+## Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
+
+| 项目                         | 当前状态                                                                                 |
+| ---------------------------- | ---------------------------------------------------------------------------------------- |
+| PR / start head              | `#3` / `a62a260b2f578105ba797a991613ad275a5f4d16`                                        |
+| Formal Admin                 | `fandom-harbor-admin` / `paused=true` / Git Preview creation disabled                    |
+| Formal Production branch     | `admin-production-disabled` / existing deployment and alias unchanged                    |
+| Dedicated Admin Preview      | `fandom-harbor-admin-p1-preview` / GitHub linked / Root `apps/admin`                     |
+| Preview production safeguard | Production Branch `admin-production-disabled`; Production deployments `0`                |
+| Preview data boundary        | QA2 `hicfnlwzmnbxhimyeviy` / Preview-only env / `ACTIVE_HEALTHY` / 20 of 20 Migrations   |
+| Preview access boundary      | Vercel Authentication enabled / automation bypass `0`                                    |
+| Runtime                      | unchanged from start head; governance commit is docs-only                                |
+| Production / Web             | no change; formal Admin paused; Web Admin entry closed                                   |
+| Release authority            | no Merge or Production release authorization; explicit immutable release SHA is required |
+| P1.1                         | DEFERRED / NOT AUTHORIZED                                                                |
+
+- The old `Vercel – fandom-harbor-admin` failure on the starting PR head was a
+  deployment-governance block caused by the paused formal project, not a code or
+  build failure.
+- The formal project retains its Git link, Root Directory, Production branch,
+  environment, deployment and alias while `previewDeploymentsDisabled=true`
+  prevents new PR/feature Preview creation.
+- The dedicated project now owns Admin PR / QA Preview creation. Connecting it
+  created no deployment and changed no QA2 or Production data, Auth, ACL, RLS or
+  Migration. A new docs-only PR head must pass Web and dedicated Admin Preview
+  checks before any separately authorized merge review.
+
 ## Admin P1-06C UI Polish Closure（2026-09-06）
 
 | 项目                    | 当前状态                                                                            |

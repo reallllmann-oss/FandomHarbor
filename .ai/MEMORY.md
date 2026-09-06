@@ -1,5 +1,20 @@
 # Project Memory
 
+- 2026-09-06: P1-07A-2C freezes Admin Git deployment governance for PR #3.
+  Formal Vercel Project `fandom-harbor-admin` remains `paused=true`, keeps its
+  repository link, `apps/admin` Root Directory, existing Production branch,
+  environment, deployments and aliases, and now has automatic Git Preview
+  creation disabled. Dedicated Project `fandom-harbor-admin-p1-preview` is linked
+  to `reallllmann-oss/FandomHarbor`, uses `apps/admin`, the existing
+  `admin-production-disabled` sentinel Production Branch, QA2 Preview-only
+  environment, Vercel Authentication and zero automation bypass; it has zero
+  Production deployments. QA2 `hicfnlwzmnbxhimyeviy` remains `ACTIVE_HEALTHY`
+  with 20/20 Migrations. Production release now requires separate Product Owner
+  authorization and an explicit immutable release SHA; PR checks or merge do not
+  imply deployment. This governance change adds docs only, leaves runtime equal
+  to start head `a62a260b2f578105ba797a991613ad275a5f4d16`, keeps Web Admin entry
+  closed, and does not authorize Merge, Production, Admin resume or P1.1.
+
 - 2026-09-06: P1-06B Manual Preview Acceptance and P1-06C Admin UI Polish are
   Product Owner PASS. P1-06C closes UI-01 Admin localization, UI-02 shrink-safe
   Review/responsive layout, UI-03 authenticated Admin global Header sign-out and
