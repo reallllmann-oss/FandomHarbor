@@ -61,7 +61,7 @@ export function parsePositiveVersion(value: unknown): bigint {
 
 function fieldError(field: SiteCopyFieldId): string {
   const { max, min } = SITE_COPY_FIELD_LIMITS[field];
-  return `请输入 ${min}–${max} 个有效 Unicode 字符；不允许换行或控制字符。`;
+  return `请输入 ${min}–${max} 个有效字符；不允许换行或控制字符。`;
 }
 
 export function prepareSiteCopyReview(
@@ -96,8 +96,7 @@ export function prepareSiteCopyReview(
         fields,
         ...(reason === undefined
           ? {
-              reason:
-                "请输入 4–200 个有效 Unicode 字符；不允许换行或控制字符。",
+              reason: "请输入 4–200 个有效字符；不允许换行或控制字符。",
             }
           : {}),
       },

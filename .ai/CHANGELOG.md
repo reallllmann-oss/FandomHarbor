@@ -1,5 +1,317 @@
 # Changelog
 
+## 2026-09-06 — Admin P1-07A Preview Deployment Governance
+
+- Kept formal Vercel Project `fandom-harbor-admin` paused and disabled its
+  automatic Git Preview deployment creation without changing its repository
+  link, `apps/admin` Root Directory, Production branch, environment, deployments
+  or aliases.
+- Connected `fandom-harbor-admin-p1-preview` to
+  `reallllmann-oss/FandomHarbor` at `apps/admin`, retained QA2 Preview-only
+  environment, Vercel Authentication and zero bypass, and set its Production
+  Branch to the existing `admin-production-disabled` sentinel. It has no
+  Production deployment.
+- Defined Admin Production release as a separately authorized explicit operation
+  from an immutable release SHA. PR checks, Preview readiness and merge do not
+  authorize Production deployment, Admin resume or Web Admin entry enablement.
+- Added a real docs-only governance change so PR #3 can obtain a new head and run
+  Web plus dedicated Admin Preview checks without changing runtime from
+  `a62a260b2f578105ba797a991613ad275a5f4d16`.
+- Changed no runtime code, tests, packages, Migration, database, Auth, RLS, ACL,
+  fixture, QA2 data or Production state. Merge and P1.1 remain unauthorized.
+
+## 2026-09-06 — Admin P1-06C UI Polish Closure
+
+- Recorded Product Owner PASS for P1-06B Manual Preview Acceptance and P1-06C
+  Admin UI Polish on protected Preview `dpl_HiF87dWBe54kXCMum3yN29nWHCxa`.
+- Completed UI-01 Admin localization, UI-02 shrink-safe Review and responsive
+  layouts, UI-03 authenticated Admin global Header sign-out, and UI-04 explicit
+  `Asia/Shanghai` timestamps displayed as `YYYY-MM-DD HH:mm（北京时间）`.
+- Product Owner human verification passed at 1440, 1024, 768, 480 and 390 pixels;
+  long registration names and user identifiers wrap safely, badges and Header are
+  not clipped, and no horizontal overflow remains.
+- Workspace TypeScript and ESLint, Admin 105, UI 5, Admin production build,
+  targeted Prettier, `git diff --check`, sensitive scan and exact scope passed.
+- Changed no Auth, Service, Repository, Domain, database, Migration, RPC, RLS,
+  Grant, ACL, fixture, Ledger, Audit or Production configuration. Formal Admin
+  Production remains `paused=true`, Web Admin entry closed and Site Copy Version 7.
+- P1-07 is ready for separate Product Owner authorization but not started. P1.1
+  remains deferred and unauthorized. No Push, PR, Merge or Production deployment
+  is part of this closure.
+
+## 2026-08-23 — Admin P1-06A Dedicated Protected Preview Acceptance
+
+- Recorded Product Owner human acceptance of Vercel Authentication, QA2 Admin
+  login, Admin overview, `/access` read-only data and the responsive overflow fix
+  on canonical Preview `dpl_84CzqyvoypWY213ESquzM9B6Ekap` sourced from
+  `b0148e051c622e0a0fce0141be8cbcbccee9401d`.
+- Preserved the full blocked/recovery history: paused formal Project, first
+  Deployment Production classification, Preview recovery, unauthorized bypass
+  creation and revocation, executor network limit, human smoke, password-policy
+  correction, responsive defect, local fix and fixed Preview deployment.
+- Revoked the exact smoke user's two sessions and two refresh tokens, then removed
+  its Auth/identity/Profile/Membership/Admin fixture and local Keychain credential.
+  Synthetic state is zero; non-fixture Audit 1, Ledger 0 and Migration 20 remain.
+- Re-proved QA ACL old `0/12`, v2 `0/12`, read `3/12`, private `0/36`; QA writes
+  remain closed and no ACL/schema/function/Migration changed.
+- Removed the two exact Production aliases from incorrect deployment
+  `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2`, verified zero active routes, then deleted the
+  deployment. Canonical and pre-fix Previews remain READY/preview and protected;
+  no promotion or new Deployment occurred.
+- Recorded the exact client-secret boundary: direct remote executor browser scan
+  was unavailable due network, while equivalent Preview configuration, local
+  browser-build/runtime-source scans, accepted QA2 human runtime and zero bypass
+  passed. Formal Admin Production remains unchanged and `paused=true`; P1-06B is
+  ready for separate authorization but not started.
+
+## 2026-08-22 — Admin P1-05 Final Closure Audit
+
+- Audited the exact P1-05 Git ancestry and preserved both failed-attempt histories,
+  the Hosted ACL correction, fresh Attempt 2 bootstrap, accepted QA-only credential
+  recovery, B-2 denials, R1 composition fix, R2 functional evidence, cleanup and
+  final QA safety state.
+- Re-ran current-HEAD local regression: Admin 88, P1-03 17, P1-04B 17,
+  composition 7, Service 57, Services 180, Repository 24, Database 143, Migration
+  contract 23, ordinary governance/Hosted ACL/rollback/dblink SQL, TypeScript,
+  ESLint, targeted Prettier, security scan and Admin production build all pass.
+- Recorded the exact atomicity boundary:
+  `REMOTE FAILURE INJECTION: NOT AVAILABLE BY CURRENT CONTRACT`. No remote
+  injection PASS is claimed. Current local rollback, Audit/Ledger atomicity and
+  concurrency tests pass.
+- Confirmed the final QA safety ACL old `0/12`, v2 `0/12`, read `3/12`, private
+  `0/36` is distinct from Migration D's desired normal v2 authenticated-only
+  `3/12` contract.
+- Marked P1-05 `PASS / READY TO CLOSE`, with docs-only closure evidence awaiting
+  Product Owner Commit authorization. P1-06 is ready for separate authorization
+  but not started; P1-07 remains unauthorized and P1.1 remains deferred.
+- Performed no remote/Production operation, stage, Commit, Push/PR/Merge, Admin
+  Unpause, Web Admin entry enablement or deployment. Admin Production remains
+  `paused=true` and P0 Production Site Copy remains Version 7.
+
+## 2026-08-22 — Admin P1-05B-3R2 Final Functional QA
+
+- Verified the committed Action raw-request → Service parser composition fix
+  through the current local `/access` UI against dedicated QA Attempt 2 only. The
+  original Membership `active -> suspended` returned Saved and refreshed Detail;
+  `INVALID_INPUT` did not recur.
+- Completed Membership and Author Saved/Unchanged, revoked ordinary, requestId
+  replay/mismatch, stale Conflict, concurrency A/B/C, exactly-once, live-access,
+  Detail/Audit and elevated/legacy denial checks. Evidence was 17 unique Ledger
+  rows (11 Saved, four Unchanged, two Conflict) and 11 business Audits with no
+  duplicate or orphan.
+- Recorded remote failure injection as `NOT APPLICABLE BY CURRENT CONTRACT` and
+  created none; reran the existing local authoritative transaction rollback and
+  dblink concurrency suites successfully.
+- Removed the exact synthetic fixture inventory, sessions, credentials, Audit,
+  Ledger, requests, invitation and redemption. QA2 is `ACTIVE_HEALTHY`, zero
+  synthetic state, 20/20 exact and write-closed: old `0/12`, v2 `0/12`, read
+  `3/12`, private `0/36`.
+- Production and Attempt 1 were untouched. No product/database contract change,
+  stage, Commit, Push/PR/Merge, Deployment, Unpause, P1-06, P1-07 or P1.1
+  occurred. P1-05B-3R2 is PASS; P1-05 is ready only for a separately authorized
+  final closure audit.
+
+## 2026-08-22 — Admin P1-05B-3 Fail-Closed Mutation Attempt and Cleanup
+
+- Ran the first formal ordinary Membership Review/Confirm against dedicated QA2.
+  Confirm returned sanitized `INVALID_INPUT` before the v2 write Port; Membership,
+  Audit and Ledger remained unchanged, so the mandatory Mission stop gate fired.
+- Read-only source tracing identified an Action-to-Service command-boundary defect:
+  an already-parsed branded Domain command is parsed a second time as raw unknown
+  input. No implementation, test, Migration or schema change was made.
+- Did not continue Saved/Unchanged, Author, idempotency, Conflict, concurrency or
+  elevated-recheck tests. Remote Audit/Ledger failure injection was safely skipped
+  because the repository has no approved remote injector and temporary triggers
+  are forbidden.
+- Revoked authenticated execute from the three v2 write RPCs, signed out, deleted
+  the exact synthetic fixture inventory and temporary credentials, and verified
+  zero Auth/session/profile/membership/role/Audit/Ledger/request/invitation residue.
+- Final QA2 state is ACTIVE_HEALTHY, 20/20 Migration, old `0/12`, v2 `0/12`, read
+  `3/12`, private `0/36`, with the non-fixture baseline unchanged. Production and
+  Attempt 1 were untouched; no stage, Commit, Push/PR/Merge or Deployment occurred.
+
+## 2026-08-22 — Admin P1-05B-2 Read Authorization and Denial QA
+
+- Provisioned 14 A–N synthetic QA identities and one non-login bootstrap control
+  identity in dedicated Attempt 2 only; revoked the temporary invitation and kept
+  all credential material outside the repository and browser.
+- Verified local `/access` Admin and Super Admin Search/Detail/Audit through the
+  live-access Service and strict Repository, including masked identity,
+  Membership/Role, expected-state, protection metadata and Audit rendering.
+- Verified Reader, Author-only, suspended Admin, revoked Admin, anonymous and
+  post-login authorization-loss denial without target-data exposure.
+- Verified protected Admin, Super Admin, elevated Membership and only-active-Super-
+  Admin mutation denial; all three legacy RPCs remain authenticated privilege
+  denied. Review-to-Confirm permission loss also denied.
+- Final business, Ledger and Audit deltas are zero; fixture and non-fixture hashes
+  equal baseline. ACL remains old `0/12`, v2 `3/12`, read `3/12`, private `0/36`.
+- Signed out the browser and confirmed zero synthetic sessions/refresh tokens. No
+  ordinary successful mutation, Production credential/data/operation, Commit,
+  Push/PR/Merge, Unpause, Deployment, P1-05B-3, P1-06, P1-07 or P1.1 occurred.
+
+## 2026-08-20 — Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2
+
+- Paused but did not delete/reuse Attempt 1, preserving its 19/20 fail-closed evidence while releasing the Free Project slot.
+- Created isolated Free/Nano Attempt 2 `hicfnlwzmnbxhimyeviy` in `ap-southeast-1`; verified zero Auth/application state and inequality from Production and Attempt 1 before apply.
+- Applied the exact current 20-Migration chain from empty state. Remote catalog is exact and A/B/C/D are applied; Hosted default privilege drift was observed and corrected D normalized it successfully.
+- Verified direct/effective ACLs: old `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12`, P1 private `0/36`; broad target grants are absent and read modes/owner/search path are exact.
+- Verified private is outside Data API schemas, Ledger/Audit RLS and immutable triggers are present, and QA P0 is the formal Version 1 Migration seed.
+- Recorded Product Owner acceptance of the Attempt 2-only database-password rotation as `QA-ONLY OPERATIONAL CREDENTIAL RECOVERY`. The secret was not exposed, Production/Attempt 1 were untouched, and the accepted deviation is not a precedent for expanding future remote authorization.
+- Created no fixture and ran no business QA. Production credentials/data/side effects, emergency close-writes, Commit, Push/PR/Merge, Deployment, P1-05B-2, P1-06, P1-07 and P1.1 remain none/not started.
+
+## 2026-08-20 — Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction
+
+- Preserved dedicated QA Attempt 1 as failed evidence: Migrations 1–19 applied, D failed on effective `anon` legacy execute, emergency fail-closed completed, and no fixtures, business QA or Production side effect occurred.
+- Proved the ACL drift precisely: PostgreSQL `PUBLIC` inheritance is separate from Supabase Hosted direct `anon/authenticated/service_role` function grants; the owning Migration revoked only `PUBLIC`, so D encountered a remaining direct Hosted grant.
+- Corrected D locally to retain hard catalog/v2/private preconditions while atomically normalizing all legacy application ACLs before the old `0/12` assertion and v2 authenticated-only `3/12` grant.
+- Added a transactional Hosted-default regression that distinguishes direct aclitems from effective PUBLIC inheritance and replays the real D Migration; no expected-state or mutation algorithm was copied.
+- Two clean 20-Migration rebuilds, all 15 SQL suites, final old/v2/read/private ACL matrices, rollback/concurrency/idempotency/elevated/P0 regressions, Database 143, Repository 24, Service 57, Services 180, Admin 82, TypeScript, ESLint and database lint pass.
+- No remote access occurred in R1; the failed QA Project remains partial/fail-closed and cannot be reused. No Commit, Push/PR/Merge, Production login/write, Unpause, Deployment, P1-05B-2, P1-06, P1-07 or P1.1 occurred.
+
+## 2026-08-20 — Admin P1-05A Dedicated QA Preparation
+
+- Added the P1-05A preparation authority for dedicated QA identification/isolation, synthetic fixtures, credential handling, write window, emergency close-writes, cleanup/retention, the 20-Migration apply order, expected ACLs, the complete QA matrix and sanitized evidence.
+- P1-05A2 found no reusable QA Project and created one Free/Nano dedicated Project in the Production-matching `ap-southeast-1` region. Non-sensitive metadata proves QA ref, API/database host and Auth tenant differ from Production; secrets were not read or exposed.
+- P1-05A is PASS and P1-05B is ready for separate Product Owner execution authorization but remains not authorized/not started. The only remote side effect was Project provisioning; no data-plane access, Migration, SQL, RPC, RLS, Grant, Auth fixture, product/config change, stage, Commit, Push/PR, Production access, login, Unpause or Deployment occurred.
+
+## 2026-08-20 — Admin P1 Final Status Reconciliation
+
+- Reconciled the current P1 authority across the P1 README/Roadmap, Server Action/API/Admin governance contracts and AI status records without rewriting point-in-time history.
+- Recorded P1-04A Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd` and P1-04B Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`; ordinary governance is locally complete.
+- Marked P1-05 `Local + Dedicated Non-Production Remote QA` as `REQUIRED / NOT AUTHORIZED / NOT EXECUTED` and the current P1 Closure blocker; P1-06/P1-07 remain unauthorized.
+- Kept P1.1 Elevated Access Governance `DEFERRED / NOT AUTHORIZED`; KI-033 is not technically resolved and future reopening requires P1 Closure, separate Product Owner authorization and a new Auth/Access ADR, with MFA/AAL2 reconsidered.
+- No code, Migration, RPC, ACL, RLS, Grant, Auth or test implementation changed. No remote Migration/SQL/ACL apply, Production mutation, login, Unpause, Deployment or Web Admin entry enablement occurred; Admin Production remains paused and P0 Site Copy remains Version 7.
+
+## 2026-08-19 — Admin P1-04A Ordinary Write RPC Atomic Cutover
+
+- Added one local-only atomic cutover Migration that validates exact signatures and ACL preconditions, revokes the three legacy Membership/Role RPCs, proves deny, then grants only the three ordinary v2 RPCs to authenticated.
+- Added static migration contracts and a transaction/subtransaction rollback rehearsal; updated Phase 1C, P1 read/write/governance and concurrency SQL assertions to the post-cutover matrix.
+- Final local catalog: legacy `0/12`, v2 authenticated-only `3/12`, read authenticated-only `3/12`, nine private helpers/executor `0/36`; no broad grant or elevated write function.
+- Two clean 20-Migration rebuilds and all 14 SQL suites pass, including idempotency, mismatch, expected-state Conflict, concurrency, Audit/Ledger rollback, elevated zero-write, final Super Admin and P0 Site Copy regression.
+- Service 57, Services 180, Database/Repository 142, workspace TypeScript/ESLint, targeted Prettier and security/scope gates pass.
+- No UI/Action/Auth/schema redesign, Commit, Push/PR, remote Migration/SQL/write, Production login, Unpause or Deployment; Admin Production remains `paused=true`, P1-04B/P1.1 not started.
+
+## 2026-08-19 — Admin P1-03 Read-only Access UI
+
+- 以 P1-02G Closure Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 为唯一基线建立独立 P1-03 Worktree/Branch。
+- 将 Admin `/access` 旧 mutation 表单替换为只读身份目录、Search、Detail、Membership/Role/expected-state/protection 和 governance Audit 页面；新增 responsive、accessible loading/empty/error/deferred 状态与稳定分页导航。
+- 新增窄三读 server facade 与 page-data loader，只调用 P1-02F Search/Detail/Audit Service；每次调用保持 live-access，严格 Repository/Domain parsing 与 safe error 边界不变。
+- 页面不再引用旧 mutation Actions，只有 GET Search 和链接；无 direct database/RPC、write method、reason/requestId、Review/confirm、result 或 disabled mutation control。
+- 新增 2 files / 16 tests，覆盖三读集成、unauthorized/forbidden、empty/loading/read error、cursor fail-closed、无 mutation UI 与 provider boundary；Admin 70、Service 57、Services 180、Database 138、Admin production build、全工作区 TypeScript/ESLint 与本地匿名 redirect smoke 回归通过。
+- ordinary write ACL 仍 0/12，旧 RPC ACL 不变且无 cutover；未修改 Migration/RPC/RLS/Grant/Auth、Web Admin 入口或 Production 配置，未开始 P1-04/P1.1。
+- 本阶段未 Commit/Push/PR、远程数据库操作、Production login、Unpause 或 Deployment；Admin Production 仍 `paused=true`，P0 Production Site Copy 仍 Version 7。
+
+## 2026-08-18 — Admin P1-02G Backend Closure and UI Handoff
+
+- 以 P1-02F Closure Commit `edd78c190002340eaa2091860e5eb997785b7528` 为唯一父基线建立独立 P1-02G Worktree/Branch；其他 P1 Worktree 与受保护 release 工作区未变化。
+- 完成 19-Migration clean local reset、13 个 SQL suite、最终 Catalog/ACL/RLS/Data API exposure、Ledger/Audit immutability、最后 active Super Admin 和 P0 Site Copy 回归。
+- 证明三个 read RPC 保持 ADR-023 权限模式，三个 ordinary write 对四个应用角色的 12 项 execute 全部 false；private helper/executor deny 和旧 RPC ACL 保持，无 cutover。
+- Saved/Unchanged/Conflict、幂等 replay/mismatch、同/异 request 并发、Audit/Ledger 原子回滚和 elevated-target 零写入通过。
+- Domain 53、Repository 24、Service 57、Services 180、Database 138、全工作区 TypeScript/ESLint、database lint 与 security advisor 通过。
+- 新增 P1-02G Closure 文档，冻结 P1-03 read-only `/access` 和 P1-04 ordinary Review/Action/write/cutover 交接；Web Admin 入口、write execute、UI 与 Action 仍关闭。
+- ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY`、elevated mutation 延期与未来独立 P1.1 Owner Gate 不变；邀请管理仍独立延期。
+- 本次仅六份 docs，未 Commit/Push/PR、修改产品实现或数据库对象、远程 Migration/SQL/写入、开放 execute、cutover、登录/Unpause/Deployment，也未开始 P1-03、P1-04 或 P1.1。
+
+## 2026-08-18 — Admin P1-02F Live-Access Identity Governance Service
+
+- 以 P1-02E Closure Commit `cadb81053720a2e1885abe3e6f63a1b5196a64e1` 为唯一父基线建立独立 P1-02F Worktree/Branch；未修改 P1-02E 或受保护 release 工作区。
+- 在 `@fandom-harbor/services` 新增六用例 Governance Service、57 项 fake/in-memory Port 单元测试与最小 export；不接入具体 Repository、App composition、Action 或 UI。
+- 所有用例按 strict input parser → fresh live-access checker → read/target precheck → exact Port 顺序执行；active Admin/Super Admin allow，Guest/Reader/Author/inactive Admin 在 Port 前 deny。
+- ordinary mutation 对 elevated target defense-in-depth deny，对普通 target 最多调用一次对应 write Port；数据库继续为竞态和最终权限权威，Service API 无 elevated method 或 Reauth placeholder。
+- requestId/expected-state/normalized reason 与 Saved/Unchanged/Conflict 原样保留；无 requestId/token 生成、Conflict 自动覆盖、mutation retry、Audit/Ledger 或敏感日志。
+- provider-neutral Domain Error 保留；unknown checker/Port failure 固定清洗且不保留 raw cause/message/provider metadata。源码无 Supabase/PostgREST/Next.js/React/database/RPC/wire 依赖。
+- Service 57 项、Services 11 files / 180 tests、Domain 53 项、Repository 24 项、Database 14 files / 138 tests、TypeScript/ESLint/Prettier、架构/链接/敏感/scope 门禁通过；P1-02C 12 个应用角色 ACL 组合继续 false。
+- 未 Commit/Push/PR，未修改 Domain/Repository/Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute 或远程状态，未接入 UI、登录/Unpause/Deployment，未开始 P1-02G。
+
+## 2026-08-18 — Admin P1-02E Strict Identity Access Repository
+
+- 以 P1-02D Closure Commit `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3` 为唯一父基线建立独立 P1-02E Worktree/Branch；未修改 P1-02D 或受保护 release 工作区。
+- 在 `@fandom-harbor/database` 新增 strict Governance Repository、测试与最小 export，完整实现 P1-02D 三个 read Port 与三个 ordinary write Port。
+- transport 只允许 P1-02B/C 六个 RPC，精确映射 snake_case 参数；无 direct identity table、private helper、legacy RPC fallback、Service/Action/UI 或 elevated mutation。
+- provider success 以 unknown 进入 strict Domain parser；额外/缺失字段、UUID/time/token/enum/cursor/result、page bound 与 response ID 不一致均 fail closed。
+- stable SQL/PostgREST code 与两个 safe detail 映射为固定 provider-neutral Error；不依赖或泄漏 raw message/hint/details/provider object。
+- 复核当前 Supabase Changelog、RPC、error 与 retry 官方合同；三个 mutation RPC 逐请求显式关闭 retry，测试证明 Repository 不自动重放 transport uncertainty。
+- Repository 24 项、Database 14 files / 138 tests、Domain 53 项、Services 10 files / 123 tests、TypeScript/ESLint/Prettier、架构/链接/敏感/scope 门禁通过；P1-02C 12 个应用角色 ACL 组合继续 false。
+- 未 Commit/Push/PR，未修改 Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute 或远程状态，未登录/Unpause/Deployment，未开始 P1-02F。
+
+## 2026-08-17 — Admin P1-02D Provider-Neutral Identity Access Domain
+
+- 以 P1-02C Closure Commit `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35` 为唯一父基线，建立独立 P1-02D Worktree/Branch；未修改 P1-02C 或受保护 release 工作区。
+- 在 `@fandom-harbor/services` 新增 strict provider-neutral Domain 与 export，覆盖脱敏 Subject summary/detail、Membership、active/effective Role、Audit、stable cursor 和 opaque database expected-state。
+- 新增 canonical non-nil User/request UUID、NFKC registration-name search、NFC 4–200 code-point reason、1–50 page limit、cursor/date/role/state/result exact-key parser；unknown privileged field fail closed。
+- 新增 Grant Author、Revoke Author 与 Set ordinary Membership 三个独立 Command，以及可穷尽 Saved/Unchanged/Conflict、安全 provider-neutral error 和六方法 read/write Port interface。
+- Admin/Super Admin 仅可在 read model 中出现；不存在 generic/elevated mutation、proof、actor/capability 注入或 escape hatch。Domain 无 Supabase/PostgREST/Next.js/React/env/database dependency。
+- 定向 Domain 53 项、Services 10 files / 123 tests、Database 13 files / 114 tests 与 P1-02A/B/C/P0 7 个 SQL suites 通过；TypeScript、ESLint、Prettier、架构边界、链接、敏感信息与范围门禁通过。
+- 未实现 P1-02E Repository、P1-02F Service、Server Action 或 UI；未修改 Migration/RPC/RLS/Grant/Auth、依赖、配置、lockfile、execute、旧 RPC 或远程状态，未 Commit/Push/PR/登录/Unpause/Deployment。
+
+## 2026-08-17 — Admin P1-02C Ordinary Governance Write RPC Foundation
+
+- 以 P1-02B Closure Commit `64bba75360e9f303819c42d1c08a2d6ec545983d` 为唯一父基线，使用 Supabase CLI 创建本地 Migration `20260817125140_admin_p1_identity_access_writes.sql`。
+- 新增三个 ordinary-only、execute-closed、postgres-owned volatile definer RPC 与 owner-only private executor；Role 接口不接受 role，Membership 拒绝 pending/elevated target，全部应用角色无 execute。
+- 实现 P1-02A helper-backed reason/fingerprint/state、request/global/final-Super-Admin/row lock、Saved/Unchanged/Conflict、exact replay、mismatch、原子 Audit/Ledger 和失败回滚；没有算法复制或 dynamic SQL。
+- 新增 6 项 static Migration contract、事务式 semantic suite 与 dblink 双连接 concurrency suite；覆盖权限矩阵、三操作三结果、stale token、same/different requestId、elevated denial、无 role overload、强制 Audit/Ledger failure 与完整 cleanup。
+- 本地 19-Migration clean reset、13 个 SQL suites、13 files / 114 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；P1-02A/B、旧 RPC、P0 Site Copy 与 final active Super Admin 回归通过。
+- 未修改 `/access`、Action、Domain、Repository、Service、依赖、配置、lockfile、旧 RPC execute 或 P1-02B read grants；未 Commit/Push/PR、远程 apply/SQL/写入、开放 execute、cutover、登录/Unpause/Deployment，未开始 P1-02D。
+
+## 2026-08-17 — Admin P1-02B Identity Access Read RPC Implementation
+
+- 以 ADR-023 docs-only Commit `fc41ad153c75a326f76ca66c5219a889eb99a84e` 为唯一父基线，使用 Supabase CLI 创建本地 read Migration `20260817121610_admin_p1_identity_access_reads.sql`。
+- 新增三个无重载 stable RPC：bounded NFKC/UUID Search（invoker）、最小治理 Detail（唯一 definer）和 target Audit summary（invoker）；均为空 search path、authenticated-only exact execute。
+- Detail 在 target lookup 前使用 `auth.uid()`、live Membership/Role 完成授权，只调用既有 P1-02A snapshot/token helper；无 dynamic SQL、算法复制或写入路径。
+- 新增 6 项 Migration static contract 和事务式 P1-02B SQL suite，覆盖 catalog、7 类 caller、存在性不可区分、稳定分页、字段最小化、helper deny、旧 grant不变与全业务事实零写入。
+- 本地 18-Migration clean reset、11 个 SQL suites、13 files / 108 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；P1-02A Ledger/Audit 与 P0 Site Copy 回归通过。
+- 未创建 write RPC、修改旧 RPC、实现 elevated mutation或接触产品 UI/Action/Domain/Repository/Service；未 Commit/Push/PR、远程 apply/SQL/写入、登录/Unpause/Deployment，未开始 P1-02C。
+
+## 2026-08-17 — Admin P1-02B Read Authority Contract Correction
+
+- 从 P1-02A Closure Commit `8f7ee546ab069c36658a1debdddbf64a7382133f` 建立独立 P1-02B Worktree/Branch；初始状态 clean。
+- 记录一次性本地 rollback proof：现有 SELECT/RLS 可支持 invoker search/Audit，但 authenticated 无法从 invoker wrapper 调用已撤权的 private expected-state helper。
+- 新增 ADR-023；Product Owner 批准最小混合读取权限：搜索/Audit 保持 `SECURITY INVOKER`，只有详情可使用严格只读 `SECURITY DEFINER`。
+- 冻结详情 definer 的 live actor authorization、target non-disclosure、空 search path、全限定对象、无 dynamic SQL、最小投影、existing-helper-only 与零写入合同。
+- P1-02A helper execute deny、单一 token 算法、底层表 Grant、ADR-022 Option 3、KI-033 与 elevated mutation 延期均不变。
+- 本次仅修正文档；未创建/修改 RPC、Migration、RLS、Grant、SQL、产品代码或远程状态，未开始 P1-02C。
+
+## 2026-08-17 — Admin P1-02A Private Ledger and Audit Immutability
+
+- 以 P1-02 planning Closure Commit `e3bb16c537d064808eeed8516b90ec3874b2ab26` 为唯一父基线，在独立 P1-02A Worktree/Branch 使用 Supabase CLI 创建时间戳 Migration。
+- 新增 private request ledger，冻结 requestId 主键、ordinary-only operation、32-byte payload fingerprint、Saved/Unchanged/Conflict result snapshot、Saved-only unique Audit reference 和 indefinite append-only 约束。
+- 新增 `security invoker` 的 reason、database-derived expected-state 与 payload fingerprint 私有 helper；固定空 `search_path`，并撤销 application-role execute。
+- 将 Site Copy 专项 Audit guard 扩展为全表 UPDATE/DELETE immutability，保留既有 Site Copy 稳定错误和 INSERT 行为。
+- 新增静态 Migration contract、事务式 SQL catalog/deny/constraint/immutability tests 与 P1-02A 验收证据，并同步 Schema、RLS、Migration registry、Roadmap 和项目状态。
+- 本地 17-Migration clean reset、10 个 SQL suites、13 files / 102 Vitest tests、TypeScript、ESLint、database lint 和 security advisor 通过；旧 RPC grant、P0 Site Copy Version 7 与 final active Super Admin 回归未漂移。
+- 未创建 read/write RPC、Repository、Service、Action 或 UI；P1-02B–G 未授权。未 Commit/Push/PR，未执行远程 Migration/SQL/写入，未登录/Unpause/Deployment。
+
+## 2026-08-17 — Admin P1-02 Implementation Plan and Engineering Gate Freeze
+
+- 以 P1-01 Closure Commit `37694f3550607e73d766471613357845a20fdc31` 为唯一父基线，在独立 P1-02 Worktree/Branch 只读复核 P1 合同、ADR、当前 `/access`、Identity tables/RLS/RPC/Grant/Trigger、Auth/capability、Domain/Repository/Service 模式与 SQL/TypeScript 测试基础。
+- 按当前 Supabase Changelog、Data API/RLS、Database Functions 和 CLI 官方合同冻结安全实现约束；所有未来 CLI 命令已先通过对应 `--help` 确认，本阶段没有运行 Migration 或数据库命令。
+- 新增 P1-02 权威实施计划，将后端拆为 private ledger/Audit guard、read RPC、默认关闭 execute 的 ordinary write RPC、Domain、Repository、Service 与 closure 七个独立 Owner Gate。
+- 冻结 P1-03 只读 UI、P1-04 Review/confirm + Server Action + 写入 UI 的独立边界；P1-02 不修改 `/access`，也不提前创建隐藏 Action。
+- 冻结旧 RPC cutover：P1-02 实现期间不造成服务中断；P1-04 新入口完成后才允许单一原子撤旧开新的 cutover，禁止兼容期双写入口，远程 apply 与 rollback 仍需独立人工授权。
+- ADR-022 Option 3 不变：elevated 账户可读，Admin/Super Admin Role 与 elevated-account Membership 写入继续延期；最后 active Super Admin guard 保留，不设计 Reauth 绕过。
+- 本阶段仅六份 docs-only 文件；未修改产品代码、Migration、RLS/RPC/Auth、依赖、配置或 lockfile，未执行 SQL/远程写入，未 Commit/Push/PR/登录/Unpause/Deployment。
+
+## 2026-08-17 — Admin P1-01 Data, Permission and Reauth Design
+
+- 以 P1-00 Closure Commit `b634da010755e7768043eea41c426ad499a269fb` 为唯一基线，在独立 P1-01 Worktree/Branch 只读审计 profiles、memberships、role_grants、audit_logs、`/access`、RLS/RPC/Grant/Trigger、权限派生和 registration-name/password Auth adapter。
+- 冻结精确注册名/完整 UUID 读取、稳定 keyset pagination、字段最小化详情/Audit 投影和数据库 canonical expected-state SHA-256 token。
+- 确定新增未暴露的 `private.identity_access_request_ledger`，为 Saved/Unchanged/Conflict 保存最小 payload fingerprint 与原结果，支持同 requestId 完整幂等重放。
+- 冻结三个低风险窄 v2 Mutation：Author Grant/Revoke 与普通账户 Membership 状态治理；固定全局治理锁、最后 active Super Admin 保护、Saved 单 Audit 与旧 RPC 无双入口 cutover/回滚顺序。
+- 按 2026-08-17 Supabase Changelog 与官方 Auth/Session/RLS/Function/Data API 合同完成 KI-033 proof：`reauthenticate()` 是 email/phone nonce，`signInWithPassword()` 只创建普通 `aal1` Session；现有代码仍缺少数据库可验证的 operation-bound proof issuer/consumer。
+- Product Owner 选择 ADR-022 Option 3：KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，全部 elevated mutations `DEFERRED`，普通治理 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。elevated 账户保持只读；旧 RPC、隐藏入口和客户端直写不得绕过延期边界。
+- 新增专用 non-Production QA Matrix，移除当前 P1 elevated success case 并保留读取、拒绝与最后 active Super Admin guard 回归。本阶段仅文档；未修改产品代码、Migration、RLS/RPC/Auth、依赖或远程状态，未 Push/PR/Unpause/Deployment。
+
+## 2026-08-16 — Admin P1-00 Scope and Security Contract
+
+- 冻结 Admin P1 为 Identity & Access Governance Console，Membership 与 Role Governance 同时纳入，不扩展 role/capability 或建立第二套权限真相。
+- 冻结成员目录、注册名/User ID 搜索、详情、Role/Membership 历史与相关 Audit 只读范围，并限制私密字段暴露。
+- 冻结所有 Mutation 的 4–200 code-point 原因、Review/confirm、requestId、expected-state、Saved/Unchanged/Conflict、幂等、Conflict 与 Audit 合同。
+- 冻结 elevated role / elevated Membership 的单次 registration-name/password reauth；记录当前 Supabase email/phone nonce 能力不适用，并建立 KI-033 P1-01 设计门槛。
+- 记录暂不采用双人审批的残余风险接受，同时保留 final active Super Admin、普通 Admin 权限矩阵和 server + database 双层授权。
+- 邀请管理延期；Web Admin 入口保持关闭；远程写入 QA 限定专用非 Production Supabase；Admin Production 保持 paused。
+- 新增 Admin P1 文档包、Admin governance 合同与 ADR-021，更新 Roadmap、Admin/Super Admin 索引、Admin Guide、Decision/Status/Memory/Known Issues 并修正 P0 文档漂移。
+- 本次为 docs-only P1-00；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Supabase、Vercel 或 Production；P1-01 未授权。
+
 ## 2026-08-15 — Admin P0 Production Release Closure
 
 - 归档 Web Production `dpl_AQ2cmyYP54rXjpLDn9oi2xvBZ5mM`（Source `d2c31d231abe971a7266094adfc0966d6de49fa9`）READY 与 Production Smoke PASS 证据；既有 Alias 保持不变。
@@ -1847,3 +2159,12 @@ All notable project changes are recorded here. Dates use `YYYY-MM-DD`.
 - Desktop、Tablet and Mobile typography/reflow checks pass without horizontal overflow.
 - Default-closed、open / adjust / close、preference persistence and theme compatibility checks pass.
 - No database、Supabase、Migration、Auth、permission or business-logic change was introduced.
+
+## 2026-08-20 — Admin P1-04B Ordinary Governance UI
+
+- Added ordinary Membership and Author Grant/Revoke reason/Review/confirm UI and a
+  narrow Server Action using the existing Governance Service/Repository/v2 RPC chain.
+- Added stable requestId retry, expected-state Conflict, safe result/error display,
+  Detail/Audit refresh, elevated no-control boundary and targeted tests/evidence.
+- No Migration/RPC/RLS/Grant/Auth/dependency/config change, Commit, Push/PR, remote
+  operation, login, Unpause or Deployment; P1-05/P1.1 not started.

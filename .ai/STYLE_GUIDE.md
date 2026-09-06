@@ -37,6 +37,8 @@ This file is the quick-reference contract for UI dimensions and visual behavior.
 - Headers remain readable and keyboard-operable; sticky behavior must not obscure focus.
 - Bulk actions display selected count and scope, and distinguish current page from all results.
 - Small-screen fallback preserves field labels and confirmation context.
+- Membership / Role actions use an explicit edit → Review → confirm sequence; the Review preserves target registration name/User ID、before/after、reason and risk context on every viewport.
+- High-risk confirmation includes a clearly labeled current-password field and never stores or redisplays its value.
 
 ## Tags
 

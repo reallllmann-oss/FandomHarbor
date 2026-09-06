@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createAdminIdentityAccess } from "../../lib/identity-access";
-import { signIn } from "./actions";
+import { signIn, signOut } from "./actions";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {
@@ -63,5 +63,23 @@ describe("admin auth sign-in", () => {
       registrationName: "HarborAdmin",
     });
     expect(redirect).toHaveBeenCalledWith("/");
+  });
+});
+
+describe("admin auth sign-out", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("ends the existing session and returns to the Admin sign-in page", async () => {
+    const providerSignOut = vi.fn(async () => undefined);
+    vi.mocked(createAdminIdentityAccess).mockResolvedValue({
+      auth: { signOut: providerSignOut },
+    } as never);
+
+    await expect(signOut()).rejects.toThrow("REDIRECT:/auth/sign-in");
+
+    expect(providerSignOut).toHaveBeenCalledTimes(1);
+    expect(redirect).toHaveBeenCalledWith("/auth/sign-in");
   });
 });

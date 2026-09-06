@@ -21,11 +21,11 @@ export default async function AdminHomePage() {
   const { access, snapshot } = data;
 
   return (
-    <div className="site-stack">
-      <section className="hero-panel">
+    <div className="site-stack min-w-0 max-w-full">
+      <section className="hero-panel min-w-0 max-w-full">
         <div className="flex flex-wrap items-center gap-3">
-          <p className="eyebrow">Site Copy</p>
-          <span className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
+          <p className="eyebrow">站点文案</p>
+          <span className="max-w-full break-words rounded-full border border-border bg-surface px-3 py-1 text-center text-xs font-medium text-muted-foreground whitespace-normal">
             受控编辑
           </span>
         </div>
@@ -38,28 +38,28 @@ export default async function AdminHomePage() {
         </p>
       </section>
 
-      <section aria-label="当前状态" className="info-grid">
-        <article className="stat-card">
-          <p className="text-sm text-muted-foreground">数据库 Version</p>
+      <section aria-label="当前状态" className="info-grid min-w-0 max-w-full">
+        <article className="stat-card min-w-0 max-w-full">
+          <p className="text-sm text-muted-foreground">数据库版本</p>
           <p className="mt-2 break-all font-mono text-xl font-semibold">
             {formatSiteCopyVersion(snapshot.version)}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            来自当前 Site Copy Revision
+            来自当前站点文案修订记录
           </p>
         </article>
-        <article className="stat-card">
+        <article className="stat-card min-w-0 max-w-full">
           <p className="text-sm text-muted-foreground">访问权限</p>
           <p className="mt-2 text-xl font-semibold">
             {access.capabilities.has("super_admin:operate")
-              ? "Super Admin"
-              : "Admin"}
+              ? "超级管理员"
+              : "管理员"}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            active membership · admin:operate
+            正常成员资格 · 后台操作权限
           </p>
         </article>
-        <article className="stat-card">
+        <article className="stat-card min-w-0 max-w-full">
           <p className="text-sm text-muted-foreground">操作状态</p>
           <p className="mt-2 text-xl font-semibold">复核后原子保存</p>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -74,13 +74,13 @@ export default async function AdminHomePage() {
         initialVersion={formatSiteCopyVersion(snapshot.version)}
       />
 
-      <section className="rounded-card border border-border bg-surface-muted p-5 sm:p-6">
-        <p className="eyebrow">Locked boundaries</p>
+      <section className="min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-5 sm:p-6">
+        <p className="eyebrow">已锁定边界</p>
         <h2 className="mt-2 text-xl font-semibold">本阶段保持锁定</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-          CTA 目标链接、导航路径与固定顺序、导航数量与可见性、Studio capability
-          条件，以及 Footer 法务链接均不属于 Site Copy 数据。此页面不会改变现有
-          Auth、权限或 /access 行为。
+          行动按钮目标链接、导航路径与固定顺序、导航数量与可见性、
+          创作中心权限条件，以及页脚法务链接均不属于站点文案数据。此页面不会改变
+          现有身份验证、权限或身份与权限页面行为。
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <a
@@ -94,7 +94,7 @@ export default async function AdminHomePage() {
               className="min-h-11 rounded-control border border-border bg-surface px-4 text-sm font-medium"
               type="submit"
             >
-              退出后台
+              退出登录
             </button>
           </form>
         </div>

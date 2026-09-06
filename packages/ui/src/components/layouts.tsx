@@ -153,7 +153,10 @@ export function ReaderLayout({
   );
 }
 
-export function AdminLayout({ children }: PropsWithChildren) {
+export function AdminLayout({
+  children,
+  headerActions,
+}: PropsWithChildren<{ headerActions?: ReactNode }>) {
   const navigation = [
     { href: "/", label: "概览" },
     { href: "/access", label: "身份与权限" },
@@ -161,6 +164,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
 
   return (
     <SharedLayout
+      headerActions={headerActions}
       navigation={navigation}
       sidebar={
         <nav aria-label="后台分区" className="space-y-2">

@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access and Phase 2 / Sprint 002A content policies implemented locally; later-domain rows remain proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1-02A/B/C foundations are implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -42,6 +42,74 @@ Legend: `own` means derived from `auth.uid()` through trusted ownership relation
 - A suspended or revoked membership causes the role helper to fail closed, even while a role grant remains historically active.
 - `supabase/tests/phase_1c_identity_access.sql` covers catalog/RLS assertions and a transactional invite/role/membership path for execution against a disposable Supabase/PostgreSQL environment.
 - Phase 2 Auth registration does not add a second permission model: the signup trigger may create only Profile, active Membership, Redemption and audit state. It cannot create Author/Admin/Super Admin grants. `phase_2_auth_registration.sql` verifies success and rollback paths.
+
+## Admin P1 target（P1-00 frozen; P1-02A foundation implemented）
+
+- P1 复用现有 `profiles`、`memberships`、`role_grants`、`audit_logs` 与 role helpers；不新增 role/capability 或第二套权限事实。
+- 目录/详情读模型必须字段最小化；ADR-023 规定搜索/Audit 使用 `security invoker` + RLS，只有详情可使用严格只读 definer 调用未开放的 expected-state helper。不得暴露内部 Auth email-shaped identifier、password、Session、Token 或 invitation secret。
+- Mutation 目标合同包括 UUID requestId、expected-state、Saved/Unchanged/Conflict、单一成功 Audit 与 stale/重复请求零部分写入。
+- 除 ADR-023 详情读取例外外，只有必要 privileged Mutation function 才可使用 `security definer`；必须空 `search_path`、全限定对象名、撤销 PUBLIC、最小 execute grant，并在函数内复核 `auth.uid()` 与对应 live authorization。详情例外不得写入；Mutation 仍须复核 target boundary 与 final active Super Admin。
+- 旧 `grant_role`、`revoke_role`、`set_membership_state` execute path 在 P1 cutover 后不得绕过 Review/idempotency/conflict；具体迁移设计属于 P1-01。
+- 远程写入验证只允许专用 non-Production Supabase QA；P1 不使用 Production 数据库进行写入测试。
+
+## Admin P1-01 design authority（P1-02A foundation implemented）
+
+- ADR-023 冻结最小混合读取权限：Directory search 与 Audit 使用 `SECURITY INVOKER` + 现有 SELECT/RLS；只有详情为严格只读 `SECURITY DEFINER`，先实时验证 caller active Membership 与未撤销 Admin/Super Admin grant，再读取 target 并调用 P1-02A expected-state helper。Guest、Reader、Author、suspended/revoked Admin deny，active Admin/Super Admin 只获得字段最小化投影。
+- 三个 read RPC 仅向 authenticated grant execute；详情 definer 为空 search path、全限定对象、禁止 dynamic SQL 和写入。P1-02A helper execute deny、底层表 Grant/RLS 与 exposed schema 均保持不变。
+- expected-state 由数据库对 Membership `state/updated_at` 和排序后的 active Role Grant `id/role/granted_at` 生成规范快照与 SHA-256 token；客户端不自证状态。
+- 幂等需要 `private.identity_access_request_ledger`；private schema 不暴露到 Data API，无应用角色 policy/grant，只由受控 Mutation 插入/读取。
+- 当前 P1 三个低风险 write RPC（Author Grant/Revoke、普通账户 Membership）确有跨 Membership/Role/Audit/private ledger 原子写入需求时才可使用 `SECURITY DEFINER`，并必须空 `search_path`、全限定对象、撤销 PUBLIC/anon、精确 authenticated grant 与实时 `auth.uid()`/角色/目标检查。
+- 普通 Membership RPC 必须在数据库拒绝任何存在未撤销 Admin/Super Admin grant 的 target；elevated 账户仍可由受控 read RPC 展示。
+- 三个旧 RPC 无法兼容新参数；cutover 必须在同一 Migration 事务内先撤销旧 authenticated execute，再 grant 仅 Author/普通 Membership v2，不允许双入口，回滚也不得恢复旧应用入口。
+- Product Owner 已选择 ADR-022 Option 3。KI-033 当前 P1 为 `ACCEPTED DEFERRED BOUNDARY`，技术问题未解决；不得实现、grant 或暴露 Admin/Super Admin Role 或 elevated-account Membership write RPC。最后一名 active Super Admin 数据库保护保留。
+
+详细合同见 [`P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`](../../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)。
+
+## Admin P1-02A local foundation
+
+- `private.identity_access_request_ledger` remains outside the exposed Data API schemas. RLS is enabled with no policies; `PUBLIC`, `anon`, `authenticated` and `service_role` have no direct table privileges.
+- Its operation constraint accepts only Author Grant, Author Revoke and ordinary-account Membership state changes. Ledger constraints forbid an Audit reference for `unchanged`/`conflict` and require one unique Audit reference for `saved`.
+- All new private normalization, expected-state and fingerprint helpers are `security invoker`, use an empty `search_path`, reference catalog/application objects explicitly and grant no execute privilege to application roles.
+- The global immutable trigger rejects every `audit_logs` UPDATE/DELETE. The P0 site-copy stable error remains unchanged, and INSERT remains available only through existing authorized workflows.
+- P1-02A creates no public function, read/write RPC, policy or application execute grant and does not alter legacy Membership/Role RPC grants. P1-02B–G remain unauthorized.
+
+Catalog and transactional evidence are in [`P1_02A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-02B local read foundation
+
+- `search_identity_access_subjects_v1(text,jsonb,integer)` and `list_identity_access_audit_v1(uuid,jsonb,integer)` are stable invoker functions; existing SELECT grants/RLS and live role helpers remain the data boundary.
+- `get_identity_access_subject_v1(uuid)` is the sole stable definer read exception under ADR-023. It checks `auth.uid()` and live active Admin/Super Admin before target lookup, calls only the existing expected-state helpers for privileged derivation and contains no write path.
+- All three have empty search path, no overload, `PUBLIC/anon/service_role` execute deny and exact authenticated execute. Private snapshot/token helper execute remains denied to every application role.
+- No table grant, RLS policy, exposed schema, legacy RPC execute, Membership/Role/Audit/Ledger or Site Copy behavior changes.
+
+Catalog, permission-matrix and zero-write evidence are in [`P1_02B_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-02C local write definitions（historical pre-cutover state）
+
+- `grant_author_role_v2(uuid,uuid,text,text)`, `revoke_author_role_v2(uuid,uuid,text,text)` and `set_ordinary_membership_state_v2(uuid,uuid,membership_state,text,text)` are volatile definer definitions with owner `postgres`, empty search path and no overload.
+- The P1-02C definition Migration revokes execute from `PUBLIC`, `anon`, `authenticated` and `service_role` for all three writes and its private executor. That pre-cutover state is preserved by the original Migration contract; the current composed local ACL is recorded in P1-04A below.
+- The private executor rechecks `auth.uid()` and live active Admin/Super Admin, serializes request/global/final-Super-Admin/target state, rejects any target with an unrevoked Admin/Super Admin grant before writing a result, and only calls P1-02A fingerprint/snapshot/token helpers.
+- Saved performs exactly one ordinary business change, one Audit and one Saved Ledger insert in the same transaction. Unchanged/Conflict write only one Ledger result. Replay returns the stored result; mismatch/elevated/error paths write nothing.
+- At P1-02C acceptance, P1-02A helper/table denies, P1-02B read grants, bottom-table grants/RLS, exposed schemas and legacy RPC execute remained unchanged. No elevated write function, role/proof parameter, policy or table grant exists.
+
+Catalog, semantic, rollback and concurrency evidence are in [`P1_02C_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-04A local atomic write cutover
+
+- `grant_role(uuid,elevated_role,text)`, `revoke_role(uuid,elevated_role,text)` and
+  `set_membership_state(uuid,membership_state,text)` now have no execute grant for
+  `PUBLIC`, `anon`, `authenticated` or `service_role` in the local migration graph.
+- Only `authenticated` can execute the exact three ordinary v2 signatures. PUBLIC,
+  anon and service_role remain denied; there is no broad function or schema grant.
+- All nine P1 private helpers/executor remain denied to all four application roles
+  (`0/36`). The read RPC matrix remains authenticated-only (`3/12`).
+- The cutover is one fail-closed atomic statement: exact preconditions → legacy
+  revoke → deny assertion → exact v2 grant → final/private assertions.
+- Failure rollback and recovery are rehearsed locally in a nested subtransaction;
+  operational rollback revokes v2 and stays read-only rather than reopening legacy
+  RPCs.
+
+Evidence is in [`P1_04A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md).
 
 ## Admin P0 site-copy foundation
 

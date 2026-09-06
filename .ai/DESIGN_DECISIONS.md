@@ -83,6 +83,14 @@ This file records product experience, interaction, UI and reading decisions. Arc
 - Rationale: Multiple simultaneous controls compete with Story Content and make the Reading Page feel like an interface workspace rather than a Private Literary Reading Space。
 - Consequence: Chapter switching returns to the default reading state；current Chapter remains marked with `aria-current`，and existing preference、route、permission、bookmark and history contracts do not change。
 
+## DD-012 — Admin identity mutations require contextual Review
+
+- Date: 2026-08-16
+- Status: Accepted and frozen during Admin P1-00
+- Decision: Membership 与 Role Mutation 不从目录或详情页直接提交。操作者先选择目标、操作和原因，再进入独立 Review，确认 registration name / User ID、before、after、reason、risk 与访问影响后执行最终确认。修改任一输入或基线状态会使旧 Review 失效；Conflict 保留输入但禁止自动覆盖。
+- Rationale: 现有 User ID 直写表单缺少对象和状态上下文，容易选错目标、重复提交或覆盖并发变化。两阶段 Review 使管理员在不可忽略的上下文中承担明确操作责任。
+- Consequence: 所有写操作都需要原因和二次确认；elevated role / elevated Membership 还需要 password reauth。小屏幕必须完整保留目标、影响和确认上下文，不得把高风险动作藏入无标签手势。Web Admin 入口仍不启用。
+
 ## Change protocol
 
 New design decisions use sequential `DD-xxx` IDs with status, rationale and consequences. Never hide an experience change inside a component implementation. Superseded decisions remain in history and link to their replacement.

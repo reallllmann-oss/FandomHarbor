@@ -1,5 +1,7 @@
 # Fandom Harbor Admin P0 Release Closure
 
+> 本文是 2026-08-15 Release Closure 的时间点证据，不是持续更新的当前 Production Deployment registry。后续 Deployment 或 Roadmap 状态以更新日期更晚的 Release 记录与 `.ai/PROJECT_STATUS.md` 顶部当前状态为准；不得改写本文中的历史 ID。
+
 | 项目                             | 结果                     |
 | -------------------------------- | ------------------------ |
 | Mission                          | ADMIN P0 RELEASE CLOSURE |

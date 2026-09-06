@@ -1,128 +1,582 @@
+import type {
+  IdentityAccessGovernanceAuditChange,
+  IdentityAccessGovernanceAuditSummary,
+  IdentityAccessEffectiveRole,
+  IdentityAccessMembershipState,
+  IdentityAccessSubjectDetail,
+  IdentityAccessSubjectSummary,
+} from "@fandom-harbor/services";
 import { redirect } from "next/navigation";
 
-import { getAdminAccessContext } from "../../lib/identity-access";
-import { grantRole, revokeRole, setMembershipState } from "./actions";
+import {
+  encodeAuditCursor,
+  encodeSubjectCursor,
+  loadAccessGovernancePageData,
+  type AccessGovernancePageData,
+  type AccessGovernanceReadError,
+  type AccessGovernanceSearchParams,
+} from "../../lib/access-governance-data";
+import {
+  ADMIN_MEMBERSHIP_LABELS,
+  adminRoleLabel,
+  formatAdminTimestamp,
+} from "../../lib/admin-presentation";
+import { AccessMutationPanel } from "./mutation-panel";
 
 export const dynamic = "force-dynamic";
 
-const inputClass =
-  "mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3";
+type RenderableAccessGovernancePageData = Exclude<
+  AccessGovernancePageData,
+  { status: "forbidden" | "unauthenticated" }
+>;
 
-export default async function AccessAdministrationPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; status?: string }>;
-}) {
-  const access = await getAdminAccessContext();
-  if (!access) redirect("/auth/sign-in");
-  if (!access.capabilities.has("admin:operate")) {
-    redirect("/auth/sign-in?error=forbidden");
-  }
-  const query = await searchParams;
-  const roles = access.capabilities.has("super_admin:operate")
-    ? (["author", "admin", "super_admin"] as const)
-    : (["author"] as const);
+const readErrorCopy: Readonly<
+  Record<AccessGovernanceReadError, { description: string; title: string }>
+> = {
+  "invalid-request": {
+    description: "查询或分页信息无效。请清除当前条件后重新查询。",
+    title: "无法读取这组查询条件",
+  },
+  "subject-unavailable": {
+    description: "该身份当前不存在或无法通过治理读取合同展示。",
+    title: "身份详情不可用",
+  },
+  "temporarily-unavailable": {
+    description: "受控读取链路暂时不可用。没有执行任何权限写入，请稍后重试。",
+    title: "身份治理数据暂时不可用",
+  },
+};
 
+function displayRegistrationName(value: string | null): string {
+  return value ?? "未设置注册名";
+}
+
+function accessHref(input: {
+  auditCursor?: string;
+  query?: string;
+  searchCursor?: string;
+  subject?: string;
+}): string {
+  const params = new URLSearchParams();
+  if (input.query) params.set("q", input.query);
+  if (input.searchCursor) params.set("cursor", input.searchCursor);
+  if (input.subject) params.set("subject", input.subject);
+  if (input.auditCursor) params.set("auditCursor", input.auditCursor);
+  const query = params.toString();
+  return query ? `/access?${query}` : "/access";
+}
+
+function MembershipBadge({ state }: { state: IdentityAccessMembershipState }) {
   return (
-    <section>
-      <p className="text-sm font-medium text-primary">
-        Identity administration
-      </p>
-      <h1 className="mt-3 text-3xl font-semibold">Membership 与 Role Grant</h1>
-      <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
-        所有操作都需要原因，并由数据库原子函数再次检查当前操作者权限并写入 audit
-        log。
-      </p>
-      {query.error ? (
-        <p className="mt-4 text-sm text-destructive" role="alert">
-          操作被拒绝或输入无效，未产生部分变更。
-        </p>
-      ) : null}
-      {query.status ? (
-        <p className="mt-4 text-sm text-primary" role="status">
-          操作已完成并写入审计记录。
-        </p>
-      ) : null}
-      <div className="mt-8 grid gap-6 xl:grid-cols-3">
-        <form
-          action={grantRole}
-          className="rounded-card border border-border p-5"
+    <span className="inline-flex max-w-full shrink-0 break-words rounded-full border border-border bg-surface-muted px-2.5 py-1 text-center text-xs font-medium whitespace-normal">
+      {ADMIN_MEMBERSHIP_LABELS[state]}
+    </span>
+  );
+}
+
+function RoleList({
+  roles,
+}: {
+  roles: readonly IdentityAccessEffectiveRole[];
+}) {
+  if (roles.length === 0) {
+    return <span className="text-sm text-muted-foreground">读者</span>;
+  }
+  return (
+    <span className="flex min-w-0 max-w-full flex-wrap gap-2">
+      {roles.map((role) => (
+        <span
+          className="max-w-full break-words rounded-full border border-border bg-background px-2.5 py-1 text-xs font-medium whitespace-normal"
+          key={role}
         >
-          <h2 className="font-semibold">授予角色</h2>
-          <IdentityFields roles={roles} />
-          <button className="mt-5 min-h-11 rounded-control bg-primary px-4 text-primary-foreground">
-            授予并审计
-          </button>
-        </form>
-        <form
-          action={revokeRole}
-          className="rounded-card border border-border p-5"
-        >
-          <h2 className="font-semibold">撤销角色</h2>
-          <IdentityFields roles={roles} />
-          <button className="mt-5 min-h-11 rounded-control border border-border px-4">
-            撤销并审计
-          </button>
-        </form>
-        <form
-          action={setMembershipState}
-          className="rounded-card border border-border p-5"
-        >
-          <h2 className="font-semibold">修改 Membership</h2>
-          <label className="mt-4 block text-sm font-medium">
-            User ID
-            <input className={inputClass} name="userId" required />
-          </label>
-          <label className="mt-4 block text-sm font-medium">
-            新状态
-            <select className={inputClass} name="state">
-              <option value="active">active</option>
-              <option value="suspended">suspended</option>
-              <option value="revoked">revoked</option>
-            </select>
-          </label>
-          <ReasonField />
-          <button className="mt-5 min-h-11 rounded-control border border-border px-4">
-            更新并审计
-          </button>
-        </form>
+          {adminRoleLabel(role)}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function SubjectSummary({
+  query,
+  searchCursor,
+  subject,
+}: {
+  query: string;
+  searchCursor: string | null;
+  subject: IdentityAccessSubjectSummary;
+}) {
+  return (
+    <li className="min-w-0">
+      <a
+        className="block min-w-0 rounded-card border border-border bg-surface p-4 transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        href={accessHref({
+          query,
+          searchCursor: searchCursor ?? undefined,
+          subject: subject.userId.value,
+        })}
+      >
+        <span className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+          <span className="min-w-0 flex-1">
+            <span className="block break-words font-semibold [overflow-wrap:anywhere]">
+              {displayRegistrationName(subject.registrationName)}
+            </span>
+            <span className="mt-1 block break-all font-mono text-xs text-muted-foreground">
+              {subject.userId.value}
+            </span>
+          </span>
+          <MembershipBadge state={subject.membershipState} />
+        </span>
+        <span className="mt-4 block">
+          <RoleList roles={subject.effectiveRoles} />
+        </span>
+        <span className="mt-3 block text-xs text-muted-foreground">
+          成员资格更新于 {formatAdminTimestamp(subject.membershipUpdatedAt)}
+        </span>
+      </a>
+    </li>
+  );
+}
+
+function DetailPanel({ detail }: { detail: IdentityAccessSubjectDetail }) {
+  return (
+    <section
+      aria-labelledby="identity-detail-heading"
+      className="site-stack min-w-0 max-w-full"
+    >
+      <div className="min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow">身份 / 账号概览</p>
+            <h2
+              className="mt-2 break-words text-2xl font-semibold [overflow-wrap:anywhere]"
+              id="identity-detail-heading"
+            >
+              {displayRegistrationName(detail.profile.registrationName)}
+            </h2>
+            <p className="mt-2 break-all font-mono text-xs text-muted-foreground">
+              {detail.profile.userId.value}
+            </p>
+          </div>
+          <span className="max-w-full shrink-0 break-words rounded-full border border-border bg-surface-muted px-3 py-1 text-center text-xs font-medium whitespace-normal">
+            读取 + 普通治理
+          </span>
+        </div>
+
+        <dl className="mt-6 grid min-w-0 gap-4 sm:grid-cols-2">
+          <div className="min-w-0">
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              账号资料创建
+            </dt>
+            <dd className="mt-1 text-sm">
+              {formatAdminTimestamp(detail.profile.createdAt)}
+            </dd>
+          </div>
+          <div className="min-w-0">
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              账号资料更新
+            </dt>
+            <dd className="mt-1 text-sm">
+              {formatAdminTimestamp(detail.profile.updatedAt)}
+            </dd>
+          </div>
+        </dl>
       </div>
+
+      <div className="grid min-w-0 gap-4 lg:grid-cols-2">
+        <article className="stat-card">
+          <p className="eyebrow">成员资格</p>
+          <div className="mt-3">
+            <MembershipBadge state={detail.membership.state} />
+          </div>
+          <dl className="mt-5 grid gap-3 text-sm">
+            <div>
+              <dt className="text-muted-foreground">最近更新</dt>
+              <dd className="mt-1">
+                {formatAdminTimestamp(detail.membership.updatedAt)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">获准时间</dt>
+              <dd className="mt-1">
+                {detail.membership.admittedAt
+                  ? formatAdminTimestamp(detail.membership.admittedAt)
+                  : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">暂停 / 撤销时间</dt>
+              <dd className="mt-1">
+                {detail.membership.suspendedAt
+                  ? formatAdminTimestamp(detail.membership.suspendedAt)
+                  : detail.membership.revokedAt
+                    ? formatAdminTimestamp(detail.membership.revokedAt)
+                    : "—"}
+              </dd>
+            </div>
+          </dl>
+        </article>
+
+        <article className="stat-card">
+          <p className="eyebrow">角色 / 权限状态</p>
+          <div className="mt-3">
+            <RoleList roles={detail.effectiveRoles} />
+          </div>
+          <dl className="mt-5 grid gap-3 text-sm">
+            <div>
+              <dt className="text-muted-foreground">高权限账号</dt>
+              <dd className="mt-1 font-medium">
+                {detail.isElevatedAccount ? "是 · 写入延期" : "否"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">唯一正常超级管理员</dt>
+              <dd className="mt-1 font-medium">
+                {detail.isOnlyActiveSuperAdmin ? "是 · 数据库保护" : "否"}
+              </dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+
+      <article className="min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6">
+        <p className="eyebrow">当前有效角色</p>
+        {detail.activeRoleGrants.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">
+            当前没有有效角色授权；有效访问角色为读者。
+          </p>
+        ) : (
+          <ul className="mt-4 divide-y divide-border">
+            {detail.activeRoleGrants.map((grant) => (
+              <li
+                className="grid min-w-0 gap-2 py-4 sm:grid-cols-2"
+                key={grant.grantId}
+              >
+                <div className="min-w-0">
+                  <p className="font-medium">{adminRoleLabel(grant.role)}</p>
+                  <p className="mt-1 break-all font-mono text-xs text-muted-foreground">
+                    {grant.grantId}
+                  </p>
+                </div>
+                <div className="min-w-0 text-sm sm:text-right">
+                  <p>{formatAdminTimestamp(grant.grantedAt)}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">
+                    授予者：{grant.grantedBy?.value ?? "系统"}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+
+      <article className="min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-5 sm:p-6">
+        <p className="eyebrow">预期状态</p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          数据库生成的状态指纹。普通治理复核会绑定此基线；状态变化时返回状态冲突。
+        </p>
+        <code className="mt-3 block max-w-full whitespace-pre-wrap break-all rounded-control border border-border bg-background p-3 text-xs">
+          {detail.expectedState.token.value}
+        </code>
+      </article>
     </section>
   );
 }
 
-function IdentityFields({ roles }: { roles: readonly string[] }) {
+function describeChange(change: IdentityAccessGovernanceAuditChange | null) {
+  if (change === null) return "—";
+  if ("membershipState" in change) {
+    return `成员资格：${ADMIN_MEMBERSHIP_LABELS[change.membershipState]}`;
+  }
+  return `角色：${adminRoleLabel(change.role)}`;
+}
+
+function auditActionLabel(
+  action: IdentityAccessGovernanceAuditSummary["action"],
+): string {
+  switch (action) {
+    case "membership.state_changed":
+      return "成员资格状态已变更";
+    case "role.bootstrap_super_admin":
+      return "已初始化超级管理员";
+    case "role.granted":
+      return "已授予角色";
+    case "role.revoked":
+      return "已撤销角色";
+  }
+}
+
+function AuditPanel({
+  data,
+}: {
+  data: Extract<AccessGovernancePageData, { status: "ready" }>;
+}) {
+  if (!data.selectedSubject || !data.auditPage) return null;
+  const targetUserId = data.selectedSubject.profile.userId.value;
+
   return (
-    <>
-      <label className="mt-4 block text-sm font-medium">
-        User ID
-        <input className={inputClass} name="userId" required />
-      </label>
-      <label className="mt-4 block text-sm font-medium">
-        角色
-        <select className={inputClass} name="role">
-          {roles.map((role) => (
-            <option key={role} value={role}>
-              {role}
-            </option>
+    <section
+      aria-labelledby="governance-audit-heading"
+      className="min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6"
+    >
+      <p className="eyebrow">权限操作记录</p>
+      <h2 className="mt-2 text-xl font-semibold" id="governance-audit-heading">
+        最近治理记录
+      </h2>
+      {data.auditPage.items.length === 0 ? (
+        <div className="empty-state mt-5">
+          <p className="font-medium">暂无相关治理记录</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            当前读取范围内没有成员资格或角色治理审计记录。
+          </p>
+        </div>
+      ) : (
+        <ol className="mt-5 divide-y divide-border">
+          {data.auditPage.items.map((event) => (
+            <li className="min-w-0 py-5" key={event.auditId}>
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">
+                    {auditActionLabel(event.action)}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {event.reason}
+                  </p>
+                </div>
+                <time
+                  className="text-xs text-muted-foreground"
+                  dateTime={event.createdAt.toISOString()}
+                >
+                  {formatAdminTimestamp(event.createdAt)}
+                </time>
+              </div>
+              <dl className="mt-4 grid min-w-0 gap-3 text-sm sm:grid-cols-3">
+                <div className="min-w-0">
+                  <dt className="text-muted-foreground">操作人</dt>
+                  <dd className="mt-1 break-all">
+                    {event.actor
+                      ? `${displayRegistrationName(event.actor.registrationName)} · ${event.actor.userId.value}`
+                      : "系统"}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-muted-foreground">变更前</dt>
+                  <dd className="mt-1">{describeChange(event.before)}</dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-muted-foreground">变更后</dt>
+                  <dd className="mt-1">{describeChange(event.after)}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 break-all font-mono text-xs text-muted-foreground">
+                审计编号 {event.auditId}
+              </p>
+            </li>
           ))}
-        </select>
-      </label>
-      <ReasonField />
-    </>
+        </ol>
+      )}
+      {data.auditPage.nextCursor ? (
+        <a
+          className="mt-5 inline-flex min-h-11 items-center rounded-control border border-border bg-background px-4 text-sm font-medium hover:bg-surface-muted"
+          href={accessHref({
+            auditCursor: encodeAuditCursor(data.auditPage.nextCursor),
+            query: data.query,
+            searchCursor: data.searchCursor ?? undefined,
+            subject: targetUserId,
+          })}
+        >
+          查看更早记录
+        </a>
+      ) : null}
+    </section>
   );
 }
 
-function ReasonField() {
+function ReadErrorState({ error }: { error: AccessGovernanceReadError }) {
+  const copy = readErrorCopy[error];
   return (
-    <label className="mt-4 block text-sm font-medium">
-      原因
-      <textarea
-        className={inputClass}
-        maxLength={1000}
-        name="reason"
-        required
-      />
-    </label>
+    <section className="empty-state min-w-0 max-w-full" role="alert">
+      <p className="eyebrow">读取错误</p>
+      <h1 className="mt-3 text-2xl font-semibold">{copy.title}</h1>
+      <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+        {copy.description}
+      </p>
+      <a
+        className="mt-5 inline-flex min-h-11 items-center rounded-control border border-border bg-surface px-4 text-sm font-medium hover:bg-background"
+        href="/access"
+      >
+        返回身份目录
+      </a>
+    </section>
   );
+}
+
+export function AccessGovernanceView({
+  data,
+}: {
+  data: RenderableAccessGovernancePageData;
+}) {
+  if (data.status === "read-error") {
+    return <ReadErrorState error={data.error} />;
+  }
+
+  return (
+    <div className="site-stack min-w-0 max-w-full">
+      <section className="hero-panel min-w-0 max-w-full">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="eyebrow">身份与权限管理</p>
+          <span className="max-w-full break-words rounded-full border border-border bg-surface px-3 py-1 text-center text-xs font-medium text-muted-foreground whitespace-normal">
+            受控治理
+          </span>
+        </div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+          身份与权限
+        </h1>
+        <p className="mt-4 max-w-3xl text-muted-foreground">
+          查询脱敏身份、成员资格、有效角色与相关治理记录，并对普通账户执行受控成员
+          资格与作者权限治理。每次调用都会重新验证当前后台访问权限。
+        </p>
+      </section>
+
+      <section
+        aria-labelledby="identity-search-heading"
+        className="min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6"
+      >
+        <p className="eyebrow">身份查询</p>
+        <h2 className="mt-2 text-xl font-semibold" id="identity-search-heading">
+          查找身份
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          使用注册名或完整用户编号。结果按稳定顺序分页，每页最多 20 项。
+        </p>
+        <form className="mt-5 flex flex-col gap-3 sm:flex-row" method="get">
+          <label className="min-w-0 flex-1 text-sm font-medium">
+            注册名或完整用户编号
+            <input
+              className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+              defaultValue={data.query}
+              maxLength={160}
+              name="q"
+              placeholder="例如 harboradmin 或完整用户编号"
+              type="search"
+            />
+          </label>
+          <button
+            className="min-h-11 self-end rounded-control bg-primary px-5 text-sm font-medium text-primary-foreground"
+            type="submit"
+          >
+            查询
+          </button>
+        </form>
+      </section>
+
+      <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)]">
+        <section aria-labelledby="identity-results-heading" className="min-w-0">
+          <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
+            <div className="min-w-0">
+              <p className="eyebrow">查询结果</p>
+              <h2
+                className="mt-2 text-xl font-semibold"
+                id="identity-results-heading"
+              >
+                查询结果
+              </h2>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {data.subjectPage.items.length} 项
+            </span>
+          </div>
+
+          {data.subjectPage.items.length === 0 ? (
+            <div className="empty-state mt-4">
+              <p className="font-medium">没有符合条件的身份</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                请检查注册名或使用完整用户编号；没有读取或修改任何账户状态。
+              </p>
+            </div>
+          ) : (
+            <ul className="mt-4 grid gap-3">
+              {data.subjectPage.items.map((subject) => (
+                <SubjectSummary
+                  key={subject.userId.value}
+                  query={data.query}
+                  searchCursor={data.searchCursor}
+                  subject={subject}
+                />
+              ))}
+            </ul>
+          )}
+
+          {data.subjectPage.nextCursor ? (
+            <a
+              className="mt-4 inline-flex min-h-11 items-center rounded-control border border-border bg-surface px-4 text-sm font-medium hover:bg-surface-muted"
+              href={accessHref({
+                query: data.query,
+                searchCursor: encodeSubjectCursor(data.subjectPage.nextCursor),
+              })}
+            >
+              查看下一页
+            </a>
+          ) : null}
+        </section>
+
+        {data.selectedSubject ? (
+          <div className="site-stack min-w-0 max-w-full">
+            <DetailPanel detail={data.selectedSubject} />
+            <AccessMutationPanel
+              authorActive={data.selectedSubject.activeRoleGrants.some(
+                (grant) => grant.role === "author",
+              )}
+              expectedStateToken={
+                data.selectedSubject.expectedState.token.value
+              }
+              isElevatedAccount={data.selectedSubject.isElevatedAccount}
+              membershipState={data.selectedSubject.membership.state}
+              registrationName={data.selectedSubject.profile.registrationName}
+              targetUserId={data.selectedSubject.profile.userId.value}
+            />
+          </div>
+        ) : (
+          <section
+            className="empty-state min-w-0 max-w-full"
+            aria-label="身份详情"
+          >
+            <p className="eyebrow">身份详情</p>
+            <h2 className="mt-3 text-xl font-semibold">选择一个身份查看详情</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              详情仅展示冻结合同中的脱敏身份、成员资格、有效角色、状态指纹与保护标
+              记。
+            </p>
+          </section>
+        )}
+      </div>
+
+      <AuditPanel data={data} />
+
+      <section className="min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-5 sm:p-6">
+        <p className="eyebrow">暂未开放的能力</p>
+        <h2 className="mt-2 text-xl font-semibold">高权限治理仍未开放</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+          当前只允许普通账号的成员资格与作者权限治理。管理员/超级管理员角色及高权
+          限账号成员资格写入继续受既定重新身份验证延期边界保护，不存在可执行控件或
+          旧写入接口绕过路径。
+        </p>
+      </section>
+    </div>
+  );
+}
+
+export default async function AccessAdministrationPage({
+  searchParams,
+}: {
+  searchParams: Promise<AccessGovernanceSearchParams>;
+}) {
+  const data = await loadAccessGovernancePageData(await searchParams);
+  if (data.status === "unauthenticated" || data.status === "forbidden") {
+    redirect(
+      data.status === "unauthenticated"
+        ? "/auth/sign-in"
+        : "/auth/sign-in?error=forbidden",
+    );
+  }
+  return <AccessGovernanceView data={data} />;
 }

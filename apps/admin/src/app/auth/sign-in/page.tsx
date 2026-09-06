@@ -12,11 +12,11 @@ export default async function AdminSignInPage({
 
   return (
     <section className="mx-auto max-w-lg rounded-card border border-border bg-surface p-6">
-      <p className="text-sm font-medium text-primary">Admin access</p>
+      <p className="text-sm font-medium text-primary">管理后台访问</p>
       <h1 className="mt-3 text-3xl font-semibold">管理员登录</h1>
       <p className="mt-3 text-sm text-muted-foreground">
-        仅 active Admin 与 Super Admin 可以进入。Reader 和 Author
-        凭据不会获得后台访问权。
+        仅成员资格正常的管理员与超级管理员可以进入。读者和作者凭据不会获得后台
+        访问权。
       </p>
       {query.error ? (
         <p className="mt-4 text-sm text-destructive" role="alert">

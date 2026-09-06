@@ -1,5 +1,649 @@
 # Project Status
 
+## Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
+
+| 项目                         | 当前状态                                                                                 |
+| ---------------------------- | ---------------------------------------------------------------------------------------- |
+| PR / start head              | `#3` / `a62a260b2f578105ba797a991613ad275a5f4d16`                                        |
+| Formal Admin                 | `fandom-harbor-admin` / `paused=true` / Git Preview creation disabled                    |
+| Formal Production branch     | `admin-production-disabled` / existing deployment and alias unchanged                    |
+| Dedicated Admin Preview      | `fandom-harbor-admin-p1-preview` / GitHub linked / Root `apps/admin`                     |
+| Preview production safeguard | Production Branch `admin-production-disabled`; Production deployments `0`                |
+| Preview data boundary        | QA2 `hicfnlwzmnbxhimyeviy` / Preview-only env / `ACTIVE_HEALTHY` / 20 of 20 Migrations   |
+| Preview access boundary      | Vercel Authentication enabled / automation bypass `0`                                    |
+| Runtime                      | unchanged from start head; governance commit is docs-only                                |
+| Production / Web             | no change; formal Admin paused; Web Admin entry closed                                   |
+| Release authority            | no Merge or Production release authorization; explicit immutable release SHA is required |
+| P1.1                         | DEFERRED / NOT AUTHORIZED                                                                |
+
+- The old `Vercel – fandom-harbor-admin` failure on the starting PR head was a
+  deployment-governance block caused by the paused formal project, not a code or
+  build failure.
+- The formal project retains its Git link, Root Directory, Production branch,
+  environment, deployment and alias while `previewDeploymentsDisabled=true`
+  prevents new PR/feature Preview creation.
+- The dedicated project now owns Admin PR / QA Preview creation. Connecting it
+  created no deployment and changed no QA2 or Production data, Auth, ACL, RLS or
+  Migration. A new docs-only PR head must pass Web and dedicated Admin Preview
+  checks before any separately authorized merge review.
+
+## Admin P1-06C UI Polish Closure（2026-09-06）
+
+| 项目                    | 当前状态                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| Branch / closure parent | `codex/admin-p1-04-ordinary-mutations` / `c9643d387c1216d40260882e6055b423576362ee` |
+| P1-06A                  | COMPLETE / Commit `c9643d387c1216d40260882e6055b423576362ee`                        |
+| P1-06B                  | Manual Preview Acceptance / Product Owner PASS                                      |
+| P1-06C                  | Admin UI Polish / PASS / COMPLETE                                                   |
+| Final accepted Preview  | `dpl_HiF87dWBe54kXCMum3yN29nWHCxa` / READY / protected / bypass `0`                 |
+| UI-01 / UI-02           | Admin localization PASS / responsive 1440–390 PASS                                  |
+| UI-03 / UI-04           | global Header sign-out PASS / `Asia/Shanghai` Beijing time PASS                     |
+| QA2                     | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY` / 20 of 20 Migrations                     |
+| Formal Admin Production | unchanged / `paused=true`; Site Copy Version 7; Web entry closed                    |
+| P1-07                   | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                 |
+| P1.1                    | DEFERRED / NOT AUTHORIZED                                                           |
+
+- Workspace TypeScript and ESLint, Admin 105, UI 5, Admin production build,
+  targeted Prettier, diff and sensitive scan passed.
+- P1-06C changed presentation and Admin layout only. Auth, Service, Repository,
+  Domain, database, Migration, RPC, RLS, Grant, ACL, Ledger, Audit and ordinary
+  governance behavior remain unchanged.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md`.
+- P1-07 has not started. This closure does not authorize Production deployment,
+  Admin resume, Web Admin entry enablement or P1.1.
+
+## Admin P1-06A Dedicated Protected Preview Acceptance（2026-08-23 historical snapshot）
+
+| 项目                          | 当前状态                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| Branch / HEAD                 | `codex/admin-p1-04-ordinary-mutations` / `b0148e051c622e0a0fce0141be8cbcbccee9401d` |
+| Canonical Preview             | `dpl_84CzqyvoypWY213ESquzM9B6Ekap` / READY / preview                                |
+| Protection                    | Vercel Authentication PASS / automation bypass `0`                                  |
+| QA2 runtime / human smoke     | `hicfnlwzmnbxhimyeviy` / Login + `/access` PASS                                     |
+| Responsive fix                | human accepted; no overflow or overlap                                              |
+| Smoke cleanup                 | Auth/identity/session/refresh/Profile/Membership/Role/Audit/Ledger/request `0`      |
+| QA ACL                        | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`; writes closed                   |
+| Incorrect Production incident | routes removed; `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2` deleted                          |
+| Formal Admin Production       | unchanged / `paused=true`; Site Copy Version 7; Web entry closed                    |
+| P1-06A                        | PASS / READY FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION                        |
+| P1-06B                        | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                 |
+| P1-07 / P1.1                  | NOT STARTED / DEFERRED AND NOT AUTHORIZED                                           |
+
+- Direct remote executor browser scanning remained unavailable due executor
+  network. Equivalent Preview allowlist, local static-build/runtime-source scans,
+  accepted QA2 human runtime evidence and zero automation bypass passed; no false
+  remote browser scan PASS is claimed.
+- Pre-fix Preview `dpl_HgXQHJPQ8i5eVUHweTAnZMrCqKeV` is retained as
+  READY/preview. The canonical fixed Preview remains protected and unpromoted.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`.
+- This section preserves the P1-06A pre-commit gate as a historical snapshot. The
+  current P1-06 status is the P1-06C Closure section above.
+
+## Admin P1-05 Final Closure Audit（2026-08-22 historical snapshot）
+
+| 项目                              | 当前状态                                                                                                                                 |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch / HEAD                     | `codex/admin-p1-04-ordinary-mutations` / `065e7626119789845471351cfbc1e71329c5735e`                                                      |
+| Git evidence ancestry             | seven required P1-05 commits exact / PASS                                                                                                |
+| P1-05A                            | COMPLETE                                                                                                                                 |
+| Bootstrap Attempt 1               | FAILED historical evidence preserved                                                                                                     |
+| Hosted ACL correction / Attempt 2 | PASS / fresh 20/20                                                                                                                       |
+| Read, denial and mutation QA      | PASS                                                                                                                                     |
+| Mutation Attempt 1 / R1 / R2      | BLOCKED history preserved / fix PASS / retry PASS                                                                                        |
+| Atomicity                         | remote injection NOT AVAILABLE; authoritative local rollback PASS                                                                        |
+| Final QA safety state             | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`; synthetic zero                                                                       |
+| Current local ACL                 | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                                                                                       |
+| Latest regression                 | Admin 88; P1-03 17; P1-04B 17; composition 7; Service 57; Services 180; Repository 24; Database 143; Migration 23; SQL/static/build PASS |
+| P1-05                             | PASS / READY TO CLOSE                                                                                                                    |
+| Closure evidence                  | READY FOR PRODUCT OWNER COMMIT AUTHORIZATION                                                                                             |
+| P1-06                             | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                                                                      |
+| P1-07                             | NOT AUTHORIZED / NOT STARTED                                                                                                             |
+| P1.1                              | DEFERRED / NOT AUTHORIZED                                                                                                                |
+| Production                        | untouched; Admin `paused=true`; Web Admin entry closed; Site Copy Version 7                                                              |
+
+- This audit used committed remote evidence and current local tests only. It did
+  not access either QA Project or Production and created no remote evidence.
+- `REMOTE FAILURE INJECTION: NOT AVAILABLE BY CURRENT CONTRACT`; no remote
+  Audit/Ledger failure-injection PASS is claimed. Local transaction rollback,
+  atomicity and dblink concurrency suites are the authority.
+- Desired formal Migration D ACL remains old `0/12`, v2 authenticated-only
+  `3/12`, read authenticated-only `3/12`, private `0/36`. The final QA v2 `0/12`
+  value is a separate safety-closure state.
+- Attempt 1 bootstrap failure, the accepted Attempt 2-only credential recovery,
+  and B-3 Attempt 1 composition failure remain explicit historical evidence.
+- Evidence: `docs/15_Sprint/Admin_P1/P1_05_FINAL_CLOSURE_AUDIT.md`.
+
+## Admin P1-05B-3R2 Final Functional QA（2026-08-22 historical snapshot）
+
+| 项目                        | 当前状态                                                         |
+| --------------------------- | ---------------------------------------------------------------- |
+| Baseline                    | `f00743c4e8ae7604b1b8114f29cf7fdec32f2e63`                       |
+| QA Attempt 2                | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY`                        |
+| Formal application chain    | `active -> suspended` Saved; no `INVALID_INPUT`                  |
+| Ordinary matrix             | Membership/Author Saved + Unchanged PASS                         |
+| Request/Conflict/concurrent | replay, mismatch, Conflict, A/B/C and exactly-once PASS          |
+| Audit / Ledger evidence     | 11 business Audit; 17 unique Ledger; zero duplicate/orphan       |
+| Live auth / Detail          | fresh live-access PASS; Detail/Audit consistent                  |
+| Atomicity                   | local write + dblink concurrency suites PASS                     |
+| Protected boundaries        | elevated targets + three legacy RPCs denied                      |
+| Cleanup                     | all synthetic Auth/data/Audit/Ledger/invitation/credentials zero |
+| Final ACL                   | old `0/12`; v2 `0/12`; read `3/12`; private `0/36`               |
+| Migration / non-fixture     | 20/20 exact; baseline unchanged                                  |
+| P1-05B-3R2                  | PASS / WAITING FOR EVIDENCE COMMIT AUTHORIZATION                 |
+| P1-05                       | READY FOR FINAL CLOSURE AUDIT                                    |
+| Production / Attempt 1      | untouched / untouched                                            |
+
+- Attempt 1's fail-closed `INVALID_INPUT` history remains in the evidence; R1's
+  committed Action raw-request composition fix is what R2 verified.
+- At that historical evidence gate, remote failure injection was recorded as
+  `NOT APPLICABLE BY CURRENT CONTRACT` and was not created. The current closure
+  authority above uses the Mission-defined status
+  `NOT AVAILABLE BY CURRENT CONTRACT`; existing local authoritative rollback tests supply the approved
+  evidence.
+- QA2 is sanitized and write-closed. P1-06, P1-07 and P1.1 remain not authorized.
+  Admin Production remains `paused=true`; Web Admin entry remains closed; P0
+  Production Site Copy remains Version 7.
+
+## Admin P1-05B-2 Read Authorization and Denial QA（2026-08-22 historical snapshot）
+
+| 项目                            | 当前状态                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------ |
+| Baseline                        | `75efba48e57381f13398b63c0cadc44c4b9b2e17`                               |
+| QA Attempt 2                    | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY`                                |
+| Synthetic fixtures              | 14 A–N + one non-login bootstrap controller                              |
+| Admin / Super Admin reads       | Search / Detail / Audit PASS                                             |
+| Caller denials                  | Reader / Author / inactive Admin / revoked Admin / anonymous PASS        |
+| Live authorization              | next protected read denied after Membership loss; restored               |
+| Elevated/protected denials      | Admin / Super Admin / elevated Membership / last active Super Admin PASS |
+| Legacy RPC                      | authenticated `42501` deny for all three                                 |
+| Review → Confirm access loss    | DENY / zero write                                                        |
+| Business / Ledger / Audit delta | `0 / 0 / 0`                                                              |
+| Final ACL                       | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                       |
+| Sessions                        | browser signed out; synthetic sessions/refresh tokens zero               |
+| P1-05B-2                        | PASS / COMMITTED at `3f45ce7459e67e7f6b8844024bfd64181a1a8374`           |
+| P1-05B-3                        | historical handoff; superseded by the current B-3 section above          |
+| Production side effect          | NO                                                                       |
+| Admin Production                | `paused=true`                                                            |
+
+- The local Admin used only Attempt 2's API URL, publishable key and synthetic
+  credentials. Service-role use was server-side fixture setup only and was never
+  exposed to the browser or repository.
+- The fixture and non-fixture hashes returned to baseline after temporary
+  live-access and only-active-Super-Admin control changes. No ordinary successful
+  mutation was executed.
+- P1-06, P1-07 and P1.1 remain not authorized. Evidence:
+  `docs/15_Sprint/Admin_P1/P1_05B2_READ_DENIAL_QA_EVIDENCE.md`.
+
+## Admin P1-05B-1R2 Clean QA Bootstrap Attempt 2（2026-08-20）
+
+| 项目                     | 当前状态                                                                 |
+| ------------------------ | ------------------------------------------------------------------------ |
+| Baseline                 | `4f93db9a834843da7640bdf52a31817f2ff528e1`                               |
+| Attempt 1                | `gqtchjrmpuxibxmurvfd` / `INACTIVE` / preserved / not deleted            |
+| Attempt 2                | `hicfnlwzmnbxhimyeviy` / Free Nano / `ap-southeast-1` / `ACTIVE_HEALTHY` |
+| Clean initial state      | PASS — Auth 0; no application schema or Migration catalog                |
+| Remote Migration         | 20/20 PASS / catalog exact                                               |
+| Hosted ACL normalization | privilege difference YES / D PASS                                        |
+| Final ACL                | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                       |
+| Fixtures / business QA   | NONE / NOT STARTED                                                       |
+| P1-05B-2                 | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                      |
+| Production side effect   | NO                                                                       |
+| Admin Production         | `paused=true`                                                            |
+
+- Attempt 2 is isolated from Production and Attempt 1 by ref, API/database host
+  and Auth tenant. No Production or Attempt 1 credential, data, Auth or schema was
+  copied.
+- Search/Audit remain stable invoker and Detail controlled stable definer; all
+  three are owner `postgres`, fixed empty search path and authenticated-only.
+  Private is absent from Data API schemas; Ledger/Audit RLS and immutable triggers
+  are present.
+- P0 QA is the formal Migration seed Version 1, not Production Version 7. No
+  fixture, business mutation QA, emergency close-write, Commit, Push/PR/Merge,
+  Deployment, P1-05B-2, P1-06, P1-07 or P1.1 occurred.
+- The clean bootstrap is a technical PASS. Project creation output parsing did
+  not retain the initial Attempt 2 database password, so one Attempt 2-only
+  password rotation was used before Migration. No secret or Production state was
+  exposed. Product Owner accepted this as `QA-ONLY OPERATIONAL CREDENTIAL
+RECOVERY`; it remains recorded and does not expand future remote authorization.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_05B1_ATTEMPT2_BOOTSTRAP_EVIDENCE.md`.
+
+## Admin P1-05B-1R1 Fresh-Bootstrap ACL Correction（2026-08-20）
+
+| 项目                      | 当前状态                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| Baseline                  | `4990440cb0a6e341ce242380480a06fe0c62ea14`                                      |
+| Attempt 1                 | FAILED AT MIGRATION D / EMERGENCY FAIL-CLOSED                                   |
+| Current QA                | PARTIAL 19/20 / NOT VALID FOR CONTINUED P1-05B                                  |
+| Root cause                | Hosted direct app-role function grants were treated as hard ACL preconditions   |
+| R1 strategy               | Modify D; normalize legacy ACL atomically; retain hard catalog/v2/private gates |
+| Rebuild / SQL             | two clean 20-Migration rebuilds / 15 SQL suites PASS                            |
+| Final ACL                 | old `0/12`; v2 `3/12`; read `3/12`; private `0/36`                              |
+| Application tests         | Database 143; Repository 24; Service 57; Services 180; Admin 82                 |
+| R1                        | LOCAL PASS / WAITING FOR PRODUCT OWNER COMMIT AUTHORIZATION                     |
+| Clean QA retry / P1-05B-2 | NOT AUTHORIZED / NOT STARTED                                                    |
+| Current QA modified in R1 | NO                                                                              |
+| Production side effect    | NO                                                                              |
+| Admin Production          | `paused=true`                                                                   |
+
+- Attempt 1 applied Migrations 1–19 and failed D on effective `anon` execute for
+  the legacy `grant_role`; no fixture or business QA ran. Emergency fail-closed
+  verified all six write RPCs closed to all four application roles.
+- PostgreSQL `PUBLIC` inheritance and Supabase Hosted direct grants are now
+  separately covered. The Hosted failure was direct `anon`, because the owning
+  Migration had already revoked `PUBLIC` but not the separate Hosted aclitem.
+- R1 changes only D, its static/Hosted regression tests and authorized status
+  documents. No remote access occurred after the failure. The failed QA Project
+  remains evidence only and cannot be resumed.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_05B1_BOOTSTRAP_FAILURE_AND_FIX.md`.
+
+## Admin P1-05A Dedicated QA Preparation（2026-08-20）
+
+| 项目                                       | 当前状态                                                        |
+| ------------------------------------------ | --------------------------------------------------------------- |
+| Baseline                                   | `10056a8101720e948b1de3cceef96112623c0fec`                      |
+| P1-05A                                     | COMPLETE / COMMITTED `4990440cb0a6e341ce242380480a06fe0c62ea14` |
+| Dedicated QA Project                       | `fandom-harbor-admin-p1-qa` / `gqtchjrmpuxibxmurvfd`            |
+| Safety/fixture/Migration/QA/evidence plans | READY                                                           |
+| P1-05B                                     | ATTEMPT 1 FAILED / R1 LOCAL CORRECTION PASS                     |
+| QA provisioning side effect                | YES — one Free/Nano non-Production Project                      |
+| QA database / Production side effect       | NONE / NONE                                                     |
+| P1-06 / P1-07                              | NOT AUTHORIZED / NOT AUTHORIZED                                 |
+| P1.1                                       | DEFERRED / NOT AUTHORIZED                                       |
+| Admin Production                           | `paused=true`                                                   |
+
+- Management metadata found no reusable QA Project, so P1-05A2 created one Free/Nano dedicated Project in `ap-southeast-1`. QA and Production ref, API/database host and Auth tenant are different; no data plane or secret was read.
+- `P1_05A_QA_PREPARATION.md` freezes project identification/isolation, synthetic fixtures, credential handling, write window, exact v2 close-writes, cleanup/retention, the 20-Migration apply order, ACL/QA matrices and sanitized evidence.
+- P1-05A entry gates passed and its docs-only Closure Commit is `4990440cb0a6e341ce242380480a06fe0c62ea14`. The later P1-05B Attempt 1 and R1 status are authoritative in the section above; this preparation record did not itself create fixtures or access the data plane.
+
+## Admin P1 Final Status Reconciliation（2026-08-20）
+
+| 项目                     | 当前状态                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| Branch / HEAD            | `codex/admin-p1-04-ordinary-mutations` / `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c` |
+| P1-02G                   | Complete / committed `370d7b0541a51ed63dd4076e4d912b2309c9d072`                     |
+| P1-03                    | Complete / committed `9caac4a9affbd3ea9d13cbae266696f9c853490e`                     |
+| P1-04A                   | Complete / committed `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`                     |
+| P1-04B                   | Complete / committed `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`                     |
+| Ordinary governance      | LOCAL COMPLETE                                                                      |
+| P1-05                    | REQUIRED / NOT AUTHORIZED / NOT EXECUTED — P1 CLOSURE BLOCKER                       |
+| P1-06 / P1-07            | NOT AUTHORIZED / NOT AUTHORIZED                                                     |
+| P1                       | NOT READY FOR CLOSURE                                                               |
+| P1.1 elevated governance | DEFERRED / NOT AUTHORIZED                                                           |
+| Remote apply             | NO                                                                                  |
+| Admin Production         | `paused=true`                                                                       |
+| Web Admin entry          | CLOSED                                                                              |
+| P0 Site Copy             | Production authority Version 7 / unchanged                                          |
+
+- P1-05 is `Local + Dedicated Non-Production Remote QA`. It must use an isolated
+  non-Production Supabase environment to validate the ordinary chain and Migrations
+  A–D; it has not been authorized or executed and Production is not a fallback.
+- P1-06 Protected Admin Preview Acceptance and P1-07 Production Release Review are
+  future independent gates. Neither is authorized by the local implementation.
+- P1.1 requires P1 Closure, separate Product Owner authorization and a new
+  Auth/Access ADR; MFA/AAL2 should be reconsidered before elevated mutations reopen.
+- No remote Migration/SQL/ACL apply, Production mutation, login, Unpause or
+  Deployment occurred. Older entries below remain point-in-time historical records.
+
+## Admin P1-04A Ordinary Write RPC Atomic Cutover（2026-08-19）
+
+| 项目                  | 当前状态                                                            |
+| --------------------- | ------------------------------------------------------------------- |
+| Baseline              | `9caac4a9affbd3ea9d13cbae266696f9c853490e`                          |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-04` / `codex/admin-p1-04-ordinary-mutations` |
+| Migration             | `20260819225318_admin_p1_identity_access_cutover.sql`               |
+| Legacy write ACL      | `0/12` execute=true                                                 |
+| Ordinary v2 write ACL | authenticated only: `3/12` execute=true                             |
+| Private helpers       | nine helpers/executor: `0/36` execute=true                          |
+| Read RPC ACL          | unchanged; authenticated only: `3/12`                               |
+| Rebuild / SQL         | two clean 20-Migration rebuilds / 14 SQL suites PASS                |
+| Application tests     | Service 57; Services 180; Database/Repository 142 PASS              |
+| UI / Action           | UNCHANGED / NOT STARTED                                             |
+| P1-04B / P1.1         | NOT STARTED / NOT AUTHORIZED                                        |
+| Commit / remote state | NONE / UNCHANGED                                                    |
+| Admin Production      | `paused=true`                                                       |
+| P0 Site Copy          | Production authority Version 7 / unchanged                          |
+
+- One atomic `DO` statement holds the global governance lock, validates the exact
+  catalog and before-state, revokes legacy execute, proves deny, grants only the
+  three narrow v2 signatures to authenticated, and re-proves final/private ACLs.
+- Local rollback rehearsal reconstructs the prior ACL in an outer transaction,
+  forces a failure after legacy revoke, proves subtransaction recovery, rehearses
+  the full cutover, then rolls back all rehearsal changes.
+- ADR-022 Option 3 and KI-033 remain unchanged. No elevated RPC, UI, Action, Auth,
+  remote database operation, login, Unpause, Deployment or Commit occurred.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-03 Read-only Access UI（2026-08-19）
+
+| 项目                  | 当前状态                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| Baseline              | `370d7b0541a51ed63dd4076e4d912b2309c9d072`                           |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-03` / `codex/admin-p1-03-read-only-access-ui` |
+| Route                 | Admin `/access` read-only                                            |
+| Service integration   | Search + Detail + Audit reads only                                   |
+| Authorization         | fresh P1-02F live-access check per Service call                      |
+| UI states             | loading / loaded / empty / unauthorized / safe error / deferred      |
+| Mutation surface      | NONE — GET search and links only                                     |
+| Write ACL / old RPC   | 0/12 application execute / unchanged, no cutover                     |
+| Database/Auth changes | NONE                                                                 |
+| Tests                 | P1-03 16; Admin 70; Service 57; Services 180; Database 138 PASS      |
+| Build / static gates  | Admin production build; workspace TypeScript/ESLint PASS             |
+| Local smoke           | anonymous `/access` → sign-in redirect contract PASS                 |
+| P1-04 / P1.1          | NOT AUTHORIZED / NOT AUTHORIZED                                      |
+| Commit / remote state | NONE / UNCHANGED                                                     |
+| Admin Production      | `paused=true`                                                        |
+| Web Admin entry       | disabled / unchanged                                                 |
+| P0 Site Copy          | Production authority Version 7 / unchanged                           |
+
+- `/access` no longer imports the legacy mutation Actions. A narrow server facade
+  exposes only `searchSubjects`, `getSubjectDetail`, and `listSubjectAudit`; the
+  Service and strict Repository remain the authorization and parsing authorities.
+- The page displays only frozen desensitized identity, Membership, Role Grant,
+  expected-state/protection flags, and governance Audit. It has no reason,
+  requestId, write result, Review/confirm, mutation method, or direct database path.
+- P1-04 ordinary write UI/cutover and P1.1 elevated governance were not started.
+  No Commit, Push, PR, remote database operation, login, Unpause, or Deployment.
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02G Backend Closure and UI Handoff（2026-08-18）
+
+| 项目                  | 当前状态                                                                 |
+| --------------------- | ------------------------------------------------------------------------ |
+| Parent baseline       | `edd78c190002340eaa2091860e5eb997785b7528`                               |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02G` / `codex/admin-p1-02g-backend-closure`       |
+| Backend slices        | P1-02A–F committed; P1-02G local validation complete                     |
+| Database rebuild      | 19 migrations / 13 SQL suites PASS                                       |
+| Read RPC ACL          | exact authenticated execute; PUBLIC/anon/service_role denied             |
+| Write RPC ACL         | 12/12 application-role combinations `execute=false`                      |
+| Immutability / RLS    | Ledger + Audit guards PASS; private schema unexposed; no grant expansion |
+| Semantic regression   | Saved/Unchanged/Conflict, replay, concurrency, rollback PASS             |
+| Application tests     | Domain 53; Repository 24; Service 57; Services 180; Database 138         |
+| Static/security gates | TypeScript, ESLint, database lint, security advisor PASS                 |
+| P1-03 / P1-04         | handoff frozen / NOT AUTHORIZED                                          |
+| Elevated / KI-033     | DEFERRED / `ACCEPTED DEFERRED BOUNDARY`                                  |
+| Commit / remote state | NONE / UNCHANGED                                                         |
+| Admin Production      | `paused=true`                                                            |
+| P0 Site Copy          | Production authority Version 7 / unchanged                               |
+
+- P1-03 is read-only `/access`: three read Service use cases, per-read live access,
+  no write controls, no P1-02C execute, and no Web Admin entry.
+- P1-04 remains a separate Owner Gate for ordinary Membership/Author Role
+  Edit/Review/reason/confirm, Action-generated fixed requestId, latest expected-state,
+  exact result handling, and atomic revoke-old/prove-deny/grant-v2 cutover. Rollback
+  is read-only and must not reopen old RPCs.
+- P1.1 Elevated Access Governance requires a future independent Auth ADR and Product
+  Owner authorization after P1. No MFA/AAL2, proof, elevated mutation, remote action,
+  UI wiring, cutover, login, Unpause, Deployment, or Commit occurred in P1-02G.
+
+Closure and handoff: `docs/15_Sprint/Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`.
+
+## Admin P1-02F Live-Access Identity Governance Service（2026-08-18）
+
+| 项目                  | 当前状态                                                              |
+| --------------------- | --------------------------------------------------------------------- |
+| Parent baseline       | `cadb81053720a2e1885abe3e6f63a1b5196a64e1`                            |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02F` / `codex/admin-p1-02f-governance-service` |
+| Service package       | `@fandom-harbor/services`                                             |
+| Use cases             | 3 read + 3 ordinary write                                             |
+| Live authorization    | fresh checker exactly once per public call                            |
+| Allowed actors        | active Admin / active Super Admin                                     |
+| Input order           | strict parser → live access → optional target precheck → exact Port   |
+| Mutation semantics    | requestId/expected-state/result preserved; no retry                   |
+| Elevated writes       | precheck deny + database final authority; no elevated method          |
+| Provider boundary     | no concrete Repository/Supabase/PostgREST/RPC/wire/framework import   |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                             |
+| Validation            | Service 57; Services 180; Domain 53; Database 138; all gates pass     |
+| P1-02G                | NOT AUTHORIZED                                                        |
+| Commit / remote state | NONE / UNCHANGED                                                      |
+| Admin Production      | `paused=true`                                                         |
+| P0 Site Copy          | Version 7 / unchanged                                                 |
+
+- Invalid caller input fails before the checker; this step performs no target lookup. Guest/Reader/Author/inactive Admin fail before all Ports, and unknown checker/Port errors are cleaned to a fixed provider-neutral error.
+- Ordinary mutations perform a read-only elevated-target precheck and call the one matching write Port at most once. Conflict remains a normal result with current snapshot/token; explicit replay rechecks live access.
+- No P1-02G, composition root, Server Action, `/access` UI, dependency, Migration/RPC/RLS/Grant, execute, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02F_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02E Strict Identity Access Repository（2026-08-18）
+
+| 项目                  | 当前状态                                                             |
+| --------------------- | -------------------------------------------------------------------- |
+| Parent baseline       | `ca300c234db6b4c9312dcc0e8b35c09b29b6f1f3`                           |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02E` / `codex/admin-p1-02e-repository`        |
+| Repository package    | `@fandom-harbor/database`                                            |
+| Port implementation   | 3 read + 3 ordinary write                                            |
+| RPC allowlist         | exactly 3 P1-02B reads + 3 P1-02C ordinary writes                    |
+| Provider parsing      | unknown → strict P1-02D parser → Domain                              |
+| Error boundary        | stable code/safe detail allowlist; no raw provider leakage           |
+| Mutation retry        | disabled per RPC request; no Repository retry loop                   |
+| Direct/legacy access  | NONE — no table/private helper/old RPC fallback                      |
+| Elevated writes       | ABSENT; ADR-022 Option 3 unchanged                                   |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                            |
+| Validation            | Repository 24; Database 138; Domain 53; Services 123; all gates pass |
+| P1-02F–G              | NOT AUTHORIZED                                                       |
+| Commit / remote state | NONE / UNCHANGED                                                     |
+| Admin Production      | `paused=true`                                                        |
+| P0 Site Copy          | Version 7 / unchanged                                                |
+
+- P1-02E maps exact request parameters and strictly validates page/detail/Audit/Saved/Unchanged/Conflict provider results, including response ID and page-bound consistency.
+- Supabase 2.102+ retry behavior was rechecked against current official documentation; each mutation builder explicitly uses retry disabled and tests prove one transport call only.
+- No P1-02F Service, Server Action, `/access` UI, dependency, Migration/RPC/RLS/Grant, execute, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02E_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02D Provider-Neutral Identity Access Domain（2026-08-17）
+
+| 项目                  | 当前状态                                                          |
+| --------------------- | ----------------------------------------------------------------- |
+| Parent baseline       | `0e1de6247a76b6e2bf94b050ce63a3b8fe80ba35`                        |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02D` / `codex/admin-p1-02d-domain`         |
+| Domain package        | `@fandom-harbor/services`                                         |
+| Read models           | Subject summary/detail + Membership/Role/Audit + stable cursors   |
+| Ordinary Commands     | Grant Author / Revoke Author / Set ordinary Membership            |
+| Expected-state        | database-issued opaque token; format validation only              |
+| Result                | Saved / Unchanged / Conflict exhaustive union                     |
+| Errors                | fixed provider-neutral codes/messages; no raw provider details    |
+| Ports                 | 3 read + 3 write interfaces; no Repository/Service implementation |
+| Elevated writes       | TYPE-LEVEL ABSENT; read-only expression + deferred error only     |
+| Provider boundary     | no Supabase/PostgREST/Next.js/React/env/database dependency       |
+| Database / execute    | UNCHANGED / P1-02C execute remains closed                         |
+| Validation            | 53 targeted; Services 123; Database 114; 7 SQL; all gates pass    |
+| P1-02E–G              | NOT AUTHORIZED                                                    |
+| Commit / remote state | NONE / UNCHANGED                                                  |
+| Admin Production      | `paused=true`                                                     |
+| P0 Site Copy          | Version 7 / unchanged                                             |
+
+- P1-02D strictly parses UUIDs, requestId, expected-state token, NFKC search, NFC reason, 1–50 limits, stable cursors, desensitized reads, Commands and results without unsafe provider casts.
+- Role write Commands have no role input; ordinary Membership rejects `pending`; exact-key parsing rejects Admin/Super Admin/proof/actor/capability injection.
+- No P1-02E Repository, P1-02F Service, P1-03/P1-04 UI/Action, dependency, database, remote, login, Unpause or Deployment work is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02D_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02C Ordinary Governance Write Definitions（2026-08-17）
+
+| 项目                  | 当前状态                                                               |
+| --------------------- | ---------------------------------------------------------------------- |
+| Parent baseline       | `64bba75360e9f303819c42d1c08a2d6ec545983d`                             |
+| Worktree / Branch     | `FandomHarbor-Admin-P1-02C` / `codex/admin-p1-02c-write-rpcs`          |
+| Local Migration       | `20260817125140_admin_p1_identity_access_writes.sql`                   |
+| New write definitions | Author Grant/Revoke + ordinary Membership only                         |
+| Authority             | 3 × `VOLATILE SECURITY DEFINER`; owner `postgres`; empty search path   |
+| Execute               | CLOSED — `PUBLIC/anon/authenticated/service_role` all deny             |
+| Result                | Saved / Unchanged / Conflict + exact replay/mismatch                   |
+| Elevated writes       | DENY before Ledger/Audit; ADR-022 Option 3 unchanged                   |
+| Atomicity             | business + one Audit + one Saved Ledger / full rollback                |
+| Concurrency           | same-request exactly-once; same-target Saved + Conflict                |
+| Legacy/read/RLS       | UNCHANGED                                                              |
+| Validation            | 19-Migration reset; 13 SQL suites; 114 Vitest tests; lint/advisor pass |
+| P1-02D–G              | NOT AUTHORIZED                                                         |
+| Commit / remote state | NONE / UNCHANGED                                                       |
+| Admin Production      | `paused=true`                                                          |
+| P0 Site Copy          | Version 7 / unchanged                                                  |
+
+- P1-02C defines exactly three ordinary-only v2 writes and one owner-only private executor. No application role can execute them before P1-04 atomic cutover.
+- Locks, P1-02A helpers and immutable Ledger/Audit provide replay, mismatch, expected-state, Saved/Unchanged/Conflict and rollback semantics without duplicating algorithms.
+- No `/access`, Action, Domain, Repository, Service, dependency, config, legacy RPC grant, remote apply, Commit, login, Unpause or Deployment change is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02C_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02B Identity Access Read RPC Implementation（2026-08-17）
+
+| 项目                   | 当前状态                                                               |
+| ---------------------- | ---------------------------------------------------------------------- |
+| Parent baseline        | `fc41ad153c75a326f76ca66c5219a889eb99a84e`                             |
+| Worktree / Branch      | `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs`           |
+| Local Migration        | `20260817121610_admin_p1_identity_access_reads.sql`                    |
+| Search RPC             | `STABLE SECURITY INVOKER` / bounded exact query + keyset               |
+| Detail RPC             | `STABLE SECURITY DEFINER` / live auth before target lookup             |
+| Audit RPC              | `STABLE SECURITY INVOKER` / minimized target summaries                 |
+| Execute                | authenticated-only exact signatures                                    |
+| Private helper execute | DENY unchanged for `PUBLIC/anon/authenticated/service_role`            |
+| Bottom-table Grant/RLS | UNCHANGED                                                              |
+| Zero-write proof       | PASS — Profile/Membership/Role/Audit/Ledger/Site Copy unchanged        |
+| Validation             | 18-Migration reset; 11 SQL suites; 108 Vitest tests; lint/advisor pass |
+| P1-02C–G               | NOT AUTHORIZED                                                         |
+| Commit / remote state  | NONE / UNCHANGED                                                       |
+| Admin Production       | `paused=true`                                                          |
+| P0 Site Copy           | Version 7 / unchanged                                                  |
+
+- ADR-023 mixed authority is implemented locally for exactly three read RPCs. Unauthorized callers receive target-independent denial; active Admin/Super Admin can read ordinary and elevated targets through the frozen minimum projection.
+- Detail calls the existing P1-02A expected-state helpers without exposing helper execute or duplicating the algorithm. All RPC calls preserve complete before/after snapshots of business, Audit, Ledger and Site Copy facts.
+- No write RPC, old-RPC cutover, product application code, remote apply, Commit, login, Unpause or Deployment is authorized or performed.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02B_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02B Read Authority Contract Correction（2026-08-17）
+
+| 项目                           | 当前状态                                                     |
+| ------------------------------ | ------------------------------------------------------------ |
+| Parent baseline                | `8f7ee546ab069c36658a1debdddbf64a7382133f`                   |
+| Worktree / Branch              | `FandomHarbor-Admin-P1-02B` / `codex/admin-p1-02b-read-rpcs` |
+| ADR                            | ADR-023 — minimal hybrid read authority accepted             |
+| Search RPC                     | Future `SECURITY INVOKER`                                    |
+| Detail RPC                     | Future strict read-only `SECURITY DEFINER`                   |
+| Audit RPC                      | Future `SECURITY INVOKER`                                    |
+| Private helper execute         | DENY remains for `PUBLIC/anon/authenticated/service_role`    |
+| Bottom-table grants            | UNCHANGED                                                    |
+| RPC / Migration implementation | NOT AUTHORIZED / NOT CREATED                                 |
+| KI-033 / elevated mutations    | `ACCEPTED DEFERRED BOUNDARY` / DEFERRED                      |
+| Admin Production               | `paused=true`                                                |
+| P0 Site Copy                   | Version 7 / unchanged                                        |
+
+- Local rollback proof showed base SELECT/RLS is sufficient for invoker search/Audit, while an invoker detail wrapper cannot call the revoked P1-02A expected-state helper.
+- ADR-023 approves only one privileged read boundary: detail must live-authorize the caller before target lookup, return the frozen minimum projection, call the existing helper without exposing it, and perform zero writes.
+- This docs-only decision does not authorize P1-02B implementation, P1-02C, SQL, remote QA, login, Unpause or Deployment.
+
+## Admin P1-02A Private Ledger and Audit Immutability（2026-08-17）
+
+| 项目                        | 当前状态                                                               |
+| --------------------------- | ---------------------------------------------------------------------- |
+| Parent baseline             | `e3bb16c537d064808eeed8516b90ec3874b2ab26`                             |
+| Worktree / Branch           | `FandomHarbor-Admin-P1-02A` / `codex/admin-p1-02a-private-ledger`      |
+| Local Migration             | `20260817104616_admin_p1_identity_access_ledger.sql`                   |
+| Private ledger              | IMPLEMENTED LOCALLY — RLS/no policies/no application grants            |
+| Private helpers             | Reason, expected-state and fingerprint foundation only                 |
+| Audit                       | Global UPDATE/DELETE immutability; Site Copy error preserved           |
+| Read/write RPC              | NONE CREATED                                                           |
+| Legacy RPC grants           | UNCHANGED                                                              |
+| KI-033 / elevated mutations | `ACCEPTED DEFERRED BOUNDARY` / DEFERRED                                |
+| Validation                  | 17-Migration reset; 10 SQL suites; 102 Vitest tests; lint/advisor pass |
+| P1-02B–G                    | NOT AUTHORIZED                                                         |
+| Commit / remote state       | NONE / UNCHANGED                                                       |
+| Admin Production            | `paused=true`                                                          |
+| P0 Site Copy                | Version 7 / unchanged                                                  |
+
+- P1-02A only establishes the private request ledger, private helper contracts and database-level Audit immutability. It creates no public RPC, application execute grant, Repository, Service, Action or UI.
+- The ledger accepts only Author Grant/Revoke and ordinary-account Membership operations. It cannot authorize Admin/Super Admin Role or elevated-account Membership mutations, and KI-033 is not technically resolved.
+- Local validation used synthetic/disposable data only. No hosted project was contacted or changed; no Commit, Push, PR, login, Unpause or Deployment occurred.
+
+Acceptance evidence: `docs/15_Sprint/Admin_P1/P1_02A_ACCEPTANCE_EVIDENCE.md`.
+
+## Admin P1-02 Implementation Plan and Engineering Gate Freeze（2026-08-17）
+
+| 项目                                    | 当前状态                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| Parent baseline                         | `37694f3550607e73d766471613357845a20fdc31`                               |
+| Worktree / Branch                       | `FandomHarbor-Admin-P1-02` / `codex/admin-p1-02-implementation-plan`     |
+| P1-02 plan                              | READY — implementation not authorized                                    |
+| Backend implementation slices           | P1-02A–G — each requires a separate Product Owner gate                   |
+| P1-03 / P1-04                           | Read UI / write Action + UI remain separate and not authorized           |
+| Data sequence                           | private ledger → read RPC → closed write RPC → Domain/Repository/Service |
+| Old RPC cutover                         | Reserved for an atomic P1-04 gate; no dual executable write path         |
+| ADR-022                                 | Option 3 — elevated mutations deferred                                   |
+| Product code / Migration / Remote state | UNCHANGED                                                                |
+| Admin Production                        | `paused=true`                                                            |
+| P0 Site Copy                            | Version 7 / unchanged                                                    |
+
+- P1-02 只冻结实施步骤、候选文件、依赖、测试、Owner Gate 与回滚，不授权创建产品代码、Migration 或执行 SQL。
+- 允许的未来实施范围仅为受控读取、普通账户 Membership 与 Author Role；Admin/Super Admin Role 和 elevated-account Membership 写入继续由 KI-033 延期边界拒绝。
+- 新 v2 write RPC 即使在 P1-02 后端实现完成也必须保持 authenticated execute 关闭；P1-04 获准且 Action/UI 完成后，才可在单一原子 cutover 中撤销旧 RPC 并开放新入口。
+- P1-03 只读 UI 与 P1-04 Review/confirm、Server Action、写入 UI 没有被并入 P1-02。专用 non-Production QA 仍需独立 Owner 授权，Production 不得作为测试环境。
+- 本 Mission 为 docs-only planning：未 Commit、Push、PR，未创建 Migration，未执行 SQL、远程写入、登录、Unpause 或 Deployment。
+
+权威计划：`docs/15_Sprint/Admin_P1/P1_02_IMPLEMENTATION_PLAN.md`。
+
+## Admin P1-01 Data, Permission and Reauth Design（2026-08-17）
+
+| 项目                                    | 当前状态                                                                           |
+| --------------------------------------- | ---------------------------------------------------------------------------------- |
+| Baseline                                | `b634da010755e7768043eea41c426ad499a269fb`                                         |
+| Worktree / Branch                       | `FandomHarbor-Admin-P1-01` / `codex/admin-p1-01-data-permission-design`            |
+| Data + permission design                | COMPLETE                                                                           |
+| Membership + Role Governance            | COVERED                                                                            |
+| Read model                              | Exact registration name/full UUID + bounded keyset pagination + minimal projection |
+| Expected-state                          | DB canonical Membership + active-grant snapshot / SHA-256 token                    |
+| requestId ledger                        | REQUIRED — private, unexposed, append-only, indefinite retention                   |
+| Mutation result                         | `Saved \| Unchanged \| Conflict`                                                   |
+| Last active Super Admin                 | DB global-lock enforcement designed                                                |
+| Old RPC cutover                         | Atomic authenticated execute revoke; no dual-entry compatibility                   |
+| KI-033                                  | `ACCEPTED DEFERRED BOUNDARY` — technical feasibility unresolved                    |
+| Elevated mutations                      | `DEFERRED` — no Role or elevated-account Membership write path                     |
+| Ordinary governance                     | `AUTHORIZED FOR FUTURE P1-02 PLANNING`                                             |
+| P1-01 Closure Commit                    | AUTHORIZED — docs-only                                                             |
+| P1-02 implementation                    | NOT AUTHORIZED                                                                     |
+| Product code / Migration / Remote state | UNCHANGED                                                                          |
+| Admin Production                        | `paused=true`                                                                      |
+| P0 Site Copy                            | Version 7 / unchanged                                                              |
+
+- 现有 registration-name/password adapter 能调用 Supabase `signInWithPassword()`，但成功只建立普通 `aal1` Session；数据库无法验证密码检查是否由受信 Server Action 执行，也无法绑定原 Admin Session 和单次 Review payload。
+- Supabase `reauthenticate()` 是安全密码变更的 confirmed email/phone nonce 流程，不是本项目的 registration-name/password step-up。
+- Product Owner 已选择 ADR-022 Option 3：当前 P1 不建立自定义 issuer 或 MFA/AAL2；elevated 账户可读但不可写，普通治理只包含 Author Role 与普通账户 Membership。
+- 延期不表示 KI-033 技术解决，也不降低 Reauth 要求。未来重新开放 elevated mutations 必须独立授权并建立新 Auth ADR，优先评估 Supabase MFA/AAL2。
+- P1-01 仅生成/更新设计文档；没有产品代码、Migration、SQL、RLS/RPC/Auth、依赖、远程 Supabase、Vercel、Push、PR 或 Deployment 变更。
+
+权威文档：`docs/15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md`、`docs/15_Sprint/Admin_P1/P1_01_NON_PRODUCTION_QA_MATRIX.md`、`docs/17_Architecture_Decisions/ADR-022.md`。
+
+## Admin P1-00 Scope and Security Contract（2026-08-16）
+
+| 项目                                    | 当前状态                                                  |
+| --------------------------------------- | --------------------------------------------------------- |
+| Program                                 | ADMIN P1 — Identity & Access Governance Console           |
+| P1-00                                   | SCOPE FREEZE COMPLETE                                     |
+| Membership + Role Governance            | IN SCOPE                                                  |
+| High-risk control                       | password reauth + normalized reason + second confirmation |
+| Dual approval                           | DEFERRED — residual risk accepted                         |
+| Invitation management                   | DEFERRED                                                  |
+| Web Admin entry                         | DISABLED / OUT OF SCOPE                                   |
+| Remote write QA                         | NON-PRODUCTION ONLY                                       |
+| P1-01                                   | DESIGN CLOSURE / OPTION 3 / ELEVATED MUTATIONS DEFERRED   |
+| Product code / Migration / Remote state | UNCHANGED                                                 |
+| Admin Production                        | `paused=true`                                             |
+
+- P1 复用 Phase 1C active Membership、live `role_grants` 与 capability，不新增 role、capability 或第二套权限真相。
+- 所有 Mutation 冻结为原因、Review/confirm、UUID requestId、expected-state、`Saved | Unchanged | Conflict` 与 Audit 合同；elevated role / elevated Membership 额外要求当前 actor 的单次 registration-name/password reauth。
+- 普通 Admin / Super Admin 权限矩阵、suspended/revoked fail-closed 与最后一个有效 Super Admin 保护保持不变。
+- 邀请管理延期，Web 不增加 Admin 链接；远程写入测试不得使用 Production，Admin Production 不因 P1 开发 Resume。
+- P1-00 只更新文档与架构决定；未修改产品代码、Migration、RLS、RPC、Auth、dependency、lockfile、Vercel 或 Supabase。
+- P1-01 已证明 KI-033 技术缺口并由 ADR-022 Option 3 接受延期边界；普通治理的 expected-state、request ledger 与旧 RPC cutover 设计已冻结。P1-02 仍需独立授权。
+
+权威文档：`docs/15_Sprint/Admin_P1/P1_00_SCOPE_AND_SECURITY_CONTRACT.md`、`docs/11_Admin/IDENTITY_ACCESS_GOVERNANCE.md`、`docs/17_Architecture_Decisions/ADR-021.md`。
+
 ## Admin P0 Production Release Closure（2026-08-15）
 
 | 项目                                  | 最终状态                                          |
@@ -948,3 +1592,13 @@ V1 Release Deployment — BLOCKED（Local gates PASS / Preview 未执行）
 - UX-06C Step 02 is Product Owner accepted and formally closed. Step 03 remains unauthorized.
 - Chapter Reading now combines the accepted responsive typography rhythm with progressive disclosure: the complete existing settings controls are hidden by default behind one accessible `Aa / 阅读设置` entry.
 - Reader preference values、local storage、theme behavior、published-only access、navigation、history and bookmark contracts remain unchanged.
+
+## Admin P1-04B Ordinary Governance UI（2026-08-20）
+
+- Baseline `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`; branch/worktree unchanged.
+- `/access` now implements ordinary Membership and Author Grant/Revoke through
+  normalized reason, server-prepared Review, stable requestId, separate confirm and
+  `Saved | Unchanged | Conflict`; Action calls only the P1-02F Service.
+- Elevated targets render read-only deferred guidance; KI-033 remains unresolved.
+- No Commit/Push/PR, database/Auth/config change, remote side effect, login, Unpause
+  or Deployment. Admin Production remains `paused=true`; P1-05/P1.1 not started.
