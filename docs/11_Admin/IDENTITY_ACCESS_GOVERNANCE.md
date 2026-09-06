@@ -1,13 +1,15 @@
 # Admin Identity & Access Governance
 
-状态：`ORDINARY GOVERNANCE LOCAL COMPLETE — P1 NOT READY FOR CLOSURE`
+状态：`P1-06C COMPLETE — P1-07 NOT STARTED — P1 NOT READY FOR CLOSURE`
 批准日期：2026-08-16
 设计日期：2026-08-17
-实施状态：P1-02A–G、P1-03、P1-04A 与 P1-04B 已完成本地实现并 Commit；P1-05 是未授权、未执行的 Closure blocker
+实施状态：P1-02A–G、P1-03、P1-04A/B、P1-05 与 P1-06A/C 已完成并 Commit；P1-06B 人工验收 PASS；P1-07 未授权、未开始
 
 P1-01 权威设计见 [Data, Permission and Reauth Design](../15_Sprint/Admin_P1/P1_01_DATA_PERMISSION_REAUTH_DESIGN.md)；专用非 Production 验收边界见 [QA Matrix](../15_Sprint/Admin_P1/P1_01_NON_PRODUCTION_QA_MATRIX.md)；KI-033 威胁证明与 Product Owner Option 3 决定见 [ADR-022](../17_Architecture_Decisions/ADR-022.md)。
 
 P1-04A 原子 cutover 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`；P1-04B ordinary Review/confirm Action/UI 已形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。这些结论仅代表本地实现链完成：没有 remote Migration/SQL/ACL apply 或 Production mutation。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+
+P1-05 专用非 Production QA 已关闭；P1-06A 受保护 Preview provisioning 已形成 Commit `c9643d387c1216d40260882e6055b423576362ee`。P1-06B Manual Preview Acceptance 与 P1-06C Admin UI Polish 已获 Product Owner PASS。P1-06C 冻结中文展示、响应式 Review、全局 Header 退出登录与显式 `Asia/Shanghai` 北京时间展示；其实现与验收见 [P1-06C UI Polish Acceptance Evidence](../15_Sprint/Admin_P1/P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)。P1-07 仍须独立授权。
 
 ## 1. 目标
 
@@ -165,8 +167,9 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 - 远程写入测试只能使用专用非 Production Supabase QA 环境；禁止使用 Production。
 - Preview 验收只能使用受保护的 Admin Preview；不得把 Admin Production Resume 当作 P1 测试步骤。
 - 历史 P1-00 阶段不执行 SQL、Migration、远程写入、登录、Deployment、Unpause、Push 或 Merge；后续本地实现与 Commit 不改变这一时点记录，也不构成远程授权。
-- P1-05 `Local + Dedicated Non-Production Remote QA` 为 `REQUIRED / NOT AUTHORIZED / NOT EXECUTED`，必须验证 ordinary chain 与 Migrations A–D，是当前 P1 Closure blocker。
-- P1-06 Protected Admin Preview Acceptance 与 P1-07 Production Release Review 均未授权。
+- P1-05 `Local + Dedicated Non-Production Remote QA` 已 PASS 并关闭。
+- P1-06 Protected Admin Preview 与 Admin UI Polish 已通过自动化及 Product Owner 人工验收并关闭。
+- P1-07 Production Release Review 为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`。
 
 ## 13. 完成定义
 
@@ -179,6 +182,6 @@ P1 Closure 前必须证明：
 - 普通 Admin 不能越权，最后一个有效 Super Admin 不能被移除或停用。
 - 旧写路径不能绕过新合同。
 - Production 数据、Version 7、Web 入口与 paused Admin 状态未被测试或实施流程改变。
-- P1-05 在专用非 Production Supabase 完成已批准的 local + remote QA；P1-06/P1-07 只能在各自独立授权后进入。
+- P1-05 已在专用非 Production Supabase 完成 local + remote QA；P1-06 已在受保护 QA Preview 完成人工验收和 UI Polish Closure；P1-07 只能在独立 Product Owner 授权后进入。
 
 P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。它依赖 P1 Closure、独立 Product Owner 授权及新的 Auth/Access ADR；重新开放 elevated mutations 时优先评估 Supabase MFA/AAL2，不得把延期误述为 KI-033 技术解决。

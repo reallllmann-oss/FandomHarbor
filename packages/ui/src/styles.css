@@ -59,6 +59,12 @@ body {
   margin: 0;
 }
 
+[data-surface="admin"] {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
 .site-header-layout {
   align-items: center;
   display: grid;
@@ -253,10 +259,37 @@ body {
   padding: clamp(1.5rem, 3vw, 2.5rem);
 }
 
+[data-surface="admin"] .site-header-layout,
+[data-surface="admin"] .site-header-layout > *,
+[data-surface="admin"] .site-header-utilities,
+[data-surface="admin"] .site-header-utilities > *,
+[data-surface="admin"] .site-stack,
+[data-surface="admin"] .site-stack > *,
+[data-surface="admin"] .hero-panel,
+[data-surface="admin"] .info-grid,
+[data-surface="admin"] .info-grid > *,
+[data-surface="admin"] .stat-card,
+[data-surface="admin"] .empty-state {
+  max-width: 100%;
+  min-width: 0;
+}
+
+[data-surface="admin"] .site-header-brand-link {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 .admin-grid {
   display: grid;
   gap: 2rem;
   grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-grid > * {
+  max-width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 768px) {
@@ -280,6 +313,10 @@ body {
 
   .site-header-account-name {
     max-width: 6rem;
+  }
+
+  .admin-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

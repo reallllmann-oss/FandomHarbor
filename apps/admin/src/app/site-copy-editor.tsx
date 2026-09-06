@@ -11,6 +11,7 @@ import {
   type SiteCopyReviewErrors,
   type SiteCopyReviewIntent,
 } from "../lib/site-copy-editor-state";
+import { formatAdminTimestamp } from "../lib/admin-presentation";
 import { ADMIN_SITE_COPY_GROUPS } from "../lib/site-copy-fields";
 import {
   INITIAL_SITE_COPY_SAVE_STATE,
@@ -25,7 +26,7 @@ interface SiteCopyEditorProps {
 }
 
 const inputClass =
-  "mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus";
+  "mt-2 min-h-11 w-full min-w-0 max-w-full rounded-control border border-border bg-background px-3 py-2 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus";
 
 const fieldLabels = {} as Record<SiteCopyFieldId, string>;
 for (const group of ADMIN_SITE_COPY_GROUPS) {
@@ -54,17 +55,17 @@ function ResultPanel({
   if (result.status === "saved") {
     return (
       <section
-        className="rounded-card border border-primary/40 bg-surface-muted p-5"
+        className="min-w-0 max-w-full rounded-card border border-primary/40 bg-surface-muted p-5"
         role="status"
       >
-        <p className="eyebrow">Saved</p>
+        <p className="eyebrow">已保存</p>
         <h3 className="mt-2 text-xl font-semibold">站点文案已原子保存</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          新数据库 Version 为{" "}
+          新数据库版本为{" "}
           <span className="font-mono text-foreground">{result.version}</span>
-          。数据库同时创建了不可编辑的 Audit #{
+          。数据库同时创建了不可编辑的审计记录 #{
             result.auditLogId
-          }，记录时间为 {new Date(result.updatedAt).toLocaleString("zh-CN")}。
+          }，记录时间为 {formatAdminTimestamp(result.updatedAt)}。
         </p>
         <ul className="mt-4 list-disc space-y-1 pl-5 text-sm">
           {result.changedFields.map((field) => (
@@ -85,14 +86,14 @@ function ResultPanel({
   if (result.status === "unchanged") {
     return (
       <section
-        className="rounded-card border border-border bg-surface-muted p-5"
+        className="min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-5"
         role="status"
       >
-        <p className="eyebrow">Unchanged</p>
+        <p className="eyebrow">无变更</p>
         <h3 className="mt-2 text-xl font-semibold">没有实际变化</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          数据库确认规范化后的内容与当前 Version {result.version}
-          相同，因此没有创建新 Revision 或 Audit。
+          数据库确认规范化后的内容与当前版本 {result.version}
+          相同，因此没有创建新的修订记录或审计记录。
         </p>
         <button
           className="mt-5 min-h-11 rounded-control border border-border bg-surface px-4 text-sm font-medium"
@@ -108,13 +109,13 @@ function ResultPanel({
   if (result.status === "conflict") {
     return (
       <section
-        className="rounded-card border border-destructive/50 bg-surface-muted p-5"
+        className="min-w-0 max-w-full rounded-card border border-destructive/50 bg-surface-muted p-5"
         role="alert"
       >
-        <p className="eyebrow">Conflict</p>
+        <p className="eyebrow">状态冲突</p>
         <h3 className="mt-2 text-xl font-semibold">数据已被其他会话更新</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          当前数据库已是 Version{" "}
+          当前数据库已是版本{" "}
           <span className="font-mono text-foreground">
             {result.currentVersion}
           </span>
@@ -143,10 +144,10 @@ function ResultPanel({
   if (result.status === "error") {
     return (
       <section
-        className="rounded-card border border-destructive/50 bg-surface-muted p-5"
+        className="min-w-0 max-w-full rounded-card border border-destructive/50 bg-surface-muted p-5"
         role="alert"
       >
-        <p className="eyebrow">Save failed</p>
+        <p className="eyebrow">保存失败</p>
         <h3 className="mt-2 text-xl font-semibold">保存未完成</h3>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
           {result.message}
@@ -163,7 +164,7 @@ function ResultPanel({
             返回编辑并保留输入
           </button>
           <p className="self-center text-sm text-muted-foreground">
-            直接再次保存会复用 Request ID {intent.requestId}。
+            直接再次保存会复用请求编号 {intent.requestId}。
           </p>
         </div>
       </section>
@@ -283,9 +284,12 @@ export function SiteCopyEditor({
 
   if (!intent) {
     return (
-      <section aria-labelledby="site-copy-editor-heading">
+      <section
+        aria-labelledby="site-copy-editor-heading"
+        className="min-w-0 max-w-full"
+      >
         <div className="mb-5">
-          <p className="eyebrow">Edit</p>
+          <p className="eyebrow">编辑</p>
           <h2
             className="mt-2 text-2xl font-semibold"
             id="site-copy-editor-heading"
@@ -293,19 +297,19 @@ export function SiteCopyEditor({
             编辑当前站点文案
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            当前基线为数据库 Version {baseline.version}
+            当前基线为数据库版本 {baseline.version}
             。输入会先经过规范化与变更复核，不会在此步骤直接保存。
           </p>
         </div>
 
         {conflictVersion !== null ? (
           <section
-            className="mb-6 rounded-card border border-destructive/50 bg-surface-muted p-5"
+            className="mb-6 min-w-0 max-w-full rounded-card border border-destructive/50 bg-surface-muted p-5"
             role="alert"
           >
-            <h3 className="font-semibold">仍需重新读取数据库 Version</h3>
+            <h3 className="font-semibold">仍需重新读取数据库版本</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              数据库已更新到 Version {conflictVersion}
+              数据库已更新到版本 {conflictVersion}
               。你的输入仍保留供检查或复制，但旧基线不能再次提交。
             </p>
             <button
@@ -318,12 +322,12 @@ export function SiteCopyEditor({
           </section>
         ) : null}
 
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid min-w-0 max-w-full gap-6 xl:grid-cols-2">
           {ADMIN_SITE_COPY_GROUPS.map((group) => (
             <article
               className={[
-                "rounded-card border border-border bg-surface p-5 sm:p-6",
-                group.title === "Footer" ? "xl:col-span-2" : "",
+                "min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6",
+                group.title === "页脚" ? "xl:col-span-2" : "",
               ].join(" ")}
               key={group.title}
             >
@@ -344,7 +348,7 @@ export function SiteCopyEditor({
 
                   return (
                     <label
-                      className="block text-sm font-medium"
+                      className="block min-w-0 max-w-full text-sm font-medium"
                       htmlFor={fieldId}
                       key={field}
                     >
@@ -380,7 +384,7 @@ export function SiteCopyEditor({
                         className="mt-1 block text-xs font-normal text-muted-foreground"
                         id={`${fieldId}-count`}
                       >
-                        {codePointLength(value)} 个 Unicode 字符
+                        {codePointLength(value)} 个字符
                       </span>
                       {errors.fields[field] ? (
                         <span
@@ -399,7 +403,7 @@ export function SiteCopyEditor({
           ))}
         </div>
 
-        <section className="mt-6 rounded-card border border-border bg-surface p-5 sm:p-6">
+        <section className="mt-6 min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6">
           <label
             className="block text-sm font-medium"
             htmlFor="site-copy-reason"
@@ -422,7 +426,7 @@ export function SiteCopyEditor({
                   reason: undefined,
                 }));
               }}
-              placeholder="说明本次调整的目的，4–200 个 Unicode 字符"
+              placeholder="说明本次调整的目的，4–200 个字符"
               rows={4}
               value={reason}
             />
@@ -430,7 +434,7 @@ export function SiteCopyEditor({
               className="mt-1 block text-xs font-normal text-muted-foreground"
               id="site-copy-reason-count"
             >
-              {codePointLength(reason)} / 200 个 Unicode 字符
+              {codePointLength(reason)} / 200 个字符
             </span>
             {errors.reason ? (
               <span
@@ -456,9 +460,12 @@ export function SiteCopyEditor({
   }
 
   return (
-    <section aria-labelledby="site-copy-review-heading">
+    <section
+      aria-labelledby="site-copy-review-heading"
+      className="min-w-0 max-w-full"
+    >
       <div className="mb-5">
-        <p className="eyebrow">Review changes</p>
+        <p className="eyebrow">复核变更</p>
         <h2
           className="mt-2 text-2xl font-semibold"
           id="site-copy-review-heading"
@@ -466,34 +473,34 @@ export function SiteCopyEditor({
           保存前复核
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-          复核基于 NFC、首尾空白移除后的值。Request ID{" "}
+          复核基于统一字符规范化并移除首尾空白后的值。请求编号{" "}
           <span className="break-all font-mono">{intent.requestId}</span>{" "}
-          会在相同 payload 的安全重试中保持不变。
+          会在相同请求内容的安全重试中保持不变。
         </p>
       </div>
 
-      <section className="rounded-card border border-border bg-surface p-5 sm:p-6">
+      <section className="min-w-0 max-w-full rounded-card border border-border bg-surface p-5 sm:p-6">
         <h3 className="text-xl font-semibold">实际变化</h3>
         {intent.changedFields.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            规范化后没有字段变化。提交后数据库将返回 Unchanged，不会创建 Audit。
+            规范化后没有字段变化。提交后数据库将返回无变更，不会创建审计记录。
           </p>
         ) : (
           <div className="mt-4 space-y-5">
             {intent.changedFields.map((field) => (
               <article
-                className="rounded-card border border-border bg-surface-muted p-4"
+                className="min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-4"
                 key={field}
               >
                 <h4 className="font-medium">{fieldLabels[field]}</h4>
-                <dl className="mt-3 grid gap-4 lg:grid-cols-2">
-                  <div>
+                <dl className="mt-3 grid min-w-0 gap-4 lg:grid-cols-2">
+                  <div className="min-w-0">
                     <dt className="text-xs text-muted-foreground">当前值</dt>
                     <dd className="mt-1 whitespace-pre-wrap break-words text-sm leading-6">
                       {baseline.content[field]}
                     </dd>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <dt className="text-xs text-muted-foreground">保存后</dt>
                     <dd className="mt-1 whitespace-pre-wrap break-words text-sm leading-6">
                       {intent.content[field]}
@@ -514,7 +521,7 @@ export function SiteCopyEditor({
 
       <form
         action={saveAction}
-        className="mt-6 rounded-card border border-border bg-surface-muted p-5 sm:p-6"
+        className="mt-6 min-w-0 max-w-full rounded-card border border-border bg-surface-muted p-5 sm:p-6"
         onSubmit={(event) => {
           if (submissionLocked.current || pending) {
             event.preventDefault();
@@ -525,9 +532,9 @@ export function SiteCopyEditor({
       >
         <HiddenSaveFields intent={intent} />
         <p className="text-sm leading-6 text-muted-foreground">
-          保存将以 Version {intent.baseVersion} 和当前 Revision
-          为乐观并发基线，由数据库原子写入内容、Revision、Audit 与 Current
-          Pointer。
+          保存将以版本 {intent.baseVersion}
+          和当前修订记录为乐观并发基线，由数据库原子写入内容、修订记录、审计记录
+          与当前指针。
         </p>
         {activeResult.status === "saved" ||
         activeResult.status === "unchanged" ? null : (
@@ -554,7 +561,7 @@ export function SiteCopyEditor({
                 {pending
                   ? "保存中…"
                   : activeResult.status === "error"
-                    ? "使用同一 Request ID 重试"
+                    ? "使用同一请求编号重试"
                     : intent.changedFields.length === 0
                       ? "确认无变化"
                       : "确认并保存"}

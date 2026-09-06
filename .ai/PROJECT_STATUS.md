@@ -1,6 +1,32 @@
 # Project Status
 
-## Admin P1-06A Dedicated Protected Preview Acceptance（2026-08-23）
+## Admin P1-06C UI Polish Closure（2026-09-06）
+
+| 项目                    | 当前状态                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| Branch / closure parent | `codex/admin-p1-04-ordinary-mutations` / `c9643d387c1216d40260882e6055b423576362ee` |
+| P1-06A                  | COMPLETE / Commit `c9643d387c1216d40260882e6055b423576362ee`                        |
+| P1-06B                  | Manual Preview Acceptance / Product Owner PASS                                      |
+| P1-06C                  | Admin UI Polish / PASS / COMPLETE                                                   |
+| Final accepted Preview  | `dpl_HiF87dWBe54kXCMum3yN29nWHCxa` / READY / protected / bypass `0`                 |
+| UI-01 / UI-02           | Admin localization PASS / responsive 1440–390 PASS                                  |
+| UI-03 / UI-04           | global Header sign-out PASS / `Asia/Shanghai` Beijing time PASS                     |
+| QA2                     | `hicfnlwzmnbxhimyeviy` / `ACTIVE_HEALTHY` / 20 of 20 Migrations                     |
+| Formal Admin Production | unchanged / `paused=true`; Site Copy Version 7; Web entry closed                    |
+| P1-07                   | READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED                                 |
+| P1.1                    | DEFERRED / NOT AUTHORIZED                                                           |
+
+- Workspace TypeScript and ESLint, Admin 105, UI 5, Admin production build,
+  targeted Prettier, diff and sensitive scan passed.
+- P1-06C changed presentation and Admin layout only. Auth, Service, Repository,
+  Domain, database, Migration, RPC, RLS, Grant, ACL, Ledger, Audit and ordinary
+  governance behavior remain unchanged.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md`.
+- P1-07 has not started. This closure does not authorize Production deployment,
+  Admin resume, Web Admin entry enablement or P1.1.
+
+## Admin P1-06A Dedicated Protected Preview Acceptance（2026-08-23 historical snapshot）
 
 | 项目                          | 当前状态                                                                            |
 | ----------------------------- | ----------------------------------------------------------------------------------- |
@@ -25,6 +51,8 @@
   READY/preview. The canonical fixed Preview remains protected and unpromoted.
 - Evidence:
   `docs/15_Sprint/Admin_P1/P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`.
+- This section preserves the P1-06A pre-commit gate as a historical snapshot. The
+  current P1-06 status is the P1-06C Closure section above.
 
 ## Admin P1-05 Final Closure Audit（2026-08-22 historical snapshot）
 

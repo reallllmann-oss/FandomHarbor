@@ -1,5 +1,21 @@
 # Project Memory
 
+- 2026-09-06: P1-06B Manual Preview Acceptance and P1-06C Admin UI Polish are
+  Product Owner PASS. P1-06C closes UI-01 Admin localization, UI-02 shrink-safe
+  Review/responsive layout, UI-03 authenticated Admin global Header sign-out and
+  UI-04 deterministic `Asia/Shanghai` timestamps rendered as
+  `YYYY-MM-DD HH:mm（北京时间）`. Product Owner human verification passed 1440,
+  1024, 768, 480 and 390 pixel layouts and the runtime Beijing-time result on
+  protected Preview `dpl_HiF87dWBe54kXCMum3yN29nWHCxa`. Workspace TypeScript,
+  ESLint, Admin 105, UI 5, Admin production build, Prettier, diff and sensitive
+  scan passed. P1-06C changed presentation/layout only; Auth, governance,
+  Service/Repository/Domain, database, Migration/RPC/RLS/Grant/ACL, Audit/Ledger,
+  QA2 and Production contracts are unchanged. Formal Admin Production remains
+  `paused=true`, Web Admin entry closed and Site Copy Version 7. P1-07 is ready
+  for separate Product Owner authorization but not started; P1.1 remains
+  deferred and unauthorized. Evidence is
+  `docs/15_Sprint/Admin_P1/P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md`.
+
 - 2026-08-23: P1-06A dedicated protected Preview acceptance passed at
   `b0148e051c622e0a0fce0141be8cbcbccee9401d`. Canonical Preview
   `dpl_84CzqyvoypWY213ESquzM9B6Ekap` is READY/preview, protected by Vercel

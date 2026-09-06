@@ -6,26 +6,25 @@ export const ADMIN_SITE_COPY_GROUPS = [
     fields: [
       ["homepage_title", "可见主标题"],
       ["homepage_introduction", "介绍文字"],
-      ["homepage_primary_cta_label", "主 CTA 显示文案"],
-      ["homepage_secondary_cta_label", "次 CTA 显示文案"],
+      ["homepage_primary_cta_label", "主要按钮显示文案"],
+      ["homepage_secondary_cta_label", "次要按钮显示文案"],
     ],
-    title: "Homepage",
+    title: "首页",
   },
   {
     description:
-      "仅编辑名称。顺序固定为 Archive → Search → Studio，路径与可见性规则保持锁定。",
+      "仅编辑名称。顺序固定为归档 → 搜索 → 创作中心，路径与可见性规则保持锁定。",
     fields: [
-      ["navigation_archive_label", "Archive 显示名称"],
-      ["navigation_search_label", "Search 显示名称"],
-      ["navigation_studio_label", "Studio 显示名称"],
+      ["navigation_archive_label", "归档入口显示名称"],
+      ["navigation_search_label", "搜索入口显示名称"],
+      ["navigation_studio_label", "创作中心入口显示名称"],
     ],
-    title: "Navigation",
+    title: "导航",
   },
   {
-    description:
-      "只编辑品牌说明；Footer 法务链接、路径和存在性不在可编辑范围。",
+    description: "只编辑品牌说明；页脚法务链接、路径和存在性不在可编辑范围。",
     fields: [["footer_brand_note", "品牌说明"]],
-    title: "Footer",
+    title: "页脚",
   },
 ] as const satisfies readonly {
   description: string;

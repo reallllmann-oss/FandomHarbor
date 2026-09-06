@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-06 — Admin P1-06C UI Polish Closure
+
+- Recorded Product Owner PASS for P1-06B Manual Preview Acceptance and P1-06C
+  Admin UI Polish on protected Preview `dpl_HiF87dWBe54kXCMum3yN29nWHCxa`.
+- Completed UI-01 Admin localization, UI-02 shrink-safe Review and responsive
+  layouts, UI-03 authenticated Admin global Header sign-out, and UI-04 explicit
+  `Asia/Shanghai` timestamps displayed as `YYYY-MM-DD HH:mm（北京时间）`.
+- Product Owner human verification passed at 1440, 1024, 768, 480 and 390 pixels;
+  long registration names and user identifiers wrap safely, badges and Header are
+  not clipped, and no horizontal overflow remains.
+- Workspace TypeScript and ESLint, Admin 105, UI 5, Admin production build,
+  targeted Prettier, `git diff --check`, sensitive scan and exact scope passed.
+- Changed no Auth, Service, Repository, Domain, database, Migration, RPC, RLS,
+  Grant, ACL, fixture, Ledger, Audit or Production configuration. Formal Admin
+  Production remains `paused=true`, Web Admin entry closed and Site Copy Version 7.
+- P1-07 is ready for separate Product Owner authorization but not started. P1.1
+  remains deferred and unauthorized. No Push, PR, Merge or Production deployment
+  is part of this closure.
+
 ## 2026-08-23 — Admin P1-06A Dedicated Protected Preview Acceptance
 
 - Recorded Product Owner human acceptance of Vercel Authentication, QA2 Admin

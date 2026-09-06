@@ -74,17 +74,14 @@ const safeMessages: Readonly<
   CONFLICT: "目标状态已经变化。请刷新详情并重新复核。",
   DATA_CORRUPTION: "治理服务返回了不可信数据，未执行变更。",
   ELEVATED_MUTATION_DEFERRED:
-    "该账户属于 Admin 或 Super Admin；写入等待未来 Reauth/MFA 阶段。",
+    "该账户属于管理员或超级管理员；写入等待未来重新身份验证或多重身份验证阶段。",
   FORBIDDEN: "当前账号没有执行这项治理操作的权限。",
   INVALID_INPUT: "操作、目标、状态指纹或变更原因不符合治理合同。",
-  REPOSITORY_UNAVAILABLE:
-    "治理服务暂时不可用。可以使用同一 Request ID 安全重试。",
-  REQUEST_ID_MISMATCH:
-    "该 Request ID 与原始请求不一致。为安全起见，请重新复核。",
+  REPOSITORY_UNAVAILABLE: "治理服务暂时不可用。可以使用同一请求编号安全重试。",
+  REQUEST_ID_MISMATCH: "该请求编号与原始请求不一致。为安全起见，请重新复核。",
   TARGET_NOT_FOUND: "目标身份当前不存在或不可治理。",
   UNAUTHENTICATED: "登录状态已失效，请重新登录。",
-  UNKNOWN_REPOSITORY_ERROR:
-    "治理操作没有完成。可以使用同一 Request ID 安全重试。",
+  UNKNOWN_REPOSITORY_ERROR: "治理操作没有完成。可以使用同一请求编号安全重试。",
 };
 
 function formString(formData: FormData, name: string): string {

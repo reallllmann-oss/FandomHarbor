@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-06A PASS — WAITING FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`
+状态：`P1-06C COMPLETE / P1-07 NOT AUTHORIZED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -17,9 +17,10 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
 | P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
 | P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — P1-05 closed                |
-| P1-06A | Protected Admin Preview Acceptance           | PASS — evidence ready for owner commit |
-| P1-06B | Next protected-preview gate                  | Ready for authorization; not started   |
-| P1-07  | Production Release Review                    | Not authorized                         |
+| P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
+| P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
+| P1-06C | Admin UI Polish                              | Complete — committed by closure        |
+| P1-07  | Production Release Review                    | Ready for authorization; not started   |
 
 权威合同：
 
@@ -33,6 +34,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-05B-3 Mutation and Cleanup QA Evidence](P1_05B3_MUTATION_AND_CLEANUP_QA_EVIDENCE.md)
 - [P1-05 Final Closure Audit](P1_05_FINAL_CLOSURE_AUDIT.md)
 - [P1-06A Dedicated Protected Preview Evidence](P1_06A_DEDICATED_PREVIEW_EVIDENCE.md)
+- [P1-06C UI Polish Acceptance Evidence](P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -59,7 +61,7 @@ P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在�
 
 Ordinary governance 的本地实现链现已完成，但这不等于任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 恢复零 synthetic state 并关闭 write。P1-05 Final Closure Audit 随后通过，并由 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。`REMOTE FAILURE INJECTION` 的准确状态仍是 `NOT AVAILABLE BY CURRENT CONTRACT`；原子回滚证据来自当前权威本地测试。当前 P1-06A 结果由下一段与专用证据文档记录；P1-07 仍未授权，P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
-P1-05 已在 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。P1-06A 随后完成专用受保护 Preview 的失败恢复、人工验收和最终清理：Canonical Preview `dpl_84CzqyvoypWY213ESquzM9B6Ekap` 保持 READY/preview、Vercel Authentication 生效且 automation bypass 为 0；Product Owner 已接受 QA2 登录、`/access` 只读烟测与 responsive fix。临时 Smoke Auth/Session/Profile/Membership/Admin/credential 已精确归零，QA ACL 保持 old `0/12`、v2 `0/12`、read `3/12`、private `0/36`。错误 Production aliases 与 `dpl_9DCjUpLGAZ7RTEKGE65JkPz8KNy2` 已删除，专用项目没有活动 Production route；正式 Admin Production 未变且仍 `paused=true`。P1-06A 为 `PASS / READY FOR PRODUCT OWNER EVIDENCE COMMIT AUTHORIZATION`；P1-06B 仅为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`。完整历史与安全边界见 [`P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`](P1_06A_DEDICATED_PREVIEW_EVIDENCE.md)。
+P1-05 已在 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。P1-06A 随后完成专用受保护 Preview 的失败恢复、人工验收和最终清理，并由 Commit `c9643d387c1216d40260882e6055b423576362ee` 关闭。P1-06B Manual Preview Acceptance 已由 Product Owner 正式确认 PASS。P1-06C 在此基础上完成 UI-01 全后台中文化、UI-02 Review 与全页面响应式修复、UI-03 全局 Header 退出登录和 UI-04 固定 `Asia/Shanghai` 的北京时间展示。Product Owner 已在最终受保护 Preview `dpl_HiF87dWBe54kXCMum3yN29nWHCxa` 完成人工验收；1440/1024/768/480/390 多视口与运行时北京时间均 PASS。正式 Admin Production 未变且仍 `paused=true`，Web Admin 入口关闭。P1-06C 已由本 Closure Commit 完成；P1-07 仅为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`，P1.1 继续 `DEFERRED / NOT AUTHORIZED`。完整证据见 [`P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`](P1_06A_DEDICATED_PREVIEW_EVIDENCE.md) 与 [`P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md`](P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)。
 
 P1-05A 已完成 fixture、credential、write-window、emergency close-writes、cleanup/retention、20-Migration apply、ACL、QA matrix 与 evidence 计划，并形成 Commit `4990440cb0a6e341ce242380480a06fe0c62ea14`。Attempt 1 在 dedicated QA 的 Migration D 检测到 Hosted direct `anon` legacy execute 后失败；Migration 1–19 已应用，D 未应用，fixture/业务 QA 未开始，紧急 fail-closed 后 6 个 write RPC × 4 个应用角色均为 deny。该 Project 固定为 `FAILED BOOTSTRAP EVIDENCE / FAIL-CLOSED`，不得继续用于 P1-05B。
 
