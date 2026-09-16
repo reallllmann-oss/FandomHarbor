@@ -124,6 +124,11 @@ Auth 迁移不是必然终点。只有在独立产品、安全、合规和用户
 
 ## Backups and recovery
 
+- Admin P1 当前备份门禁为 `P1-07B PASS / BACKUP RELEASE GATE SATISFIED`，依据 [R1/R2 evidence](../15_Sprint/Admin_P1/P1_07B_BACKUP_EVIDENCE.md) 与 [recovery runbook](../19_Release/V1-SUPABASE-RECOVERY-RUNBOOK.md)。Frozen Release SHA `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`；R1 恢复点 UTC `2026-09-10T14:00:52Z`，Production `szfhngifsipsrxcpekti` 为 `16/20`、P1 `0/4`。
+- Business、Migration history、账号/identity/password hash 与 durable Auth boundary 已备份；sessions/refresh tokens 等瞬态状态排除，恢复后全员重新登录；Storage `0/0`，无 custom login roles，managed role passwords 未导出。
+- R2 仅封存现有证据，不执行 Backup、Production connection 或 Restore。Restore Drill `NOT RUN`；目标 managed Auth schema 兼容性及实际恢复登录必须由独立 Mission 验证，不因备份存在而声明实测恢复就绪。
+- P1-07C `WAITING FOR PRODUCT OWNER AUTHORIZATION / NOT EXECUTED`，执行前另行判断基线与备份新鲜度；Formal Admin `paused=true`、Web Admin Entry `CLOSED`、P1.1 `DEFERRED / NOT AUTHORIZED`。本次门禁不授权 Migration、Production Deployment 或 Resume。
+
 - Supabase/PostgreSQL backup capability, point-in-time recovery tier and Storage recovery must match approved RPO/RTO (KI-009).
 - Restore drills must prove data and authorization integrity, not merely backup existence.
 - Export critical metadata separately where platform recovery does not cover it.

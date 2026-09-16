@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-16 — Admin P1-07B-R2 Backup Evidence Closure
+
+- 基于 Frozen Release SHA `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`，封存已正式
+  PASS 的 R1 backup evidence；仅本地只读复核既有 15 artifacts、checksum 14/14、
+  Manifest 和 `700/600` 权限。新增 [P1-07B evidence](../docs/15_Sprint/Admin_P1/P1_07B_BACKUP_EVIDENCE.md)，同步备份、恢复、部署及项目状态权威文档。
+- `BACKUP RELEASE GATE SATISFIED`；记录 R1 UTC `2026-09-10T14:00:52Z`、Production
+  `ACTIVE_HEALTHY` / Migration `16/20` / P1 `0/4`、Business 与 durable Auth coverage，
+  以及 Session 等排除项、全员重新登录、Storage `0/0`、无 custom login role、
+  managed role passwords 未导出和 Restore Drill `NOT RUN`。
+- P1-07C 等待独立 Product Owner 授权与基线/新鲜度复核，未执行；P1 不自动 Closure。
+  Formal Admin 仍 `paused=true`、Web Admin Entry `CLOSED`、P1.1 延期。旧状态明确为历史时点。
+- 本次 docs-only local closure：不重新 Backup、不连接 Production、不 Restore、不执行
+  SQL/DB/Auth/ACL/Migration 写入、不部署、不 Push/PR/Merge，不处理受保护 release 工作区。
+
 ## 2026-09-06 — Admin P1-07A Preview Deployment Governance
 
 - Kept formal Vercel Project `fandom-harbor-admin` paused and disabled its

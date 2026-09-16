@@ -1,7 +1,15 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07A release preconditions in progress
+Status: Active — Admin P1-07B backup gate passed; P1-07C awaits Product Owner authorization
 Roadmap type: Product Phase Roadmap
+
+## 当前 Admin P1 发布门禁（2026-09-16）
+
+PR #3 已 Merge，Frozen Release SHA `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。[P1-07B evidence](Admin_P1/P1_07B_BACKUP_EVIDENCE.md) 已记录 R1 PASS 和 R2 本地完整性复核，`BACKUP RELEASE GATE SATISFIED`。恢复点 UTC `2026-09-10T14:00:52Z`；R1 Production `ACTIVE_HEALTHY`、Migration `16/20`、P1 `0/4`；R2 未重新 Backup 或连接 Production。
+
+Business / Migration history / durable Auth recovery coverage PASS；sessions、refresh tokens 等瞬态状态排除，恢复后全员重新登录。Storage `0/0`、custom login roles `NONE`、managed role passwords 未导出。Restore Drill `NOT RUN`；目标 managed Auth schema 兼容性和实际恢复验证仍为独立授权边界。
+
+P1-07C `WAITING FOR PRODUCT OWNER AUTHORIZATION / NOT EXECUTED`，执行前需重新判断基线与备份新鲜度。P1 整体不自动 Closure；Formal Admin `paused=true`、Web Admin Entry `CLOSED`、P1.1 `DEFERRED / NOT AUTHORIZED`。下文旧的 P1-07 未授权 / P1-07A 未 Merge 状态属于历史阶段，不覆盖此当前状态。
 
 ## Phase and Sprint model
 
