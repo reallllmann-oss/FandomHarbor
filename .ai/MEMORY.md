@@ -1,5 +1,21 @@
 # Project Memory
 
+- 2026-09-16 当前事实：P1-07B `PASS / BACKUP RELEASE GATE SATISFIED`。
+  Frozen Release SHA / merged PR #3 `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`；
+  [P1-07B evidence](../docs/15_Sprint/Admin_P1/P1_07B_BACKUP_EVIDENCE.md) 封存
+  UTC `2026-09-10T14:00:52Z` 的 R1 backup 与 R2 本地完整性复核。
+  15 artifacts / checksum 14/14 PASS，目录 `700`、文件 `600`，备份内容不入 Git。
+  R1 Production `szfhngifsipsrxcpekti` 前后 `ACTIVE_HEALTHY` / Migration `16/20` /
+  P1 `0/4`、write `NONE`；R2 未重新备份、连接 Production 或恢复。
+  Business / Migration history / durable Auth（users、identities、password hash、
+  MFA/provider boundary）coverage PASS；sessions、refresh tokens 等瞬态状态不恢复，
+  全员重新登录。Storage `0/0`、custom login roles `NONE`、managed role passwords 未导出。
+  Restore Drill 与实际 Auth recovery/login validation `NOT RUN`，目标 managed Auth
+  schema 兼容性须单独审阅。P1-07C 等待 Product Owner 授权，尚未执行，需另行复核
+  基线与备份新鲜度；P1 不自动 Closure。Formal Admin `paused=true`、Web Admin Entry
+  `CLOSED`、P1.1 `DEFERRED / NOT AUTHORIZED`。下列较早日期记录是历史快照，其
+  未 Merge / 未授权状态不覆盖上述当前事实。
+
 - 2026-09-06: P1-07A-2C freezes Admin Git deployment governance for PR #3.
   Formal Vercel Project `fandom-harbor-admin` remains `paused=true`, keeps its
   repository link, `apps/admin` Root Directory, existing Production branch,

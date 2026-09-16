@@ -1,10 +1,27 @@
 # Fandom Harbor V1 Supabase Production Backup Evidence
 
-状态：`PASS / CURRENT PRODUCTION FRESH BACKUP VERIFIED / PDR-02 CLOSED FOR CURRENT RELEASE`
-审计日期：2026-07-25（Asia/Shanghai）
-Mission：V1 Current Production Fresh Backup and PDR-02 Closure
+状态：`PASS / P1-07B BACKUP RELEASE GATE SATISFIED`
+证据整理日期：2026-09-16（Asia/Shanghai）
+Mission：ADMIN P1-07B-R2 Backup Evidence Closure
 
-## 1. 当前结论
+## 当前 P1-07B 恢复点
+
+- Frozen Release SHA：`b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`；Production `szfhngifsipsrxcpekti`。
+- R1 `PASS`：备份 UTC `2026-09-10T14:00:52Z` / 北京时间 `2026-09-10T22:00:52+08:00`。
+- 当前已接受的恢复源目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20260910-140052_P1-07B_PRODUCTION_PRE_RELEASE`。
+- [P1-07B 详细证据](../15_Sprint/Admin_P1/P1_07B_BACKUP_EVIDENCE.md) 为本次 Artifact、字节数、SHA256、Auth 与 Recovery Boundary 的权威清单；15 项文件存在，R2 checksum 14/14 PASS，目录 `700` / 文件 `600`。
+- Business `public,private`、Function/RPC、Trigger、RLS/Policy、Grant/ACL、Data 与独立 Migration history coverage `PASS`。
+- Auth users / identities `37/37`，账号、identity、password hash 与 durable MFA/provider boundary coverage `PASS`；sessions、refresh tokens、one-time tokens、flow state、transient challenges 与 session-bound AMR claims 排除；恢复后全部用户重新登录。
+- Storage `0/0` 无 payload 需要备份；custom login roles `NONE`，managed role passwords 未导出。
+- R1 前后 `ACTIVE_HEALTHY` / Production Migration `16/20` / P1 `0/4`，Production write `NONE`，Restore `NOT EXECUTED`。R2 仅核对本地现有 metadata，不重新 Backup 或连接 Production。
+- Restore Drill `NOT RUN`；目标 Supabase managed Auth schema 兼容性必须在恢复前审阅。Backup Gate PASS 不代表恢复演练完成。
+- P1-07C 等待独立 Product Owner 授权与基线/新鲜度复核；Formal Admin `paused=true`，Web Admin Entry `CLOSED`，P1.1 `DEFERRED / NOT AUTHORIZED`。
+
+## 历史记录说明
+
+以下 2026-07-25 / 2026-07-16 记录保持原始历史事实，包括其当时不含 Auth 的导出范围；不再代表当前 P1-07B 恢复源或实时 Production 状态。历史 PDR-02 结论不取代当前 P1 发布门禁。
+
+## 1. 2026-07-25 历史结论
 
 - 2026-07-25 22:38:50（Asia/Shanghai）为已链接的 `fandom-harbor` Production 项目创建了全新的仓库外逻辑备份。
 - Schema 和 Data 导出命令退出码均为 `0`；文件非空、格式可识别，15 / 15 应用表集合一致，15 个 COPY 段均有结束标记。

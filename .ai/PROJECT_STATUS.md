@@ -1,6 +1,17 @@
 # Project Status
 
-## Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
+## 当前 Admin P1-07B-R2 Backup Evidence Closure（2026-09-16）
+
+- Frozen Release SHA / merged PR #3：`b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。
+- P1-07B：`PASS / BACKUP RELEASE GATE SATISFIED`；[详细证据](../docs/15_Sprint/Admin_P1/P1_07B_BACKUP_EVIDENCE.md) 记录已接受 R1 与本次 R2 本地完整性复核。
+- R1 backup UTC `2026-09-10T14:00:52Z` / 北京时间 `2026-09-10T22:00:52+08:00`；15 artifacts 完整，checksum 14/14 PASS，目录 `700` / 文件 `600`。
+- R1 Production `szfhngifsipsrxcpekti` 前后 `ACTIVE_HEALTHY`、Migration `16/20`、P1 `0/4`；write `NONE`、Restore `NOT EXECUTED`。R2 不重新 Backup 或连接 Production，不将历史状态作为实时查询。
+- Business / Migration history / Auth users、identities、password hash 与 durable MFA/provider boundary coverage PASS；sessions/refresh tokens 等瞬态状态排除，恢复后全员重新认证。Storage `0/0`、custom login roles `NONE`、managed role passwords 未导出。
+- Restore Drill `NOT RUN`；managed Auth 目标版本兼容性与实际恢复登录待独立授权验证。
+- P1-07C：`WAITING FOR PRODUCT OWNER AUTHORIZATION / NOT EXECUTED`，后续复核基线与备份新鲜度；P1 尚不自动 Closure。Formal Admin `paused=true`、Web Admin Entry `CLOSED`、P1.1 `DEFERRED / NOT AUTHORIZED`。
+- 本次仅 docs-only local closure，不 Push/PR/Merge、部署或远程写入。以下较早日期记录均为历史时点，未 Merge / 未开始等历史授权状态不覆盖本节。
+
+## 历史：Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
 
 | 项目                         | 当前状态                                                                                 |
 | ---------------------------- | ---------------------------------------------------------------------------------------- |

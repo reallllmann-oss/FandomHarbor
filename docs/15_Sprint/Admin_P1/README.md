@@ -1,26 +1,36 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-06C COMPLETE / P1-07A RELEASE PRECONDITIONS IN PROGRESS`
+状态：`P1-06C COMPLETE / P1-07B BACKUP GATE PASS / P1-07C WAITING FOR OWNER AUTHORIZATION`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
 
+## 当前发布门禁（2026-09-16）
+
+- PR #3 已 Merge；Frozen Release SHA `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。此前 P1-07A 记录中的未 Merge / 未授权陈述为各自历史时点，不是当前状态。
+- [P1-07B Backup Evidence](P1_07B_BACKUP_EVIDENCE.md)：R1 PASS、R2 本地完整性复核 PASS、`BACKUP RELEASE GATE SATISFIED`。备份 UTC `2026-09-10T14:00:52Z`；Business / Migration history / durable Auth coverage PASS。
+- R1 Production 快照 `ACTIVE_HEALTHY` / Migration `16/20` / P1 `0/4`；R2 不重新连接 Production。Session 等排除项、全员重新登录、Storage `0/0`、无 custom login role 和 managed passwords 未导出均已记录。
+- Restore Drill `NOT RUN`，managed Auth 目标兼容性及实际恢复验证仍需独立授权。P1-07C `WAITING FOR PRODUCT OWNER AUTHORIZATION / NOT EXECUTED`，后续重新判断基线与备份新鲜度。
+- P1 整体尚未自动 Closure；Formal Admin `paused=true`、Web Admin Entry `CLOSED`、P1.1 `DEFERRED / NOT AUTHORIZED`。本次只创建 docs-only local closure commit，不 Push 或执行 Production 操作。
+
 ## 执行切片
 
-| Step   | 目标                                         | 当前状态                               |
-| ------ | -------------------------------------------- | -------------------------------------- |
-| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                               |
-| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted  |
-| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed          |
-| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                   |
-| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                   |
-| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
-| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
-| P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — P1-05 closed                |
-| P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
-| P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
-| P1-06C | Admin UI Polish                              | Complete — committed by closure        |
-| P1-07  | Production Release Review                    | In progress — PR #3 release gates      |
+| Step   | 目标                                         | 当前状态                                                 |
+| ------ | -------------------------------------------- | -------------------------------------------------------- |
+| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                                                 |
+| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted                    |
+| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed                            |
+| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                                     |
+| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                                     |
+| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                                     |
+| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified                   |
+| P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — P1-05 closed                                  |
+| P1-06A | Protected Admin Preview Provisioning         | Complete — committed                                     |
+| P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS                            |
+| P1-06C | Admin UI Polish                              | Complete — committed by closure                          |
+| P1-07  | Production Release Review                    | In progress — backup gate passed, release not authorized |
+| P1-07B | Fresh Production Backup / Evidence Closure   | Pass — backup gate satisfied                             |
+| P1-07C | Production Migration                         | Waiting for Product Owner authorization — not executed   |
 
 权威合同：
 
