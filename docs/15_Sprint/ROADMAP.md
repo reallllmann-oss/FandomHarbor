@@ -1,7 +1,19 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07A release preconditions in progress
+Status: Active — Admin P1-07C Migration D blocked; Option B feasibility proof next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-07C gate（2026-09-19）
+
+Production is `ACTIVE_HEALTHY` at Migration `19/20`; P1 A/B/C are applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
+
+Option B requires Supabase TOTP/AAL2 plus fresh `amr`, original Session and one-time operation-bound intent. The selected legacy-bypass solution is a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. Migration D is not modified by this architecture decision, but Session preservation and C→Pre-D→D compatibility require dedicated non-Production proof before implementation.
+
+Both controlled accounts must satisfy role + credential control + primary/backup TOTP + independent AAL2 operability. The current active-Super-Admin count remains one; a role row alone cannot close the gate. After compliant grant and independent `akumie` smoke, create a fresh current-state Pre-Cutover Backup, rerun P1-07C-4A and only then reconsider D.
+
+The 2026-09-16 backup remains historical evidence, not the final current-state backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains `paused=true`, and Web Admin Entry remains CLOSED. The next authorized planning target is P1-07C-4A5 feasibility proof; runtime implementation, Migration D, P1.1 and Production release are not authorized by this decision.
+
+P1-08 Unified Account Navigation is a future authorized product requirement: one account may expose reading, Author Studio and Admin navigation based on live capabilities, and Admin returns to Web without logout. Backend authorization remains independent and Web Admin Entry stays closed until an explicit release authorization.
 
 ## Phase and Sprint model
 
@@ -124,11 +136,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-06C COMPLETE / P1 NOT READY FOR CLOSURE / P1-07A IN PROGRESS / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`，完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal 通过；未远程 apply。
+历史 P1-04/P1-06 状态：`P1-06C COMPLETE / P1 NOT READY FOR CLOSURE / P1-07A IN PROGRESS / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。该快照已由本节上方 2026-09-19 的 P1-07C 当前状态取代。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`，完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal通过；未远程 apply。
 
 P1-03 的历史 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐读取 live-access check。随后独立授权的 P1-04 只覆盖 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Server Action、`Saved | Unchanged | Conflict` 展示和先撤旧、证明 deny、再开三个 v2 的单一原子 cutover；回滚不得重开旧 RPC。Web Admin 入口继续关闭。
 
-现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。Admin/Super Admin Role 与 elevated-account Membership 写入继续延期。P1.1 Elevated Access Governance 为 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后经 Product Owner 独立授权与新的 Auth/Access ADR 重新评估，并优先考虑 MFA/AAL2。邀请管理继续独立延期且不归入 P1.1。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
+在 P1-01/P1-02 历史冻结时点，现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof，ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 因此延期全部 elevated mutations。2026-09-19 的 ADR-024 仅为 exact `grant_super_admin` commissioning 接受 TOTP/AAL2 + operation-bound intent 架构，尚待 feasibility proof；其他 Admin/Super Admin Role 与 elevated-account Membership 写入继续延期。P1.1 Elevated Access Governance 为 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后经 Product Owner 独立授权重新评估。邀请管理继续独立延期且不归入 P1.1。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
 
 P1-02A–G 已 Commit。P1-03 只读 `/access` 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：通过 P1-02F Service 的 Search/Detail/Audit 三个 read 和逐调用 live-access check 展示最小治理信息，覆盖稳定分页、loading、empty、unauthorized、safe read error 与延期提示。页面仍无写表单、mutation Action 绑定或 direct database/RPC，Web Admin 入口继续关闭。P1-03 Closure 当时的 write-closed/legacy-open ACL 已由随后单独授权的 P1-04A 本地 cutover 取代。证据见 [`P1_03_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md)。
 

@@ -1,5 +1,27 @@
 # Project Memory
 
+- 2026-09-19: Product Owner selected ADR-024 Option B for a narrow Production
+  Super Admin commissioning path. The only operation is `grant_super_admin`, the
+  initial actor is controlled live Super Admin `Phase2RemoteInviter`, and the exact
+  controlled target is `akumie`; `Reader11` is not targeted. AAL2 alone is
+  insufficient: confirmation requires a fresh latest TOTP AMR (maximum five
+  minutes), original `session_id`, a private one-time payload-bound intent, live
+  Super Admin authority, expected-state and atomic grant/Audit/ledger/intent
+  consumption. Both accounts require primary and backup verified TOTP; `akumie`
+  counts as redundant only after its own AAL2 and read-only Admin smoke.
+- ADR-022 Option C remains historical authority for frozen ordinary P1; KI-033 is
+  not generally solved. Pattern 1 is selected for legacy bypass closure: a future
+  atomic Pre-D compatibility Migration, versioned between C and D, keeps necessary
+  ordinary legacy behavior while rejecting all legacy elevated branches and
+  installs the exact new path. D remains unchanged by design, but Session ID/SSR
+  cookie/AMR behavior and C→Pre-D→D compatibility are `FEASIBILITY PROOF
+REQUIRED`. Production is `ACTIVE_HEALTHY` at 19/20, D unapplied; the 2026-09-16
+  backup is historical rather than final-current and must be replaced after the
+  second-SA mutation and before D. PR #4 stays open/unmerged, Formal Admin stays
+  paused and Web Admin Entry stays closed. P1-08 Unified Account Navigation is a
+  future requirement only; no runtime, Auth, Migration or Production change was
+  made in this architecture closure.
+
 - 2026-09-06: P1-07A-2C freezes Admin Git deployment governance for PR #3.
   Formal Vercel Project `fandom-harbor-admin` remains `paused=true`, keeps its
   repository link, `apps/admin` Root Directory, existing Production branch,

@@ -53,7 +53,7 @@ P1 的读路径采用“目录 → 搜索/筛选 → 成员详情 → Review”�
 
 ## 4. Mutation 合同
 
-P1-00 识别了三类既有操作族；ADR-022 Option 3 将当前可实施集合收窄为：
+P1-00 识别了三类既有操作族；ADR-022 Option 3 在 P1 ordinary-governance 实施期将可实施集合收窄为：
 
 1. Grant Author Role。
 2. Revoke Author Role。
@@ -114,7 +114,9 @@ P1-01 必须在实现前冻结 expected-state 的具体形态：Membership 至�
 
 Supabase `auth.reauthenticate()` 当前是向已确认 email/phone 发送 nonce 的密码变更辅助能力，不适用于本项目不可投递内部标识；P1 不将其误当作已可用的 Admin step-up 认证。
 
-P1-01 证明现有 adapter 只能创建新的普通 `aal1` Session，无法生成数据库可验证、绑定原 Admin Session 与单次 Review payload 的一次性 proof。Product Owner 已选择 ADR-022 Option 3：KI-033 当前 P1 状态为 `ACCEPTED DEFERRED BOUNDARY`，但技术问题没有解决；全部 elevated mutations 为 `DEFERRED`，普通治理为 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。延期不降低 Reauth 要求，也不表示 elevated mutations 已验收。未来重新开放必须独立授权并建立新 Auth ADR，优先评估 Supabase MFA/AAL2。
+P1-01 证明现有 adapter 只能创建新的普通 `aal1` Session，无法生成数据库可验证、绑定原 Admin Session 与单次 Review payload 的一次性 proof。Product Owner 当时选择 ADR-022 Option 3：KI-033 在该历史时点为 `ACCEPTED DEFERRED BOUNDARY`，全部 elevated mutations 为 `DEFERRED`，普通治理为 `AUTHORIZED FOR FUTURE P1-02 PLANNING`。延期不降低 Reauth 要求，也不表示 elevated mutations 已验收；其后任何重新开放仍必须独立授权并建立新 Auth ADR。
+
+2026-09-19 Product Owner 通过 [ADR-024](../17_Architecture_Decisions/ADR-024.md) 完成了一次独立、狭窄的重新授权：只设计 `Phase2RemoteInviter` 向 exact target `akumie` 执行 `grant_super_admin` 的 Option B commissioning path。该路径要求 Supabase TOTP/AAL2、fresh AMR、原 Session 与一次性 operation-bound intent；AAL2 alone 不合格。当前状态仍是 architecture accepted / feasibility required，没有可执行 runtime。其他 elevated Role/Membership 操作继续由 ADR-022 延期。
 
 ## 8. 双人审批风险接受
 
@@ -184,4 +186,6 @@ P1 Closure 前必须证明：
 - Production 数据、Version 7、Web 入口与 paused Admin 状态未被测试或实施流程改变。
 - P1-05 已在专用非 Production Supabase 完成 local + remote QA；P1-06 已在受保护 QA Preview 完成人工验收和 UI Polish Closure；P1-07 只能在独立 Product Owner 授权后进入。
 
-P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。它依赖 P1 Closure、独立 Product Owner 授权及新的 Auth/Access ADR；重新开放 elevated mutations 时优先评估 Supabase MFA/AAL2，不得把延期误述为 KI-033 技术解决。
+P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。ADR-024 只覆盖建立第二条受控 Super Admin 路径，不是完整 P1.1 授权，也不得把架构选择误述为 KI-033 已实现或已证明。
+
+P1-08 Unified Account Navigation 是未来产品需求：同一账号可按 live capability 同时出现阅读、Author Studio 和管理后台入口；Admin 提供“返回主站”。前端导航不替代后台实时授权，当前 Web Admin Entry 继续关闭。

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-19 — Admin P1-07C-4A4 Option B Auth Architecture
+
+- Added ADR-024 accepting Supabase TOTP/AAL2 plus fresh AMR and a one-time,
+  operation-bound intent for the single `grant_super_admin` commissioning
+  operation from `Phase2RemoteInviter` to exact target `akumie`.
+- Preserved ADR-022 Option C as historical ordinary-P1 authority and kept every
+  other elevated mutation deferred. AAL2 alone, ordinary password login, JWT
+  `iat`, Session age and client booleans remain invalid proof substitutes.
+- Selected Pattern 1 for closing the legacy elevated bypass in one future Pre-D
+  compatibility Migration ordered between C and D. The design does not modify D;
+  Session preservation, AMR behavior and D compatibility remain gated on a
+  dedicated non-Production feasibility proof.
+- Froze global requestId, exact target, two-factor recovery, atomic Audit/result,
+  two-operational-Super-Admin and fresh Pre-Cutover Backup requirements. Recorded
+  P1-08 Unified Account Navigation as a future product requirement without runtime
+  navigation changes.
+- Changed documentation only. No runtime, SQL Migration, Auth enrollment, Role,
+  Production, deployment, Admin Resume or Web Admin Entry change occurred; PR #4
+  remains open/unmerged.
+
 ## 2026-09-06 — Admin P1-07A Preview Deployment Governance
 
 - Kept formal Vercel Project `fandom-harbor-admin` paused and disabled its

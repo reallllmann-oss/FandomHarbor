@@ -39,3 +39,4 @@ ADRs explain why durable decisions were made, alternatives/trade-offs and conseq
 | ADR-021 | Admin Identity & Access Governance Contract                       | D-005, D-011, D-039              |
 | ADR-022 | Admin Step-up Reauthentication Trust Boundary — Option 3 Accepted | D-039, KI-033                    |
 | ADR-023 | Identity Access Read RPC Authority Boundary                       | ADR-008, ADR-021, ADR-022        |
+| ADR-024 | TOTP/AAL2-Bound Super Admin Commissioning                         | D-040, ADR-021, ADR-022, KI-033  |

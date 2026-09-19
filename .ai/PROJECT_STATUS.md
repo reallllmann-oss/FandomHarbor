@@ -1,5 +1,31 @@
 # Project Status
 
+## Admin P1-07C-4A4 Option B Auth ADR（2026-09-19）
+
+| Item                      | Current authority                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| Source / branch           | `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f` / `codex/admin-p1-07c-option-b-auth-adr` |
+| Production                | `szfhngifsipsrxcpekti` / `ACTIVE_HEALTHY` / Migration `19/20` / P1 `3/4`            |
+| Migration D               | NOT APPLIED / BLOCKED                                                               |
+| Current Super Admin       | `Phase2RemoteInviter` / Product Owner control confirmed                             |
+| Exact second target       | `akumie` / password recovered and manual Production login PASS                      |
+| Non-target                | `Reader11` / unchanged                                                              |
+| Auth decision             | ADR-024 Option B — TOTP/AAL2 + fresh AMR + one-time operation-bound intent          |
+| Authorized operation      | architecture for `grant_super_admin` only                                           |
+| Session / D compatibility | FEASIBILITY PROOF REQUIRED                                                          |
+| Legacy bypass             | Pattern 1: atomic Pre-D compatibility Migration                                     |
+| Backup                    | 2026-09-16 historical, not final current-state Pre-Cutover backup                   |
+| PR #4                     | OPEN / UNMERGED                                                                     |
+| Production UI             | Formal Admin `paused=true`; Web Admin Entry `CLOSED`                                |
+| Next gate                 | Product Owner P1-07C-4A5 feasibility proof authorization                            |
+
+- ADR-022 Option C remains the correct historical boundary for frozen ordinary P1. ADR-024 is a separately authorized narrow reopening and does not authorize other elevated mutations or mark KI-033 generally resolved.
+- Both `Phase2RemoteInviter` and `akumie` must enroll verified primary/backup TOTP before the grant. `akumie` counts toward redundancy only after its own AAL2 and read-only Admin smoke.
+- Intent binds actor, original Session, requestId, operation, exact target, expected state, fixed desired role and normalized reason fingerprint; fresh TOTP AMR is at most five minutes old and must be consumed once with Role/Audit/ledger atomically.
+- Existing request ledger remains result authority; intent and ordinary/elevated executors share the request advisory-lock namespace so one requestId cannot represent unrelated mutations.
+- New database work requires a version between C and D. The design keeps D unchanged, but clean rebuild, Hosted ACL, function-definition, rollback and sequential upgrade proof are mandatory before Production.
+- No runtime, SQL Migration, Auth enrollment, Role change, Production write, deployment, Resume or Web navigation change occurred. P1-08 Unified Account Navigation is documentation-only and future.
+
 ## Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
 
 | 项目                         | 当前状态                                                                                 |

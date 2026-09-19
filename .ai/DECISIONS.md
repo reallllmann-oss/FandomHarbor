@@ -303,6 +303,15 @@ Accepted decisions are authoritative until explicitly superseded. New entries in
 - Decision: Admin P1 同时治理 Membership 与 Role Grant，复用现有 active Membership、live `role_grants` 与 capability 模型，不创建新 role、capability 或第二套权限真相。所有 Mutation 要求规范化原因和独立 Review/confirm；Admin/Super Admin grant/revoke 与 elevated-account Membership 变更还要求当前 actor 的单次 registration-name/password reauth。P1 暂不采用双人审批；邀请管理延期；Web Admin 入口保持关闭；远程写入 QA 禁止使用 Production。
 - Consequence: P1 必须提供成员搜索/详情/审计上下文、requestId 幂等、expected-state、`Saved | Unchanged | Conflict`、server + database 双层授权、最后一个有效 Super Admin 防护与旧写入口 cutover。Reauth 只能先复用现有 Auth provider adapter；如需 email/phone OTP、MFA、Auth 配置或 Auth 架构变化，必须停止并取得新授权。P1-00 只冻结合同，不授权 P1-01、Migration、远程写入、Admin Unpause、Web 入口或 Deployment。
 
+## D-040 — Narrow Option B Super Admin commissioning boundary
+
+- Date: 2026-09-19
+- Status: Accepted as an explicit Product Owner Auth architecture decision; implementation gated on feasibility proof
+- Related ADR: `docs/17_Architecture_Decisions/ADR-024.md`
+- Supersedes: D-039 registration-name/password reauth only for the exact `grant_super_admin` commissioning operation described by ADR-024; all other D-039 and ADR-022 elevated boundaries remain
+- Decision: 为在 Migration D 前建立第二条独立受控的 Production Super Admin 路径，选择 Supabase TOTP/AAL2 加 fresh AMR、原 Session 和一次性 operation-bound intent。初始 actor 为 `Phase2RemoteInviter`，target 仅为 `akumie`；AAL2 alone、普通密码登录、Session age、JWT `iat` 或客户端 boolean 均不合格。两个账号在计入冗余 Gate 前都必须具备独立可操作 TOTP 与恢复路径。
+- Consequence: 新 Pre-D compatibility Migration 必须排序在 C 与 D 之间，原子关闭 legacy elevated bypass、保留必要 ordinary legacy behavior 并安装 exact new path；D 当前设计不修改但必须通过 sequential upgrade proof。Session ID、SSR cookie、AMR freshness、global requestId、recovery、QA、Preview、新 release SHA、新 backup 与 P1-07C-4A rerun均是后续 Gate。本决定不授权 runtime、Migration、Auth mutation、Production write、Admin Resume、Web Admin Entry 或完整 P1.1。
+
 ## Pending decisions
 
 Pending matters are not decisions. They are tracked in `KNOWN_ISSUES.md` and move here only after approval.
