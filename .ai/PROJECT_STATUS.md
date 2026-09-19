@@ -1,5 +1,29 @@
 # Project Status
 
+## Admin P1-07C-4A6 Option B Runtime Security Core（2026-09-20）
+
+| Item                     | Current authority                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Baseline / branch        | `c75f68f5aea2ed66dd412cd4d9979c96e4aaf2ee` / `codex/admin-p1-07c-option-b-runtime-core`                 |
+| Runtime verdict          | PASS — narrow security core implemented                                                                 |
+| Trusted Auth             | server `getClaims()` → normalized `sub`/`aal`/object AMR/`session_id`; no raw token exposure            |
+| Fresh MFA                | AAL2 + latest exact `totp` AMR, inclusive age `0..300s`; client evidence rejected                       |
+| Commissioning boundary   | only `grant_super_admin`; private-policy actor/exact target; original Session/request/state/fingerprint |
+| Intent boundary          | issue/read/consume port + expiry/replay/mismatch mapping; DB atomicity not implemented                  |
+| SQL / Migration D        | no formal SQL created / D unchanged and blocked                                                         |
+| Production / hosted QA   | unchanged; no real MFA, intent, grant, deployment or remote mutation                                    |
+| PR #4 / product exposure | OPEN / UNMERGED; Formal Admin paused; Web Admin Entry closed                                            |
+| Next gate                | Product Owner authorization for formal Pre-D private adapter/Migration implementation                   |
+
+- ADR-024 remains byte-for-byte unchanged. Existing ordinary requestId,
+  expected-state, idempotency, Audit and Admin authorization contracts remain
+  under regression coverage.
+- `ONE-TIME CONSUMPTION RUNTIME CONTRACT IMPLEMENTED`; database transaction
+  consumption, ledger extension, live Auth/role policy and grant/Audit writes are
+  deliberately deferred to Pre-D.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md`.
+
 ## Admin P1-07C-4A5 Option B Feasibility Proof（2026-09-20）
 
 | Item                       | Current authority                                                                                  |

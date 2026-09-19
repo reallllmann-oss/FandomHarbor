@@ -9,6 +9,11 @@ import {
   normalizeRegistrationName,
   registrationNameEmail,
 } from "./registration-policy";
+import {
+  TrustedAuthEvidenceError,
+  trustedAuthEvidenceFromVerifiedClaims,
+  type TrustedAuthEvidence,
+} from "./trusted-auth-evidence";
 
 export interface AuthCookie {
   name: string;
@@ -49,6 +54,10 @@ export interface AuthProvider {
     identity: TrustedIdentity;
     session: TrustedSession | null;
   }>;
+}
+
+export interface ServerAuthProvider extends AuthProvider {
+  getTrustedAuthEvidence(): Promise<TrustedAuthEvidence | null>;
 }
 
 export class AuthProviderError extends Error {
@@ -301,6 +310,23 @@ function provider(client: SupabaseClient): AuthProvider {
   };
 }
 
+function serverProvider(client: SupabaseClient): ServerAuthProvider {
+  return {
+    ...provider(client),
+
+    async getTrustedAuthEvidence() {
+      const { data, error } = await client.auth.getClaims();
+
+      if (error) {
+        throw new TrustedAuthEvidenceError("TRUSTED_AUTH_UNAVAILABLE");
+      }
+      if (!data) return null;
+
+      return trustedAuthEvidenceFromVerifiedClaims(data.claims);
+    },
+  };
+}
+
 function config(
   environment: PublicRuntimeConfig | Record<string, string | undefined>,
 ) {
@@ -322,9 +348,9 @@ export function createBrowserAuthProvider(
 export function createServerAuthProvider(
   environment: PublicRuntimeConfig | Record<string, string | undefined>,
   cookies: AuthCookieStore,
-): AuthProvider {
+): ServerAuthProvider {
   const runtime = config(environment);
-  return provider(
+  return serverProvider(
     createServerClient(
       runtime.NEXT_PUBLIC_SUPABASE_URL,
       runtime.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,

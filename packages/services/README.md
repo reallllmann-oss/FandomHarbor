@@ -11,3 +11,11 @@ Admin P0 DOMAIN-01 adds the exact eight-field Site Copy content and Baseline, NF
 Admin P1-02D adds the provider-neutral Identity Access Governance Domain. It owns strict parsers for bounded search/cursors, desensitized Subject/Audit reads, opaque database-issued expected-state tokens, three ordinary-only Commands, closed Saved/Unchanged/Conflict results and safe provider error codes. Read and write Ports remain provider-neutral interfaces; P1-02E owns the Supabase RPC transport mapping in `@fandom-harbor/database`. Elevated roles can appear in read projections, but no Admin/Super Admin Role or elevated-account Membership mutation is expressible by this package.
 
 Admin P1-02F adds `createIdentityAccessGovernanceService()` as the six-use-case application boundary. Every call validates caller input first, obtains one fresh `TrustedAccessContext` from an injected live-access checker, and requires active Membership plus a live Admin/Super Admin capability before any Port call. Reads invoke only their matching read Port. Ordinary writes perform a defense-in-depth target-detail classification, reject elevated targets locally, then invoke the one matching write Port at most once; the database remains final authority for target races. The Service does not generate requestId, recalculate expected-state, retry mutations, convert Conflict, produce Audit/Ledger, import a concrete Repository, or know Supabase/PostgREST/RPC/wire/framework details.
+
+Admin P1-07C-4A6 adds a separate narrow elevated security core whose only
+operation is `grant_super_admin`. It requires server-verified AAL2, fresh TOTP AMR
+within five minutes, exact private-policy actor/target, original Session,
+requestId, expected state, normalized reason and a deterministic payload
+fingerprint. Its port defines future issue/read/consume seams but does not claim
+database one-time or transaction atomicity; those guarantees remain mandatory in
+the separately authorized Pre-D private adapter/Migration.

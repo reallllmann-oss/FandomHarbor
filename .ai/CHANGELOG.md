@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-20 — Admin P1-07C-4A6 Option B Runtime Security Core
+
+- Added a server-only Supabase verified-claims adapter that normalizes trusted
+  actor, AAL, object-form AMR and Session evidence without exposing raw JWT,
+  tokens, Cookies or provider internals.
+- Added the exact `grant_super_admin` runtime security contract: AAL2, latest TOTP
+  age `0..300` seconds, private-policy actor/target, original Session, requestId,
+  expected state, normalized reason and deterministic fixed-order SHA-256 payload
+  fingerprint.
+- Added future private intent issue/read/consume ports, expiry/consumed/replay/
+  mismatch/conflict mappings and defense-in-depth validation. Database atomic
+  one-time consumption remains explicitly unimplemented pending Pre-D.
+- Added Auth and Service security tests for malformed/missing evidence, exact
+  five-minute boundary, operation/target substitution, client injection, Session
+  mismatch, request/payload drift and safe failure output.
+- ADR-024 and Migration D remain unchanged. No SQL, remote Auth/database action,
+  real MFA, commissioning, grant, UI, deployment, Push or Merge occurred; Formal
+  Admin remains paused and Web Admin Entry remains closed.
+
 ## 2026-09-20 — Admin P1-07C-4A5 Option B Feasibility Proof
 
 - Added proof evidence for the repository-pinned Supabase JS/Auth/SSR stack. A

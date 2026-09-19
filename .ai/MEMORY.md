@@ -1,5 +1,21 @@
 # Project Memory
 
+- 2026-09-20: P1-07C-4A6 implements ADR-024's formal runtime security core on
+  baseline `c75f68f5aea2ed66dd412cd4d9979c96e4aaf2ee`. The server Auth adapter uses
+  Supabase `getClaims()` and exposes only normalized trusted `sub`, `aal`,
+  object-form AMR method/time and `session_id`. The Service admits only
+  `grant_super_admin`, requires AAL2 plus latest exact TOTP age `0..300` seconds,
+  resolves actor/target through a private-policy port and binds the original
+  Session, requestId, expected state, normalized reason and canonical SHA-256
+  payload fingerprint. Client Auth evidence and operation/target substitution
+  fail closed.
+- A6 defines issue/read/consume and safe replay/conflict/expiry/consumption result
+  contracts for a future private adapter. It does not implement database atomic
+  consumption, SQL, RPC, schema, Auth configuration or UI. ADR-024 and Migration
+  D are unchanged; D remains blocked. No real MFA, intent, role grant, hosted QA,
+  Production or deployment action occurred. PR #4 remains open/unmerged, Formal
+  Admin remains paused and Web Admin Entry remains closed.
+
 - 2026-09-20: P1-07C-4A5 proves ADR-024 Option B technically feasible without
   Production or real-user mutation. With repository-pinned Supabase JS/Auth
   `2.108.2`, SSR `0.12.0` and disposable local GoTrue `v2.191.0`, TOTP verify
