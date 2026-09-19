@@ -1,5 +1,20 @@
 # Project Memory
 
+- 2026-09-20: P1-07C-4A5 proves ADR-024 Option B technically feasible without
+  Production or real-user mutation. With repository-pinned Supabase JS/Auth
+  `2.108.2`, SSR `0.12.0` and disposable local GoTrue `v2.191.0`, TOTP verify
+  replaced access/refresh tokens but preserved user and `session_id`; explicit
+  refresh and SSR-cookie reload retained AAL2 and the original trusted TOTP AMR
+  timestamp, while a new TOTP verify advanced it. Database code verified AAL2,
+  TOTP age ≤5 minutes and the live `auth.sessions` row. A shared request-lock
+  concurrency probe admitted only one ordinary/elevated requestId claimant.
+- A disposable clean migration proof applied 19 migrations through C, a local-only
+  Pre-D structural probe, then byte-identical D to reach 21. D retained exactly six
+  named functions, old execute `0/12`, v2 execute `3/12`, private deny and the new
+  distinct path, so D modification is not required. ADR-024 remains unchanged and
+  Migration D remains blocked pending separately authorized implementation,
+  hosted QA, real-user TOTP/commissioning, a fresh backup and P1-07C-4A rerun.
+
 - 2026-09-19: Product Owner selected ADR-024 Option B for a narrow Production
   Super Admin commissioning path. The only operation is `grant_super_admin`, the
   initial actor is controlled live Super Admin `Phase2RemoteInviter`, and the exact

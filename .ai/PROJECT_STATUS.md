@@ -1,5 +1,26 @@
 # Project Status
 
+## Admin P1-07C-4A5 Option B Feasibility Proof（2026-09-20）
+
+| Item                       | Current authority                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Baseline / branch          | `6c246eb7b6e19bac3bf85d258f6f5a2706b1e84d` / `codex/admin-p1-07c-option-b-feasibility`             |
+| Option B verdict           | PASS — technically feasible; implementation not authorized                                         |
+| Exact client stack         | Supabase JS/Auth `2.108.2`; SSR `0.12.0`; local GoTrue `v2.191.0`                                  |
+| Session proof              | same user/`session_id` through TOTP verify, refresh and SSR reload; tokens replaced                |
+| Fresh MFA proof            | signed TOTP AMR timestamp advances on new verify and is retained, not renewed, by refresh          |
+| Database proof             | AAL2, TOTP ≤5m and live `auth.sessions` were validated server-side                                 |
+| Intent/requestId           | exact target/operation/Session binding feasible; shared advisory-lock race serialized to one claim |
+| Migration proof            | clean `19 → Pre-D 20 → unchanged D 21`; D SHA and catalog/ACL contract preserved                   |
+| Runtime / formal Migration | NOT IMPLEMENTED / NOT AUTHORIZED                                                                   |
+| Production                 | unchanged; Migration `19/20`; D blocked; Formal Admin paused; Web Entry closed                     |
+| PR #4                      | OPEN / UNMERGED                                                                                    |
+| Next gate                  | Product Owner authorization for narrow Option B implementation                                     |
+
+- ADR-024 is unchanged. No real-user MFA, QA/Production Auth mutation, Role/Membership/business mutation, formal Migration, deployment, backup, Push or Merge occurred.
+- Hosted non-Production validation, final Pre-D Migration, protected Preview, new release SHA, real-user enrollment/commissioning, fresh backup and P1-07C-4A rerun remain later mandatory release gates.
+- Evidence: `docs/15_Sprint/Admin_P1/P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md`.
+
 ## Admin P1-07C-4A4 Option B Auth ADR（2026-09-19）
 
 | Item                      | Current authority                                                                   |

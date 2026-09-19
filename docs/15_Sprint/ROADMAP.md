@@ -1,17 +1,19 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Migration D blocked; Option B feasibility proof next
+Status: Active — Admin P1-07C Migration D blocked; Option B feasibility proven
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-09-19）
+## Current Admin P1-07C gate（2026-09-20）
 
 Production is `ACTIVE_HEALTHY` at Migration `19/20`; P1 A/B/C are applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
 
-Option B requires Supabase TOTP/AAL2 plus fresh `amr`, original Session and one-time operation-bound intent. The selected legacy-bypass solution is a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. Migration D is not modified by this architecture decision, but Session preservation and C→Pre-D→D compatibility require dedicated non-Production proof before implementation.
+Option B requires Supabase TOTP/AAL2 plus fresh `amr`, original Session and one-time operation-bound intent. P1-07C-4A5 proved the exact `supabase-js`/`auth-js`/SSR stack preserves `session_id` across TOTP verify, refresh and reload while replacing tokens, retains trusted TOTP AMR age, and exposes the claims plus live `auth.sessions` validation to database code. A shared request-lock concurrency probe also preserved one global namespace.
+
+The selected legacy-bypass solution remains a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. A disposable clean upgrade applied 19 → Pre-D 20 → unchanged D 21 with D's catalog and ACL assertions passing, so D modification is not required.
 
 Both controlled accounts must satisfy role + credential control + primary/backup TOTP + independent AAL2 operability. The current active-Super-Admin count remains one; a role row alone cannot close the gate. After compliant grant and independent `akumie` smoke, create a fresh current-state Pre-Cutover Backup, rerun P1-07C-4A and only then reconsider D.
 
-The 2026-09-16 backup remains historical evidence, not the final current-state backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains `paused=true`, and Web Admin Entry remains CLOSED. The next authorized planning target is P1-07C-4A5 feasibility proof; runtime implementation, Migration D, P1.1 and Production release are not authorized by this decision.
+The 2026-09-16 backup remains historical evidence, not the final current-state backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains `paused=true`, and Web Admin Entry remains CLOSED. Feasibility PASS does not authorize runtime implementation, a formal Migration, hosted QA, real-user enrollment, commissioning, Migration D, P1.1 or Production release. The next boundary requires Product Owner authorization for the narrow Option B implementation phase.
 
 P1-08 Unified Account Navigation is a future authorized product requirement: one account may expose reading, Author Studio and Admin navigation based on live capabilities, and Admin returns to Web without logout. Backend authorization remains independent and Web Admin Entry stays closed until an explicit release authorization.
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-20 — Admin P1-07C-4A5 Option B Feasibility Proof
+
+- Added proof evidence for the repository-pinned Supabase JS/Auth/SSR stack. A
+  disposable local TOTP flow proved AAL2 upgrade, stable user/Session ID, token
+  replacement, SSR reload, refresh retention and newly advanced trusted TOTP AMR.
+- Confirmed database-side access to signed AAL/AMR/session claims plus live
+  `auth.sessions`, and confirmed the ≤5-minute check does not rely on client
+  self-report or token refresh time.
+- Proved the existing request advisory-lock/ledger namespace can serialize an
+  ordinary/elevated same-requestId race, preserving one-result semantics.
+- Ran a disposable clean C → Pre-D structural probe → byte-identical D upgrade.
+  D completed with its catalog/ACL contract intact, so D modification is not
+  required; the probe was never added as a repository Migration.
+- Changed documentation only. No runtime, formal Migration, Production/real-user
+  Auth, Role, Membership, business data, deployment, backup, Push or Merge change
+  occurred. ADR-024 is unchanged and Migration D remains blocked.
+
 ## 2026-09-19 — Admin P1-07C-4A4 Option B Auth Architecture
 
 - Added ADR-024 accepting Supabase TOTP/AAL2 plus fresh AMR and a one-time,

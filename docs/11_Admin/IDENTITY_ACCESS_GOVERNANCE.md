@@ -118,6 +118,8 @@ P1-01 证明现有 adapter 只能创建新的普通 `aal1` Session，无法生�
 
 2026-09-19 Product Owner 通过 [ADR-024](../17_Architecture_Decisions/ADR-024.md) 完成了一次独立、狭窄的重新授权：只设计 `Phase2RemoteInviter` 向 exact target `akumie` 执行 `grant_super_admin` 的 Option B commissioning path。该路径要求 Supabase TOTP/AAL2、fresh AMR、原 Session 与一次性 operation-bound intent；AAL2 alone 不合格。当前状态仍是 architecture accepted / feasibility required，没有可执行 runtime。其他 elevated Role/Membership 操作继续由 ADR-022 延期。
 
+2026-09-20 的 [P1-07C-4A5 feasibility proof](../15_Sprint/Admin_P1/P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md) 已证明当前 JS/SSR/Auth stack 的 Session preservation、trusted fresh TOTP AMR、private intent/requestId namespace 与 C→Pre-D→unchanged D ordering 技术可行。该 PASS 仅解除 feasibility uncertainty；当前仍无可执行 runtime、正式 Pre-D Migration、真实 enrollment 或 commissioning 权限，Migration D 继续 blocked。
+
 ## 8. 双人审批风险接受
 
 P1 暂不采用双人审批。P1-00 曾记录单个有效 Super Admin 在合格 Reauth、原因填写、二次确认、数据库复核和完整审计后执行 elevated 操作的残余风险；Option 3 下这些操作并未开放，因此该风险接受不是当前执行授权。
