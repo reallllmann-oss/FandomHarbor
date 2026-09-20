@@ -9,3 +9,11 @@ SQL migrations, RLS policies, database functions and transactional SQL tests liv
 Admin P0 DOMAIN-01 adds Public/Admin Site Copy repositories for the three approved RPCs. Narrow Zod schemas validate the real RPC shapes; safe numeric or canonical decimal bigint transport is converted to Domain `bigint`, UUID/time data is strict, and structured database errors are mapped without exposing provider errors. No Site Copy Migration or RPC is owned or changed by this package.
 
 Admin P1-02E adds the strict Identity Access Governance Repository for the six frozen P1 read/ordinary-write RPCs. All provider data remains `unknown` until the P1-02D exact-key parsers create Domain values; snake_case exists only in explicit RPC parameter mapping. The adapter never reads underlying identity tables, private helpers or legacy mutation RPCs. Ordinary mutation requests explicitly disable transport retry, preserve requestId/expected-state/Conflict semantics and clean structured provider errors into fixed Domain errors. P1-02C write execute remains closed, so this Repository is a local transport contract rather than an authenticated write integration.
+
+Admin P1-07C-4A7 adds the strict Option B database adapter for the A6 policy and
+intent ports. Provider results remain `unknown` until exact-key parsing validates
+the policy, intent and canonical mutation result. The four exact RPC mappings do
+not send actor, Session, target, desired role or trusted MFA fields; issue and
+confirm explicitly disable transport retry. Provider errors are reduced to the
+closed elevated-security vocabulary without exposing SQLSTATE, hints, function
+names or provider objects. Private tables/helpers are never accessed directly.

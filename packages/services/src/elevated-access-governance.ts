@@ -142,9 +142,6 @@ export interface ElevatedIntent {
 export interface IssueElevatedIntentCommand extends GrantSuperAdminIntentRequest {
   actorAuthorizationReference: string;
   actorSessionId: string;
-  challengeNotBeforeEpochSeconds: number;
-  expiresAtEpochSeconds: number;
-  issuedAtEpochSeconds: number;
   payloadFingerprint: string;
   priorTotpAuthenticatedAtEpochSeconds: number;
 }
@@ -456,6 +453,10 @@ function utf8(value: string): ArrayBuffer {
   return result;
 }
 
+function fingerprintPart(value: string): string {
+  return `${new TextEncoder().encode(value).byteLength}:${value}`;
+}
+
 function hex(bytes: ArrayBuffer): string {
   return [...new Uint8Array(bytes)]
     .map((value) => value.toString(16).padStart(2, "0"))
@@ -481,7 +482,7 @@ export async function grantSuperAdminPayloadFingerprint(
   ] as const;
   const digest = await crypto.subtle.digest(
     "SHA-256",
-    utf8(JSON.stringify(canonicalTuple)),
+    utf8(canonicalTuple.map(fingerprintPart).join("")),
   );
   return hex(digest);
 }
@@ -509,12 +510,20 @@ function assertIssuedIntentMatches(
     intent.expectedStateToken.value !== command.expectedStateToken.value ||
     intent.normalizedReason.value !== command.normalizedReason.value ||
     intent.payloadFingerprint !== command.payloadFingerprint ||
-    intent.issuedAtEpochSeconds !== command.issuedAtEpochSeconds ||
-    intent.expiresAtEpochSeconds !== command.expiresAtEpochSeconds ||
-    intent.challengeNotBeforeEpochSeconds !==
-      command.challengeNotBeforeEpochSeconds ||
     intent.priorTotpAuthenticatedAtEpochSeconds !==
       command.priorTotpAuthenticatedAtEpochSeconds
+  ) {
+    throw securityError("INTENT_MISMATCH");
+  }
+  if (
+    parseIntentId(intent.intentId) !== intent.intentId ||
+    !Number.isSafeInteger(intent.issuedAtEpochSeconds) ||
+    !Number.isSafeInteger(intent.challengeNotBeforeEpochSeconds) ||
+    !Number.isSafeInteger(intent.expiresAtEpochSeconds) ||
+    intent.challengeNotBeforeEpochSeconds !== intent.issuedAtEpochSeconds ||
+    intent.expiresAtEpochSeconds - intent.issuedAtEpochSeconds !==
+      MAX_TOTP_AGE_SECONDS ||
+    intent.consumedAtEpochSeconds !== null
   ) {
     throw securityError("INTENT_MISMATCH");
   }
@@ -528,10 +537,10 @@ export function validateElevatedIntentForConsumption(input: {
 }): void {
   const { confirmation, currentEpochSeconds, intent, trustedAuthEvidence } =
     input;
-  if (intent.consumedAtEpochSeconds !== null) {
-    throw securityError("INTENT_CONSUMED");
-  }
-  if (currentEpochSeconds > intent.expiresAtEpochSeconds) {
+  if (
+    intent.consumedAtEpochSeconds === null &&
+    currentEpochSeconds > intent.expiresAtEpochSeconds
+  ) {
     throw securityError("INTENT_EXPIRED");
   }
   if (
@@ -632,9 +641,6 @@ export function createElevatedAccessGovernanceService(
         ...payload,
         actorAuthorizationReference: policy.actorAuthorizationReference,
         actorSessionId: evidence.sessionId,
-        challengeNotBeforeEpochSeconds: currentEpochSeconds,
-        expiresAtEpochSeconds: currentEpochSeconds + MAX_TOTP_AGE_SECONDS,
-        issuedAtEpochSeconds: currentEpochSeconds,
         payloadFingerprint,
         priorTotpAuthenticatedAtEpochSeconds: totp.authenticatedAtEpochSeconds,
         requestId: parsed.requestId,

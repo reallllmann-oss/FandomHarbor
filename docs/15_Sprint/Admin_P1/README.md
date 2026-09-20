@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C 3/4 APPLIED / OPTION B RUNTIME CORE PASS / MIGRATION D BLOCKED`
+状态：`P1-07C 3/5 APPLIED / OPTION B PRE-D LOCAL PASS / MIGRATION D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -37,6 +37,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-06C UI Polish Acceptance Evidence](P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)
 - [P1-07C-4A5 Option B Feasibility Proof](P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md)
 - [P1-07C-4A6 Option B Runtime Security Core](P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md)
+- [P1-07C-4A7 Option B Pre-D Database Implementation](P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -62,11 +63,12 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-024](../../17_Architecture_Decisions/ADR-024.md) 接受 Option B，但只为 `grant_super_admin` commissioning 建立架构边界。AAL2 必须叠加 fresh TOTP AMR 与一次性、原 Session/操作/payload 绑定 intent；AAL2 alone 不授权写入。
 - P1-07C-4A5 已通过 exact JS/SSR stack 的 disposable local TOTP、Session、AMR、数据库 claims、request namespace concurrency 与 clean C→Pre-D→D 实证。Session ID 在 verify/refresh/reload 中稳定；fresh TOTP AMR 可由数据库使用可信时间验证；D 可保持原文件不变。
 - P1-07C-4A6 已实现正式 server-side trusted claims extractor 与 provider-neutral runtime security core：AAL2、最新 TOTP AMR `≤300s`、原 `session_id`、exact operation/actor/target、requestId、expected-state 与 fixed-order SHA-256 payload fingerprint 全部 fail closed。只实现 future private adapter 与 one-time consumption runtime contract；数据库原子消费仍未实现。
+- P1-07C-4A7 已在正式 Pre-D Migration 中实现 private policy/intent、shared requestId namespace、live Session/policy revalidation、原子 expected-state、grant/Audit/ledger/consume 与 legacy elevated bypass closure，并将 A6 Port 接到 strict Supabase RPC adapter。完整 21-Migration clean chain、并发、失败回滚、ACL 与 synthetic E2E 仅在 local/disposable database 通过；Hosted QA 尚未执行。
 - 选择 Pre-D compatibility Pattern 1：未来单一原子 Migration 关闭 legacy elevated 分支、保留必要 ordinary legacy 行为并安装 exact new path。该 Migration 必须排序在 C 与 D 之间。
 - `Phase2RemoteInviter` 与 `akumie` 都必须先完成 primary/backup TOTP。`akumie` 只有以自己的 Session 完成 AAL2 与只读 Admin smoke 后才计入 two-Super-Admin gate。
 - 2026-09-16 backup 仍是历史证据，但不是 final current-state Pre-Cutover Backup；完成第二 Super Admin 后、D 前必须重新 Backup 并 rerun P1-07C-4A。
 - PR #4 继续 OPEN / UNMERGED；Formal Admin Production `paused=true`；Web Admin Entry `CLOSED`。A6 没有 SQL、Migration、Auth 配置、UI、hosted QA 或 Production 写入。
-- 下一 Gate 仅为 Product Owner 单独授权的 Pre-D private adapter/Migration implementation。A6 PASS 不授权正式 Migration、hosted QA、真实 TOTP enrollment、commissioning 或 cutover；Migration D 继续 blocked。
+- 下一 Gate 仅为 Product Owner 单独授权的 P1-07C-4A8 hosted QA Migration 与 integration acceptance。A7 PASS 不授权 hosted apply、真实 TOTP enrollment、commissioning 或 cutover；Migration D 继续 blocked。
 
 P1-08 Unified Account Navigation 已记录为未来产品需求：同一账号可按 live capabilities 同时展示阅读、Author Studio 与管理后台入口，Admin 提供“返回主站”；当前不实现，Web Admin Entry 继续关闭。
 

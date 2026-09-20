@@ -7,6 +7,11 @@
 - Allowed operation: `grant_super_admin`
 - Initial actor / exact target: `Phase2RemoteInviter` / `akumie`
 
+> Forward status: the separately authorized 4A7 stage subsequently implemented
+> the private database adapter and atomic Pre-D contract. This document preserves
+> the A6 runtime acceptance boundary; current evidence is in
+> [P1-07C-4A7](P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md).
+
 ## Result
 
 The formal TypeScript runtime implements the narrow ADR-024 security contract
@@ -89,8 +94,9 @@ The intent model freezes:
 Confirmation requires a fresh TOTP time that is later than the frozen prior TOTP
 time and not earlier than the intent's challenge boundary. Actor, Session,
 requestId, operation, target, expected state, reason and fingerprint must all
-match. Expired, consumed and mismatched intents fail closed before the consume
-port.
+match. Expired and mismatched intents fail closed before the consume port. An
+exact already-consumed replay reaches the atomic adapter so the database ledger
+can return the canonical prior result without a second mutation.
 
 ## Canonical fingerprint and shared request namespace
 

@@ -1,6 +1,6 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Migration D blocked; Option B runtime core implemented
+Status: Active — Admin P1-07C Migration D blocked; Option B Pre-D local implementation passed
 Roadmap type: Product Phase Roadmap
 
 ## Current Admin P1-07C gate（2026-09-20）
@@ -16,11 +16,19 @@ shared requestId vocabulary and a fixed-order SHA-256 payload fingerprint. It
 defines future issue/read/consume adapter seams and safe failure mapping without
 claiming database atomicity.
 
+P1-07C-4A7 now implements the formal Pre-D private database contract and strict
+RPC adapter. The single additional operation shares the ordinary requestId
+ledger/lock namespace; the database derives and revalidates actor, Session,
+policy target and MFA evidence, then commits expected-state, grant, Audit,
+ledger and one-time intent consumption atomically. Clean 21-Migration rebuild,
+ACL, concurrency, rollback and synthetic E2E proofs pass locally. D remains
+byte-identical and blocked; hosted QA has not run.
+
 The selected legacy-bypass solution remains a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. A disposable clean upgrade applied 19 → Pre-D 20 → unchanged D 21 with D's catalog and ACL assertions passing, so D modification is not required.
 
 Both controlled accounts must satisfy role + credential control + primary/backup TOTP + independent AAL2 operability. The current active-Super-Admin count remains one; a role row alone cannot close the gate. After compliant grant and independent `akumie` smoke, create a fresh current-state Pre-Cutover Backup, rerun P1-07C-4A and only then reconsider D.
 
-The 2026-09-16 backup remains historical evidence, not the final current-state backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains `paused=true`, and Web Admin Entry remains CLOSED. Runtime-core PASS does not authorize a formal Migration, hosted QA, real-user enrollment, commissioning, Migration D, P1.1 or Production release. The next boundary requires Product Owner authorization for the Pre-D private database adapter/Migration implementation.
+The 2026-09-16 backup remains historical evidence, not the final current-state backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains `paused=true`, and Web Admin Entry remains CLOSED. Pre-D local PASS does not authorize hosted QA, real-user enrollment, commissioning, Migration D, P1.1 or Production release. The next boundary requires Product Owner authorization for P1-07C-4A8 hosted QA Migration and integration acceptance.
 
 P1-08 Unified Account Navigation is a future authorized product requirement: one account may expose reading, Author Studio and Admin navigation based on live capabilities, and Admin returns to Web without logout. Backend authorization remains independent and Web Admin Entry stays closed until an explicit release authorization.
 

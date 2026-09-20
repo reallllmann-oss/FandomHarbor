@@ -1,5 +1,27 @@
 # Project Memory
 
+- 2026-09-21: P1-07C-4A7 implements the formal ADR-024 Pre-D private
+  database adapter/Migration on baseline
+  `4f37cafa03e097f085a21c14436670aaf90cfd40`. The only elevated operation is
+  `grant_super_admin`. Private policy resolves the initial registration names to
+  stable Auth IDs and live policy state; there is no hard-coded ID bypass.
+  Private five-minute intents bind requestId, actor, original Session, exact
+  target, expected-state, fixed role, normalized reason and the A6 canonical
+  fingerprint.
+- The existing ledger is the sole result authority. Ordinary and elevated paths
+  share request advisory locks and cross-store guards. Confirm revalidates signed
+  AAL2/TOTP claims, live `auth.sessions`, current Membership/Super Admin policy,
+  exact target and expected state, then commits grant, one non-secret Audit,
+  ledger and one-time intent consumption atomically. Exact retry returns the
+  canonical ledger result; changed payload, stale state and replay mutation fail
+  closed. Grant/Audit/ledger failure rolls back every component.
+- Pre-D is `20260818120000_admin_p1_option_b_elevated_access_pred.sql`, strictly
+  between C and byte-identical D. A clean 21-Migration rebuild, ACL, strict
+  adapter, synthetic E2E, concurrency and rollback proofs pass locally. No
+  hosted QA/Production apply, real MFA, real commissioning, deployment, Push or
+  Merge occurred. PR #4 remains open/unmerged, Formal Admin remains paused, Web
+  Admin Entry remains closed and D remains blocked pending A8 hosted QA.
+
 - 2026-09-20: P1-07C-4A6 implements ADR-024's formal runtime security core on
   baseline `c75f68f5aea2ed66dd412cd4d9979c96e4aaf2ee`. The server Auth adapter uses
   Supabase `getClaims()` and exposes only normalized trusted `sub`, `aal`,

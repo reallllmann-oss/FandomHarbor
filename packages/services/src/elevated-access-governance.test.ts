@@ -86,9 +86,12 @@ function mutationResult() {
 function intentFrom(command: IssueElevatedIntentCommand): ElevatedIntent {
   return {
     ...command,
+    challengeNotBeforeEpochSeconds: issuedAt,
     consumedAtEpochSeconds: null,
     desiredRole: "super_admin",
+    expiresAtEpochSeconds: issuedAt + MAX_TOTP_AGE_SECONDS,
     intentId,
+    issuedAtEpochSeconds: issuedAt,
   };
 }
 
@@ -322,6 +325,9 @@ describe("canonical elevated payload fingerprint", () => {
     const second = await grantSuperAdminPayloadFingerprint({ ...payload });
     expect(first).toMatch(/^[0-9a-f]{64}$/u);
     expect(second).toBe(first);
+    expect(first).toBe(
+      "b86f6a8bf06cbde93379917111803d987a0c75a7a6917d23db98ceae5bc2a443",
+    );
   });
 
   it.each([
@@ -430,14 +436,15 @@ describe("session-bound one-time intent runtime contract", () => {
     );
   });
 
-  it("rejects an already consumed intent", async () => {
+  it("passes an exact consumed-intent replay to the atomic adapter boundary", async () => {
     const intent = current.getIntent();
     if (!intent) throw new Error("test setup did not issue an intent");
     current.setIntent({ ...intent, consumedAtEpochSeconds: issuedAt + 40 });
-    await expectCode(
+    current.setNow(issuedAt + MAX_TOTP_AGE_SECONDS + 1);
+    await expect(
       current.service.confirmGrantSuperAdminIntent(confirmation()),
-      "INTENT_CONSUMED",
-    );
+    ).resolves.toMatchObject({ status: "unchanged" });
+    expect(current.intents.consumeGrantSuperAdminIntent).toHaveBeenCalledOnce();
   });
 
   it("requires the confirmation TOTP to follow the frozen prior evidence", async () => {

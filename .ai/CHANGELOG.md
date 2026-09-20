@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-21 — Admin P1-07C-4A7 Option B Pre-D Database Implementation
+
+- Added the formal Pre-D Migration with private commissioning policy and
+  five-minute elevated intents, shared ordinary/elevated requestId atomicity,
+  live signed Session/TOTP and current-policy checks, exact expected-state and
+  atomic Super Admin grant/Audit/ledger/intent consumption.
+- Closed legacy elevated role and elevated-account Membership branches while
+  preserving necessary ordinary legacy behavior until unchanged Migration D.
+  Added four exact authenticated definer RPCs while keeping all private CRUD and
+  helper execute denied to application roles, including service role.
+- Added the strict database adapter for the A6 provider-neutral ports, exact
+  unknown parsing, no privileged client parameters, disabled write retry and
+  safe provider-error cleaning.
+- Added migration contract, synthetic E2E, Session invalidation, rollback and
+  two-connection concurrency coverage. A clean 21-Migration chain preserves D's
+  exact SHA-256 and catalog/ACL contract.
+- No hosted QA/Production Migration, remote write, real MFA enrollment, real
+  commissioning, deployment, Push or Merge occurred. ADR-024 and D are
+  unchanged; PR #4 remains open/unmerged, Formal Admin paused and Web Admin Entry
+  closed.
+
 ## 2026-09-20 — Admin P1-07C-4A6 Option B Runtime Security Core
 
 - Added a server-only Supabase verified-claims adapter that normalizes trusted

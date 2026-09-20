@@ -19,3 +19,11 @@ requestId, expected state, normalized reason and a deterministic payload
 fingerprint. Its port defines future issue/read/consume seams but does not claim
 database one-time or transaction atomicity; those guarantees remain mandatory in
 the separately authorized Pre-D private adapter/Migration.
+
+Admin P1-07C-4A7 connects those unchanged provider-neutral ports to the formal
+private database contract. Runtime remains responsible for verified Auth claims,
+fresh TOTP and request validation; the database owns live Session/policy state,
+shared requestId atomicity, expected-state, one-time intent consumption, grant,
+Audit and ledger transactionality. Exact consumed-intent retry is passed to the
+database so the canonical ledger result can be returned without a second
+mutation; mismatched replay remains fail closed.

@@ -1,6 +1,6 @@
 # Row Level Security Policy Matrix
 
-Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1-02A/B/C foundations are implemented locally; later-domain rows remain proposed.
+Status: Phase 1C identity/access, Phase 2 / Sprint 002A content policies and Admin P1 ordinary governance plus ADR-024 Pre-D are implemented locally; later-domain rows remain proposed.
 
 Legend: `own` means derived from `auth.uid()` through trusted ownership relations; `active` means active membership. Admin checks use authoritative role grants, not user-editable metadata.
 
@@ -110,6 +110,34 @@ Catalog, semantic, rollback and concurrency evidence are in [`P1_02C_ACCEPTANCE_
   RPCs.
 
 Evidence is in [`P1_04A_ACCEPTANCE_EVIDENCE.md`](../../15_Sprint/Admin_P1/P1_04A_ACCEPTANCE_EVIDENCE.md).
+
+## Admin P1-07C-4A7 Option B Pre-D local boundary
+
+- `private.elevated_commissioning_policy` and
+  `private.elevated_access_intents` are outside exposed Data API schemas. Both
+  enable RLS with no application policies; `PUBLIC`, `anon`, `authenticated` and
+  `service_role` have no direct table privileges.
+- Every new private helper uses an empty search path and fully qualified objects.
+  Application roles have no helper execute. The four public definer RPCs revoke
+  `PUBLIC`, `anon` and `service_role`; only their exact signatures are granted to
+  `authenticated`.
+- The public signatures cannot accept actor ID, Session ID, target ID, desired
+  role or trusted MFA evidence. Database code derives `auth.uid()` and signed
+  claims, validates a matching live `auth.sessions` row, and rechecks active
+  Membership, live Super Admin policy, exact stable target and verified-factor
+  recovery minimum.
+- Guest, Reader, Author and ordinary Admin cannot enter the commissioning
+  transaction. Direct private CRUD/execute and service-role commissioning are
+  denied; service role is not a daily bypass.
+- Shared request advisory locks and cross-store triggers prevent ordinary and
+  elevated claims from sharing a requestId. Expected-state, grant, Audit, ledger
+  and one-time intent consumption are one transaction.
+- Legacy Author/ordinary behavior remains compatible before D, while every
+  legacy Admin/Super Admin role branch and elevated-account Membership mutation
+  fails closed. Migration D remains unchanged and blocked.
+
+Evidence is in
+[`P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md`](../../15_Sprint/Admin_P1/P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md).
 
 ## Admin P0 site-copy foundation
 

@@ -1,5 +1,29 @@
 # Project Status
 
+## Admin P1-07C-4A7 Option B Pre-D Database Implementation（2026-09-21）
+
+| Item                | Current authority                                                                                  |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| Baseline / branch   | `4f37cafa03e097f085a21c14436670aaf90cfd40` / `codex/admin-p1-07c-option-b-pred-d`                  |
+| Local verdict       | PASS — formal Pre-D + strict adapter; local/disposable proof only                                  |
+| Migration order     | C → `20260818120000_admin_p1_option_b_elevated_access_pred.sql` → byte-identical D                 |
+| Request / intent    | one global request namespace; private five-minute Session/payload-bound intent                     |
+| Atomic result       | expected-state + grant + one Audit + ledger + one-time consume; exact replay returns prior result  |
+| Authorization       | DB-derived actor/Session/TOTP, live Super Admin/policy, exact stable target, factor recovery check |
+| ACL                 | private CRUD/helpers denied; four exact authenticated definer RPCs; service-role bypass absent     |
+| Compatibility       | legacy elevated branches closed; necessary legacy ordinary behavior retained until D               |
+| Hosted / Production | no apply, Auth/role mutation, real MFA, commissioning, deployment or state change                  |
+| PR #4 / exposure    | OPEN / UNMERGED; Formal Admin paused; Web Admin Entry closed                                       |
+| Next gate           | Product Owner authorization for P1-07C-4A8 hosted QA Migration and integration acceptance          |
+
+- ADR-024 and Migration D remain byte-for-byte unchanged. Local clean rebuild,
+  ACL/catalog, synthetic E2E, Session invalidation, request/intent concurrency,
+  expected-state and grant/Audit/ledger rollback tests pass.
+- Production remains at 19 applied migrations; formal Pre-D and D are not
+  applied. Migration D remains blocked.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md`.
+
 ## Admin P1-07C-4A6 Option B Runtime Security Core（2026-09-20）
 
 | Item                     | Current authority                                                                                       |
