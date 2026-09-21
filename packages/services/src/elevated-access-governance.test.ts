@@ -83,6 +83,26 @@ function mutationResult() {
   });
 }
 
+function savedMutationResult() {
+  return parseIdentityAccessMutationResult({
+    currentState: {
+      activeRoleGrants: [],
+      membership: {
+        state: "active",
+        updatedAt: "2026-09-20T00:00:00Z",
+      },
+      targetUserId,
+    },
+    auditLogId: "701",
+    changedAt: "2026-09-20T00:01:00Z",
+    requestId,
+    roleGrantId: "60000000-0000-4000-8000-000000000001",
+    stateToken: expectedStateToken,
+    status: "saved",
+    targetUserId,
+  });
+}
+
 function intentFrom(command: IssueElevatedIntentCommand): ElevatedIntent {
   return {
     ...command,
@@ -441,10 +461,116 @@ describe("session-bound one-time intent runtime contract", () => {
     if (!intent) throw new Error("test setup did not issue an intent");
     current.setIntent({ ...intent, consumedAtEpochSeconds: issuedAt + 40 });
     current.setNow(issuedAt + MAX_TOTP_AGE_SECONDS + 1);
+    vi.mocked(current.dependencies.policy.getGrantSuperAdminPolicy).mockClear();
     await expect(
       current.service.confirmGrantSuperAdminIntent(confirmation()),
     ).resolves.toMatchObject({ status: "unchanged" });
+    expect(
+      current.dependencies.policy.getGrantSuperAdminPolicy,
+    ).not.toHaveBeenCalled();
     expect(current.intents.consumeGrantSuperAdminIntent).toHaveBeenCalledOnce();
+  });
+
+  it("returns the canonical Saved result after the original grant changes target eligibility", async () => {
+    let businessMutationCount = 0;
+    const canonicalSaved = savedMutationResult();
+    vi.mocked(current.intents.consumeGrantSuperAdminIntent).mockImplementation(
+      async () => {
+        if (businessMutationCount === 0) businessMutationCount += 1;
+        return { result: canonicalSaved, status: "result" };
+      },
+    );
+    vi.mocked(current.dependencies.policy.getGrantSuperAdminPolicy).mockClear();
+
+    await expect(
+      current.service.confirmGrantSuperAdminIntent(confirmation()),
+    ).resolves.toEqual(canonicalSaved);
+    expect(
+      current.dependencies.policy.getGrantSuperAdminPolicy,
+    ).toHaveBeenCalledOnce();
+
+    const intent = current.getIntent();
+    if (!intent) throw new Error("test setup did not issue an intent");
+    current.setIntent({ ...intent, consumedAtEpochSeconds: issuedAt + 40 });
+    vi.mocked(current.dependencies.policy.getGrantSuperAdminPolicy).mockClear();
+
+    await expect(
+      current.service.confirmGrantSuperAdminIntent(confirmation()),
+    ).resolves.toEqual(canonicalSaved);
+    expect(businessMutationCount).toBe(1);
+    expect(
+      current.dependencies.policy.getGrantSuperAdminPolicy,
+    ).not.toHaveBeenCalled();
+    expect(current.intents.consumeGrantSuperAdminIntent).toHaveBeenCalledTimes(
+      2,
+    );
+  });
+
+  it.each([
+    ["target", { targetUserId: otherTargetUserId }, "INTENT_MISMATCH"],
+    [
+      "expected state fingerprint",
+      { expectedStateToken: "b".repeat(64) },
+      "INTENT_MISMATCH",
+    ],
+    [
+      "normalized reason fingerprint",
+      { reason: "A changed commissioning reason" },
+      "INTENT_MISMATCH",
+    ],
+  ])(
+    "rejects a consumed-intent retry with changed %s",
+    async (_label, override, code) => {
+      const intent = current.getIntent();
+      if (!intent) throw new Error("test setup did not issue an intent");
+      current.setIntent({ ...intent, consumedAtEpochSeconds: issuedAt + 40 });
+      vi.mocked(
+        current.dependencies.policy.getGrantSuperAdminPolicy,
+      ).mockClear();
+
+      await expectCode(
+        current.service.confirmGrantSuperAdminIntent(confirmation(override)),
+        code,
+      );
+      expect(
+        current.dependencies.policy.getGrantSuperAdminPolicy,
+      ).not.toHaveBeenCalled();
+      expect(
+        current.intents.consumeGrantSuperAdminIntent,
+      ).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not disclose an unknown intent through the strict policy lookup", async () => {
+    current.setIntent(null);
+    vi.mocked(current.dependencies.policy.getGrantSuperAdminPolicy).mockClear();
+
+    await expectCode(
+      current.service.confirmGrantSuperAdminIntent(confirmation()),
+      "INTENT_MISMATCH",
+    );
+    expect(
+      current.dependencies.policy.getGrantSuperAdminPolicy,
+    ).not.toHaveBeenCalled();
+    expect(current.intents.consumeGrantSuperAdminIntent).not.toHaveBeenCalled();
+  });
+
+  it("blocks another actor and session from a consumed retry", async () => {
+    const intent = current.getIntent();
+    if (!intent) throw new Error("test setup did not issue an intent");
+    current.setIntent({ ...intent, consumedAtEpochSeconds: issuedAt + 40 });
+    current.setEvidence(
+      authEvidence({
+        actorUserId: otherActorUserId,
+        sessionId: otherSessionId,
+      }),
+    );
+
+    await expectCode(
+      current.service.confirmGrantSuperAdminIntent(confirmation()),
+      "UNAUTHORIZED_ACTOR",
+    );
+    expect(current.intents.consumeGrantSuperAdminIntent).not.toHaveBeenCalled();
   });
 
   it("requires the confirmation TOTP to follow the frozen prior evidence", async () => {

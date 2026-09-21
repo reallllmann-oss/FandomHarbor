@@ -663,21 +663,42 @@ export function createElevatedAccessGovernanceService(
       const evidence = await trustedEvidence(dependencies.auth);
       const totp = requireFreshTotpEvidence(evidence, currentEpochSeconds);
       if (evidence === null) throw securityError("AUTHENTICATION_REQUIRED");
-      const policy = await currentPolicy(dependencies.policy);
-      authorizeExactActorAndTarget(evidence, policy, parsed.targetUserId);
+
+      // Resolve the session-bound intent before applying the pre-mutation
+      // target policy. The database lookup is scoped to the live actor,
+      // session and frozen commissioning policy, so an unrelated caller
+      // cannot use an opaque intent id as a result-disclosure oracle.
+      const intent = await safePortOperation(() =>
+        dependencies.intents.getIntent(parsed.intentId),
+      );
+      if (intent === null) throw securityError("INTENT_MISMATCH");
+
+      // A new execution must still satisfy the strict "target is ordinary"
+      // policy. A consumed intent, however, must be allowed to reach the
+      // atomic database boundary so that an exact retry can return its
+      // canonical ledger result after the original grant changed that state.
+      const policy =
+        intent.consumedAtEpochSeconds === null
+          ? await currentPolicy(dependencies.policy)
+          : null;
+      if (policy !== null) {
+        authorizeExactActorAndTarget(evidence, policy, parsed.targetUserId);
+      }
 
       const payload: GrantSuperAdminPayload = {
-        actorUserId: policy.authorizedActorUserId,
+        actorUserId: policy?.authorizedActorUserId ?? intent.actorUserId,
         expectedStateToken: parsed.expectedStateToken,
         normalizedReason: parsed.normalizedReason,
         operation: parsed.operation,
-        targetUserId: policy.exactTargetUserId,
+        targetUserId: policy?.exactTargetUserId ?? parsed.targetUserId,
       };
       const payloadFingerprint =
         await grantSuperAdminPayloadFingerprint(payload);
       const confirmation: ConsumeElevatedIntentCommand = {
         ...payload,
-        actorAuthorizationReference: policy.actorAuthorizationReference,
+        actorAuthorizationReference:
+          policy?.actorAuthorizationReference ??
+          intent.actorAuthorizationReference,
         actorSessionId: evidence.sessionId,
         confirmedTotpAuthenticatedAtEpochSeconds:
           totp.authenticatedAtEpochSeconds,
@@ -685,10 +706,6 @@ export function createElevatedAccessGovernanceService(
         payloadFingerprint,
         requestId: parsed.requestId,
       };
-      const intent = await safePortOperation(() =>
-        dependencies.intents.getIntent(parsed.intentId),
-      );
-      if (intent === null) throw securityError("INTENT_MISMATCH");
       safeRuntimeValidation(() =>
         validateElevatedIntentForConsumption({
           confirmation,
