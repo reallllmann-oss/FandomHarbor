@@ -1,5 +1,20 @@
 # Project Status
 
+## Admin P1-07C-4A8 Option B Hosted QA Integration（2026-09-23）
+
+| Item           | Current authority                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QA             | `gqtchjrmpuxibxmurvfd` `ACTIVE_HEALTHY`; Pre-D applied, `20/21`; D not applied                                                                    |
+| Runtime fix    | `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`; no further product code change                                                                        |
+| Hosted verdict | PASS: exact retry, requestId, one-time Saved, concurrency, target-state Conflict, post-runtime actor revocation denial, ordinary pre-D regression |
+| Cleanup        | zero active A8 synthetic Auth, identity, Session, factor, Membership, Role, invitation or policy binding; immutable evidence retained             |
+| Production     | 19 migrations; Pre-D/D unapplied; no write; Formal Admin paused; Web Admin Entry closed                                                           |
+| PR #4          | OPEN / UNMERGED; no Push or Merge in A8 continuation                                                                                              |
+| Next gate      | Product Owner authorization only; real-user MFA/commissioning, Preview, fresh backup, D and P1.1 remain blocked                                   |
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md`.
+The A7 section below is its historical local-only checkpoint.
+
 ## Admin P1-07C-4A7 Option B Pre-D Database Implementation（2026-09-21）
 
 | Item                | Current authority                                                                                  |

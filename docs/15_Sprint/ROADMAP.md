@@ -1,9 +1,19 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Migration D blocked; Option B Pre-D local implementation passed
+Status: Active — Admin P1-07C Migration D blocked; Option B Pre-D hosted QA passed
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-09-20）
+## Current Admin P1-07C gate（2026-09-23）
+
+P1-07C-4A8 completed hosted QA integration on `gqtchjrmpuxibxmurvfd` at
+`20/21` migrations. The exact-retry repair, synthetic AAL2/TOTP flow,
+canonical one-time Saved result, concurrency, both final TOCTOU races, ordinary
+pre-D regression and synthetic cleanup passed. [A8 evidence](Admin_P1/P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
+distinguishes reused hosted results from new race tests and the privileged
+ordinary v2 database test. Production remains at 19 migrations; Pre-D and D
+are not applied. PR #4 remains open/unmerged, Formal Admin paused and Web Admin
+Entry closed. Hosted QA PASS does not authorize real-user MFA/commissioning,
+Preview, Production migration, fresh backup or D.
 
 Production is `ACTIVE_HEALTHY` at Migration `19/20`; P1 A/B/C are applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
 
@@ -22,7 +32,8 @@ ledger/lock namespace; the database derives and revalidates actor, Session,
 policy target and MFA evidence, then commits expected-state, grant, Audit,
 ledger and one-time intent consumption atomically. Clean 21-Migration rebuild,
 ACL, concurrency, rollback and synthetic E2E proofs pass locally. D remains
-byte-identical and blocked; hosted QA has not run.
+byte-identical and blocked; this paragraph records the earlier A7 local-only
+checkpoint, superseded by the A8 result above.
 
 The selected legacy-bypass solution remains a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. A disposable clean upgrade applied 19 → Pre-D 20 → unchanged D 21 with D's catalog and ACL assertions passing, so D modification is not required.
 

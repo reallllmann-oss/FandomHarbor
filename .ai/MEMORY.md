@@ -1,5 +1,19 @@
 # Project Memory
 
+- 2026-09-23: P1-07C-4A8 completed hosted QA Option B integration on
+  `gqtchjrmpuxibxmurvfd` at `20/21` migrations with only Pre-D applied.
+  Runtime exact-retry repair `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`
+  preserves one canonical Saved result. Reused current A8 hosted evidence covers
+  fresh AAL2/TOTP, Session binding, requestId and same-intent concurrency.
+  Continuation proved post-issuance target-state Conflict and execution-time
+  actor-role revocation denial, then ordinary pre-D reads/legacy writes and
+  privileged v2 requestId semantics without opening v2 execute. All active
+  synthetic users, identities, Sessions, factors and permissions were cleared;
+  immutable intent/Ledger/Audit evidence remains. ADR-024 and D are unchanged.
+  Production remains at 19 migrations, Formal Admin paused, Web Admin Entry
+  closed, PR #4 open/unmerged. Hosted PASS does not authorize real-user
+  commissioning, Preview, D, Production writes or P1.1.
+
 - 2026-09-21: P1-07C-4A7 implements the formal ADR-024 Pre-D private
   database adapter/Migration on baseline
   `4f37cafa03e097f085a21c14436670aaf90cfd40`. The only elevated operation is

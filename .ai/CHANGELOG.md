@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-23 — Admin P1-07C-4A8 Hosted QA Integration Acceptance
+
+- Accepted QA-only Pre-D at `20/21` on `gqtchjrmpuxibxmurvfd`. Existing
+  exact-retry repair commit restored canonical Saved replay without duplicate
+  Grant, Audit, Ledger or intent consumption.
+- Proved two final hosted races: target-state change after intent issuance
+  produced Conflict and no Super Admin grant; actor Super Admin revocation
+  after runtime validation but before database consume was denied by the
+  execution-time database authority with zero mutation.
+- Regressed pre-D ordinary Search/Detail/Audit, legacy Author/Membership
+  behavior, application ACL denial, and privileged v2 requestId semantics
+  without opening v2 execute. Cleared all active synthetic Auth/governance
+  fixtures while retaining immutable evidence.
+- Added dedicated A8 evidence. No further product runtime, Migration D, ADR,
+  Production, deployment, Push or Merge change occurred; Admin remains paused
+  and Web Admin Entry closed.
+
 ## 2026-09-21 — Admin P1-07C-4A7 Option B Pre-D Database Implementation
 
 - Added the formal Pre-D Migration with private commissioning policy and

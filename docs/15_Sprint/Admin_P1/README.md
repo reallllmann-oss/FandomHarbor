@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C 3/5 APPLIED / OPTION B PRE-D LOCAL PASS / MIGRATION D BLOCKED`
+状态：`P1-07C Production 3/4 / OPTION B PRE-D HOSTED QA PASS / MIGRATION D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -38,6 +38,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A5 Option B Feasibility Proof](P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md)
 - [P1-07C-4A6 Option B Runtime Security Core](P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md)
 - [P1-07C-4A7 Option B Pre-D Database Implementation](P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md)
+- [P1-07C-4A8 Option B Hosted QA Integration Acceptance](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -55,7 +56,10 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-09-20）
+## 当前 P1-07C 权威状态（2026-09-23）
+
+- P1-07C-4A8 hosted QA `gqtchjrmpuxibxmurvfd` 为 `ACTIVE_HEALTHY`、`20/21`：仅 Pre-D 已应用，D 未应用。A6/A7 runtime→hosted exact retry、并发、签发后 target 状态冲突、运行时检查后 actor 撤权、ordinary pre-D 回归与零活跃合成夹具均 PASS；详见 [A8 验收证据](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)。修复提交 `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`；本次继续阶段没有产品代码修改。
+- Production 仍为 19 项 Migration；Pre-D 与 D 均未应用。A8 PASS 不授权真实用户 TOTP/commissioning、Preview、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。
 
 - Frozen historical release baseline 为 `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。
 - Production `szfhngifsipsrxcpekti` 为 `ACTIVE_HEALTHY`；A/B/C 已应用，Migration `19/20`，D `20260819225318_admin_p1_identity_access_cutover.sql` 未应用。
@@ -68,7 +72,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - `Phase2RemoteInviter` 与 `akumie` 都必须先完成 primary/backup TOTP。`akumie` 只有以自己的 Session 完成 AAL2 与只读 Admin smoke 后才计入 two-Super-Admin gate。
 - 2026-09-16 backup 仍是历史证据，但不是 final current-state Pre-Cutover Backup；完成第二 Super Admin 后、D 前必须重新 Backup 并 rerun P1-07C-4A。
 - PR #4 继续 OPEN / UNMERGED；Formal Admin Production `paused=true`；Web Admin Entry `CLOSED`。A6 没有 SQL、Migration、Auth 配置、UI、hosted QA 或 Production 写入。
-- 下一 Gate 仅为 Product Owner 单独授权的 P1-07C-4A8 hosted QA Migration 与 integration acceptance。A7 PASS 不授权 hosted apply、真实 TOTP enrollment、commissioning 或 cutover；Migration D 继续 blocked。
+- 下一 Gate 必须由 Product Owner 单独授权；真实用户 MFA、受保护 Preview、fresh backup、P1-07C-4A rerun 与 Migration D 仍各自受控。以下 A7 段落描述其历史时点，不能覆盖上方 A8 Hosted PASS 状态。
 
 P1-08 Unified Account Navigation 已记录为未来产品需求：同一账号可按 live capabilities 同时展示阅读、Author Studio 与管理后台入口，Admin 提供“返回主站”；当前不实现，Web Admin Entry 继续关闭。
 
