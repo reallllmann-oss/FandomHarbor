@@ -1,5 +1,19 @@
 # Project Memory
 
+- 2026-09-28: P1-07C-4A9 froze canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f` and accepted exact-SHA protected
+  Preview `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`. Existing sensitive env values were
+  safely updated in place with Preview-only scope through the official Vercel
+  API; no false Secret Rotation or Production binding occurred. Minimum QA Auth,
+  trusted server claims, Search, Detail, Audit and elevated-exposure smoke
+  passed. A8 heavy evidence was reused. Transport-interrupted cleanup was
+  recovered by exact synthetic ID and final active Auth/user/Session/MFA/
+  Membership/Role/invitation/intent/policy counts are zero. Product code,
+  ADR-024, Pre-D and D are unchanged. Production remains at 19 migrations,
+  Formal Admin paused and Web Admin Entry closed. The docs closure commit does
+  not replace the Product RC; real-user MFA/commissioning, fresh backup, final
+  4A rerun, D, Production release and PR merge remain separately authorized.
+
 - 2026-09-23: P1-07C-4A8 completed hosted QA Option B integration on
   `gqtchjrmpuxibxmurvfd` at `20/21` migrations with only Pre-D applied.
   Runtime exact-retry repair `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`

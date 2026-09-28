@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C Production 3/4 / OPTION B PRE-D HOSTED QA PASS / MIGRATION D BLOCKED`
+状态：`P1-07C Production 3/4 / OPTION B PROTECTED PREVIEW ACCEPTED / MIGRATION D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -39,6 +39,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A6 Option B Runtime Security Core](P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md)
 - [P1-07C-4A7 Option B Pre-D Database Implementation](P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md)
 - [P1-07C-4A8 Option B Hosted QA Integration Acceptance](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
+- [P1-07C-4A9 Option B Protected Preview Acceptance](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -56,10 +57,17 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-09-23）
+## 当前 P1-07C 权威状态（2026-09-28）
 
+- P1-07C-4A9 将 canonical Product RC 冻结为
+  `f42217d913d44517b53935a68488100610bdff0f`，并接受 exact-SHA、`READY`、
+  Vercel Authentication 保护且仅绑定 QA 的 Preview
+  `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`。最小 QA Auth、trusted claims、
+  Search/Detail/Audit 与 elevated exposure smoke 均 PASS；A8 重型证据直接复用。
+  传输中断后的精确恢复清理证明 active 4A9 synthetic artifacts 为 0。详见
+  [4A9 验收证据](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)。
 - P1-07C-4A8 hosted QA `gqtchjrmpuxibxmurvfd` 为 `ACTIVE_HEALTHY`、`20/21`：仅 Pre-D 已应用，D 未应用。A6/A7 runtime→hosted exact retry、并发、签发后 target 状态冲突、运行时检查后 actor 撤权、ordinary pre-D 回归与零活跃合成夹具均 PASS；详见 [A8 验收证据](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)。修复提交 `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`；本次继续阶段没有产品代码修改。
-- Production 仍为 19 项 Migration；Pre-D 与 D 均未应用。A8 PASS 不授权真实用户 TOTP/commissioning、Preview、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。
+- Production 仍为 19 项 Migration；Pre-D 与 D 均未应用。4A9 PASS 不授权真实用户 TOTP/commissioning、fresh backup、final 4A rerun、Migration D、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。Docs closure commit 不替代 canonical Product RC。
 
 - Frozen historical release baseline 为 `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。
 - Production `szfhngifsipsrxcpekti` 为 `ACTIVE_HEALTHY`；A/B/C 已应用，Migration `19/20`，D `20260819225318_admin_p1_identity_access_cutover.sql` 未应用。

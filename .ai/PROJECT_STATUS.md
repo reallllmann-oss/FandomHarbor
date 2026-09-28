@@ -1,5 +1,23 @@
 # Project Status
 
+## Admin P1-07C-4A9 Option B Protected Preview Acceptance（2026-09-28）
+
+| Item             | Current authority                                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; docs closure is separate                                              |
+| Preview          | `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`; exact RC; `READY`; protected; QA-only                                         |
+| Minimum smoke    | PASS: protected access, boot, QA Auth, trusted claims, Search, Detail, Audit, no elevated UI exposure             |
+| Cleanup          | `ACTIVE 4A9 SYNTHETIC ARTIFACTS = 0` across Auth, identity, Session, MFA, Membership, Role and temporary objects  |
+| Validation       | exact deployment/build evidence plus docs-only diff, sensitive and link/format checks; A8 heavy evidence reused   |
+| QA               | `gqtchjrmpuxibxmurvfd`; 20 migrations; Pre-D applied; D not applied                                               |
+| Production       | `szfhngifsipsrxcpekti`; 19 migrations; Pre-D/D unapplied; no write/Auth/env/deployment mutation                   |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; PR #4 OPEN / UNMERGED; D blocked                                     |
+| Next gate        | separate Product Owner authorization for real MFA/commissioning, backup, final 4A rerun, D and Production release |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md`.
+The A8 section below remains the authority for heavy hosted integration proof.
+
 ## Admin P1-07C-4A8 Option B Hosted QA Integration（2026-09-23）
 
 | Item           | Current authority                                                                                                                                 |

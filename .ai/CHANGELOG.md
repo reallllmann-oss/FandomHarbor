@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-28 — Admin P1-07C-4A9 Protected Preview Acceptance
+
+- Froze canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f` and accepted protected Preview
+  `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL` as `READY`, exact-SHA and QA-only.
+- Updated the two existing sensitive Preview env values in place through the
+  official Vercel API. No env delete/recreate, Production scope or false Secret
+  Rotation declaration was used.
+- Passed minimum protected access, boot, QA Auth, trusted claims,
+  Search/Detail/Audit read and elevated-exposure smoke while reusing the A8
+  heavy hosted evidence.
+- Recovered cleanup idempotently after a transport interruption and proved zero
+  active 4A9 synthetic Auth, identity, Session, MFA, Membership, Role,
+  invitation, intent or policy artifacts.
+- Changed documentation only. QA remains at 20 migrations with D unapplied;
+  Production remains at 19 with Pre-D/D unapplied. No real MFA, commissioning,
+  Production mutation, Migration, Merge, Admin resume or Web entry opening
+  occurred.
+
 ## 2026-09-23 — Admin P1-07C-4A8 Hosted QA Integration Acceptance
 
 - Accepted QA-only Pre-D at `20/21` on `gqtchjrmpuxibxmurvfd`. Existing
