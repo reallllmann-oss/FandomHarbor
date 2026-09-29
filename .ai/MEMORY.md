@@ -1,5 +1,19 @@
 # Project Memory
 
+- 2026-09-29: P1-07C-4A10A passed the final read-only Production Pre-D
+  readiness gate on `szfhngifsipsrxcpekti`: `ACTIVE_HEALTHY`, 19 migrations,
+  Pre-D/D absent and required identity/governance/Audit/Auth/ledger prerequisites
+  compatible. `Phase2RemoteInviter` and `akumie` each resolve uniquely;
+  `Phase2RemoteInviter` is the sole active Super Admin and neither has TOTP/MFA.
+  The future `grant_super_admin` actor/target inputs are resolvable, but no policy
+  binding, MFA, intent or role mutation occurred. Fresh warehouse-external backup
+  `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY` contains custom business/private,
+  migration, durable Auth-subset and Auth-schema archives; checksum, offline
+  parse, permissions and pre/post inventory verification passed. Restore was not
+  run. Product code is unchanged, Formal Admin remains paused and Web Admin
+  Entry closed. The next explicit authorization boundary is only
+  `PRODUCTION PRE-D MIGRATION 19 → 20`; D remains blocked.
+
 - 2026-09-28: P1-07C-4A9 froze canonical Product RC
   `f42217d913d44517b53935a68488100610bdff0f` and accepted exact-SHA protected
   Preview `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`. Existing sensitive env values were

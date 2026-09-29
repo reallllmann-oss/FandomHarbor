@@ -1,5 +1,22 @@
 # Project Status
 
+## Admin P1-07C-4A10A Production Pre-D Readiness（2026-09-29）
+
+| Item             | Current authority                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                        |
+| Production       | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exact 19 migrations; Pre-D/D absent                                |
+| Schema gate      | PASS — required identity, governance, Audit, Auth, ledger, RLS and function prerequisites present            |
+| Real identities  | `Phase2RemoteInviter` and `akumie` uniquely resolved; neither has TOTP/MFA                                   |
+| Super Admin      | exactly one active: `Phase2RemoteInviter`; no unknown additional Super Admin                                 |
+| Backup           | `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`; checksum/offline parse/pre-post inventory PASS; restore not run |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; no Production mutation or deployment                            |
+| Next gate        | explicit Product Owner authorization for `PRODUCTION PRE-D MIGRATION 19 → 20` only                           |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md`.
+Migration D, real-user MFA and commissioning remain separately blocked.
+
 ## Admin P1-07C-4A9 Option B Protected Preview Acceptance（2026-09-28）
 
 | Item             | Current authority                                                                                                 |

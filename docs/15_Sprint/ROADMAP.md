@@ -1,9 +1,22 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Migration D blocked; Option B protected Preview accepted
+Status: Active — Admin P1-07C Production Pre-D ready; Migration D blocked
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-09-28）
+## Current Admin P1-07C gate（2026-09-29）
+
+P1-07C-4A10A verified Production `szfhngifsipsrxcpekti` remains
+`ACTIVE_HEALTHY` at exactly 19 migrations with Pre-D and D unapplied. The
+required schema prerequisites passed; real `Phase2RemoteInviter` and `akumie`
+identities are uniquely resolvable; the sole active Super Admin remains
+`Phase2RemoteInviter`; neither identity has TOTP/MFA. Warehouse-external safety
+backup `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY` passed checksums, custom
+archive offline parsing, permissions and pre/post inventory equality. Restore
+was not run. [4A10A evidence](Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
+is the authority. No Production data/Auth/role/Migration mutation occurred.
+Formal Admin remains paused and Web Admin Entry remains closed. The only next
+authorization boundary is `PRODUCTION PRE-D MIGRATION 19 → 20`; Migration D,
+real MFA and commissioning remain separately blocked.
 
 P1-07C-4A9 froze canonical Product RC
 `f42217d913d44517b53935a68488100610bdff0f` and accepted protected Preview
@@ -14,7 +27,7 @@ records safe env upsert, A8 evidence reuse and zero active synthetic artifacts.
 The later docs closure commit does not replace the Product RC. Production
 remains at 19 migrations with Pre-D/D unapplied; Formal Admin remains paused,
 Web Admin Entry remains closed and PR #4 remains open/unmerged. Real-user MFA,
-commissioning, fresh backup, final 4A rerun, Migration D and Production release
+commissioning, the later pre-cutover backup/final 4A rerun, Migration D and Production release
 remain separately gated.
 
 P1-07C-4A8 completed hosted QA integration on `gqtchjrmpuxibxmurvfd` at

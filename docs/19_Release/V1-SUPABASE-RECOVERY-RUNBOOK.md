@@ -1,28 +1,32 @@
 # Fandom Harbor V1 Supabase Recovery Runbook
 
-状态：`READY FOR AUTHORIZED DRY RUN / RESTORE NOT RUN`
-日期：2026-07-25
+状态：`READY FOR AUTHORIZED ISOLATED DRY RUN / RESTORE NOT RUN`
+日期：2026-09-29
 
-## 最新恢复源（2026-07-25）
+## 最新恢复源（2026-09-29）
 
 当前最新、已验证的 Production 逻辑备份：
 
-- Backup ID：`fandom-harbor-production-2026-07-25_223850`
-- 创建时间：2026-07-25 22:38:50（Asia/Shanghai，UTC+08:00）
-- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/fandom-harbor-production-2026-07-25_223850`
-- Schema：`fandom-harbor-production-schema-2026-07-25_223850.sql`
-- Data：`fandom-harbor-production-data-2026-07-25_223850.sql`
-- Manifest：`backup-manifest.txt`
-- Schema / Data 顺序：先 Schema，验证对象与权限后再 Data。
-- Auth：不包含 Supabase Auth 身份、密码散列、Session、MFA 或 OAuth identity。
-- Storage：Product Owner 已确认当前 Bucket=0、实际文件对象=0；当前无需恢复对象，但备份本身仍不包含 Storage 对象。
+- Backup ID：`20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
+- 创建时间：2026-09-29 11:31:50（Asia/Shanghai，UTC+08:00）
+- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
+- Production baseline：`szfhngifsipsrxcpekti`、`ACTIVE_HEALTHY`、19/21 migrations、Pre-D/D absent
+- Business：`01_business_public_private.dump`（custom-format `public,private` Schema/Data）
+- Migration history：`02_migration_history.dump`（custom-format `supabase_migrations`）
+- Auth data：`03_auth_recovery.dump`（durable recovery subset only）
+- Auth reference：`04_auth_schema_reference.dump`（schema-only）
+- Inventory/verification：`00_baseline_inventory.tsv`、`07_post_backup_inventory.tsv`、
+  `inventory.json`、`MANIFEST.json`、`SHA256SUMS.txt`
+- Auth：durable users/identities/MFA/provider/SSO data subset is included;
+  Session、refresh token、challenge/flow state 与 managed Auth history 未包含，恢复后全部用户必须重新认证。
+- Storage：备份时 Bucket=0、实际对象=0；当前无需对象恢复，但 archive 不包含 Storage payload。
 - Restore drill：`NOT RUN`
 
 未来启用头像、封面、附件或其他文件上传后，必须增加独立 Storage 对象备份与恢复步骤。未经 Product Owner 批准，禁止把本备份直接恢复到 Production。
 
 ## 1. 使用范围
 
-本 Runbook 适用于 Production 数据误删、不可逆 Schema / Migration 事故、重大数据损坏或 Supabase 项目不可恢复时的受控恢复准备。它说明应用自有 `public,private` Schema 与数据逻辑备份的恢复路径，不代表已经完成恢复演练，也不覆盖 Supabase Auth 身份、Storage 实际对象或第三方平台配置。
+本 Runbook 适用于 Production 数据误删、不可逆 Schema / Migration 事故、重大数据损坏或 Supabase 项目不可恢复时的受控恢复准备。它说明 `public,private`、Migration history 与 durable Auth recovery subset 的逻辑恢复路径，不代表已经完成恢复演练，也不覆盖 transient Auth Session/token、Storage 实际对象、managed role password 或第三方平台配置。
 
 ## 2. 风险警告
 
@@ -63,18 +67,18 @@
 
 ## 6. 工具与恢复顺序
 
-使用与目标 PostgreSQL 主版本兼容的官方 `psql`；必要时使用与备份相同或经验证兼容的 Supabase CLI。Supabase 官方逻辑迁移说明见 [Restore a platform backup locally](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore)。
+使用与目标 PostgreSQL 主版本兼容的官方 `pg_restore`/`psql`。2026-09-29 archive 由 `pg_dump 18.6` 从 PostgreSQL `17.6` 创建；任何目标版本兼容性都必须先在隔离环境确认。Supabase 官方逻辑迁移说明见 [Restore a platform backup locally](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore)。
 
 推荐顺序：
 
 1. 创建隔离目标项目并确认连接只指向目标。
 2. 按审计清单准备所需 extensions 与平台级设置。
-3. 如果备份包含自定义数据库 roles，先由授权 DBA 审阅并恢复 roles；当前 2026-07-25 备份不含 roles，禁止臆造。
-4. 恢复 Schema SQL。
-5. 验证表、类型、函数、触发器、索引、约束、RLS policy 与 grants。
-6. 恢复 Data SQL。
-7. 执行序列值、外键、数据计数和应用权限验证。
-8. 单独处理 Auth 与 Storage，完成全量验收后才考虑切流。
+3. `05_roles_inventory.txt` 只供审阅；它不含 managed role password，也不是可盲目执行的 role restore 脚本。由授权 DBA 在隔离目标预建兼容 roles/settings。
+4. 先审阅 `pg_restore --list` 与目标差异，再恢复 `01_business_public_private.dump`。
+5. 验证表、类型、函数、触发器、索引、约束、RLS policy、grants、序列、外键与数据计数。
+6. 审阅并恢复 `02_migration_history.dump`；禁止同时运行会重复创建对象的 migrations。
+7. 只有在独立 Auth 恢复方案、版本兼容性与停写/重新认证计划获批后，才处理 `04_auth_schema_reference.dump` 与 `03_auth_recovery.dump`。
+8. 单独处理 Storage 与平台配置；完成全量验收后才考虑切流。
 
 示例仅展示安全形态，不能直接复制到 Production：
 
@@ -82,28 +86,35 @@
 # 由授权操作人在当前受控进程中安全注入；不要写入脚本或历史。
 export RESTORE_DATABASE_URL='<isolated-target-database-url>'
 
-psql "$RESTORE_DATABASE_URL" \
-  --set ON_ERROR_STOP=on \
-  --single-transaction \
-  --file '<absolute-path-to-schema.sql>'
+pg_restore --list '<absolute-path-to-01_business_public_private.dump>'
 
-psql "$RESTORE_DATABASE_URL" \
-  --set ON_ERROR_STOP=on \
+pg_restore \
+  --exit-on-error \
   --single-transaction \
-  --file '<absolute-path-to-data.sql>'
+  --dbname "$RESTORE_DATABASE_URL" \
+  '<absolute-path-to-01_business_public_private.dump>'
 
 unset RESTORE_DATABASE_URL
 ```
 
-Schema 和 Data 应分别使用事务与 `ON_ERROR_STOP`，便于在首个错误时中止。不要同时盲目运行会重复创建对象的 migrations 与 Schema dump；必须先决定由哪一个作为目标 Schema 的唯一来源，并由 Database Operator 审阅差异。
+每个 archive 必须分别使用 `--exit-on-error` 与 transaction，在首个错误时中止。不要同时盲目运行会重复创建对象的 migrations 与 business archive；必须先决定目标 Schema 的唯一来源，并由 Database Operator 审阅差异。上例只展示隔离目标的 business archive 形态，不授权恢复 Migration/Auth archive，更不授权指向 Production。
 
 ## 7. Auth 注意事项
 
-当前逻辑备份不包含 Supabase 管理的 `auth` Schema：
+当前逻辑备份包含 Auth schema reference 与以下 durable data recovery subset：
 
-- 恢复 `public.profiles`、Membership 或角色记录不会恢复登录身份、密码散列、MFA、Session、OAuth identity 或邮箱确认状态。
+- users、identities、instances 与 mfa_factors；
+- custom OAuth providers/clients/consents；
+- SSO/SAML/WebAuthn durable configuration/credential records；
+- MFA recovery code sets/codes 与 SCIM users/tokens。
+
+它明确不包含 transient 或 managed operational state：
+
+- Session、refresh token、flow/challenge、one-time token 与 managed Auth audit/migration history。
+- managed role password 与 Supabase Dashboard/provider Secret。
+- 恢复后所有用户必须重新认证；archive 存在不等于 Auth end-to-end restore 已验证。
 - 禁止直接手工编辑 Auth 表或伪造用户 ID。
-- 完整 Auth 恢复需要 Supabase 平台备份 / 克隆能力，或另行设计、审批并验证的 Auth 导出与重新供给方案。
+- Auth 恢复必须先核对目标 managed schema/version，再由单独设计、审批和验证的流程执行；当前只完成 archive structural verification。
 - 如果 Auth 无法恢复，Product Owner 必须批准受控用户重建、邀请重发或密码重置流程，并验证应用表外键与身份映射。
 
 在 Auth 策略确定前，不得把恢复环境开放给真实用户。
@@ -123,7 +134,7 @@ Storage 必须拆成两层处理：
 1. PostgreSQL `storage.buckets` / `storage.objects` 是元数据。
 2. bucket 中实际上传的头像、封面、附件或其他文件是对象本体。
 
-当前备份两层都不包含。Product Owner 已确认 2026-07-25 当前 Production Bucket=0、实际文件对象=0，因此当前没有对象需要恢复；这不改变逻辑备份的覆盖边界。即使未来数据库备份包含 Storage 元数据，也不代表实际对象已备份。启用头像、封面、附件或其他上传后，必须单独建立对象导出、对象清单、校验和、访问策略与恢复验证；参见 [Supabase Storage object download](https://supabase.com/docs/guides/storage/management/download-objects)。
+当前 2026-09-29 backup 不包含这两层。只读 inventory 确认 Bucket=0、实际对象=0，因此当前没有对象需要恢复；这不改变逻辑备份的覆盖边界。即使未来数据库备份包含 Storage 元数据，也不代表实际对象已备份。启用头像、封面、附件或其他上传后，必须单独建立对象导出、对象清单、校验和、访问策略与恢复验证；参见 [Supabase Storage object download](https://supabase.com/docs/guides/storage/management/download-objects)。
 
 ## 10. 恢复后验证
 
@@ -166,7 +177,7 @@ Storage 必须拆成两层处理：
 ## 13. 当前状态
 
 - Recovery Runbook：`DOCUMENTED`
-- Latest verified backup：`fandom-harbor-production-2026-07-25_223850`
+- Latest verified backup：`20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
 - Isolated restore dry run：`NOT RUN`
 - Production restore：`NOT RUN`
 - Auth recovery validation：`NOT RUN`
