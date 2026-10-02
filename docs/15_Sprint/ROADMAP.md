@@ -1,9 +1,21 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Production Pre-D ready; Migration D blocked
+Status: Active — Admin P1-07C Production Pre-D applied and accepted; Migration D blocked
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-09-29）
+## Current Admin P1-07C gate（2026-10-02）
+
+P1-07C-4A10B applied exact accepted Pre-D only to Production
+`szfhngifsipsrxcpekti`, moving the live migration baseline from 19 to exactly 20.
+Migration D remains unapplied. Catalog, persistence, shared-ledger,
+constraint/index, RLS/grant, helper/RPC, fixed-search-path and runtime-guard
+acceptance passed; Reader/Author/non-actor denial and Search/Detail/Audit read
+regression passed. [4A10B evidence](Admin_P1/P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
+is the current authority. Identities, Roles and MFA are unchanged; the active
+Super Admin count remains one. Formal Admin remains paused, Web Admin Entry
+remains closed and no deployment occurred. The next gate is only
+`4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`; D and the final
+Pre-Cutover Backup remain separately blocked.
 
 P1-07C-4A10A verified Production `szfhngifsipsrxcpekti` remains
 `ACTIVE_HEALTHY` at exactly 19 migrations with Pre-D and D unapplied. The
@@ -15,8 +27,8 @@ archive offline parsing, permissions and pre/post inventory equality. Restore
 was not run. [4A10A evidence](Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
 is the authority. No Production data/Auth/role/Migration mutation occurred.
 Formal Admin remains paused and Web Admin Entry remains closed. The only next
-authorization boundary is `PRODUCTION PRE-D MIGRATION 19 → 20`; Migration D,
-real MFA and commissioning remain separately blocked.
+authorization boundary was `PRODUCTION PRE-D MIGRATION 19 → 20`; 4A10B has now
+completed that boundary, so this paragraph is historical.
 
 P1-07C-4A9 froze canonical Product RC
 `f42217d913d44517b53935a68488100610bdff0f` and accepted protected Preview
@@ -40,7 +52,7 @@ are not applied. PR #4 remains open/unmerged, Formal Admin paused and Web Admin
 Entry closed. Hosted QA PASS does not authorize real-user MFA/commissioning,
 Preview, Production migration, fresh backup or D.
 
-Production is `ACTIVE_HEALTHY` at Migration `19/20`; P1 A/B/C are applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
+Production is `ACTIVE_HEALTHY` at Migration `20/21`; Pre-D is applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
 
 Option B requires Supabase TOTP/AAL2 plus fresh `amr`, original Session and one-time operation-bound intent. P1-07C-4A5 proved the exact `supabase-js`/`auth-js`/SSR stack preserves `session_id` across TOTP verify, refresh and reload while replacing tokens, retains trusted TOTP AMR age, and exposes the claims plus live `auth.sessions` validation to database code. A shared request-lock concurrency probe also preserved one global namespace.
 
@@ -64,13 +76,14 @@ The selected legacy-bypass solution remains a new compatibility Migration ordere
 
 Both controlled accounts must satisfy role + credential control + primary/backup TOTP + independent AAL2 operability. The current active-Super-Admin count remains one; a role row alone cannot close the gate. After compliant grant and independent `akumie` smoke, create a fresh current-state Pre-Cutover Backup, rerun P1-07C-4A and only then reconsider D.
 
-The 2026-09-16 backup remains historical evidence, not the final current-state
-backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains
+The 2026-09-29 safety backup is the verified pre-Pre-D recovery point, not the
+final post-commissioning Pre-Cutover Backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains
 `paused=true`, and Web Admin Entry remains CLOSED. The earlier Pre-D local PASS
 did not authorize hosted QA; the later A8 and 4A9 gates now supersede that
 historical boundary. The next boundary requires separate Product Owner
-authorization for real-user enrollment/commissioning, a fresh current-state
-backup, the final 4A rerun, Migration D and Production release.
+authorization for `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`.
+After that gate, a fresh current-state backup and final 4A rerun remain required
+before Migration D or Production release can be reconsidered.
 
 P1-08 Unified Account Navigation is a future authorized product requirement: one account may expose reading, Author Studio and Admin navigation based on live capabilities, and Admin returns to Web without logout. Backend authorization remains independent and Web Admin Entry stays closed until an explicit release authorization.
 

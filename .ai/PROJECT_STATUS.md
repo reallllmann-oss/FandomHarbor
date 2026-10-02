@@ -1,5 +1,21 @@
 # Project Status
 
+## Admin P1-07C-4A10B Production Pre-D Migration（2026-10-02）
+
+| Item             | Current authority                                                                                        |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                    |
+| Production       | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exact 20 migrations; Pre-D applied; D absent                   |
+| Schema/ACL       | PASS — persistence, ledger integration, constraints/indexes, RLS/grants, helpers/RPCs and runtime guards |
+| Identity safety  | unchanged; both real identities have zero TOTP; one active Super Admin remains                           |
+| Ordinary read    | PASS — Search, Detail and Audit callable in read-only transactions                                       |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; no deployment, real MFA, commissioning or Role change       |
+| Next gate        | `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING` only                                              |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md`.
+Migration D and the final Pre-Cutover Backup remain separately blocked.
+
 ## Admin P1-07C-4A10A Production Pre-D Readiness（2026-09-29）
 
 | Item             | Current authority                                                                                            |

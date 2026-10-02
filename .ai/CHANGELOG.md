@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-10-02 — Admin P1-07C-4A10B Production Pre-D Migration
+
+- Applied exact accepted Pre-D
+  `20260818120000_admin_p1_option_b_elevated_access_pred.sql` only to Production
+  `szfhngifsipsrxcpekti`, moving migration history from 19 to 20 while keeping
+  Migration D unapplied.
+- Passed live catalog, constraint/index, shared-ledger, RLS/grant, private helper,
+  public RPC, `SECURITY DEFINER`/fixed-search-path and runtime guard acceptance.
+  Reader, Author and non-actor denial probes passed; service-role bypass remains
+  absent.
+- Confirmed identities, Roles and MFA unchanged: `Phase2RemoteInviter` remains
+  the sole active Super Admin with `author + super_admin`; `akumie` remains an
+  active member without a Role; both still have zero TOTP factors.
+- Passed non-destructive Search/Detail/Audit regression. No business-data, Auth,
+  Role, MFA, commissioning, D, deployment, Admin resume or Web-entry mutation
+  occurred. Product files remain unchanged; this closure changes docs only.
+
 ## 2026-09-29 — Admin P1-07C-4A10A Production Pre-D Readiness
 
 - Verified the exact Production project `szfhngifsipsrxcpekti` is

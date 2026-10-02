@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C Production 3/4 / PRE-D READY + SAFETY BACKUP VERIFIED / MIGRATION D BLOCKED`
+状态：`P1-07C Production 3/4 / PRE-D APPLIED + ACCEPTED / MIGRATION D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -41,6 +41,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A8 Option B Hosted QA Integration Acceptance](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
 - [P1-07C-4A9 Option B Protected Preview Acceptance](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)
 - [P1-07C-4A10A Production Pre-D Readiness and Safety Backup](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
+- [P1-07C-4A10B Production Pre-D Migration Acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -58,7 +59,20 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-09-29）
+## 当前 P1-07C 权威状态（2026-10-02）
+
+- P1-07C-4A10B 已在精确 Production `szfhngifsipsrxcpekti` 仅应用 accepted
+  Pre-D `20260818120000_admin_p1_option_b_elevated_access_pred.sql`，Production
+  从 19 到达精确 20 migrations，Migration D 仍未应用。live catalog/ACL/RLS、
+  shared ledger、private helpers、public RPC、fixed `search_path`、
+  `SECURITY DEFINER` 与完整 runtime guard acceptance 均 PASS；Reader、Author、
+  non-actor denial 以及 Search/Detail/Audit read regression PASS。详见
+  [4A10B Production acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)。
+- `Phase2RemoteInviter` 与 `akumie` identity/Role/MFA 均未变化；active Super Admin
+  仍精确为 1。双方 TOTP 仍为 0，canonical policy 虽已按 migration 绑定，但路径
+  fail-closed。下一边界仅为
+  `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`；D 与 final
+  Pre-Cutover Backup 继续独立阻塞。
 
 - P1-07C-4A10A 已对真实 Production `szfhngifsipsrxcpekti` 完成最终 Pre-D
   只读 readiness：项目 `ACTIVE_HEALTHY`、精确 19 项 Migration、Pre-D/D 均未应用，
@@ -68,8 +82,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
   `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY` 的 checksum、custom archive
   离线解析、权限与前后 inventory 一致性均 PASS；restore 未执行。详见
   [4A10A readiness/backup 证据](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)。
-- 本结果不授权自动继续。下一边界仅为单独授权
-  `PRODUCTION PRE-D MIGRATION 19 → 20`；真实 MFA、commissioning 与 D 继续阻塞。
+- 4A10A 是执行前历史 Gate；其 `19 → 20` 下一边界已由 4A10B 完成，不能覆盖上方当前状态。
 
 - P1-07C-4A9 将 canonical Product RC 冻结为
   `f42217d913d44517b53935a68488100610bdff0f`，并接受 exact-SHA、`READY`、
@@ -79,10 +92,10 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
   传输中断后的精确恢复清理证明 active 4A9 synthetic artifacts 为 0。详见
   [4A9 验收证据](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)。
 - P1-07C-4A8 hosted QA `gqtchjrmpuxibxmurvfd` 为 `ACTIVE_HEALTHY`、`20/21`：仅 Pre-D 已应用，D 未应用。A6/A7 runtime→hosted exact retry、并发、签发后 target 状态冲突、运行时检查后 actor 撤权、ordinary pre-D 回归与零活跃合成夹具均 PASS；详见 [A8 验收证据](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)。修复提交 `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`；本次继续阶段没有产品代码修改。
-- Production 仍为 19 项 Migration；Pre-D 与 D 均未应用。4A9 PASS 不授权真实用户 TOTP/commissioning、fresh backup、final 4A rerun、Migration D、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。Docs closure commit 不替代 canonical Product RC。
+- 4A9 验收时 Production 为 19 项 Migration；当前已由 4A10B 更新为 20、仅 Pre-D applied。4A9 PASS 本身不授权真实用户 TOTP/commissioning、final backup、final 4A rerun、Migration D、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。Docs closure commit 不替代 canonical Product RC。
 
 - Frozen historical release baseline 为 `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。
-- Production `szfhngifsipsrxcpekti` 为 `ACTIVE_HEALTHY`；A/B/C 已应用，Migration `19/20`，D `20260819225318_admin_p1_identity_access_cutover.sql` 未应用。
+- Production `szfhngifsipsrxcpekti` 为 `ACTIVE_HEALTHY`；Pre-D 已应用，Migration `20/21`，D `20260819225318_admin_p1_identity_access_cutover.sql` 未应用。
 - Product Owner 要求 D 前存在两条独立控制且可实际使用的 active Super Admin 路径。当前 `Phase2RemoteInviter` 受控；第二目标 `akumie` 的账号控制与人工登录已验证。`Reader11` 不在目标范围。
 - [ADR-024](../../17_Architecture_Decisions/ADR-024.md) 接受 Option B，但只为 `grant_super_admin` commissioning 建立架构边界。AAL2 必须叠加 fresh TOTP AMR 与一次性、原 Session/操作/payload 绑定 intent；AAL2 alone 不授权写入。
 - P1-07C-4A5 已通过 exact JS/SSR stack 的 disposable local TOTP、Session、AMR、数据库 claims、request namespace concurrency 与 clean C→Pre-D→D 实证。Session ID 在 verify/refresh/reload 中稳定；fresh TOTP AMR 可由数据库使用可信时间验证；D 可保持原文件不变。
@@ -90,9 +103,9 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - P1-07C-4A7 已在正式 Pre-D Migration 中实现 private policy/intent、shared requestId namespace、live Session/policy revalidation、原子 expected-state、grant/Audit/ledger/consume 与 legacy elevated bypass closure，并将 A6 Port 接到 strict Supabase RPC adapter。完整 21-Migration clean chain、并发、失败回滚、ACL 与 synthetic E2E 仅在 local/disposable database 通过；Hosted QA 尚未执行。
 - 选择 Pre-D compatibility Pattern 1：未来单一原子 Migration 关闭 legacy elevated 分支、保留必要 ordinary legacy 行为并安装 exact new path。该 Migration 必须排序在 C 与 D 之间。
 - `Phase2RemoteInviter` 与 `akumie` 都必须先完成 primary/backup TOTP。`akumie` 只有以自己的 Session 完成 AAL2 与只读 Admin smoke 后才计入 two-Super-Admin gate。
-- 2026-09-16 backup 仍是历史证据，但不是 final current-state Pre-Cutover Backup；完成第二 Super Admin 后、D 前必须重新 Backup 并 rerun P1-07C-4A。
+- 2026-09-29 backup 是已验证的 Pre-D safety recovery point，但不是完成第二 Super Admin 后所需的 final current-state Pre-Cutover Backup；commissioning 后、D 前必须重新 Backup 并 rerun P1-07C-4A。
 - PR #4 继续 OPEN / UNMERGED；Formal Admin Production `paused=true`；Web Admin Entry `CLOSED`。A6 没有 SQL、Migration、Auth 配置、UI、hosted QA 或 Production 写入。
-- 下一 Gate 必须由 Product Owner 单独授权；真实用户 MFA、受保护 Preview、fresh backup、P1-07C-4A rerun 与 Migration D 仍各自受控。以下 A7 段落描述其历史时点，不能覆盖上方 A8 Hosted PASS 状态。
+- 下一 Gate 必须由 Product Owner 单独授权：`4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`。Final backup、P1-07C-4A rerun 与 Migration D 仍各自受控。以下 A7 段落描述其历史时点，不能覆盖上方当前 Production 状态。
 
 P1-08 Unified Account Navigation 已记录为未来产品需求：同一账号可按 live capabilities 同时展示阅读、Author Studio 与管理后台入口，Admin 提供“返回主站”；当前不实现，Web Admin Entry 继续关闭。
 

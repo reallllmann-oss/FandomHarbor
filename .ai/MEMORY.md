@@ -1,5 +1,21 @@
 # Project Memory
 
+- 2026-10-02: P1-07C-4A10B applied exact accepted Pre-D
+  `20260818120000_admin_p1_option_b_elevated_access_pred.sql` only to Production
+  `szfhngifsipsrxcpekti`, reaching 20 migrations while D remains absent. The
+  2026-09-29 safety backup was reverified before execution. Live post-checks
+  passed for policy/intent persistence, shared request ledger, constraints,
+  indexes, RLS, grants, private helpers, four public elevated RPCs, fixed
+  `search_path`, `SECURITY DEFINER` and exact actor/target + dual-TOTP + AAL2 +
+  live Session/fresh-TOTP guards. Reader, Author and non-actor denial plus
+  Search/Detail/Audit read regression passed. The canonical policy is bound but
+  the path remains fail-closed because both real identities still have zero
+  TOTP. `Phase2RemoteInviter` remains the sole active Super Admin;
+  `akumie` remains active with no Role. No business data, Auth, Role, MFA,
+  commissioning, deployment, Admin resume or Web-entry mutation occurred. The
+  next gate is only `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`; D
+  and the final Pre-Cutover Backup remain separately blocked.
+
 - 2026-09-29: P1-07C-4A10A passed the final read-only Production Pre-D
   readiness gate on `szfhngifsipsrxcpekti`: `ACTIVE_HEALTHY`, 19 migrations,
   Pre-D/D absent and required identity/governance/Audit/Auth/ledger prerequisites
