@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-10: P1-07C-4A10D closed Option B redundancy and the fresh
+  post-commissioning Pre-Cutover Backup on Production `szfhngifsipsrxcpekti`.
+  Production remains at exactly 20 migrations with Pre-D applied and D absent.
+  `Phase2RemoteInviter` retains `author + super_admin`, `akumie` retains
+  `super_admin`, both have two verified TOTP factors, and they are the only two
+  active Super Admins. Grant/Audit/Ledger/Consume remain `1/1/1/1`, with zero
+  unconsumed intent and no duplicate mutation. Attempt 1
+  `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` is retained as
+  `INVALID / INCOMPLETE` after local `jq` absence. After authorized Homebrew
+  installation of `jq-1.8.2`, exactly one rerun created verified backup
+  `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`; checksums, four archive
+  lists/offline parses, manifest/inventory, pre/post equality, sensitive scan and
+  `0700/0600` permissions pass. Raw MFA factors, Sessions, refresh tokens and
+  recovery codes are excluded; sanitized MFA metadata only is retained. Restore
+  was not run. Product code is unchanged. Formal Admin/Web live check was
+  unavailable and state was unchanged by this task; paused/closed repository
+  authority remains. The only next boundary is `P1-07C-4A FINAL RERUN`; D remains
+  blocked.
+
 - 2026-10-02: P1-07C-4A10B applied exact accepted Pre-D
   `20260818120000_admin_p1_option_b_elevated_access_pred.sql` only to Production
   `szfhngifsipsrxcpekti`, reaching 20 migrations while D remains absent. The

@@ -1,5 +1,23 @@
 # Project Status
 
+## Admin P1-07C-4A10D Option B Redundancy and Final Backup（2026-10-10）
+
+| Item             | Current authority                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                      |
+| Production       | `szfhngifsipsrxcpekti`; exact 20 migrations; Pre-D applied; D absent                                       |
+| Redundancy       | PASS — `Phase2RemoteInviter` and `akumie` are the only two active Super Admins; each has two verified TOTP |
+| Commissioning    | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`; no duplicate mutation                         |
+| Final backup     | `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`; checksums/offline parse/inventory/permissions PASS   |
+| Failed evidence  | `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING`; retained `INVALID / INCOMPLETE` after missing `jq`   |
+| Release boundary | Formal Admin/Web live check unavailable; state unchanged by task; paused/closed authority retained         |
+| Next gate        | `P1-07C-4A FINAL RERUN` only; Migration D remains blocked                                                  |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md`.
+No restore, Production business mutation, deployment, Admin resume or Web-entry
+opening occurred.
+
 ## Admin P1-07C-4A10B Production Pre-D Migration（2026-10-02）
 
 | Item             | Current authority                                                                                        |

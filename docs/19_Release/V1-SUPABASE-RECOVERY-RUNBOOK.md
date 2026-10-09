@@ -1,24 +1,25 @@
 # Fandom Harbor V1 Supabase Recovery Runbook
 
 状态：`READY FOR AUTHORIZED ISOLATED DRY RUN / RESTORE NOT RUN`
-日期：2026-09-29
+日期：2026-10-10
 
-## 最新恢复源（2026-09-29）
+## 最新恢复源（2026-10-10）
 
 当前最新、已验证的 Production 逻辑备份：
 
-- Backup ID：`20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
-- 创建时间：2026-09-29 11:31:50（Asia/Shanghai，UTC+08:00）
-- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
-- Production baseline：`szfhngifsipsrxcpekti`、`ACTIVE_HEALTHY`、19/21 migrations、Pre-D/D absent
+- Backup ID：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
+- 创建时间：2026-10-10 00:39:42（Asia/Shanghai，UTC+08:00）
+- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
+- Production baseline：`szfhngifsipsrxcpekti`、20/21 migrations、Pre-D applied、D absent、two active Super Admins
 - Business：`01_business_public_private.dump`（custom-format `public,private` Schema/Data）
 - Migration history：`02_migration_history.dump`（custom-format `supabase_migrations`）
 - Auth data：`03_auth_recovery.dump`（durable recovery subset only）
 - Auth reference：`04_auth_schema_reference.dump`（schema-only）
 - Inventory/verification：`00_baseline_inventory.tsv`、`07_post_backup_inventory.tsv`、
   `inventory.json`、`MANIFEST.json`、`SHA256SUMS.txt`
-- Auth：durable users/identities/MFA/provider/SSO data subset is included;
-  Session、refresh token、challenge/flow state 与 managed Auth history 未包含，恢复后全部用户必须重新认证。
+- Auth：durable users/identities/provider/SSO data subset 与 sanitized MFA
+  metadata included；raw MFA factors、MFA recovery codes、Session、refresh token、
+  challenge/flow state 与 managed Auth history 未包含，恢复后全部用户必须重新认证。
 - Storage：备份时 Bucket=0、实际对象=0；当前无需对象恢复，但 archive 不包含 Storage payload。
 - Restore drill：`NOT RUN`
 
@@ -67,7 +68,7 @@
 
 ## 6. 工具与恢复顺序
 
-使用与目标 PostgreSQL 主版本兼容的官方 `pg_restore`/`psql`。2026-09-29 archive 由 `pg_dump 18.6` 从 PostgreSQL `17.6` 创建；任何目标版本兼容性都必须先在隔离环境确认。Supabase 官方逻辑迁移说明见 [Restore a platform backup locally](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore)。
+使用与目标 PostgreSQL 主版本兼容的官方 `pg_restore`/`psql`。2026-10-10 archive 由 `pg_dump 18.6` 从 PostgreSQL `17.6` 创建；任何目标版本兼容性都必须先在隔离环境确认。Supabase 官方逻辑迁移说明见 [Restore a platform backup locally](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore)。
 
 推荐顺序：
 
@@ -103,13 +104,15 @@ unset RESTORE_DATABASE_URL
 
 当前逻辑备份包含 Auth schema reference 与以下 durable data recovery subset：
 
-- users、identities、instances 与 mfa_factors；
+- users、identities 与 instances；
 - custom OAuth providers/clients/consents；
 - SSO/SAML/WebAuthn durable configuration/credential records；
-- MFA recovery code sets/codes 与 SCIM users/tokens。
+- SCIM users/tokens；
+- 仅含 factor type/status/friendly name/timestamps 的 sanitized MFA metadata。
 
 它明确不包含 transient 或 managed operational state：
 
+- raw `auth.mfa_factors`、TOTP secret、QR、OTP 与 MFA recovery codes。
 - Session、refresh token、flow/challenge、one-time token 与 managed Auth audit/migration history。
 - managed role password 与 Supabase Dashboard/provider Secret。
 - 恢复后所有用户必须重新认证；archive 存在不等于 Auth end-to-end restore 已验证。
@@ -134,7 +137,7 @@ Storage 必须拆成两层处理：
 1. PostgreSQL `storage.buckets` / `storage.objects` 是元数据。
 2. bucket 中实际上传的头像、封面、附件或其他文件是对象本体。
 
-当前 2026-09-29 backup 不包含这两层。只读 inventory 确认 Bucket=0、实际对象=0，因此当前没有对象需要恢复；这不改变逻辑备份的覆盖边界。即使未来数据库备份包含 Storage 元数据，也不代表实际对象已备份。启用头像、封面、附件或其他上传后，必须单独建立对象导出、对象清单、校验和、访问策略与恢复验证；参见 [Supabase Storage object download](https://supabase.com/docs/guides/storage/management/download-objects)。
+当前 2026-10-10 backup 不包含这两层。只读 inventory 确认 Bucket=0、实际对象=0，因此当前没有对象需要恢复；这不改变逻辑备份的覆盖边界。即使未来数据库备份包含 Storage 元数据，也不代表实际对象已备份。启用头像、封面、附件或其他上传后，必须单独建立对象导出、对象清单、校验和、访问策略与恢复验证；参见 [Supabase Storage object download](https://supabase.com/docs/guides/storage/management/download-objects)。
 
 ## 10. 恢复后验证
 
@@ -177,7 +180,7 @@ Storage 必须拆成两层处理：
 ## 13. 当前状态
 
 - Recovery Runbook：`DOCUMENTED`
-- Latest verified backup：`20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
+- Latest verified backup：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
 - Isolated restore dry run：`NOT RUN`
 - Production restore：`NOT RUN`
 - Auth recovery validation：`NOT RUN`

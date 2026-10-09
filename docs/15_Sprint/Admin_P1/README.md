@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C Production 3/4 / PRE-D APPLIED + ACCEPTED / MIGRATION D BLOCKED`
+状态：`P1-07C 4A10D PASS / REDUNDANCY + FINAL BACKUP VERIFIED / MIGRATION D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -20,7 +20,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
 | P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
-| P1-07  | Production Release Review                    | In progress — C 3/4; D blocked         |
+| P1-07  | Production Release Review                    | In progress — 4A10D PASS; D blocked    |
 
 权威合同：
 
@@ -42,6 +42,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A9 Option B Protected Preview Acceptance](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)
 - [P1-07C-4A10A Production Pre-D Readiness and Safety Backup](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
 - [P1-07C-4A10B Production Pre-D Migration Acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
+- [P1-07C-4A10D Option B Redundancy and Final Backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -59,7 +60,23 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-10-02）
+## 当前 P1-07C 权威状态（2026-10-10）
+
+- P1-07C-4A10D 已确认 Production `szfhngifsipsrxcpekti` 保持精确 20 项
+  migrations、Pre-D applied、D 未应用。`Phase2RemoteInviter` 与 `akumie` 是仅有的
+  两名 active Super Admin，双方各有两个 verified TOTP；commissioning
+  Grant/Audit/Ledger/Consume 为 `1/1/1/1`，unconsumed intent 为 0。
+- Attempt 1 `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` 因本机缺少
+  `jq` 保留为 `INVALID / INCOMPLETE`。安装授权的 Homebrew `jq-1.8.2` 后只执行
+  一次新 rerun；`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` 的
+  manifest、inventory、checksums、四个 archive list/offline parse、敏感扫描与
+  `0700/0600` 权限全部 PASS。restore 未执行。
+- 完整证据见
+  [4A10D redundancy/final backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)。
+  Formal Admin/Web live check 本轮不可用，准确记录为
+  `LIVE CHECK UNAVAILABLE / STATE UNCHANGED BY THIS TASK`；repository authority
+  仍为 Admin `paused=true`、Web Admin Entry closed。下一边界仅为
+  `P1-07C-4A FINAL RERUN`；Migration D 继续阻塞。
 
 - P1-07C-4A10B 已在精确 Production `szfhngifsipsrxcpekti` 仅应用 accepted
   Pre-D `20260818120000_admin_p1_option_b_elevated_access_pred.sql`，Production

@@ -1,34 +1,44 @@
 # Fandom Harbor V1 Supabase Production Backup Evidence
 
-状态：`PASS / 2026-09-29 PRODUCTION PRE-D SAFETY BACKUP VERIFIED / RESTORE NOT RUN`
-最新审计日期：2026-09-29（Asia/Shanghai）
-当前 Mission：Admin P1-07C-4A10A Production Pre-D Readiness and Safety Backup
+状态：`PASS / 2026-10-10 POST-COMMISSIONING PRE-CUTOVER BACKUP VERIFIED / RESTORE NOT RUN`
+最新审计日期：2026-10-10（Asia/Shanghai）
+当前 Mission：Admin P1-07C-4A10D Option B Redundancy and Final Pre-Cutover Backup
 
-## 最新已验证恢复源（2026-09-29）
+## 最新已验证恢复源（2026-10-10）
 
-- Backup ID：`20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
-- Production：`fandom-harbor` / `szfhngifsipsrxcpekti` / `ACTIVE_HEALTHY`
-- 创建时间：`2026-09-29 11:31:50+08:00`
-- Migration baseline：`19/21`；Pre-D 与 Migration D 均未应用
-- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`
+- Backup ID：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
+- Production：`fandom-harbor` / `szfhngifsipsrxcpekti`
+- 创建时间：`2026-10-10T00:39:42+0800` / `2026-10-09T16:39:42Z`
+- Migration baseline：`20/21`；Pre-D 已应用；Migration D 未应用
+- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
 - 范围：`public,private` 业务 Schema/Data、`supabase_migrations`、durable Auth
-  recovery subset、Auth schema reference、role/catalog/inventory evidence
+  recovery subset、sanitized MFA metadata、Auth schema reference、role/catalog/inventory evidence
 - 验证：全量 `SHA256SUMS.txt`、四个 custom archive 的 `pg_restore --list`
   与离线 parse、`0700/0600`、pre/post catalog 与 durable row count 一致性均 PASS
-- 限制：restore drill 未执行；Session/refresh token/challenge 等 transient Auth
-  state 未备份；managed role password 未导出；四个 archive 不声明共享同一 snapshot
+- 状态：两名 active Super Admin；双方各两个 verified TOTP；Grant/Audit/Ledger/Consume
+  `1/1/1/1`；unconsumed intent `0`
+- 限制：restore drill 未执行；raw MFA factors、MFA recovery codes、Session、refresh
+  token/challenge 等 transient Auth state 未备份；managed role password 未导出；
+  四个 archive 不声明共享同一 snapshot
 
 Primary archives：
 
 | 文件                              |  字节数 | SHA-256                                                            |
 | --------------------------------- | ------: | ------------------------------------------------------------------ |
-| `01_business_public_private.dump` | 325,994 | `dd8a220e429b65cd8dd148f01c7cfc2b2a7f7adeef4650ee91e2ab72aaa6e16d` |
-| `02_migration_history.dump`       |  24,358 | `979a6d3869e9feb47ea4fb029fc0a7ebe4f408814cb9782be637811ec81158c3` |
-| `03_auth_recovery.dump`           |  20,445 | `e91c8c001401258650fcf693347990939d569ceb22f0f30ddbbb3b376ac9965c` |
-| `04_auth_schema_reference.dump`   | 102,026 | `3b154d083c4e7191cfc82979d428ce5b24a7b9dc85b052ce36c1eb1417a32a9f` |
+| `01_business_public_private.dump` | 379,006 | `92e188e4bb015f44ddf7847c6e888534a4cf20f5352bdec0fc0d917be6c8a614` |
+| `02_migration_history.dump`       |  30,350 | `eeec872a4b339b7f219b704d37efe96086f937eb7457c4f797652ce70086e233` |
+| `03_auth_recovery.dump`           |  19,403 | `fcb7bbd457911da94804d6e6c26bd5dcde7ede15175eee911131a25489a93837` |
+| `04_auth_schema_reference.dump`   | 102,026 | `db6bd4709de52ad4ced871d4dffe067d089e0f8a943263516563c94ae5f2d7c2` |
 
 完整 gate 与安全边界见
-[`P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md`](../15_Sprint/Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)。
+[`P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md`](../15_Sprint/Admin_P1/P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)。
+
+失败的 Attempt 1
+`20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` 因本机缺少 `jq`
+以 exit `127` 结束，保留为 `INVALID / INCOMPLETE` evidence。其
+`inventory.json` 为 0 bytes，且没有 manifest、checksums 或 integrity record；
+不得恢复、补写或伪装为有效备份。
+
 以下 2026-07-25 章节保留为历史 Release/PDR-02 证据，不能覆盖上述最新恢复源。
 
 ## 1. 当前结论

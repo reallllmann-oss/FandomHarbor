@@ -1,9 +1,23 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Production Pre-D applied and accepted; Migration D blocked
+Status: Active — Admin P1-07C Option B redundancy and final backup verified; Migration D blocked
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-10-02）
+## Current Admin P1-07C gate（2026-10-10）
+
+P1-07C-4A10D certified the post-commissioning Production state at exactly 20
+migrations with Pre-D applied and D absent. `Phase2RemoteInviter` and `akumie`
+are the only two active Super Admins, each with two verified TOTP factors;
+Grant/Audit/Ledger/Consume remain `1/1/1/1` and unconsumed intent is zero. The
+first backup attempt is retained as invalid evidence after local `jq` failure.
+The single authorized rerun produced
+`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`, whose manifest,
+inventory, checksums, archive lists/offline parses, sensitive scan and
+permissions all pass. [4A10D evidence](Admin_P1/P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
+is current authority. No restore or Production business mutation occurred.
+Formal Admin/Web live check was unavailable and state was unchanged by this
+task; paused/closed repository authority remains. The next gate is only
+`P1-07C-4A FINAL RERUN`; Migration D remains blocked.
 
 P1-07C-4A10B applied exact accepted Pre-D only to Production
 `szfhngifsipsrxcpekti`, moving the live migration baseline from 19 to exactly 20.

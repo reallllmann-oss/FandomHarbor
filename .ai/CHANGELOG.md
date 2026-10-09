@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-10-10 — Admin P1-07C-4A10D Option B Redundancy and Final Backup
+
+- Certified exactly two active Production Super Admins: `Phase2RemoteInviter`
+  with `author + super_admin` and `akumie` with `super_admin`; each has two
+  verified TOTP factors. Commissioning Grant/Audit/Ledger/Consume counts remain
+  `1/1/1/1`, with zero unconsumed intent, no third Super Admin and no duplicate
+  mutation.
+- Preserved failed backup attempt
+  `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` as
+  `INVALID / INCOMPLETE` after missing local `jq`; it was not completed,
+  overwritten or deleted.
+- Installed the authorized local Homebrew dependency `jq-1.8.2`, then ran exactly
+  one new backup. `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` passed
+  manifest/inventory validation, complete checksums, four archive lists and
+  offline parses, pre/post inventory equality, sensitive scan and secure
+  `0700/0600` permissions.
+- Production remains at 20 migrations with Pre-D applied and Migration D absent.
+  No restore, Production business mutation, product-code change, deployment,
+  Admin resume or Web-entry opening occurred. This closure changes docs only.
+
 ## 2026-10-02 — Admin P1-07C-4A10B Production Pre-D Migration
 
 - Applied exact accepted Pre-D
