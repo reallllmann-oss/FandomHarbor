@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-10: P1-07C-4A FINAL RERUN passed on unchanged canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f`. RC-to-closure drift is docs only.
+  Migration D remains byte-identical at
+  `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`,
+  directly follows unchanged Pre-D, and was not executed. Live Production
+  `szfhngifsipsrxcpekti` is `ACTIVE_HEALTHY` at exactly 20 migrations with
+  Pre-D applied and D absent. `Phase2RemoteInviter` and `akumie` remain the only
+  two active Super Admins with two verified TOTP each; commissioning remains
+  Grant/Audit/Ledger/Consume `1/1/1/1`, unconsumed intent 0. Existing backup
+  `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` re-passed manifest,
+  inventory, checksum, archive-list, integrity and permission checks. Eight
+  targeted test files / 186 tests passed; A5/A7 heavy compatibility evidence was
+  reused with current deterministic hash/order/contract checks. Option B
+  security boundary remains PASS. Production post-cleanup retry remains
+  `NOT REPRODUCIBLE AFTER AUTHORIZED SESSION DISPOSAL`, with A8 canonical retry
+  evidence reused. Formal Admin/Web live channel was unavailable and state was
+  unchanged by this task; paused/closed authority remains. The next boundary is
+  only `MIGRATION D EXECUTION AUTHORIZATION`.
+
 - 2026-10-10: P1-07C-4A10D closed Option B redundancy and the fresh
   post-commissioning Pre-Cutover Backup on Production `szfhngifsipsrxcpekti`.
   Production remains at exactly 20 migrations with Pre-D applied and D absent.

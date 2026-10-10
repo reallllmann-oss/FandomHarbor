@@ -1,9 +1,22 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Option B redundancy and final backup verified; Migration D blocked
+Status: Active — Admin P1-07C-4A final rerun PASS; Migration D authorization is next and D remains blocked
 Roadmap type: Product Phase Roadmap
 
 ## Current Admin P1-07C gate（2026-10-10）
+
+P1-07C-4A FINAL RERUN passed on canonical Product RC
+`f42217d913d44517b53935a68488100610bdff0f`. Product code drift is NO;
+Migration D retains exact accepted SHA, directly follows Pre-D and was not
+executed. Production is `ACTIVE_HEALTHY` at 20 migrations with D absent,
+exactly two active Super Admins, two verified TOTP factors each, commissioning
+`1/1/1/1`, zero unconsumed intent and no third Super Admin. The fresh backup
+revalidation and 8-file/186-test targeted regression passed. Reused A5/A7 heavy
+evidence plus current hashes/order/contracts keep Pre-D → D compatibility and
+the Option B security boundary PASS. [Final rerun evidence](Admin_P1/P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
+is current authority. Formal Admin/Web live check was unavailable and state was
+unchanged by this task; paused/closed repository authority remains. The only
+next boundary is `MIGRATION D EXECUTION AUTHORIZATION`; D remains blocked.
 
 P1-07C-4A10D certified the post-commissioning Production state at exactly 20
 migrations with Pre-D applied and D absent. `Phase2RemoteInviter` and `akumie`

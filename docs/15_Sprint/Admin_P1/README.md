@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C 4A10D PASS / REDUNDANCY + FINAL BACKUP VERIFIED / MIGRATION D BLOCKED`
+状态：`P1-07C-4A FINAL RERUN PASS / SAFE TO REQUEST D AUTHORIZATION / D BLOCKED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -20,7 +20,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
 | P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
-| P1-07  | Production Release Review                    | In progress — 4A10D PASS; D blocked    |
+| P1-07  | Production Release Review                    | Final rerun PASS; D authorization next |
 
 权威合同：
 
@@ -43,6 +43,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A10A Production Pre-D Readiness and Safety Backup](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
 - [P1-07C-4A10B Production Pre-D Migration Acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
 - [P1-07C-4A10D Option B Redundancy and Final Backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
+- [P1-07C-4A Final Pre-Cutover Rerun Acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -61,6 +62,20 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
 ## 当前 P1-07C 权威状态（2026-10-10）
+
+- P1-07C-4A FINAL RERUN 已在 canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f` 与真实 Production Pre-D 状态上
+  PASS。RC 到 closure 仅 docs/evidence drift；Migration D SHA 精确匹配、直接
+  跟随 Pre-D 且未执行。Production 保持 `ACTIVE_HEALTHY`、20 migrations、双
+  Super Admin、双方 TOTP 2、commissioning `1/1/1/1`、unconsumed 0。
+- 现有 final backup 全量 metadata/checksum/archive-list/inventory/integrity/
+  permission revalidation PASS。8 个 targeted files、186 tests PASS；重用 A5/A7
+  heavy evidence 并完成当前 deterministic compatibility/static gate，得到
+  `PRE-D → D COMPATIBILITY = PASS` 与 `OPTION B SECURITY BOUNDARY = PASS`。
+- 完整证据见
+  [4A Final Rerun acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)。下一边界仅为
+  `MIGRATION D EXECUTION AUTHORIZATION`。当前 PASS 不是 D 执行授权；D、部署、
+  Admin resume、Web Admin Entry 与 PR merge 仍被阻塞。
 
 - P1-07C-4A10D 已确认 Production `szfhngifsipsrxcpekti` 保持精确 20 项
   migrations、Pre-D applied、D 未应用。`Phase2RemoteInviter` 与 `akumie` 是仅有的

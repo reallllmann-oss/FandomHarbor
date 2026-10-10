@@ -1,5 +1,25 @@
 # Project Status
 
+## Admin P1-07C-4A Final Pre-Cutover Rerun（2026-10-10）
+
+| Item               | Current authority                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; Product code drift `NO`                                  |
+| Migration D        | exact SHA `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`; not executed           |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; 20 migrations; Pre-D applied; D absent                     |
+| Redundancy         | exactly two active Super Admins; each has two verified TOTP; no third                                |
+| Commissioning      | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`                                          |
+| Recovery point     | `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`; reverified PASS                                |
+| Regression         | 8 targeted files / 186 tests PASS; Pre-D → D compatibility and Option B boundary PASS                |
+| Exposure           | Formal Admin/Web live check unavailable; state unchanged; repository authority remains paused/closed |
+| Final verdict      | `P1-07C-4A FINAL RERUN = PASS`                                                                       |
+| Next authorization | `MIGRATION D EXECUTION AUTHORIZATION` only                                                           |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md`.
+Migration D, deployment, Admin resume, Web entry opening and PR merge were not
+executed.
+
 ## Admin P1-07C-4A10D Option B Redundancy and Final Backup（2026-10-10）
 
 | Item             | Current authority                                                                                          |

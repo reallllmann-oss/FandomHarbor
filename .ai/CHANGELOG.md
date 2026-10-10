@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-10-10 — Admin P1-07C-4A Final Pre-Cutover Rerun
+
+- Proved canonical Product RC to current closure drift is docs/evidence only;
+  Product/runtime/Auth/database implementation is unchanged. Recomputed exact
+  Migration D SHA and direct Pre-D ordering without executing D.
+- Reconfirmed Production `ACTIVE_HEALTHY`, exactly 20 migrations, Pre-D applied,
+  D absent, exactly two active Super Admins with two TOTP each, commissioning
+  `1/1/1/1`, zero unconsumed intent and no third Super Admin.
+- Reverified the existing fresh backup's manifest, inventory, checksums, four
+  archive lists, integrity record and `0700/0600` permissions without creating a
+  backup or performing a restore.
+- Passed 8 targeted test files / 186 tests for trusted Auth, Option B runtime,
+  database contract/adapter, exact request/retry, ordinary governance and Admin
+  non-elevation. Current hashes/order/static contract plus reused A5/A7 evidence
+  keep Pre-D → D compatibility PASS.
+- Recorded `P1-07C-4A FINAL RERUN = PASS`. Migration D, Production deployment,
+  Admin resume, Web entry opening and PR merge were not executed. This closure
+  changes docs only.
+
 ## 2026-10-10 — Admin P1-07C-4A10D Option B Redundancy and Final Backup
 
 - Certified exactly two active Production Super Admins: `Phase2RemoteInviter`
