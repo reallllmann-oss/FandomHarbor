@@ -1,26 +1,26 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C-4A FINAL RERUN PASS / SAFE TO REQUEST D AUTHORIZATION / D BLOCKED`
+状态：`P1-07C MIGRATION D CUTOVER PASS / POST-CUTOVER RELEASE AUTHORIZATION REQUIRED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
 
 ## 执行切片
 
-| Step   | 目标                                         | 当前状态                               |
-| ------ | -------------------------------------------- | -------------------------------------- |
-| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                               |
-| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted  |
-| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed          |
-| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                   |
-| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                   |
-| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                   |
-| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified |
-| P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — P1-05 closed                |
-| P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
-| P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
-| P1-06C | Admin UI Polish                              | Complete — committed by closure        |
-| P1-07  | Production Release Review                    | Final rerun PASS; D authorization next |
+| Step   | 目标                                         | 当前状态                                    |
+| ------ | -------------------------------------------- | ------------------------------------------- |
+| P1-00  | 范围、安全合同、威胁模型、验收与文档漂移冻结 | Complete                                    |
+| P1-01  | Database / Permission / Reauth Design        | Complete — Option 3 boundary accepted       |
+| P1-02  | Backend Data / Domain / Repository / Service | Complete — P1-02A–G committed               |
+| P1-03  | Read-only Directory / Search / Detail        | Complete — committed                        |
+| P1-04A | Ordinary write RPC atomic cutover            | Complete — committed                        |
+| P1-04B | Controlled Membership / Author Role UI       | Complete — committed                        |
+| P1-05A | QA environment and safety preparation        | Pass — dedicated QA isolation verified      |
+| P1-05B | Local + Dedicated Non-Production Remote QA   | Complete — P1-05 closed                     |
+| P1-06A | Protected Admin Preview Provisioning         | Complete — committed                        |
+| P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS               |
+| P1-06C | Admin UI Polish                              | Complete — committed by closure             |
+| P1-07  | Production Release Review                    | Migration D cutover PASS; release gate next |
 
 权威合同：
 
@@ -44,6 +44,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A10B Production Pre-D Migration Acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
 - [P1-07C-4A10D Option B Redundancy and Final Backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
 - [P1-07C-4A Final Pre-Cutover Rerun Acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
+- [P1-07C Migration D Cutover Acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -62,6 +63,25 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
 ## 当前 P1-07C 权威状态（2026-10-10）
+
+- Product Owner-authorized Migration D 已在 Production
+  `szfhngifsipsrxcpekti` 精确执行一次：20 → 21 migrations，Pre-D 与 D 各存在
+  一次，D SHA 保持
+  `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`，
+  Production 仍为 `ACTIVE_HEALTHY`。
+- Post-D catalog/RLS/grant acceptance PASS：legacy `0/12`、ordinary v2
+  `3/12`、read `3/12`、private `0/36`；commissioning 与双 Super Admin 状态
+  保持 `1/1/1/1`、unconsumed 0、TOTP 2+2、third Super Admin 0。最小 read smoke、
+  denial probe 与 95 个 targeted tests PASS。
+- Fresh Post-Cutover Backup
+  `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER` 的 manifest/inventory、
+  checksums、四个 archive list/offline parse、敏感扫描和 `0700/0600` 权限 PASS；
+  D 前 backup 永久保留。完整证据见
+  [Migration D cutover acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)。
+- Product code 与 Production deployment 未变。Formal Admin/Web live check 不可用，
+  准确状态为 `LIVE CHECK UNAVAILABLE / STATE UNCHANGED BY THIS TASK`；repository
+  authority 仍为 `paused=true` / `disabled / closed`。下一边界仅为 Product Owner
+  post-cutover release authorization；不得自动 deploy、resume、open entry 或 merge。
 
 - P1-07C-4A FINAL RERUN 已在 canonical Product RC
   `f42217d913d44517b53935a68488100610bdff0f` 与真实 Production Pre-D 状态上

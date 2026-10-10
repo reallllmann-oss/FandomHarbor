@@ -1,9 +1,25 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C-4A final rerun PASS; Migration D authorization is next and D remains blocked
+Status: Active — Admin P1-07C Migration D cutover PASS; post-cutover release authorization is next
 Roadmap type: Product Phase Roadmap
 
 ## Current Admin P1-07C gate（2026-10-10）
+
+Product Owner-authorized Migration D cutover is complete on Production
+`szfhngifsipsrxcpekti`. The immutable exact D applied once, moving migration
+history from 20 to 21; Production remains `ACTIVE_HEALTHY`. Live final ACL is
+legacy `0/12`, ordinary v2 `3/12`, read `3/12` and private `0/36`, with RLS,
+grants and definer/search-path review PASS. Both controlled Super Admins and
+their two verified TOTP factors remain intact; commissioning remains `1/1/1/1`,
+unconsumed intent zero and no third Super Admin exists. Minimum read smoke,
+Search/Detail/Audit, denial probes and 95 targeted tests pass. Fresh Post-Cutover
+Backup `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER` passed manifest,
+inventory, full checksums, four archive lists/offline parses, sensitive scan and
+secure permissions; the D-before recovery point remains preserved.
+[Migration D cutover evidence](Admin_P1/P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
+is current authority. Product code and deployment are unchanged; Formal Admin
+remains paused and Web Admin Entry closed by repository authority. The next
+boundary is only Product Owner post-cutover release authorization.
 
 P1-07C-4A FINAL RERUN passed on canonical Product RC
 `f42217d913d44517b53935a68488100610bdff0f`. Product code drift is NO;

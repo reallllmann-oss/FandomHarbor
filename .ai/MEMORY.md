@@ -1,5 +1,25 @@
 # Project Memory
 
+- 2026-10-10: Product Owner-authorized Migration D cutover completed on exact
+  Production `szfhngifsipsrxcpekti`. The immutable file
+  `20260819225318_admin_p1_identity_access_cutover.sql` retained SHA-256
+  `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`
+  and was applied exactly once at `2026-10-10T08:48:37+0800`; migration history
+  is now exactly 21 with Pre-D and D each present once. Live final ACL is legacy
+  `0/12`, ordinary v2 `3/12`, read `3/12`, private `0/36`; RLS, grants,
+  owner/security/search-path contracts and Option B guards pass. Both controlled
+  identities remain active Super Admins with two verified TOTP factors each;
+  commissioning stays `1/1/1/1`, unconsumed intent 0 and third Super Admin 0.
+  Ordinary/Super-Admin read smoke, Search/Detail/Audit, denial probes and 95
+  targeted tests pass with no business mutation. Fresh Post-Cutover Backup
+  `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER` passed manifest/inventory,
+  full checksums, four archive lists/offline parses, sensitive scan and
+  `0700/0600` permissions. Pre-Cutover Backup
+  `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` remains preserved.
+  Product code and deployment are unchanged; Formal Admin remains paused and Web
+  Admin Entry closed by repository authority. The next boundary is only Product
+  Owner post-cutover release authorization.
+
 - 2026-10-10: P1-07C-4A FINAL RERUN passed on unchanged canonical Product RC
   `f42217d913d44517b53935a68488100610bdff0f`. RC-to-closure drift is docs only.
   Migration D remains byte-identical at

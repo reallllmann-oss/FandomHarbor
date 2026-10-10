@@ -7,10 +7,10 @@
 
 当前最新、已验证的 Production 逻辑备份：
 
-- Backup ID：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
-- 创建时间：2026-10-10 00:39:42（Asia/Shanghai，UTC+08:00）
-- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
-- Production baseline：`szfhngifsipsrxcpekti`、20/21 migrations、Pre-D applied、D absent、two active Super Admins
+- Backup ID：`20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`
+- 创建时间：2026-10-10 08:52:50（Asia/Shanghai，UTC+08:00）
+- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`
+- Production baseline：`szfhngifsipsrxcpekti`、21/21 migrations、Pre-D applied、D applied、two active Super Admins
 - Business：`01_business_public_private.dump`（custom-format `public,private` Schema/Data）
 - Migration history：`02_migration_history.dump`（custom-format `supabase_migrations`）
 - Auth data：`03_auth_recovery.dump`（durable recovery subset only）
@@ -180,7 +180,8 @@ Storage 必须拆成两层处理：
 ## 13. 当前状态
 
 - Recovery Runbook：`DOCUMENTED`
-- Latest verified backup：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
+- Latest verified backup：`20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`
+- Preserved pre-cutover recovery point：`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`
 - Isolated restore dry run：`NOT RUN`
 - Production restore：`NOT RUN`
 - Auth recovery validation：`NOT RUN`

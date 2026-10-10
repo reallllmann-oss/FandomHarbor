@@ -1,5 +1,26 @@
 # Project Status
 
+## Admin P1-07C Migration D Cutover（2026-10-10）
+
+| Item               | Current authority                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; product code unchanged                                   |
+| Migration D        | exact SHA; applied once at `2026-10-10T08:48:37+0800`; no retry or unexpected migration              |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exactly 21 migrations; Pre-D and D applied                 |
+| Database boundary  | legacy `0/12`; ordinary v2 `3/12`; read `3/12`; private `0/36`; RLS/grants/definer review PASS       |
+| Redundancy         | exactly two active Super Admins; two verified TOTP each; no third                                    |
+| Commissioning      | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`; preserved                               |
+| Smoke / regression | ordinary/Super-Admin reads, Search/Detail/Audit and denial probes PASS; 3 files / 95 tests PASS      |
+| Recovery point     | `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`; checksum/offline parse/inventory/permissions PASS |
+| Exposure           | live check unavailable; state unchanged; repository authority remains Formal Admin paused/Web closed |
+| Final verdict      | `MIGRATION D CUTOVER = PASS`                                                                         |
+| Next authorization | Product Owner post-cutover release authorization only                                                |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md`.
+Production deployment, Admin resume, Web entry opening and PR merge were not
+executed.
+
 ## Admin P1-07C-4A Final Pre-Cutover Rerun（2026-10-10）
 
 | Item               | Current authority                                                                                    |

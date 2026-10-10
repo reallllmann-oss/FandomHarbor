@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-10-10 — Admin P1-07C Migration D Cutover
+
+- Applied exact accepted Migration D
+  `20260819225318_admin_p1_identity_access_cutover.sql` once to Production
+  `szfhngifsipsrxcpekti`, moving migration history from 20 to 21. Independent
+  verification confirmed D once, no unexpected migration and Production
+  `ACTIVE_HEALTHY`.
+- Passed live Post-D catalog/RLS/grant acceptance: legacy `0/12`, ordinary v2
+  `3/12`, read `3/12`, private helper/executor `0/36` and elevated RPCs
+  authenticated-only with unchanged runtime guards.
+- Preserved both controlled Super Admins, two verified TOTP factors each,
+  commissioning `1/1/1/1`, zero unconsumed intent and no third Super Admin.
+  Minimum ordinary/Super-Admin reads, Search/Detail/Audit and denial probes
+  passed; 3 targeted files / 95 tests passed.
+- Created and independently verified Post-Cutover Backup
+  `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`; manifest/inventory,
+  checksums, four archive lists/offline parses, sensitive scan and `0700/0600`
+  permissions pass. The Pre-Cutover Backup remains preserved.
+- Recorded `MIGRATION D CUTOVER = PASS`. Product code, Production deployment,
+  Formal Admin pause, Web Admin Entry, PR merge and existing Super Admins were
+  unchanged. This closure changes docs only.
+
 ## 2026-10-10 — Admin P1-07C-4A Final Pre-Cutover Rerun
 
 - Proved canonical Product RC to current closure drift is docs/evidence only;
