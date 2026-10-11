@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-11: P1-07C Post-Cutover Production Release passed. Vercel Project
+  `fandom-harbor-admin` is active and Production deployment
+  `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX` is `READY` from exact canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f`. The verified canonical alias was
+  already bound to that deployment, so Product Owner-authorized Web Admin Entry
+  opening retained the exact binding without a redundant alias mutation. Entry
+  state became `OPEN / ENABLED` at `2026-10-11T21:55:51+0800`. Full manual
+  pre-open reads and post-open canonical alias, Guest Auth redirect, independent
+  `Phase2RemoteInviter`/`akumie` Super Admin recognition and protected reads
+  passed with no unexpected redirect/error. Unchanged-RC auth/page, Service and
+  database boundary tests passed 15 + 57 + 30. Production remains
+  `ACTIVE_HEALTHY` at 21 migrations with D applied, exactly two active Super
+  Admins, no third, commissioning `1/1/1/1` and unconsumed intent 0. No
+  database/Auth/Role/business mutation, Product code change or new backup
+  occurred; authoritative recovery remains
+  `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`. The account-name + Role
+  header request and P1-08 remain future Product work. PR merge remains blocked
+  pending explicit Product Owner authorization.
+
 - 2026-10-10: Product Owner-authorized Migration D cutover completed on exact
   Production `szfhngifsipsrxcpekti`. The immutable file
   `20260819225318_admin_p1_identity_access_cutover.sql` retained SHA-256

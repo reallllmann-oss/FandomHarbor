@@ -1,9 +1,31 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C Migration D cutover PASS; post-cutover release authorization is next
+Status: Active — Admin P1-07C post-cutover Production release PASS; PR merge authorization is next
 Roadmap type: Product Phase Roadmap
 
-## Current Admin P1-07C gate（2026-10-10）
+## Current Admin P1-07C gate（2026-10-11）
+
+Canonical Product RC `f42217d913d44517b53935a68488100610bdff0f` is live on
+Production deployment `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX`, which is `READY` on
+active Vercel Project `fandom-harbor-admin`. The canonical Admin alias is
+verified and bound to that exact deployment. Product Owner-authorized Web Admin
+Entry opening completed at `2026-10-11T21:55:51+0800` without Product code or a
+redundant alias mutation. Full pre-open manual read acceptance and post-open
+canonical-entry, Guest Auth redirect and both controlled Super Admin protected
+reads pass. Unchanged-RC auth/page, Service and cutover contract regression
+passes 15 + 57 + 30 tests.
+
+Production `szfhngifsipsrxcpekti` remains `ACTIVE_HEALTHY` at 21 migrations
+with Migration D applied, exactly two active Super Admins, no third,
+commissioning `1/1/1/1` and zero unconsumed intent. No database/Auth/Role/
+business mutation or new backup occurred; authoritative recovery remains
+`20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`. The account-name + Role
+header improvement and P1-08 Unified Account Navigation remain future Product
+work. [Post-cutover release evidence](Admin_P1/P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)
+is current authority. PR merge remains blocked pending explicit Product Owner
+authorization.
+
+The following Migration D section is the preceding cutover checkpoint.
 
 Product Owner-authorized Migration D cutover is complete on Production
 `szfhngifsipsrxcpekti`. The immutable exact D applied once, moving migration

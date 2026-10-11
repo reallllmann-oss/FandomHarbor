@@ -1,5 +1,25 @@
 # Project Status
 
+## Admin P1-07C Post-Cutover Production Release（2026-10-11）
+
+| Item               | Current authority                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; exact deployed source; Product code unchanged |
+| Vercel             | `fandom-harbor-admin` active; `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX` `READY`                  |
+| Web Admin Entry    | `OPEN / ENABLED` at `2026-10-11T21:55:51+0800`; canonical alias bound to exact deployment |
+| Live acceptance    | pre-open full read smoke and post-open canonical-entry/Auth/protected-read smoke PASS     |
+| Authorization      | Guest redirect, Reader/Author denial and ordinary Admin non-elevation boundary PASS       |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; 21 migrations; Migration D applied              |
+| Redundancy         | exactly two active Super Admins; no third; commissioning `1/1/1/1`; unconsumed intent `0` |
+| Recovery point     | `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`; no new backup required                 |
+| Final verdict      | `POST-CUTOVER PRODUCTION RELEASE = PASS`                                                  |
+| Next authorization | Product Owner PR merge authorization only                                                 |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md`.
+PR merge remains blocked. The account-name + Role header improvement and P1-08
+Unified Account Navigation remain future Product work.
+
 ## Admin P1-07C Migration D Cutover（2026-10-10）
 
 | Item               | Current authority                                                                                    |

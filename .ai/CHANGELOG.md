@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-10-11 — Admin P1-07C Post-Cutover Production Release
+
+- Resumed exact Vercel Project `fandom-harbor-admin` and deployed canonical
+  Product RC `f42217d913d44517b53935a68488100610bdff0f` once as Production
+  deployment `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX`; build, source provenance and
+  final `READY` state passed.
+- Accepted full manual pre-open runtime/Auth/Super-Admin/Search/Detail/Audit
+  smoke, then opened the canonical Web Admin Entry at
+  `2026-10-11T21:55:51+0800`. The verified Production alias already targeted
+  the exact deployment, so no redundant alias mutation or Product change was
+  performed.
+- Passed post-open canonical-entry reachability, Guest Auth redirect and
+  independent `Phase2RemoteInviter`/`akumie` Super Admin protected reads with no
+  `404`, `5xx` or unexpected redirect. Targeted unchanged-RC authorization
+  regression passed 15 + 57 + 30 tests.
+- Reconfirmed Production `ACTIVE_HEALTHY`, 21 migrations, Migration D applied,
+  exactly two active Super Admins, no third, commissioning `1/1/1/1` and zero
+  unconsumed intent. No database/Auth/Role/business mutation or new backup
+  occurred.
+- Recorded the account-name + Role header request as future UI work. This
+  closure changes docs only. PR merge remains blocked pending explicit Product
+  Owner authorization.
+
 ## 2026-10-10 — Admin P1-07C Migration D Cutover
 
 - Applied exact accepted Migration D

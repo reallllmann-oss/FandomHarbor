@@ -142,6 +142,12 @@ P1-01 已确定需要 request ledger。它必须位于 private schema 或其他�
 
 P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量或可见链接；Guest、Reader、Author、Admin 与 Super Admin 在 Web 的显示结果均保持现状。
 
+2026-10-11 的独立 post-cutover release authorization 已开放现有 canonical
+direct Admin Entry：`https://fandom-harbor-admin.vercel.app/auth/sign-in`。
+这没有向 Reader 主导航添加入口，也没有修改 Product/Auth/capability；active
+Vercel Project 是独立运营开关，Admin App 继续在服务端要求 live
+`admin:operate`。P1-08 Unified Account Navigation 仍属未来 Product 工作。
+
 未来若单独授权入口：
 
 - 只放在账号/身份区域，不进入 Reader 主导航。
@@ -173,7 +179,8 @@ P1 不启用 Web 后台入口。Web 不新增 Admin URL、菜单、环境变量�
 - 历史 P1-00 阶段不执行 SQL、Migration、远程写入、登录、Deployment、Unpause、Push 或 Merge；后续本地实现与 Commit 不改变这一时点记录，也不构成远程授权。
 - P1-05 `Local + Dedicated Non-Production Remote QA` 已 PASS 并关闭。
 - P1-06 Protected Admin Preview 与 Admin UI Polish 已通过自动化及 Product Owner 人工验收并关闭。
-- P1-07 Production Release Review 为 `READY FOR PRODUCT OWNER AUTHORIZATION / NOT STARTED`。
+- P1-07 Production Release Review 已完成：exact RC Production deployment、
+  Migration D、Web Admin Entry 和 live acceptance 均 PASS；PR merge 仍须独立授权。
 
 ## 13. 完成定义
 
@@ -190,4 +197,4 @@ P1 Closure 前必须证明：
 
 P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。ADR-024 只覆盖建立第二条受控 Super Admin 路径，不是完整 P1.1 授权，也不得把架构选择误述为 KI-033 已实现或已证明。
 
-P1-08 Unified Account Navigation 是未来产品需求：同一账号可按 live capability 同时出现阅读、Author Studio 和管理后台入口；Admin 提供“返回主站”。前端导航不替代后台实时授权，当前 Web Admin Entry 继续关闭。
+P1-08 Unified Account Navigation 是未来产品需求：同一账号可按 live capability 同时出现阅读、Author Studio 和管理后台入口；Admin 提供“返回主站”。前端导航不替代后台实时授权。当前 canonical direct Admin Entry 已开放，但 Web 账号区域的 capability-aware 入口仍未实现。
