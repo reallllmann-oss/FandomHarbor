@@ -1,5 +1,245 @@
 # Project Status
 
+## Admin P1-07C Post-Cutover Production Release（2026-10-11）
+
+| Item               | Current authority                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; exact deployed source; Product code unchanged |
+| Vercel             | `fandom-harbor-admin` active; `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX` `READY`                  |
+| Web Admin Entry    | `OPEN / ENABLED` at `2026-10-11T21:55:51+0800`; canonical alias bound to exact deployment |
+| Live acceptance    | pre-open full read smoke and post-open canonical-entry/Auth/protected-read smoke PASS     |
+| Authorization      | Guest redirect, Reader/Author denial and ordinary Admin non-elevation boundary PASS       |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; 21 migrations; Migration D applied              |
+| Redundancy         | exactly two active Super Admins; no third; commissioning `1/1/1/1`; unconsumed intent `0` |
+| Recovery point     | `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`; no new backup required                 |
+| Final verdict      | `POST-CUTOVER PRODUCTION RELEASE = PASS`                                                  |
+| Next authorization | Product Owner PR merge authorization only                                                 |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md`.
+PR merge remains blocked. The account-name + Role header improvement and P1-08
+Unified Account Navigation remain future Product work.
+
+## Admin P1-07C Migration D Cutover（2026-10-10）
+
+| Item               | Current authority                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; product code unchanged                                   |
+| Migration D        | exact SHA; applied once at `2026-10-10T08:48:37+0800`; no retry or unexpected migration              |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exactly 21 migrations; Pre-D and D applied                 |
+| Database boundary  | legacy `0/12`; ordinary v2 `3/12`; read `3/12`; private `0/36`; RLS/grants/definer review PASS       |
+| Redundancy         | exactly two active Super Admins; two verified TOTP each; no third                                    |
+| Commissioning      | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`; preserved                               |
+| Smoke / regression | ordinary/Super-Admin reads, Search/Detail/Audit and denial probes PASS; 3 files / 95 tests PASS      |
+| Recovery point     | `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`; checksum/offline parse/inventory/permissions PASS |
+| Exposure           | live check unavailable; state unchanged; repository authority remains Formal Admin paused/Web closed |
+| Final verdict      | `MIGRATION D CUTOVER = PASS`                                                                         |
+| Next authorization | Product Owner post-cutover release authorization only                                                |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md`.
+Production deployment, Admin resume, Web entry opening and PR merge were not
+executed.
+
+## Admin P1-07C-4A Final Pre-Cutover Rerun（2026-10-10）
+
+| Item               | Current authority                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Product RC         | `f42217d913d44517b53935a68488100610bdff0f`; Product code drift `NO`                                  |
+| Migration D        | exact SHA `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`; not executed           |
+| Production         | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; 20 migrations; Pre-D applied; D absent                     |
+| Redundancy         | exactly two active Super Admins; each has two verified TOTP; no third                                |
+| Commissioning      | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`                                          |
+| Recovery point     | `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`; reverified PASS                                |
+| Regression         | 8 targeted files / 186 tests PASS; Pre-D → D compatibility and Option B boundary PASS                |
+| Exposure           | Formal Admin/Web live check unavailable; state unchanged; repository authority remains paused/closed |
+| Final verdict      | `P1-07C-4A FINAL RERUN = PASS`                                                                       |
+| Next authorization | `MIGRATION D EXECUTION AUTHORIZATION` only                                                           |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md`.
+Migration D, deployment, Admin resume, Web entry opening and PR merge were not
+executed.
+
+## Admin P1-07C-4A10D Option B Redundancy and Final Backup（2026-10-10）
+
+| Item             | Current authority                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                      |
+| Production       | `szfhngifsipsrxcpekti`; exact 20 migrations; Pre-D applied; D absent                                       |
+| Redundancy       | PASS — `Phase2RemoteInviter` and `akumie` are the only two active Super Admins; each has two verified TOTP |
+| Commissioning    | Grant/Audit/Ledger/Consume `1/1/1/1`; unconsumed intent `0`; no duplicate mutation                         |
+| Final backup     | `20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`; checksums/offline parse/inventory/permissions PASS   |
+| Failed evidence  | `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING`; retained `INVALID / INCOMPLETE` after missing `jq`   |
+| Release boundary | Formal Admin/Web live check unavailable; state unchanged by task; paused/closed authority retained         |
+| Next gate        | `P1-07C-4A FINAL RERUN` only; Migration D remains blocked                                                  |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md`.
+No restore, Production business mutation, deployment, Admin resume or Web-entry
+opening occurred.
+
+## Admin P1-07C-4A10B Production Pre-D Migration（2026-10-02）
+
+| Item             | Current authority                                                                                        |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                    |
+| Production       | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exact 20 migrations; Pre-D applied; D absent                   |
+| Schema/ACL       | PASS — persistence, ledger integration, constraints/indexes, RLS/grants, helpers/RPCs and runtime guards |
+| Identity safety  | unchanged; both real identities have zero TOTP; one active Super Admin remains                           |
+| Ordinary read    | PASS — Search, Detail and Audit callable in read-only transactions                                       |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; no deployment, real MFA, commissioning or Role change       |
+| Next gate        | `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING` only                                              |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md`.
+Migration D and the final Pre-Cutover Backup remain separately blocked.
+
+## Admin P1-07C-4A10A Production Pre-D Readiness（2026-09-29）
+
+| Item             | Current authority                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; unchanged                                                        |
+| Production       | `szfhngifsipsrxcpekti`; `ACTIVE_HEALTHY`; exact 19 migrations; Pre-D/D absent                                |
+| Schema gate      | PASS — required identity, governance, Audit, Auth, ledger, RLS and function prerequisites present            |
+| Real identities  | `Phase2RemoteInviter` and `akumie` uniquely resolved; neither has TOTP/MFA                                   |
+| Super Admin      | exactly one active: `Phase2RemoteInviter`; no unknown additional Super Admin                                 |
+| Backup           | `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY`; checksum/offline parse/pre-post inventory PASS; restore not run |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; no Production mutation or deployment                            |
+| Next gate        | explicit Product Owner authorization for `PRODUCTION PRE-D MIGRATION 19 → 20` only                           |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md`.
+Migration D, real-user MFA and commissioning remain separately blocked.
+
+## Admin P1-07C-4A9 Option B Protected Preview Acceptance（2026-09-28）
+
+| Item             | Current authority                                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Product RC       | `f42217d913d44517b53935a68488100610bdff0f`; docs closure is separate                                              |
+| Preview          | `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`; exact RC; `READY`; protected; QA-only                                         |
+| Minimum smoke    | PASS: protected access, boot, QA Auth, trusted claims, Search, Detail, Audit, no elevated UI exposure             |
+| Cleanup          | `ACTIVE 4A9 SYNTHETIC ARTIFACTS = 0` across Auth, identity, Session, MFA, Membership, Role and temporary objects  |
+| Validation       | exact deployment/build evidence plus docs-only diff, sensitive and link/format checks; A8 heavy evidence reused   |
+| QA               | `gqtchjrmpuxibxmurvfd`; 20 migrations; Pre-D applied; D not applied                                               |
+| Production       | `szfhngifsipsrxcpekti`; 19 migrations; Pre-D/D unapplied; no write/Auth/env/deployment mutation                   |
+| Release boundary | Formal Admin paused; Web Admin Entry closed; PR #4 OPEN / UNMERGED; D blocked                                     |
+| Next gate        | separate Product Owner authorization for real MFA/commissioning, backup, final 4A rerun, D and Production release |
+
+Evidence:
+`docs/15_Sprint/Admin_P1/P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md`.
+The A8 section below remains the authority for heavy hosted integration proof.
+
+## Admin P1-07C-4A8 Option B Hosted QA Integration（2026-09-23）
+
+| Item           | Current authority                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QA             | `gqtchjrmpuxibxmurvfd` `ACTIVE_HEALTHY`; Pre-D applied, `20/21`; D not applied                                                                    |
+| Runtime fix    | `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`; no further product code change                                                                        |
+| Hosted verdict | PASS: exact retry, requestId, one-time Saved, concurrency, target-state Conflict, post-runtime actor revocation denial, ordinary pre-D regression |
+| Cleanup        | zero active A8 synthetic Auth, identity, Session, factor, Membership, Role, invitation or policy binding; immutable evidence retained             |
+| Production     | 19 migrations; Pre-D/D unapplied; no write; Formal Admin paused; Web Admin Entry closed                                                           |
+| PR #4          | OPEN / UNMERGED; no Push or Merge in A8 continuation                                                                                              |
+| Next gate      | Product Owner authorization only; real-user MFA/commissioning, Preview, fresh backup, D and P1.1 remain blocked                                   |
+
+Evidence: `docs/15_Sprint/Admin_P1/P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md`.
+The A7 section below is its historical local-only checkpoint.
+
+## Admin P1-07C-4A7 Option B Pre-D Database Implementation（2026-09-21）
+
+| Item                | Current authority                                                                                  |
+| ------------------- | -------------------------------------------------------------------------------------------------- |
+| Baseline / branch   | `4f37cafa03e097f085a21c14436670aaf90cfd40` / `codex/admin-p1-07c-option-b-pred-d`                  |
+| Local verdict       | PASS — formal Pre-D + strict adapter; local/disposable proof only                                  |
+| Migration order     | C → `20260818120000_admin_p1_option_b_elevated_access_pred.sql` → byte-identical D                 |
+| Request / intent    | one global request namespace; private five-minute Session/payload-bound intent                     |
+| Atomic result       | expected-state + grant + one Audit + ledger + one-time consume; exact replay returns prior result  |
+| Authorization       | DB-derived actor/Session/TOTP, live Super Admin/policy, exact stable target, factor recovery check |
+| ACL                 | private CRUD/helpers denied; four exact authenticated definer RPCs; service-role bypass absent     |
+| Compatibility       | legacy elevated branches closed; necessary legacy ordinary behavior retained until D               |
+| Hosted / Production | no apply, Auth/role mutation, real MFA, commissioning, deployment or state change                  |
+| PR #4 / exposure    | OPEN / UNMERGED; Formal Admin paused; Web Admin Entry closed                                       |
+| Next gate           | Product Owner authorization for P1-07C-4A8 hosted QA Migration and integration acceptance          |
+
+- ADR-024 and Migration D remain byte-for-byte unchanged. Local clean rebuild,
+  ACL/catalog, synthetic E2E, Session invalidation, request/intent concurrency,
+  expected-state and grant/Audit/ledger rollback tests pass.
+- Production remains at 19 applied migrations; formal Pre-D and D are not
+  applied. Migration D remains blocked.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md`.
+
+## Admin P1-07C-4A6 Option B Runtime Security Core（2026-09-20）
+
+| Item                     | Current authority                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Baseline / branch        | `c75f68f5aea2ed66dd412cd4d9979c96e4aaf2ee` / `codex/admin-p1-07c-option-b-runtime-core`                 |
+| Runtime verdict          | PASS — narrow security core implemented                                                                 |
+| Trusted Auth             | server `getClaims()` → normalized `sub`/`aal`/object AMR/`session_id`; no raw token exposure            |
+| Fresh MFA                | AAL2 + latest exact `totp` AMR, inclusive age `0..300s`; client evidence rejected                       |
+| Commissioning boundary   | only `grant_super_admin`; private-policy actor/exact target; original Session/request/state/fingerprint |
+| Intent boundary          | issue/read/consume port + expiry/replay/mismatch mapping; DB atomicity not implemented                  |
+| SQL / Migration D        | no formal SQL created / D unchanged and blocked                                                         |
+| Production / hosted QA   | unchanged; no real MFA, intent, grant, deployment or remote mutation                                    |
+| PR #4 / product exposure | OPEN / UNMERGED; Formal Admin paused; Web Admin Entry closed                                            |
+| Next gate                | Product Owner authorization for formal Pre-D private adapter/Migration implementation                   |
+
+- ADR-024 remains byte-for-byte unchanged. Existing ordinary requestId,
+  expected-state, idempotency, Audit and Admin authorization contracts remain
+  under regression coverage.
+- `ONE-TIME CONSUMPTION RUNTIME CONTRACT IMPLEMENTED`; database transaction
+  consumption, ledger extension, live Auth/role policy and grant/Audit writes are
+  deliberately deferred to Pre-D.
+- Evidence:
+  `docs/15_Sprint/Admin_P1/P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md`.
+
+## Admin P1-07C-4A5 Option B Feasibility Proof（2026-09-20）
+
+| Item                       | Current authority                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Baseline / branch          | `6c246eb7b6e19bac3bf85d258f6f5a2706b1e84d` / `codex/admin-p1-07c-option-b-feasibility`             |
+| Option B verdict           | PASS — technically feasible; implementation not authorized                                         |
+| Exact client stack         | Supabase JS/Auth `2.108.2`; SSR `0.12.0`; local GoTrue `v2.191.0`                                  |
+| Session proof              | same user/`session_id` through TOTP verify, refresh and SSR reload; tokens replaced                |
+| Fresh MFA proof            | signed TOTP AMR timestamp advances on new verify and is retained, not renewed, by refresh          |
+| Database proof             | AAL2, TOTP ≤5m and live `auth.sessions` were validated server-side                                 |
+| Intent/requestId           | exact target/operation/Session binding feasible; shared advisory-lock race serialized to one claim |
+| Migration proof            | clean `19 → Pre-D 20 → unchanged D 21`; D SHA and catalog/ACL contract preserved                   |
+| Runtime / formal Migration | NOT IMPLEMENTED / NOT AUTHORIZED                                                                   |
+| Production                 | unchanged; Migration `19/20`; D blocked; Formal Admin paused; Web Entry closed                     |
+| PR #4                      | OPEN / UNMERGED                                                                                    |
+| Next gate                  | Product Owner authorization for narrow Option B implementation                                     |
+
+- ADR-024 is unchanged. No real-user MFA, QA/Production Auth mutation, Role/Membership/business mutation, formal Migration, deployment, backup, Push or Merge occurred.
+- Hosted non-Production validation, final Pre-D Migration, protected Preview, new release SHA, real-user enrollment/commissioning, fresh backup and P1-07C-4A rerun remain later mandatory release gates.
+- Evidence: `docs/15_Sprint/Admin_P1/P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md`.
+
+## Admin P1-07C-4A4 Option B Auth ADR（2026-09-19）
+
+| Item                      | Current authority                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| Source / branch           | `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f` / `codex/admin-p1-07c-option-b-auth-adr` |
+| Production                | `szfhngifsipsrxcpekti` / `ACTIVE_HEALTHY` / Migration `19/20` / P1 `3/4`            |
+| Migration D               | NOT APPLIED / BLOCKED                                                               |
+| Current Super Admin       | `Phase2RemoteInviter` / Product Owner control confirmed                             |
+| Exact second target       | `akumie` / password recovered and manual Production login PASS                      |
+| Non-target                | `Reader11` / unchanged                                                              |
+| Auth decision             | ADR-024 Option B — TOTP/AAL2 + fresh AMR + one-time operation-bound intent          |
+| Authorized operation      | architecture for `grant_super_admin` only                                           |
+| Session / D compatibility | FEASIBILITY PROOF REQUIRED                                                          |
+| Legacy bypass             | Pattern 1: atomic Pre-D compatibility Migration                                     |
+| Backup                    | 2026-09-16 historical, not final current-state Pre-Cutover backup                   |
+| PR #4                     | OPEN / UNMERGED                                                                     |
+| Production UI             | Formal Admin `paused=true`; Web Admin Entry `CLOSED`                                |
+| Next gate                 | Product Owner P1-07C-4A5 feasibility proof authorization                            |
+
+- ADR-022 Option C remains the correct historical boundary for frozen ordinary P1. ADR-024 is a separately authorized narrow reopening and does not authorize other elevated mutations or mark KI-033 generally resolved.
+- Both `Phase2RemoteInviter` and `akumie` must enroll verified primary/backup TOTP before the grant. `akumie` counts toward redundancy only after its own AAL2 and read-only Admin smoke.
+- Intent binds actor, original Session, requestId, operation, exact target, expected state, fixed desired role and normalized reason fingerprint; fresh TOTP AMR is at most five minutes old and must be consumed once with Role/Audit/ledger atomically.
+- Existing request ledger remains result authority; intent and ordinary/elevated executors share the request advisory-lock namespace so one requestId cannot represent unrelated mutations.
+- New database work requires a version between C and D. The design keeps D unchanged, but clean rebuild, Hosted ACL, function-definition, rollback and sequential upgrade proof are mandatory before Production.
+- No runtime, SQL Migration, Auth enrollment, Role change, Production write, deployment, Resume or Web navigation change occurred. P1-08 Unified Account Navigation is documentation-only and future.
+
 ## Admin P1-07A-2C Preview Deployment Governance（2026-09-06）
 
 | 项目                         | 当前状态                                                                                 |

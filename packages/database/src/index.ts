@@ -9,6 +9,11 @@ export {
   createIdentityAccessGovernanceRepository,
   createSupabaseIdentityAccessGovernanceRepository,
 } from "./identity-access-governance-repository";
+export {
+  createElevatedAccessDatabaseAdapters,
+  createSupabaseElevatedAccessDatabaseAdapters,
+  type ElevatedAccessDatabaseAdapters,
+} from "./elevated-access-governance-repository";
 export { createServerSupabaseClient } from "./server-client";
 export {
   createAuthorWorkDraftRepository,

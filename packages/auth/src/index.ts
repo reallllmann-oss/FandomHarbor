@@ -7,7 +7,16 @@ export {
   type AuthCookieStore,
   type AuthProvider,
   type PasswordSignUpInput,
+  type ServerAuthProvider,
 } from "./provider";
+export {
+  TrustedAuthEvidenceError,
+  trustedAuthEvidenceFromVerifiedClaims,
+  type TrustedAuthenticationMethodReference,
+  type TrustedAuthenticatorAssuranceLevel,
+  type TrustedAuthEvidence,
+  type TrustedAuthEvidenceErrorCode,
+} from "./trusted-auth-evidence";
 export {
   createTrustedAccessContext,
   type Capability,

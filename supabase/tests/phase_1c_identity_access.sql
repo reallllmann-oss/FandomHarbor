@@ -159,8 +159,10 @@ begin
     errcode = 'XX000',
     message = 'final Super Admin revocation unexpectedly succeeded';
 exception
-  when sqlstate 'P0001' then
-    null;
+  when insufficient_privilege then
+    if sqlerrm <> 'ELEVATED_MUTATION_REQUIRES_MFA' then
+      raise;
+    end if;
 end;
 $$;
 

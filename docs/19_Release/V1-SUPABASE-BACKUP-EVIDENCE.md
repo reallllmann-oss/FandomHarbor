@@ -1,8 +1,49 @@
 # Fandom Harbor V1 Supabase Production Backup Evidence
 
-状态：`PASS / CURRENT PRODUCTION FRESH BACKUP VERIFIED / PDR-02 CLOSED FOR CURRENT RELEASE`
-审计日期：2026-07-25（Asia/Shanghai）
-Mission：V1 Current Production Fresh Backup and PDR-02 Closure
+状态：`PASS / 2026-10-10 POST-CUTOVER BACKUP VERIFIED / RESTORE NOT RUN`
+最新审计日期：2026-10-10（Asia/Shanghai）
+当前 Mission：Admin P1-07C Migration D Cutover and Fresh Post-Cutover Backup
+
+## 最新已验证恢复源（2026-10-10）
+
+- Backup ID：`20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`
+- Production：`fandom-harbor` / `szfhngifsipsrxcpekti`
+- 创建时间：`2026-10-10T08:52:50+0800` / `2026-10-10T00:52:50Z`
+- Migration baseline：`21/21`；Pre-D 已应用；Migration D 已应用
+- 目录：`/Users/liuzyzy/Documents/FandomHarbor-Private-Backups/20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`
+- 范围：`public,private` 业务 Schema/Data、`supabase_migrations`、durable Auth
+  recovery subset、sanitized MFA metadata、Auth schema reference、role/catalog/inventory evidence
+- 验证：全量 `SHA256SUMS.txt`、四个 custom archive 的 `pg_restore --list`
+  与离线 parse、`0700/0600`、pre/post catalog 与 durable row count 一致性均 PASS
+- 状态：两名 active Super Admin；双方各两个 verified TOTP；Grant/Audit/Ledger/Consume
+  `1/1/1/1`；unconsumed intent `0`
+- 限制：restore drill 未执行；raw MFA factors、MFA recovery codes、Session、refresh
+  token/challenge 等 transient Auth state 未备份；managed role password 未导出；
+  四个 archive 不声明共享同一 snapshot
+
+Primary archives：
+
+| 文件                              |  字节数 | SHA-256                                                            |
+| --------------------------------- | ------: | ------------------------------------------------------------------ |
+| `01_business_public_private.dump` | 379,145 | `c1facfbd5eb8a5571099ef5e0e3e5fc13e3a6b99833e10f6bd5e1b5cf80b3b5a` |
+| `02_migration_history.dump`       |  31,150 | `157ebf8311053d3d86155b6dd7976cc6e61607cf2f48779a2e48bd622b0f292e` |
+| `03_auth_recovery.dump`           |  19,403 | `f851f017c3228287f55449bed3547f90ced989dd2453caefd9b85ac94fb194a1` |
+| `04_auth_schema_reference.dump`   | 102,026 | `0fcc59761f7ae96fef63475c0c1773fd5e1e600e465f7d03352f8a8d53ac1bc5` |
+
+完整 gate 与安全边界见
+[`P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md`](../15_Sprint/Admin_P1/P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)。
+
+D 前恢复点
+`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` 仍完整保留，未被覆盖或
+删除；它继续作为 Migration D 之前的权威 recovery point。
+
+失败的 Attempt 1
+`20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` 因本机缺少 `jq`
+以 exit `127` 结束，保留为 `INVALID / INCOMPLETE` evidence。其
+`inventory.json` 为 0 bytes，且没有 manifest、checksums 或 integrity record；
+不得恢复、补写或伪装为有效备份。
+
+以下 2026-07-25 章节保留为历史 Release/PDR-02 证据，不能覆盖上述最新恢复源。
 
 ## 1. 当前结论
 

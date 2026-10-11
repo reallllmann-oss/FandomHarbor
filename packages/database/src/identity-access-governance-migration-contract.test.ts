@@ -6,6 +6,8 @@ import { describe, expect, it } from "vitest";
 const migrationName = "20260817104616_admin_p1_identity_access_ledger.sql";
 const readMigrationName = "20260817121610_admin_p1_identity_access_reads.sql";
 const writeMigrationName = "20260817125140_admin_p1_identity_access_writes.sql";
+const elevatedPreCutoverMigrationName =
+  "20260818120000_admin_p1_option_b_elevated_access_pred.sql";
 const cutoverMigrationName =
   "20260819225318_admin_p1_identity_access_cutover.sql";
 
@@ -40,6 +42,122 @@ async function cutoverMigration() {
     "utf8",
   );
 }
+
+async function elevatedPreCutoverMigration() {
+  return readFile(
+    resolve(
+      process.cwd(),
+      "../../supabase/migrations",
+      elevatedPreCutoverMigrationName,
+    ),
+    "utf8",
+  );
+}
+
+describe("ADR-024 Option B Pre-D migration contract", () => {
+  it("sorts strictly between C and byte-identical D", async () => {
+    expect(writeMigrationName < elevatedPreCutoverMigrationName).toBe(true);
+    expect(elevatedPreCutoverMigrationName < cutoverMigrationName).toBe(true);
+    const d = await cutoverMigration();
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(d),
+    );
+    expect(
+      [...new Uint8Array(digest)]
+        .map((value) => value.toString(16).padStart(2, "0"))
+        .join(""),
+    ).toBe("b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e");
+  });
+
+  it("adds only the exact grant_super_admin policy and private intent state", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    expect(sql).toContain("create table private.elevated_commissioning_policy");
+    expect(sql).toContain("create table private.elevated_access_intents");
+    expect(sql).toContain("operation = 'grant_super_admin'");
+    expect(sql).toContain("desired_role = 'super_admin'");
+    expect(sql).not.toContain("grant_admin");
+    expect(sql).not.toContain("revoke_super_admin");
+    expect(sql).not.toContain("set_elevated_membership");
+  });
+
+  it("shares the request namespace with database locks and two-sided guards", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    expect(sql).toContain(
+      "'fandom-harbor:identity-access-request:' || new.request_id::text",
+    );
+    expect(sql).toContain("trigger elevated_access_intent_request_claim");
+    expect(sql).toContain("trigger identity_access_ledger_request_claim");
+    expect(sql).toContain("intent.request_id = new.request_id");
+    expect(sql).toContain("ledger.request_id = new.request_id");
+    expect(sql).toContain("request_id uuid not null unique");
+  });
+
+  it("derives actor, Session, target, MFA, and time from trusted database context", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    const publicRpcs = sql.slice(
+      sql.indexOf("function public.get_grant_super_admin_policy_v1"),
+      sql.indexOf(
+        "revoke all on function public.get_grant_super_admin_policy_v1",
+      ),
+    );
+    expect(sql).toContain("v_actor_user_id uuid := auth.uid()");
+    expect(sql).toContain("v_jwt jsonb := auth.jwt()");
+    expect(sql).toContain("from auth.sessions session_row");
+    expect(sql).toContain("from auth.mfa_factors factor");
+    expect(sql).toContain("factor.status::text = 'verified'");
+    expect(sql).toContain("pg_catalog.statement_timestamp()");
+    expect(publicRpcs).not.toContain("p_actor_user_id");
+    expect(publicRpcs).not.toContain("p_session_id");
+    expect(publicRpcs).not.toContain("p_totp");
+    expect(publicRpcs).not.toContain("p_target_user_id uuid,");
+  });
+
+  it("keeps tables and helpers private while exposing only four narrow authenticated RPCs", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    expect(
+      sql.match(/from public, anon, authenticated, service_role;/g)?.length,
+    ).toBeGreaterThanOrEqual(13);
+    expect(sql).toContain(
+      "revoke all on table private.elevated_access_intents",
+    );
+    expect(sql).toContain(
+      "revoke all on table private.elevated_commissioning_policy",
+    );
+    expect(sql.match(/grant execute on function public\./g)).toHaveLength(7);
+    expect(sql.match(/grant execute on function private\./g)).toBeNull();
+    expect(sql).not.toContain("grant select on table private.");
+    expect(sql).not.toContain("create policy");
+  });
+
+  it("atomically writes grant, Audit, ledger, and consumed intent", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    const confirm = sql.slice(
+      sql.indexOf("function public.confirm_grant_super_admin_intent_v1"),
+      sql.indexOf(
+        "revoke all on function public.get_grant_super_admin_policy_v1",
+      ),
+    );
+    expect(confirm).toContain("insert into public.role_grants");
+    expect(confirm).toContain("private.write_audit(");
+    expect(confirm).toContain(
+      "insert into private.identity_access_request_ledger",
+    );
+    expect(confirm).toContain("update private.elevated_access_intents");
+    expect(confirm).toContain("consumed_mfa_evidence_key = v_evidence_key");
+    expect(confirm).not.toMatch(/\bcommit\b|\brollback\b/i);
+  });
+
+  it("closes legacy elevated branches without changing the six D signatures", async () => {
+    const sql = await elevatedPreCutoverMigration();
+    expect(sql).toContain("message = 'ELEVATED_MUTATION_REQUIRES_MFA'");
+    expect(sql).toContain("function public.grant_role(");
+    expect(sql).toContain("function public.revoke_role(");
+    expect(sql).toContain("function public.set_membership_state(");
+    expect(sql).not.toContain("function public.grant_role_v2");
+    expect(sql).not.toContain("function public.grant_super_admin_role");
+  });
+});
 
 describe("Admin P1-02A private ledger migration contract", () => {
   it("creates only the private, append-only request ledger", async () => {

@@ -76,6 +76,23 @@ Admin P1 contract（P1-00 frozen; ordinary subset locally implemented）:
 
 ADR-022 Option 3 closure narrows the current P1 implementation boundary without lowering that Reauth requirement: only Author Grant/Revoke and ordinary-account Membership mutations may be planned. Admin/Super Admin Role and elevated-account Membership mutations are deferred and have no callable current P1 contract. Elevated subjects remain readable through the minimal projection. Future reopening requires separate Product Owner authorization and a new Auth ADR.
 
+ADR-024 is that separately authorized narrow reopening for the single
+`grant_super_admin` commissioning operation. It does not authorize generic
+elevated governance. P1-07C-4A7 adds four exact authenticated RPCs:
+
+- `get_grant_super_admin_policy_v1()`;
+- `issue_grant_super_admin_intent_v1(uuid,text,text,text)`;
+- `get_grant_super_admin_intent_v1(uuid)`; and
+- `confirm_grant_super_admin_intent_v1(uuid,uuid,text,text,text)`.
+
+The client cannot send actor, Session, target, role or trusted MFA facts. Those
+facts come from private policy and signed/live database Auth state. Issue and
+confirm use the A6 fixed-order SHA-256 fingerprint and shared requestId namespace.
+Confirm returns the existing `Saved | Unchanged | Conflict` result shape. Exact
+retry returns the ledger snapshot; changed request payload fails closed. The
+adapter performs strict unknown parsing, disables transport retry for issue and
+confirm, and cleans provider errors. No UI or hosted execution is part of A7.
+
 ### Pen names, works, chapters and series
 
 | Resource/action                        | Permission                                        | Concurrency/audit                                       |

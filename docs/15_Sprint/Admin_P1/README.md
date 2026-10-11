@@ -1,7 +1,7 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-06C COMPLETE / P1-07A RELEASE PRECONDITIONS IN PROGRESS`
-P1-00 Product Owner 决策日期：2026-08-16；ADR-022 Option 3 与 ADR-023 决策日期：2026-08-17
+状态：`P1-07C POST-CUTOVER PRODUCTION RELEASE PASS / PR MERGE AUTHORIZATION REQUIRED`
+P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
 
@@ -20,7 +20,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06A | Protected Admin Preview Provisioning         | Complete — committed                   |
 | P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
-| P1-07  | Production Release Review                    | In progress — PR #3 release gates      |
+| P1-07  | Production Release Review                    | Complete — Production release PASS     |
 
 权威合同：
 
@@ -35,6 +35,17 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-05 Final Closure Audit](P1_05_FINAL_CLOSURE_AUDIT.md)
 - [P1-06A Dedicated Protected Preview Evidence](P1_06A_DEDICATED_PREVIEW_EVIDENCE.md)
 - [P1-06C UI Polish Acceptance Evidence](P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)
+- [P1-07C-4A5 Option B Feasibility Proof](P1_07C_4A5_OPTION_B_FEASIBILITY_PROOF.md)
+- [P1-07C-4A6 Option B Runtime Security Core](P1_07C_4A6_OPTION_B_RUNTIME_SECURITY_CORE.md)
+- [P1-07C-4A7 Option B Pre-D Database Implementation](P1_07C_4A7_OPTION_B_PRE_D_DATABASE_IMPLEMENTATION.md)
+- [P1-07C-4A8 Option B Hosted QA Integration Acceptance](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
+- [P1-07C-4A9 Option B Protected Preview Acceptance](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)
+- [P1-07C-4A10A Production Pre-D Readiness and Safety Backup](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
+- [P1-07C-4A10B Production Pre-D Migration Acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
+- [P1-07C-4A10D Option B Redundancy and Final Backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
+- [P1-07C-4A Final Pre-Cutover Rerun Acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
+- [P1-07C Migration D Cutover Acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
+- [P1-07C Post-Cutover Production Release Acceptance](P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -50,16 +61,136 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-021](../../17_Architecture_Decisions/ADR-021.md)
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
+- [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
+
+## 当前 P1-07C 权威状态（2026-10-11）
+
+- Exact canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f` 已作为 Production deployment
+  `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX` 部署到 active
+  `fandom-harbor-admin`，状态 `READY`。canonical alias 已精确绑定该
+  deployment；Web Admin Entry 在 `2026-10-11T21:55:51+0800` 正式成为
+  `OPEN / ENABLED`，未执行冗余 alias mutation 或 Product code 修改。
+- Product Owner 完成 pre-open full read smoke 与 post-open canonical alias
+  acceptance：Guest Auth redirect、`Phase2RemoteInviter` 与 `akumie` 独立登录、
+  Super Admin recognition 和 protected read 全部 PASS；无 404/5xx/异常 redirect。
+  Reader/Author denial、ordinary Admin non-elevation 与 legacy bypass closure
+  通过 unchanged-RC 15 + 57 + 30 targeted tests。
+- Production `szfhngifsipsrxcpekti` 保持 `ACTIVE_HEALTHY`、21 migrations、
+  Migration D applied、两名 active Super Admin、third 0、commissioning
+  `1/1/1/1`、unconsumed intent 0。无 DB/Auth/Role/business mutation；不创建新
+  backup，继续使用 `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`。
+- 完整证据见
+  [Post-Cutover Production Release Acceptance](P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)。
+  “后台右上角显示当前账号名 + Role 标签”与 P1-08 属于后续 Product/UI 工作，
+  本轮未实现。PR merge 仍未授权；下一边界仅为 Product Owner PR merge authorization。
+
+- Product Owner-authorized Migration D 已在 Production
+  `szfhngifsipsrxcpekti` 精确执行一次：20 → 21 migrations，Pre-D 与 D 各存在
+  一次，D SHA 保持
+  `b44ed44145b25cdf4524f1e7fbdec802a2bb84972ce07c467e4ff4edbc95d69e`，
+  Production 仍为 `ACTIVE_HEALTHY`。
+- Post-D catalog/RLS/grant acceptance PASS：legacy `0/12`、ordinary v2
+  `3/12`、read `3/12`、private `0/36`；commissioning 与双 Super Admin 状态
+  保持 `1/1/1/1`、unconsumed 0、TOTP 2+2、third Super Admin 0。最小 read smoke、
+  denial probe 与 95 个 targeted tests PASS。
+- Fresh Post-Cutover Backup
+  `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER` 的 manifest/inventory、
+  checksums、四个 archive list/offline parse、敏感扫描和 `0700/0600` 权限 PASS；
+  D 前 backup 永久保留。完整证据见
+  [Migration D cutover acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)。
+- Product code 与 Production deployment 未变。Formal Admin/Web live check 不可用，
+  准确状态为 `LIVE CHECK UNAVAILABLE / STATE UNCHANGED BY THIS TASK`；repository
+  authority 仍为 `paused=true` / `disabled / closed`。下一边界仅为 Product Owner
+  post-cutover release authorization；不得自动 deploy、resume、open entry 或 merge。
+
+- P1-07C-4A FINAL RERUN 已在 canonical Product RC
+  `f42217d913d44517b53935a68488100610bdff0f` 与真实 Production Pre-D 状态上
+  PASS。RC 到 closure 仅 docs/evidence drift；Migration D SHA 精确匹配、直接
+  跟随 Pre-D 且未执行。Production 保持 `ACTIVE_HEALTHY`、20 migrations、双
+  Super Admin、双方 TOTP 2、commissioning `1/1/1/1`、unconsumed 0。
+- 现有 final backup 全量 metadata/checksum/archive-list/inventory/integrity/
+  permission revalidation PASS。8 个 targeted files、186 tests PASS；重用 A5/A7
+  heavy evidence 并完成当前 deterministic compatibility/static gate，得到
+  `PRE-D → D COMPATIBILITY = PASS` 与 `OPTION B SECURITY BOUNDARY = PASS`。
+- 完整证据见
+  [4A Final Rerun acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)。下一边界仅为
+  `MIGRATION D EXECUTION AUTHORIZATION`。当前 PASS 不是 D 执行授权；D、部署、
+  Admin resume、Web Admin Entry 与 PR merge 仍被阻塞。
+
+- P1-07C-4A10D 已确认 Production `szfhngifsipsrxcpekti` 保持精确 20 项
+  migrations、Pre-D applied、D 未应用。`Phase2RemoteInviter` 与 `akumie` 是仅有的
+  两名 active Super Admin，双方各有两个 verified TOTP；commissioning
+  Grant/Audit/Ledger/Consume 为 `1/1/1/1`，unconsumed intent 为 0。
+- Attempt 1 `20261010-002941_P1-07C-4A10D_R1_POST_COMMISSIONING` 因本机缺少
+  `jq` 保留为 `INVALID / INCOMPLETE`。安装授权的 Homebrew `jq-1.8.2` 后只执行
+  一次新 rerun；`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING` 的
+  manifest、inventory、checksums、四个 archive list/offline parse、敏感扫描与
+  `0700/0600` 权限全部 PASS。restore 未执行。
+- 完整证据见
+  [4A10D redundancy/final backup](P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)。
+  Formal Admin/Web live check 本轮不可用，准确记录为
+  `LIVE CHECK UNAVAILABLE / STATE UNCHANGED BY THIS TASK`；repository authority
+  仍为 Admin `paused=true`、Web Admin Entry closed。下一边界仅为
+  `P1-07C-4A FINAL RERUN`；Migration D 继续阻塞。
+
+- P1-07C-4A10B 已在精确 Production `szfhngifsipsrxcpekti` 仅应用 accepted
+  Pre-D `20260818120000_admin_p1_option_b_elevated_access_pred.sql`，Production
+  从 19 到达精确 20 migrations，Migration D 仍未应用。live catalog/ACL/RLS、
+  shared ledger、private helpers、public RPC、fixed `search_path`、
+  `SECURITY DEFINER` 与完整 runtime guard acceptance 均 PASS；Reader、Author、
+  non-actor denial 以及 Search/Detail/Audit read regression PASS。详见
+  [4A10B Production acceptance](P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)。
+- `Phase2RemoteInviter` 与 `akumie` identity/Role/MFA 均未变化；active Super Admin
+  仍精确为 1。双方 TOTP 仍为 0，canonical policy 虽已按 migration 绑定，但路径
+  fail-closed。下一边界仅为
+  `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`；D 与 final
+  Pre-Cutover Backup 继续独立阻塞。
+
+- P1-07C-4A10A 已对真实 Production `szfhngifsipsrxcpekti` 完成最终 Pre-D
+  只读 readiness：项目 `ACTIVE_HEALTHY`、精确 19 项 Migration、Pre-D/D 均未应用，
+  必要 identity/governance/Audit/Auth/ledger prerequisite 无未知 drift。
+  `Phase2RemoteInviter` 与 `akumie` 均唯一可解析；当前唯一 active Super Admin 是
+  `Phase2RemoteInviter`，两者均无 TOTP/MFA。新鲜仓库外安全备份
+  `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY` 的 checksum、custom archive
+  离线解析、权限与前后 inventory 一致性均 PASS；restore 未执行。详见
+  [4A10A readiness/backup 证据](P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)。
+- 4A10A 是执行前历史 Gate；其 `19 → 20` 下一边界已由 4A10B 完成，不能覆盖上方当前状态。
+
+- P1-07C-4A9 将 canonical Product RC 冻结为
+  `f42217d913d44517b53935a68488100610bdff0f`，并接受 exact-SHA、`READY`、
+  Vercel Authentication 保护且仅绑定 QA 的 Preview
+  `dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL`。最小 QA Auth、trusted claims、
+  Search/Detail/Audit 与 elevated exposure smoke 均 PASS；A8 重型证据直接复用。
+  传输中断后的精确恢复清理证明 active 4A9 synthetic artifacts 为 0。详见
+  [4A9 验收证据](P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)。
+- P1-07C-4A8 hosted QA `gqtchjrmpuxibxmurvfd` 为 `ACTIVE_HEALTHY`、`20/21`：仅 Pre-D 已应用，D 未应用。A6/A7 runtime→hosted exact retry、并发、签发后 target 状态冲突、运行时检查后 actor 撤权、ordinary pre-D 回归与零活跃合成夹具均 PASS；详见 [A8 验收证据](P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)。修复提交 `00f2afb7b3b4de3c447cb112917b9ec14e66fe7d`；本次继续阶段没有产品代码修改。
+- 4A9 验收时 Production 为 19 项 Migration；当前已由 4A10B 更新为 20、仅 Pre-D applied。4A9 PASS 本身不授权真实用户 TOTP/commissioning、final backup、final 4A rerun、Migration D、Production cutover 或 Admin unpause；PR #4 保持 OPEN / UNMERGED，Web Admin Entry 关闭。Docs closure commit 不替代 canonical Product RC。
+
+- Frozen historical release baseline 为 `b494b5e954ce0d43e28df088bd3f2c0c7a19b31f`。
+- Production `szfhngifsipsrxcpekti` 为 `ACTIVE_HEALTHY`；Pre-D 已应用，Migration `20/21`，D `20260819225318_admin_p1_identity_access_cutover.sql` 未应用。
+- Product Owner 要求 D 前存在两条独立控制且可实际使用的 active Super Admin 路径。当前 `Phase2RemoteInviter` 受控；第二目标 `akumie` 的账号控制与人工登录已验证。`Reader11` 不在目标范围。
+- [ADR-024](../../17_Architecture_Decisions/ADR-024.md) 接受 Option B，但只为 `grant_super_admin` commissioning 建立架构边界。AAL2 必须叠加 fresh TOTP AMR 与一次性、原 Session/操作/payload 绑定 intent；AAL2 alone 不授权写入。
+- P1-07C-4A5 已通过 exact JS/SSR stack 的 disposable local TOTP、Session、AMR、数据库 claims、request namespace concurrency 与 clean C→Pre-D→D 实证。Session ID 在 verify/refresh/reload 中稳定；fresh TOTP AMR 可由数据库使用可信时间验证；D 可保持原文件不变。
+- P1-07C-4A6 已实现正式 server-side trusted claims extractor 与 provider-neutral runtime security core：AAL2、最新 TOTP AMR `≤300s`、原 `session_id`、exact operation/actor/target、requestId、expected-state 与 fixed-order SHA-256 payload fingerprint 全部 fail closed。只实现 future private adapter 与 one-time consumption runtime contract；数据库原子消费仍未实现。
+- P1-07C-4A7 已在正式 Pre-D Migration 中实现 private policy/intent、shared requestId namespace、live Session/policy revalidation、原子 expected-state、grant/Audit/ledger/consume 与 legacy elevated bypass closure，并将 A6 Port 接到 strict Supabase RPC adapter。完整 21-Migration clean chain、并发、失败回滚、ACL 与 synthetic E2E 仅在 local/disposable database 通过；Hosted QA 尚未执行。
+- 选择 Pre-D compatibility Pattern 1：未来单一原子 Migration 关闭 legacy elevated 分支、保留必要 ordinary legacy 行为并安装 exact new path。该 Migration 必须排序在 C 与 D 之间。
+- `Phase2RemoteInviter` 与 `akumie` 都必须先完成 primary/backup TOTP。`akumie` 只有以自己的 Session 完成 AAL2 与只读 Admin smoke 后才计入 two-Super-Admin gate。
+- 2026-09-29 backup 是已验证的 Pre-D safety recovery point，但不是完成第二 Super Admin 后所需的 final current-state Pre-Cutover Backup；commissioning 后、D 前必须重新 Backup 并 rerun P1-07C-4A。
+- PR #4 继续 OPEN / UNMERGED；Formal Admin Production `paused=true`；Web Admin Entry `CLOSED`。A6 没有 SQL、Migration、Auth 配置、UI、hosted QA 或 Production 写入。
+- 下一 Gate 必须由 Product Owner 单独授权：`4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`。Final backup、P1-07C-4A rerun 与 Migration D 仍各自受控。以下 A7 段落描述其历史时点，不能覆盖上方当前 Production 状态。
+
+P1-08 Unified Account Navigation 已记录为未来产品需求：同一账号可按 live capabilities 同时展示阅读、Author Studio 与管理后台入口，Admin 提供“返回主站”；当前不实现，Web Admin Entry 继续关闭。
 
 P1-02A–F 已形成独立本地 Commit。P1-02G 在父提交 `edd78c190002340eaa2091860e5eb997785b7528` 上完成 clean local rebuild、全部 19 个 Migration、13 个 SQL suite、最终 Catalog/ACL/RLS/不可变性复核，以及 Domain 53、Repository 24、Service 57、Services 180、Database 138 项测试。三个读取 RPC 保持 ADR-023 最小混合权限；三个 ordinary write RPC 对 `PUBLIC`、`anon`、`authenticated`、`service_role` 的 12 项 execute 继续全部关闭。旧 RPC execute 未变且未 cutover。
 
-权威交接将 P1-03 限定为 `/access` 读取 UI，只调用三个读取 Service 用例，不显示写控件、不开放 write execute、不启用 Web Admin 入口；P1-04 继续作为独立 Gate，才可实现 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Action、结果展示和单一原子 cutover。ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY` 与全部 elevated mutations `DEFERRED` 不变；P1.1 Elevated Access Governance 只能在整个 P1 完成后独立评估。邀请管理仍独立延期。P1-02G 已由 Product Owner 验收并形成 Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072`；随后单独授权的 P1-03 不授权 P1-04、P1.1、远程 apply、登录、Unpause 或 Deployment。
+以下为 P1-02G 的历史交接状态：当时 P1-03 限定为 `/access` 读取 UI，只调用三个读取 Service 用例，不显示写控件、不开放 write execute、不启用 Web Admin 入口；P1-04 继续作为独立 Gate，才可实现 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Action、结果展示和单一原子 cutover。当时 ADR-022 Option 3、KI-033 `ACCEPTED DEFERRED BOUNDARY` 与全部 elevated mutations `DEFERRED` 保持不变；当前 narrow `grant_super_admin` 架构例外由上方 ADR-024 状态取代。P1.1 Elevated Access Governance 仍只能在整个 P1 完成后独立评估。邀请管理仍独立延期。P1-02G 已由 Product Owner 验收并形成 Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072`；随后单独授权的 P1-03 不授权 P1-04、P1.1、远程 apply、登录、Unpause 或 Deployment。
 
 P1-03 基于 P1-02G Commit `370d7b0541a51ed63dd4076e4d912b2309c9d072` 完成并形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：`/access` 使用 Search、Detail 与 Audit 三个既有 Governance Service read，按调用执行 fresh live-access check，展示冻结的最小身份、Membership、Role、expected-state 与治理 Audit。页面只有 GET 查询和链接导航；旧 mutation Action 不再被页面引用。P1-03 Closure 时 write execute 仍为 0/12、旧 RPC 尚未 cutover；其后的本地 ACL 状态由 P1-04A 段落取代。Loading、loaded、empty、unauthorized、recoverable error 与 unavailable/deferred 状态均已覆盖。
 
 P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`。P1-04B 在该本地 ACL 基线上完成 ordinary Membership 与 Author Grant/Revoke 的 reason → Review → 独立确认 → `Saved | Unchanged | Conflict` UI/Action，并形成 Commit `bf35f5a1e4b005e04bb4b9d054cf6310ffb0c74c`。每次 Review 通过 Service 重新读取并绑定数据库 expected-state，Action 生成稳定 requestId；确认只调用一次 Service mutation，安全显式重试复用同一 ID，Conflict 强制刷新与新 Review。Elevated 账户只有读取与延期说明，无写控件。证据见 [`P1_04B_ACCEPTANCE_EVIDENCE.md`](P1_04B_ACCEPTANCE_EVIDENCE.md)。
 
-Ordinary governance 的本地实现链现已完成，但这不等于任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 恢复零 synthetic state 并关闭 write。P1-05 Final Closure Audit 随后通过，并由 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。`REMOTE FAILURE INJECTION` 的准确状态仍是 `NOT AVAILABLE BY CURRENT CONTRACT`；原子回滚证据来自当前权威本地测试。当前 P1-06A 结果由下一段与专用证据文档记录；P1-07 仍未授权，P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
+以下为 P1-05 Closure 的历史状态：Ordinary governance 的本地实现链已完成，但这不等于任何 Production 发布。P1-05B-3R2 已在 dedicated QA Attempt 2 完成 ordinary mutation、幂等、Conflict、并发、live authorization、Detail/Audit、elevated/legacy deny、local atomicity 与精确 cleanup；QA2 恢复零 synthetic state 并关闭 write。P1-05 Final Closure Audit 随后通过，并由 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。`REMOTE FAILURE INJECTION` 的准确状态仍是 `NOT AVAILABLE BY CURRENT CONTRACT`；原子回滚证据来自当前权威本地测试。该历史时点 P1-07 尚未授权；当前 P1-07C 3/4 与 ADR-024 状态由顶部权威段落取代。P1.1 Elevated Access Governance 保持 `DEFERRED / NOT AUTHORIZED`。Admin Production 保持 `paused=true`，Web Admin 入口保持关闭，P0 Production Site Copy 保持 Version 7。
 
 P1-05 已在 Commit `0542c759a2ac0683cc7ac7370748773ed26ae7d3` 正式关闭。P1-06A 随后完成专用受保护 Preview 的失败恢复、人工验收和最终清理，并由 Commit `c9643d387c1216d40260882e6055b423576362ee` 关闭。P1-06B Manual Preview Acceptance 已由 Product Owner 正式确认 PASS。P1-06C 在此基础上完成 UI-01 全后台中文化、UI-02 Review 与全页面响应式修复、UI-03 全局 Header 退出登录和 UI-04 固定 `Asia/Shanghai` 的北京时间展示。Product Owner 已在最终受保护 Preview `dpl_HiF87dWBe54kXCMum3yN29nWHCxa` 完成人工验收；1440/1024/768/480/390 多视口与运行时北京时间均 PASS。正式 Admin Production 未变且仍 `paused=true`，Web Admin 入口关闭。P1-06C 已由本 Closure Commit 完成；P1-07A 已获授权并进入 PR #3 release precondition gates，P1.1 继续 `DEFERRED / NOT AUTHORIZED`。完整证据见 [`P1_06A_DEDICATED_PREVIEW_EVIDENCE.md`](P1_06A_DEDICATED_PREVIEW_EVIDENCE.md) 与 [`P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md`](P1_06C_UI_POLISH_ACCEPTANCE_EVIDENCE.md)。
 

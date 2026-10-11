@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProviderError, createServerAuthProvider } from "./provider";
 
 const mocks = vi.hoisted(() => ({
+  getClaims: vi.fn(),
   rpc: vi.fn(),
   signUp: vi.fn(),
 }));
@@ -11,6 +12,7 @@ vi.mock("@supabase/ssr", () => ({
   createBrowserClient: vi.fn(),
   createServerClient: vi.fn(() => ({
     auth: {
+      getClaims: mocks.getClaims,
       signUp: mocks.signUp,
     },
     rpc: mocks.rpc,
@@ -108,5 +110,64 @@ describe("registration provider errors", () => {
     expect(result.session?.identity.id).toBe(
       "20000000-0000-4000-8000-000000000010",
     );
+  });
+});
+
+describe("server trusted Auth evidence", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("uses Supabase verified claims and returns no raw token material", async () => {
+    mocks.getClaims.mockResolvedValue({
+      data: {
+        claims: {
+          aal: "aal2",
+          amr: [{ method: "totp", timestamp: 1_900_000_100 }],
+          session_id: "20000000-0000-4000-8000-000000000002",
+          sub: "10000000-0000-4000-8000-000000000001",
+        },
+      },
+      error: null,
+    });
+
+    const result = await createServerAuthProvider(
+      runtime,
+      cookies,
+    ).getTrustedAuthEvidence();
+
+    expect(mocks.getClaims).toHaveBeenCalledOnce();
+    expect(result).toEqual({
+      actorUserId: "10000000-0000-4000-8000-000000000001",
+      assuranceLevel: "aal2",
+      authenticationMethods: [
+        { authenticatedAtEpochSeconds: 1_900_000_100, method: "totp" },
+      ],
+      sessionId: "20000000-0000-4000-8000-000000000002",
+    });
+    expect(result).not.toHaveProperty("access_token");
+    expect(result).not.toHaveProperty("refresh_token");
+  });
+
+  it("returns null only when there is no verified session", async () => {
+    mocks.getClaims.mockResolvedValue({ data: null, error: null });
+
+    await expect(
+      createServerAuthProvider(runtime, cookies).getTrustedAuthEvidence(),
+    ).resolves.toBeNull();
+  });
+
+  it("maps provider verification failures without exposing provider details", async () => {
+    mocks.getClaims.mockResolvedValue({
+      data: null,
+      error: new Error("raw provider detail"),
+    });
+
+    await expect(
+      createServerAuthProvider(runtime, cookies).getTrustedAuthEvidence(),
+    ).rejects.toMatchObject({
+      code: "TRUSTED_AUTH_UNAVAILABLE",
+      message: "Trusted authentication evidence is unavailable",
+    });
   });
 });

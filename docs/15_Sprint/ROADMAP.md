@@ -1,7 +1,156 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07A release preconditions in progress
+Status: Active — Admin P1-07C post-cutover Production release PASS; PR merge authorization is next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-07C gate（2026-10-11）
+
+Canonical Product RC `f42217d913d44517b53935a68488100610bdff0f` is live on
+Production deployment `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX`, which is `READY` on
+active Vercel Project `fandom-harbor-admin`. The canonical Admin alias is
+verified and bound to that exact deployment. Product Owner-authorized Web Admin
+Entry opening completed at `2026-10-11T21:55:51+0800` without Product code or a
+redundant alias mutation. Full pre-open manual read acceptance and post-open
+canonical-entry, Guest Auth redirect and both controlled Super Admin protected
+reads pass. Unchanged-RC auth/page, Service and cutover contract regression
+passes 15 + 57 + 30 tests.
+
+Production `szfhngifsipsrxcpekti` remains `ACTIVE_HEALTHY` at 21 migrations
+with Migration D applied, exactly two active Super Admins, no third,
+commissioning `1/1/1/1` and zero unconsumed intent. No database/Auth/Role/
+business mutation or new backup occurred; authoritative recovery remains
+`20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER`. The account-name + Role
+header improvement and P1-08 Unified Account Navigation remain future Product
+work. [Post-cutover release evidence](Admin_P1/P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)
+is current authority. PR merge remains blocked pending explicit Product Owner
+authorization.
+
+The following Migration D section is the preceding cutover checkpoint.
+
+Product Owner-authorized Migration D cutover is complete on Production
+`szfhngifsipsrxcpekti`. The immutable exact D applied once, moving migration
+history from 20 to 21; Production remains `ACTIVE_HEALTHY`. Live final ACL is
+legacy `0/12`, ordinary v2 `3/12`, read `3/12` and private `0/36`, with RLS,
+grants and definer/search-path review PASS. Both controlled Super Admins and
+their two verified TOTP factors remain intact; commissioning remains `1/1/1/1`,
+unconsumed intent zero and no third Super Admin exists. Minimum read smoke,
+Search/Detail/Audit, denial probes and 95 targeted tests pass. Fresh Post-Cutover
+Backup `20261010-085250_P1-07C_MIGRATION_D_POST_CUTOVER` passed manifest,
+inventory, full checksums, four archive lists/offline parses, sensitive scan and
+secure permissions; the D-before recovery point remains preserved.
+[Migration D cutover evidence](Admin_P1/P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
+is current authority. Product code and deployment are unchanged; Formal Admin
+remains paused and Web Admin Entry closed by repository authority. The next
+boundary is only Product Owner post-cutover release authorization.
+
+P1-07C-4A FINAL RERUN passed on canonical Product RC
+`f42217d913d44517b53935a68488100610bdff0f`. Product code drift is NO;
+Migration D retains exact accepted SHA, directly follows Pre-D and was not
+executed. Production is `ACTIVE_HEALTHY` at 20 migrations with D absent,
+exactly two active Super Admins, two verified TOTP factors each, commissioning
+`1/1/1/1`, zero unconsumed intent and no third Super Admin. The fresh backup
+revalidation and 8-file/186-test targeted regression passed. Reused A5/A7 heavy
+evidence plus current hashes/order/contracts keep Pre-D → D compatibility and
+the Option B security boundary PASS. [Final rerun evidence](Admin_P1/P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
+is current authority. Formal Admin/Web live check was unavailable and state was
+unchanged by this task; paused/closed repository authority remains. The only
+next boundary is `MIGRATION D EXECUTION AUTHORIZATION`; D remains blocked.
+
+P1-07C-4A10D certified the post-commissioning Production state at exactly 20
+migrations with Pre-D applied and D absent. `Phase2RemoteInviter` and `akumie`
+are the only two active Super Admins, each with two verified TOTP factors;
+Grant/Audit/Ledger/Consume remain `1/1/1/1` and unconsumed intent is zero. The
+first backup attempt is retained as invalid evidence after local `jq` failure.
+The single authorized rerun produced
+`20261010-003942_P1-07C-4A10D_R1_POST_COMMISSIONING`, whose manifest,
+inventory, checksums, archive lists/offline parses, sensitive scan and
+permissions all pass. [4A10D evidence](Admin_P1/P1_07C_4A10D_OPTION_B_REDUNDANCY_FINAL_BACKUP.md)
+is current authority. No restore or Production business mutation occurred.
+Formal Admin/Web live check was unavailable and state was unchanged by this
+task; paused/closed repository authority remains. The next gate is only
+`P1-07C-4A FINAL RERUN`; Migration D remains blocked.
+
+P1-07C-4A10B applied exact accepted Pre-D only to Production
+`szfhngifsipsrxcpekti`, moving the live migration baseline from 19 to exactly 20.
+Migration D remains unapplied. Catalog, persistence, shared-ledger,
+constraint/index, RLS/grant, helper/RPC, fixed-search-path and runtime-guard
+acceptance passed; Reader/Author/non-actor denial and Search/Detail/Audit read
+regression passed. [4A10B evidence](Admin_P1/P1_07C_4A10B_PRODUCTION_PRE_D_MIGRATION_ACCEPTANCE.md)
+is the current authority. Identities, Roles and MFA are unchanged; the active
+Super Admin count remains one. Formal Admin remains paused, Web Admin Entry
+remains closed and no deployment occurred. The next gate is only
+`4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`; D and the final
+Pre-Cutover Backup remain separately blocked.
+
+P1-07C-4A10A verified Production `szfhngifsipsrxcpekti` remains
+`ACTIVE_HEALTHY` at exactly 19 migrations with Pre-D and D unapplied. The
+required schema prerequisites passed; real `Phase2RemoteInviter` and `akumie`
+identities are uniquely resolvable; the sole active Super Admin remains
+`Phase2RemoteInviter`; neither identity has TOTP/MFA. Warehouse-external safety
+backup `20260929-113150_P1-07C-4A10A_PRE_D_SAFETY` passed checksums, custom
+archive offline parsing, permissions and pre/post inventory equality. Restore
+was not run. [4A10A evidence](Admin_P1/P1_07C_4A10A_PRODUCTION_PRE_D_READINESS_BACKUP.md)
+is the authority. No Production data/Auth/role/Migration mutation occurred.
+Formal Admin remains paused and Web Admin Entry remains closed. The only next
+authorization boundary was `PRODUCTION PRE-D MIGRATION 19 → 20`; 4A10B has now
+completed that boundary, so this paragraph is historical.
+
+P1-07C-4A9 froze canonical Product RC
+`f42217d913d44517b53935a68488100610bdff0f` and accepted protected Preview
+`dpl_8kJwa2PxAtB6kmFktmdaHHpbdFpL` as exact-SHA, `READY` and QA-only. Minimum
+protected access, QA Auth, trusted claims, Search/Detail/Audit and elevated UI
+exposure smoke passed; [4A9 evidence](Admin_P1/P1_07C_4A9_OPTION_B_PROTECTED_PREVIEW_ACCEPTANCE.md)
+records safe env upsert, A8 evidence reuse and zero active synthetic artifacts.
+The later docs closure commit does not replace the Product RC. Production
+remains at 19 migrations with Pre-D/D unapplied; Formal Admin remains paused,
+Web Admin Entry remains closed and PR #4 remains open/unmerged. Real-user MFA,
+commissioning, the later pre-cutover backup/final 4A rerun, Migration D and Production release
+remain separately gated.
+
+P1-07C-4A8 completed hosted QA integration on `gqtchjrmpuxibxmurvfd` at
+`20/21` migrations. The exact-retry repair, synthetic AAL2/TOTP flow,
+canonical one-time Saved result, concurrency, both final TOCTOU races, ordinary
+pre-D regression and synthetic cleanup passed. [A8 evidence](Admin_P1/P1_07C_4A8_OPTION_B_HOSTED_QA_INTEGRATION.md)
+distinguishes reused hosted results from new race tests and the privileged
+ordinary v2 database test. Production remains at 19 migrations; Pre-D and D
+are not applied. PR #4 remains open/unmerged, Formal Admin paused and Web Admin
+Entry closed. Hosted QA PASS does not authorize real-user MFA/commissioning,
+Preview, Production migration, fresh backup or D.
+
+Production is `ACTIVE_HEALTHY` at Migration `20/21`; Pre-D is applied and D remains unapplied. Product Owner selected [ADR-024 Option B](../17_Architecture_Decisions/ADR-024.md) for the only authorized elevated operation, `grant_super_admin`, with current Super Admin `Phase2RemoteInviter` and exact target `akumie`. `Reader11` remains outside scope.
+
+Option B requires Supabase TOTP/AAL2 plus fresh `amr`, original Session and one-time operation-bound intent. P1-07C-4A5 proved the exact `supabase-js`/`auth-js`/SSR stack preserves `session_id` across TOTP verify, refresh and reload while replacing tokens, retains trusted TOTP AMR age, and exposes the claims plus live `auth.sessions` validation to database code. A shared request-lock concurrency probe also preserved one global namespace.
+
+P1-07C-4A6 now implements the formal runtime security core: server-verified
+`sub`/`aal`/object-form `amr`/`session_id`, AAL2 plus latest TOTP age `0..300`
+seconds, exact private-policy actor and target, original Session, expected state,
+shared requestId vocabulary and a fixed-order SHA-256 payload fingerprint. It
+defines future issue/read/consume adapter seams and safe failure mapping without
+claiming database atomicity.
+
+P1-07C-4A7 now implements the formal Pre-D private database contract and strict
+RPC adapter. The single additional operation shares the ordinary requestId
+ledger/lock namespace; the database derives and revalidates actor, Session,
+policy target and MFA evidence, then commits expected-state, grant, Audit,
+ledger and one-time intent consumption atomically. Clean 21-Migration rebuild,
+ACL, concurrency, rollback and synthetic E2E proofs pass locally. D remains
+byte-identical and blocked; this paragraph records the earlier A7 local-only
+checkpoint, superseded by the A8 result above.
+
+The selected legacy-bypass solution remains a new compatibility Migration ordered between C and D: close all legacy elevated branches, preserve required ordinary legacy behavior and install the exact commissioning path atomically. A disposable clean upgrade applied 19 → Pre-D 20 → unchanged D 21 with D's catalog and ACL assertions passing, so D modification is not required.
+
+Both controlled accounts must satisfy role + credential control + primary/backup TOTP + independent AAL2 operability. The current active-Super-Admin count remains one; a role row alone cannot close the gate. After compliant grant and independent `akumie` smoke, create a fresh current-state Pre-Cutover Backup, rerun P1-07C-4A and only then reconsider D.
+
+The 2026-09-29 safety backup is the verified pre-Pre-D recovery point, not the
+final post-commissioning Pre-Cutover Backup. PR #4 remains OPEN / UNMERGED, Formal Admin Production remains
+`paused=true`, and Web Admin Entry remains CLOSED. The earlier Pre-D local PASS
+did not authorize hosted QA; the later A8 and 4A9 gates now supersede that
+historical boundary. The next boundary requires separate Product Owner
+authorization for `4A10C REAL MFA ENROLLMENT & CONTROLLED COMMISSIONING`.
+After that gate, a fresh current-state backup and final 4A rerun remain required
+before Migration D or Production release can be reconsidered.
+
+P1-08 Unified Account Navigation is a future authorized product requirement: one account may expose reading, Author Studio and Admin navigation based on live capabilities, and Admin returns to Web without logout. Backend authorization remains independent and Web Admin Entry stays closed until an explicit release authorization.
 
 ## Phase and Sprint model
 
@@ -124,11 +273,11 @@ Reader/Author 登录、Author Profile、Studio 权限与 Reader 拒绝路径已�
 
 P1-00 已由 Product Owner 于 2026-08-16 批准并完成范围冻结：Membership 与 Role 同时纳入；所有写操作要求原因和二次确认；elevated role / elevated Membership 操作要求当前操作者 registration-name/password 重新认证；暂不采用双人审批；邀请延期；Web 后台入口关闭；远程写入 QA 禁止使用 Production。
 
-状态：`P1-06C COMPLETE / P1 NOT READY FOR CLOSURE / P1-07A IN PROGRESS / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`，完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal 通过；未远程 apply。
+历史 P1-04/P1-06 状态：`P1-06C COMPLETE / P1 NOT READY FOR CLOSURE / P1-07A IN PROGRESS / OPTION 3 / ELEVATED MUTATIONS DEFERRED`。该快照已由本节上方 2026-09-19 的 P1-07C 当前状态取代。P1-03 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`。P1-04A 已形成 Commit `2750205f2b9a3cce2c09d2e3f5e43ba1b7d421cd`，完成本地原子 ACL cutover：旧 RPC `0/12`、v2 RPC authenticated-only `3/12`、private helper/executor `0/36`，read RPC 仍为 authenticated-only `3/12`。两次 clean 20-Migration rebuild、14 个 SQL suite 与 rollback rehearsal通过；未远程 apply。
 
 P1-03 的历史 handoff 仅允许 `/access` 读取 UI、三个读取 Service 用例和逐读取 live-access check。随后独立授权的 P1-04 只覆盖 ordinary Membership 与 Author Role 的 Edit/Review/reason/confirm、Server Action、`Saved | Unchanged | Conflict` 展示和先撤旧、证明 deny、再开三个 v2 的单一原子 cutover；回滚不得重开旧 RPC。Web Admin 入口继续关闭。
 
-现有 registration-name/password adapter 仍不能提供数据库可验证、绑定原 Session/单次操作的 proof；ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 不变。Admin/Super Admin Role 与 elevated-account Membership 写入继续延期。P1.1 Elevated Access Governance 为 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后经 Product Owner 独立授权与新的 Auth/Access ADR 重新评估，并优先考虑 MFA/AAL2。邀请管理继续独立延期且不归入 P1.1。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
+在 P1-01/P1-02 历史冻结时点，现有 registration-name/password adapter 不能提供数据库可验证、绑定原 Session/单次操作的 proof，ADR-022 Option 3 与 KI-033 `ACCEPTED DEFERRED BOUNDARY` 因此延期全部 elevated mutations。2026-09-19 的 ADR-024 仅为 exact `grant_super_admin` commissioning 接受 TOTP/AAL2 + operation-bound intent 架构，尚待 feasibility proof；其他 Admin/Super Admin Role 与 elevated-account Membership 写入继续延期。P1.1 Elevated Access Governance 为 `DEFERRED / NOT AUTHORIZED`，只能在 P1 Closure 后经 Product Owner 独立授权重新评估。邀请管理继续独立延期且不归入 P1.1。权威计划见 [`P1_02_IMPLEMENTATION_PLAN.md`](Admin_P1/P1_02_IMPLEMENTATION_PLAN.md)，闭环与交接见 [`P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md`](Admin_P1/P1_02G_BACKEND_CLOSURE_AND_UI_HANDOFF.md)。
 
 P1-02A–G 已 Commit。P1-03 只读 `/access` 已形成 Commit `9caac4a9affbd3ea9d13cbae266696f9c853490e`：通过 P1-02F Service 的 Search/Detail/Audit 三个 read 和逐调用 live-access check 展示最小治理信息，覆盖稳定分页、loading、empty、unauthorized、safe read error 与延期提示。页面仍无写表单、mutation Action 绑定或 direct database/RPC，Web Admin 入口继续关闭。P1-03 Closure 当时的 write-closed/legacy-open ACL 已由随后单独授权的 P1-04A 本地 cutover 取代。证据见 [`P1_03_ACCEPTANCE_EVIDENCE.md`](Admin_P1/P1_03_ACCEPTANCE_EVIDENCE.md)。
 
