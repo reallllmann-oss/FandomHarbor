@@ -1,6 +1,6 @@
 # Admin P1-08 — Unified Account Navigation Plan
 
-状态：`P1-08A SCOPE / IA / ARCHITECTURE READY — IMPLEMENTATION NOT STARTED`
+状态：`P1-08C DESKTOP NAVIGATION UNIFIED — P1-08D AUTHORIZATION REQUIRED`
 
 基线：remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`
 
@@ -168,8 +168,12 @@ Cross-surface links 与 Admin primary navigation 分区：
   `/studio`；目标 URL 未配置时 fail closed 不显示。
 
 不创建“内容/作品”“站点设置”“审计/系统”等占位导航。未来真实 route 出现后再增加。
-只保留 Header primary navigation；移除 Admin 的重复 sidebar。若未来导航深度需要 sidebar，
-应由后续 IA 重新授权，而不是现在保留空壳。
+P1-08C 的实际选择是 Sidebar 作为唯一 Desktop primary navigation；Header 只保留 Product
+identity、当前页面 context、Theme 与 Account Menu。原因是 Sidebar 能随未来真实 Admin
+route 扩展，且不会让长 registration name 与 primary links 在 Header 争宽。Header 中原有
+重复 links 已移除。cross-surface links 未加入：Admin 当前没有同时满足 canonical Web URL
+与 server-resolved capability presentation 的安全来源，P1-08C 不硬编码 host，也不让 client
+推断授权。
 
 ## 8. Mobile IA
 
@@ -284,7 +288,7 @@ Tab 顺序与视觉顺序一致；Enter/Space 打开；Arrow keys 仅在采用�
 | 390px      | 作为既有 Admin regression 主合同；不横向滚动                                                         | 同上                                                | 16px padding；保持现有 shrink-safe cards        |
 | 430px      | 不提前压入 desktop nav；保持 mobile IA                                                               | 可选短 registration name，但不是验收依赖            | 16px padding                                    |
 | 768–1023px | compact/tablet shell；主导航可保持 drawer，避免两项 nav + account + 长名称争宽                       | account trigger 可显示截断名称和 Role               | 24px padding；无 sidebar 重复                   |
-| `>=1024px` | desktop Header 显示两项 primary nav、cross-surface action 与 account trigger                         | name max width 8–12rem，ellipsis；menu 展示完整值   | 32px padding；main width 维持 `max-w-screen-xl` |
+| `>=1024px` | Sidebar 显示两项 primary nav；Header 显示 Product/page context/account，不重复 links                 | name max width 8–12rem，ellipsis；menu 展示完整值   | 32px padding；main width 维持 `max-w-screen-xl` |
 
 Header 顶/左右/抽屉底部使用 `env(safe-area-inset-*)`；不可只用 viewport 高度而忽略
 mobile browser chrome。Role badge 必须有文本；ellipsis 元素提供打开后的完整名称，不依赖
@@ -335,8 +339,8 @@ Dashboard redesign 状态：`HOLD`。
 - **Likely files**：新 `admin-navigation-config.ts`、`AdminShell`、`AdminHeader`、
   `AdminNavigation`；`packages/ui/src/components/layouts.tsx` 与 styles 的最小兼容调整；
   `apps/admin/src/app/page.tsx` 删除重复 links/Logout。
-- **Goal**：一份 config；准确 labels；active route；移除重复 sidebar；返回主站与按
-  capability 显示 Studio。
+- **Goal**：一份 config；准确 labels；active route；Sidebar 成为唯一 Desktop primary
+  navigation；Header 移除重复 links。cross-surface links 仅在安全来源完整时加入。
 - **Tests**：exact/prefix match、`aria-current`、cross-surface fail-closed URL、页面内重复
   Logout 不存在、`/` 与 `/access` URL 不变。
 - **Acceptance**：desktop 只有一个 primary navigation，当前 route 明确，页面业务不变。
@@ -500,3 +504,65 @@ read；Profile display 增加一次必要 self read。`/access` governance Servi
 `P1-08B SECURITY BOUNDARY = PASS`
 
 下一授权边界仅为：`P1-08C — Unified Desktop Navigation`。
+
+## 21. P1-08C implementation closure（2026-10-12）
+
+状态：`DESKTOP NAVIGATION UNIFIED / ONE NAVIGATION CONFIG / ACTIVE ROUTE + PAGE CONTEXT READY`
+
+### Canonical config and route presentation
+
+- 唯一 typed source 为 `apps/admin/src/lib/admin-navigation.ts` 中的
+  `adminNavigationConfig`。它只含真实 route：`/` → `站点文案`、`/access` →
+  `身份与权限`，并保存 exact/segment match 与 optional accessibility label。
+- `/` 只 exact active；`/access`、`/access?q=...`、`/access?subject=...` 与 segment
+  detail variants 都保持 `身份与权限` active；`/accessibility`、sign-in 与不存在 route
+  不误激活。
+- `AdminShell` 只使用 `usePathname()` 解析 presentation state，再把 active href/page label
+  传入 shared layout。它不读取 Auth、Role 或 capability，也不承担 authorization。
+- Desktop active link 使用 `aria-current="page"`、700 font weight 与实体 leading marker，
+  不仅依赖颜色。Header page context 明确显示“当前页面：站点文案/身份与权限”。
+
+### Desktop, tablet and mobile boundary
+
+- Sidebar 是 `>=1024px` 唯一可见 primary navigation；Header 只承担 Product identity、
+  page context、Theme 与 P1-08B Account Menu，不再重复 `/`、`/access` links。
+- `768–1023px` 隐藏 Sidebar，继续使用既有原生 `<details>` fallback；`<=767px` 同样保留
+  该 fallback。Desktop Sidebar 与 fallback 都直接映射同一 `adminNavigationConfig`，不再
+  hardcode route/label。
+- P1-08D 的 drawer/sheet、focus lifecycle、back system 与完整 Mobile page-title architecture
+  未实现。Dashboard 业务主体、cards、metrics 与 IA 保持 `HOLD`。
+- `返回主站` 与 `创作中心` 未加入：当前 Admin 没有足够安全、明确的 canonical URL +
+  trusted server capability presentation source，故 fail closed；未硬编码 Production host。
+
+### Security and regression
+
+- P1-08B `AdminCurrentIdentity`、Account Menu、Role precedence 与 canonical Logout 保持原样；
+  sign-in 不显示 protected navigation/page context/Account Menu。
+- `TrustedAccessContext`、page/Action/Service authorization、governance contract、Auth、Role、
+  DB schema 与 Migration 均未修改。pathname/config 仅用于展示。
+- 现有 `React cache` 仍只用于同一 server request 的 access/read reuse；没有新增
+  module/global mutable identity cache，也没有 cross-request/cross-session identity state。
+- Temporary component harness = `NOT USED`，原因是当前依赖树没有 `vite` executable；
+  未安装 dependency、未修改 package contract。验证改用成功构建的 Admin production
+  server + real compiled CSS。
+
+### Validation
+
+- Navigation/active/shell/Account/identity focused tests：PASS。
+- Full Admin targeted tests：15 files / 133 tests PASS。
+- Admin typecheck、lint、production build：PASS。
+- Google Chrome production-build presentation smoke：Desktop 1024/1280/1440 对 `/` 与
+  `/access` 共 6 项 PASS；Tablet 768/834 对两条 route 共 4 项 PASS。确认唯一可见 primary
+  navigation、正确 active/`aria-current`、长账号名稳定、无横向 overflow、内容/Sidebar
+  不重叠，Tablet fallback 可展开。
+- Production、dedicated remote QA 与 Vercel 未访问；Database、Auth 与 Role 均未修改。
+
+`P1-08C SECURITY BOUNDARY = PASS`
+
+### Recorded future boundary
+
+P1-08F 记录为 `Cross-Surface Account Identity`：未来 Reader、Author Studio、Admin 右上角
+均显示 `registration name + contextual Role`；mixed-role identity 必须按当前 surface context
+显示 Role，而不是全站永远显示最高权限。该要求本阶段仅记录，未修改 Web 或 Author Studio。
+
+下一授权边界仅为：`P1-08D — Mobile Navigation`。

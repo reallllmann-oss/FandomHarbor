@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08B COMPLETE / P1-08C AUTHORIZATION REQUIRED`
+状态：`P1-08C COMPLETE / P1-08D AUTHORIZATION REQUIRED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -23,6 +23,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-07  | Production Release Review                    | Complete — Production release PASS     |
 | P1-08A | Unified Account Navigation audit / IA / plan | Complete — docs-only plan ready        |
 | P1-08B | Identity + Account Menu foundation           | Complete — security boundary PASS      |
+| P1-08C | Unified Desktop Navigation                   | Complete — security boundary PASS      |
 
 权威合同：
 
@@ -65,6 +66,28 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
+
+## 当前 P1-08C 权威状态（2026-10-12）
+
+- `apps/admin/src/lib/admin-navigation.ts` 是唯一 navigation config，只包含 `/` →
+  `站点文案` 与 `/access` → `身份与权限`。root exact match；`/access` query/detail
+  variants 保持 active，unrelated route 不误激活。
+- Sidebar 是 `>=1024px` 唯一 Desktop primary navigation。Header 只承担 Product identity、
+  page context、Theme 与 Account Menu；active link 使用 `aria-current="page"`、字重与实体
+  marker。重复 Header links 已移除。
+- Tablet/Mobile 现有 `<details>` fallback 复用同一 config；完整 drawer/sheet/back system
+  留给 P1-08D。cross-surface links 因缺少完整安全 URL + trusted capability presentation
+  source 而 fail closed 未加入。
+- P1-08B identity/Role/Account Menu/Logout 与 server authorization 均未改变；无跨请求 identity
+  cache、DB、Migration、Auth、Role、governance、Dashboard 或 Production 变化。
+- Admin 15 files / 133 tests、typecheck、lint、build PASS；production-build compiled-CSS
+  smoke 在 Desktop 1024/1280/1440 与 Tablet 768/834 对 `/`、`/access` 共 10 项 PASS。
+  Temporary component harness 因无 `vite` executable 而未使用，也未新增 dependency。
+- 已记录未来 `P1-08F — Cross-Surface Account Identity`：Role 按 Reader/Author/Admin 当前
+  surface context 展示，本阶段未修改 Web/Studio。
+- 完整 closure 见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08D — Mobile Navigation`。
 
 ## 当前 P1-08B 权威状态（2026-10-12）
 

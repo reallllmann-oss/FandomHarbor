@@ -1,4 +1,5 @@
 import { createTrustedAccessContext } from "@fandom-harbor/auth";
+import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -74,5 +75,17 @@ describe("Admin current identity trusted lookup", () => {
     expect(mocks.select).toHaveBeenCalledWith("registration_name");
     expect(mocks.eq).toHaveBeenCalledWith("user_id", identity.id);
     expect(mocks.maybeSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps identity read reuse request-scoped without a mutable cross-request cache", async () => {
+    const implementation = await readFile("src/lib/identity-access.ts", "utf8");
+
+    expect(implementation).toContain('import { cache } from "react"');
+    expect(implementation).toContain(
+      "const getAdminIdentityAccessForRequest = cache(createAdminIdentityAccess)",
+    );
+    expect(implementation).not.toContain("globalThis");
+    expect(implementation).not.toContain("new Map");
+    expect(implementation).not.toContain("new WeakMap");
   });
 });

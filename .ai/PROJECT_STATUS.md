@@ -1,5 +1,26 @@
 # Project Status
 
+## Admin P1-08C Unified Desktop Navigation（2026-10-12）
+
+| Item               | Current authority                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Navigation source  | one typed `adminNavigationConfig`; `/` = `站点文案`, `/access` = `身份与权限`                             |
+| Desktop surface    | Sidebar only; Header = Product identity + page context + Theme + Account Menu                             |
+| Active state       | root exact; access query/detail variants active; `aria-current`, 700 weight and shape marker              |
+| Tablet/Mobile      | existing native `<details>` reuses canonical config; full Mobile remains P1-08D                           |
+| Cross-surface      | links omitted fail-closed; no complete canonical URL + trusted capability presentation source             |
+| P1-08B regression  | identity, contextual Admin Role, Account Menu and unique Logout PASS                                      |
+| Validation         | Admin 15/133, typecheck, lint, build; Chrome 1024/1280/1440 and 768/834 across both routes PASS           |
+| Harness            | temporary component harness not used: no `vite` executable; no dependency added                           |
+| Security           | `P1-08C SECURITY BOUNDARY = PASS`; server authorization/request cache unchanged; no Auth/DB/Role mutation |
+| Future recorded    | P1-08F Cross-Surface Account Identity with Role selected by current surface context                       |
+| Final verdict      | `P1-08C UNIFIED DESKTOP NAVIGATION = PASS`                                                                |
+| Next authorization | `P1-08D — Mobile Navigation` only                                                                         |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+Dashboard remains `HOLD`; Production is unchanged.
+
 ## Admin P1-08B Identity + Account Menu Foundation（2026-10-12）
 
 | Item               | Current authority                                                                              |

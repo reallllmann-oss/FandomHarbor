@@ -1,7 +1,32 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-08B identity/account foundation complete; P1-08C authorization is next
+Status: Active — Admin P1-08C desktop navigation complete; P1-08D authorization is next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08C gate（2026-10-12）
+
+P1-08C establishes one typed `adminNavigationConfig` for `/` → `站点文案` and
+`/access` → `身份与权限`. Root matching is exact; access query/detail variants
+stay active. Sidebar is the only Desktop primary navigation; Header now owns
+Product identity, page context, Theme and the P1-08B Account Menu without
+duplicating links. Active state uses `aria-current="page"`, weight and a shape
+marker rather than color alone.
+
+Tablet/Mobile retain the native `<details>` fallback while reusing the same
+config; full Mobile interaction remains P1-08D. Cross-surface links fail closed
+because Admin does not yet have a complete canonical URL + trusted capability
+presentation source. Account identity, Role, Logout, server authorization and
+request-scoped React cache remain unchanged; no DB, Migration, Auth, Role,
+governance, Dashboard or Production change occurred.
+
+Admin 15 files / 133 tests, typecheck, lint and build pass. Production-build
+compiled-CSS Chrome smoke passes `/` and `/access` at 1024/1280/1440 and
+768/834. Temporary component harness was not used because the dependency tree
+has no `vite` executable; no dependency was added. Future
+`P1-08F — Cross-Surface Account Identity` is recorded for surface-contextual
+Reader/Author/Admin Role presentation only. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only `P1-08D — Mobile Navigation`.
 
 ## Current Admin P1-08B gate（2026-10-12）
 

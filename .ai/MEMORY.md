@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-12: P1-08C unified Desktop Admin navigation around one typed
+  `adminNavigationConfig`: `/` is `站点文案`, `/access` is `身份与权限`, root is
+  exact-only and access query/detail variants remain active. Sidebar is the
+  only `>=1024px` primary navigation; Header now contains Product identity,
+  page context, Theme and the P1-08B Account Menu without duplicate links.
+  Active links use `aria-current="page"`, 700 weight and a physical marker.
+  Tablet/Mobile native `<details>` now reuses the same config; full drawer,
+  sheet and back/page-title work remains P1-08D. Cross-surface links were
+  omitted fail-closed because Admin lacks a complete canonical URL + trusted
+  capability presentation source. P1-08B identity/Role/Account Menu/Logout,
+  server authorization and request-scoped React cache remain unchanged; no
+  cross-request identity cache, DB, Migration, Auth, Role, governance,
+  Dashboard or Production change occurred. Admin 15/133, typecheck, lint,
+  build and compiled-CSS Chrome smoke at 1024/1280/1440 plus 768/834 across
+  both routes pass. The temporary component harness was not used because no
+  `vite` executable exists; no dependency was added. P1-08F records future
+  surface-contextual Reader/Author/Admin account Role presentation. The only
+  next authorization boundary is `P1-08D — Mobile Navigation`.
+
 - 2026-10-12: P1-08B implemented the trusted current Admin identity and
   canonical Account Menu foundation. It chose a separate
   `AdminCurrentIdentity { registrationName, displayRole }` projection and left

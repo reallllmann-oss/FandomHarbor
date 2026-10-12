@@ -25,7 +25,7 @@ describe("Admin authenticated header actions", () => {
     ]);
 
     expect(layout).toContain(
-      "<AdminLayout headerActions={<AdminHeaderActions />}>",
+      "<AdminShell headerActions={<AdminHeaderActions />}>",
     );
     expect(sharedLayout).toContain('className="site-header-utilities"');
     expect(sharedLayout.indexOf("<ThemeToggle />")).toBeLessThan(
@@ -42,9 +42,16 @@ describe("Admin authenticated header actions", () => {
   });
 
   it("keeps the sign-in route free of account-menu identity or logout UI", async () => {
-    const signInPage = await source("./auth/sign-in/page.tsx");
+    const [shell, signInPage] = await Promise.all([
+      source("./admin-shell.tsx"),
+      source("./auth/sign-in/page.tsx"),
+    ]);
 
     expect(signInPage).not.toContain("AdminAccountMenu");
     expect(signInPage).not.toContain("退出登录");
+    expect(shell).toContain("usePathname()");
+    expect(shell).not.toContain("capabilities");
+    expect(shell).not.toContain("getAdminAccessContext");
+    expect(shell).not.toContain("getAdminCurrentIdentity");
   });
 });
