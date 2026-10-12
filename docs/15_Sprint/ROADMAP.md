@@ -1,7 +1,31 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-08A scope / IA / architecture ready; P1-08B authorization is next
+Status: Active — Admin P1-08B identity/account foundation complete; P1-08C authorization is next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08B gate（2026-10-12）
+
+P1-08B implements a server-owned `AdminCurrentIdentity` presentation model
+without changing `TrustedAccessContext`. A verified Session identity keys the
+existing trusted Membership/Role lookup and a self-only
+`profiles.registration_name` read. Client code receives only registration name
+and the selected Admin display label; authorization remains in existing server
+page, Action and Service contracts.
+
+The Header now exposes one Account Menu with registration name, Admin Role and
+the existing sign-out Server Action. Role display is `super_admin > admin`,
+never a synthesized Reader role. The former Home-page Logout was removed.
+Keyboard, Escape/outside close, focus return, ARIA, 44px targets and long-name
+responsive contracts pass targeted validation. Sign-in remains free of account
+identity; no route-group or Navigation IA rewrite occurred.
+
+Focused tests, all Admin targeted tests, typecheck, lint, build and
+375/390/430/1024 Chrome smoke pass. `P1-08B SECURITY BOUNDARY = PASS`.
+Dashboard remains `HOLD`; Auth, DB, Migration, governance and Production are
+unchanged. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08C — Unified Desktop Navigation`.
 
 ## Current Admin P1-08 gate（2026-10-12）
 

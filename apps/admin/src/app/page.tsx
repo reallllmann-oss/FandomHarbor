@@ -4,7 +4,6 @@ import {
   formatSiteCopyVersion,
   loadAdminHomeData,
 } from "../lib/admin-home-data";
-import { signOut } from "./auth/actions";
 import { SiteCopyEditor } from "./site-copy-editor";
 
 export const dynamic = "force-dynamic";
@@ -82,22 +81,12 @@ export default async function AdminHomePage() {
           创作中心权限条件，以及页脚法务链接均不属于站点文案数据。此页面不会改变
           现有身份验证、权限或身份与权限页面行为。
         </p>
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <a
-            className="inline-flex min-h-11 items-center rounded-control border border-border bg-surface px-4 text-sm font-medium hover:bg-background"
-            href="/access"
-          >
-            前往身份与权限
-          </a>
-          <form action={signOut}>
-            <button
-              className="min-h-11 rounded-control border border-border bg-surface px-4 text-sm font-medium"
-              type="submit"
-            >
-              退出登录
-            </button>
-          </form>
-        </div>
+        <a
+          className="mt-5 inline-flex min-h-11 items-center rounded-control border border-border bg-surface px-4 text-sm font-medium hover:bg-background"
+          href="/access"
+        >
+          前往身份与权限
+        </a>
       </section>
     </div>
   );

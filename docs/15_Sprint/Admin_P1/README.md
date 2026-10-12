@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08A PLAN READY / P1-08B AUTHORIZATION REQUIRED`
+状态：`P1-08B COMPLETE / P1-08C AUTHORIZATION REQUIRED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -22,6 +22,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
 | P1-07  | Production Release Review                    | Complete — Production release PASS     |
 | P1-08A | Unified Account Navigation audit / IA / plan | Complete — docs-only plan ready        |
+| P1-08B | Identity + Account Menu foundation           | Complete — security boundary PASS      |
 
 权威合同：
 
@@ -65,7 +66,25 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-08A 权威状态（2026-10-12）
+## 当前 P1-08B 权威状态（2026-10-12）
+
+- P1-08B 采用独立 `AdminCurrentIdentity` presentation model；
+  `TrustedAccessContext` 未改变。verified Session identity → trusted Membership/Role →
+  self `profiles.registration_name` 是唯一 identity display path，client 不提供 user id。
+- Header Account Trigger 显示 registration name 与最高真实 Admin Role；
+  `super_admin > admin`，mixed Author Role 不覆盖 Admin label，也不合成 Reader Role。
+  Account panel 展示完整账号、Role 与唯一 canonical Logout；首页重复 Logout 已移除。
+- Menu 支持 native keyboard activation、Escape、outside close、focus return、
+  `aria-expanded`/`aria-controls`、44px targets 与长名称响应式处理。sign-in 不显示
+  Account Menu；未进行 route-group 或 Navigation IA 重构。
+- focused tests、Admin targeted tests、typecheck、lint、build 与 375/390/430/1024
+  responsive smoke 均 PASS。`P1-08B SECURITY BOUNDARY = PASS`；Auth、DB、Migration、
+  governance、Dashboard 与 Production 均未改变。
+- 完整架构与 closure 见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08C — Unified Desktop Navigation`。
+
+## P1-08A 规划基线（2026-10-12）
 
 - 基于 remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d` 完成
   `apps/admin`、shared UI 与 trusted identity/access chain 的只读审计。

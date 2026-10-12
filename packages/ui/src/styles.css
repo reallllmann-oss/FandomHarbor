@@ -144,6 +144,117 @@ body {
   outline-offset: 2px;
 }
 
+.admin-account-menu {
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.admin-account-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  max-width: min(20rem, calc(100vw - 7rem));
+  min-height: 2.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.admin-account-trigger:hover,
+.admin-account-trigger[aria-expanded="true"] {
+  background: var(--surface-muted);
+}
+
+.admin-account-trigger:focus-visible,
+.admin-account-logout:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.admin-account-trigger-copy {
+  align-items: center;
+  display: flex;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.admin-account-trigger-name {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-account-trigger-role {
+  color: var(--muted-foreground);
+  flex: none;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.admin-account-trigger-indicator {
+  flex: none;
+  font-size: 0.75rem;
+}
+
+.admin-account-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1rem 2.5rem
+    color-mix(in oklch, var(--foreground) 14%, transparent);
+  max-width: calc(100vw - 2rem);
+  padding: 1rem;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 18rem;
+  z-index: 40;
+}
+
+.admin-account-panel-label {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.admin-account-panel-name {
+  font-weight: 600;
+  margin: 0.375rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-account-panel-role {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+.admin-account-panel-action {
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+}
+
+.admin-account-logout {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+  text-align: left;
+  width: 100%;
+}
+
+.admin-account-logout:hover {
+  background: var(--surface-muted);
+}
+
 .site-footer-layout {
   align-items: center;
   display: flex;
@@ -398,6 +509,34 @@ body {
 
   .site-header-account-name {
     max-width: 5.5rem;
+  }
+
+  .admin-account-trigger {
+    max-width: min(8rem, calc(100vw - 11rem));
+    padding-inline: 0.625rem;
+  }
+
+  .admin-account-trigger-copy {
+    align-items: flex-start;
+    display: grid;
+    gap: 0;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .admin-account-trigger-name {
+    max-width: 5.5rem;
+  }
+
+  .admin-account-trigger-separator {
+    display: none;
+  }
+
+  .admin-account-panel {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    top: calc(4rem + env(safe-area-inset-top));
+    width: min(18rem, calc(100vw - 2rem));
   }
 
   .admin-grid {

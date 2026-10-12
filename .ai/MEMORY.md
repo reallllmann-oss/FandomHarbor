@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-12: P1-08B implemented the trusted current Admin identity and
+  canonical Account Menu foundation. It chose a separate
+  `AdminCurrentIdentity { registrationName, displayRole }` projection and left
+  `TrustedAccessContext` unchanged. The only lookup path is verified server
+  Session identity → trusted Membership/active Roles → self
+  `profiles.registration_name`; client code cannot select a subject and never
+  receives UUID, email, MFA/AMR, JWT/session metadata or capabilities. Display
+  precedence is `super_admin > admin`; Author does not replace an Admin label
+  and no Reader role is synthesized. The Header menu renders identity, Role and
+  the existing sign-out Server Action, with native keyboard activation,
+  Escape/outside close, focus return, ARIA, 44px targets and long-name handling.
+  The duplicate Home Logout was removed. Sign-in remains Account-Menu-free
+  without a route-group migration; Desktop/Mobile navigation IA was not
+  changed. Focused/full Admin tests, typecheck, lint, build and
+  375/390/430/1024 Chrome smoke pass. `P1-08B SECURITY BOUNDARY = PASS`.
+  Dashboard stays `HOLD`; Auth, DB, Migration, governance, deployment and
+  Production are unchanged. The only next authorization boundary is
+  `P1-08C — Unified Desktop Navigation`.
+
 - 2026-10-12: P1-08A completed a docs-only baseline audit and froze the scope,
   Desktop/Mobile IA, identity data flow, component architecture,
   server/client boundary, responsive/accessibility matrix, B–E implementation

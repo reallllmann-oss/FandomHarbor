@@ -427,3 +427,76 @@ Dashboard redesign 状态：`HOLD`。
 - Does not mean：`P1-08 IMPLEMENTATION STARTED`
 - Recommended next authorization boundary：
   `P1-08B — Identity + Account Menu Foundation`
+
+## 20. P1-08B implementation closure（2026-10-12）
+
+状态：`TRUSTED CURRENT ACCOUNT IDENTITY VISIBLE / ROLE LABEL VISIBLE / CANONICAL ACCOUNT MENU + LOGOUT READY`
+
+### Actual architecture choice
+
+P1-08B 采用 Option B：新增独立、最小化的 `AdminCurrentIdentity`
+presentation model：
+
+```ts
+interface AdminCurrentIdentity {
+  registrationName: string;
+  displayRole: "管理员" | "超级管理员";
+}
+```
+
+`TrustedAccessContext` 未修改。registration name 是可信 server lookup 得到的
+display-safe 数据，但不是 authorization field；把它留在 presentation model 可避免 UI
+需求污染 security authorization object，也不会把 UUID、email、MFA、AMR、JWT、
+`session_id`、capabilities 或 Auth metadata 发送给 client。
+
+### Trusted lookup path
+
+1. `createServerAuthProvider(...).getSession()` 验证 cookie Session/user。
+2. `getAdminAccessContext()` 以 verified `session.identity` 读取 Membership 与 active Roles。
+3. 只有 active、具有真实 `admin`/`super_admin` Role 且含 `admin:operate` 的 context 才继续。
+4. server-only loader 以该 trusted `identity.id` 查询当前用户自己的
+   `profiles.registration_name`；API 不接受 client subject/user id。
+5. missing/invalid profile、读取错误、inactive 或 unauthorized context 均 fail closed，不以
+   UUID/email/metadata 回退显示。
+
+Header 与首页在同一 RSC request 内通过 request-scoped `React cache` 复用既有 access
+read；Profile display 增加一次必要 self read。`/access` governance Service 继续逐用例独立
+执行 live authorization，未为减少查询而削弱安全检查。
+
+### Role and Account Menu
+
+- Admin Account Role 只从真实 Role Set 选择，优先级固定为
+  `super_admin > admin`；不会从 active Membership 合成 `reader`。
+- `author + super_admin` 显示“超级管理员”；`admin + author` 显示“管理员”。
+- `AdminAccountMenu` 是 client interaction component，但只接收上方两个 presentation
+  fields。Trigger 显示 registration name + Admin Role；长名称截断，panel 展示完整值。
+- Trigger 是原生 button，含 `aria-expanded`、`aria-controls` 与完整 accessible label；
+  支持原生 Enter/Space、点击切换、outside pointer close、Escape close、打开后 focus 到
+  Logout、Escape 后 focus 返回 trigger。
+- trigger 与 Logout target 均至少 44×44；Mobile panel 使用 safe-area-aware fixed
+  positioning。本阶段未实现 drawer、active route、page title 或 Desktop IA 重构。
+
+### Logout and shell boundary
+
+- Account Menu 中的 form 直接复用既有 `signOut` Server Action；Auth provider sign-out 与
+  `/auth/sign-in` redirect 合同未改变。
+- 首页重复 Logout 已移除；Account Menu 成为 protected Admin 的 canonical Logout。
+- 未进行 route-group 迁移。Root Header action 仍为 async Server Component：Guest、
+  unauthorized、missing identity 或读取错误时返回 `null`，因此 `/auth/sign-in` 不出现
+  Account Menu；现有 protected pages 继续执行各自 authorization/redirect。
+
+### Validation
+
+- Identity/Role/Menu/Auth focused tests：6 files / 33 tests PASS。
+- Full Admin targeted tests：13 files / 119 tests PASS。
+- Admin typecheck：PASS。
+- Admin lint：PASS。
+- Admin production build：PASS。
+- Chrome viewport smoke：375/390/430/1024 全部无横向溢出；长 registration name
+  trigger 截断、Role 可见、panel 在 viewport 内、trigger/Logout 均为 44px。
+- Auth、Role authorization、governance contract、DB schema、Migration、Dashboard、
+  Production/QA/Vercel 均未改变。
+
+`P1-08B SECURITY BOUNDARY = PASS`
+
+下一授权边界仅为：`P1-08C — Unified Desktop Navigation`。

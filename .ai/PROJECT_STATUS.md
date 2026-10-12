@@ -1,5 +1,26 @@
 # Project Status
 
+## Admin P1-08B Identity + Account Menu Foundation（2026-10-12）
+
+| Item               | Current authority                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| Identity model     | separate `AdminCurrentIdentity`; `TrustedAccessContext` unchanged                              |
+| Registration name  | server self-read from `profiles.registration_name`, keyed only by verified Session identity    |
+| Role display       | `super_admin → 超级管理员`; `admin → 管理员`; mixed Author role does not override Admin label  |
+| Account Menu       | registration name, Role, canonical Logout; long-name truncation and full panel value           |
+| Interaction        | native keyboard, Escape/outside close, focus return, ARIA and 44px targets                     |
+| Logout             | existing Server Action/Auth contract retained; duplicate Home Logout removed                   |
+| Shell boundary     | sign-in has no Account Menu; no route-group or Navigation IA migration                         |
+| Validation         | focused 6/33 and full Admin 13/119 tests, typecheck, lint, build, 375/390/430/1024 Chrome PASS |
+| Security           | `P1-08B SECURITY BOUNDARY = PASS`; authorization remains server-side                           |
+| Product/Production | no DB/Migration/Auth/governance/Dashboard/Production change                                    |
+| Final verdict      | `P1-08B IDENTITY + ACCOUNT MENU FOUNDATION = PASS`                                             |
+| Next authorization | `P1-08C — Unified Desktop Navigation` only                                                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+Desktop and Mobile navigation remain incomplete by design.
+
 ## Admin P1-08A Unified Account Navigation Plan（2026-10-12）
 
 | Item               | Current authority                                                                                                          |
