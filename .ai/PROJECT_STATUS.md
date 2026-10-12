@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P1-08D Mobile Navigation（2026-10-12）
+
+| Item               | Current authority                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| Mobile surface     | `<=1023px` three-region Header + one `AdminMobileNavigation` drawer; Admin `<details>` retired      |
+| Desktop boundary   | `>=1024px` P1-08C Sidebar and Account Menu unchanged                                                |
+| Page/back context  | canonical title; root no Back; access list → `/`; Detail removes only `subject` and preserves query |
+| Drawer lifecycle   | dialog, backdrop/Escape/nav close, focus trap/return, body lock, background inert                   |
+| Account/logout     | trusted registration name + Admin Role; one existing canonical `signOut` form                       |
+| Responsive         | 320/375/390/430/768/834/1024/1280 compiled-CSS Chrome PASS; 44px/safe-area/zero overflow            |
+| Validation         | Admin 16 files / 146 tests, typecheck, lint and production build PASS                               |
+| Security           | `P1-08D SECURITY BOUNDARY = PASS`; no TrustedAccessContext/Auth/Role/capability/DB/Migration change |
+| Product boundary   | Dashboard `HOLD`; P1-08F recorded only; Production/QA/Vercel unchanged                              |
+| Final verdict      | `P1-08D MOBILE NAVIGATION = PASS`                                                                   |
+| Next authorization | `P1-08E — Responsive / Accessibility / Regression Closure` only                                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
 ## Admin P1-08C Unified Desktop Navigation（2026-10-12）
 
 | Item               | Current authority                                                                                         |

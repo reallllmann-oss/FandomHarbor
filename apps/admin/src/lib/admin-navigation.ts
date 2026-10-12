@@ -55,3 +55,25 @@ export function getActiveAdminNavigationItem(
     ) ?? null
   );
 }
+
+export function getAdminMobileBackHref(location: string): string | null {
+  const url = new URL(location, "https://admin.fandom-harbor.invalid");
+
+  if (url.pathname === "/") return null;
+
+  if (url.pathname === "/access") {
+    if (!url.searchParams.has("subject")) return "/";
+
+    url.searchParams.delete("subject");
+    const query = url.searchParams.toString();
+    return query ? `/access?${query}` : "/access";
+  }
+
+  if (url.pathname.startsWith("/access/")) {
+    url.searchParams.delete("subject");
+    const query = url.searchParams.toString();
+    return query ? `/access?${query}` : "/access";
+  }
+
+  return "/";
+}

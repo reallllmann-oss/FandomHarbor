@@ -1,7 +1,29 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-08C desktop navigation complete; P1-08D authorization is next
+Status: Active — Admin P1-08D mobile navigation complete; P1-08E authorization is next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08D gate（2026-10-12）
+
+P1-08D replaces the Admin native `<details>` fallback with one real
+`AdminMobileNavigation` drawer for `<=1023px`; `>=1024px` retains the P1-08C
+Sidebar. The compact Header now owns deterministic Back/product context,
+canonical page title and one Menu trigger. `/access` list/search returns to `/`;
+Detail removes only `subject` and preserves its list/search query context.
+
+The drawer reuses `adminNavigationConfig`, active matching, trusted Admin identity
+projection and the canonical `signOut` Server Action. Modal semantics, focus
+trap/return, Escape/backdrop/navigation close, body scroll lock/background inert,
+44px targets, `100dvh`, safe-area padding and complete long-name presentation are
+covered. Admin 16 files / 146 tests, typecheck, lint and production build pass;
+compiled-CSS Chrome smoke passes 320/375/390/430/768/834/1024/1280.
+
+`P1-08D SECURITY BOUNDARY = PASS`: TrustedAccessContext, authorization,
+request-scoped caching, Auth, Role, capability, DB, Migration, governance,
+Dashboard and Production are unchanged. P1-08F remains future-only. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08E — Responsive / Accessibility / Regression Closure`.
 
 ## Current Admin P1-08C gate（2026-10-12）
 

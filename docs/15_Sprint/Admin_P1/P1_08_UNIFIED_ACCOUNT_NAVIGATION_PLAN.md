@@ -1,6 +1,6 @@
 # Admin P1-08 — Unified Account Navigation Plan
 
-状态：`P1-08C DESKTOP NAVIGATION UNIFIED — P1-08D AUTHORIZATION REQUIRED`
+状态：`P1-08D MOBILE NAVIGATION READY — P1-08E AUTHORIZATION REQUIRED`
 
 基线：remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`
 
@@ -177,16 +177,20 @@ route 扩展，且不会让长 registration name 与 primary links 在 Header �
 
 ## 8. Mobile IA
 
-Mobile 不复制 desktop nav 横排。建议 `<768px` 使用：
+P1-08D 的 canonical Mobile/Tablet IA 适用于 `<=1023px`：
 
-1. 顶部 safe-area-aware Header：可选返回按钮、当前页面标题、主导航按钮、账号按钮。
-2. 主导航 drawer/sheet：依次为当前 Admin section、其他 Admin section、分隔线、返回主站、
-   capability-aware 创作中心。
-3. Account sheet/popover：registration name、Role label、Logout；不显示 UUID、email、MFA、
-   Auth metadata。
-4. 当前项使用文案 + `aria-current="page"` + 非颜色形态标记。
-5. `/access?subject=...` 的“返回”清除 `subject`/`auditCursor`，保留 `q`/`cursor`，回到
-   Search 结果；一级 `/` 与 `/access` 不显示虚构返回箭头。
+1. 顶部三分区 Header：左侧为确定性 Back 或“管理后台”产品 context，中间为 canonical
+   page title，右侧只有一个 Navigation trigger。
+2. 同一个 `AdminMobileNavigation` drawer 同时承载两项 primary navigation 与独立 Account
+   section，避免第二套 account trigger/menu。
+3. Account section 展示完整 registration name、Admin Role 与唯一 canonical Logout；不显示
+   UUID、email、MFA、capability 或 Auth metadata。
+4. 当前项使用文案 + `aria-current="page"` + 背景、字重与实体 marker，不只依赖颜色。
+5. `/` 不显示 Back；`/access` 及只有 list/search query 的 variant 返回 `/`；带
+   `subject` 的 Detail 只删除 `subject`，保留 `q`、`cursor`、`auditCursor` 等现有 query，
+   回到同一 list/search context。未知 `/access/*` fail-safe 到 canonical `/access` context。
+6. Drawer 采用 modal dialog contract：focus 进入 Close、Tab trap、Escape/backdrop close、
+   关闭后 focus 返回 trigger、背景 inert、body scroll lock。
 
 320px 时 account trigger 采用图标/紧凑按钮并提供完整 accessible name；375/390/430px
 保持同一信息顺序，不通过隐藏 Logout 或 Role 来腾空间。长 registration name 只在 trigger
@@ -287,7 +291,7 @@ Tab 顺序与视觉顺序一致；Enter/Space 打开；Arrow keys 仅在采用�
 | 375px      | 同 320；保留 page title + 两个操作目标                                                               | 可显示 initials-free account icon + accessible name | 16px padding                                    |
 | 390px      | 作为既有 Admin regression 主合同；不横向滚动                                                         | 同上                                                | 16px padding；保持现有 shrink-safe cards        |
 | 430px      | 不提前压入 desktop nav；保持 mobile IA                                                               | 可选短 registration name，但不是验收依赖            | 16px padding                                    |
-| 768–1023px | compact/tablet shell；主导航可保持 drawer，避免两项 nav + account + 长名称争宽                       | account trigger 可显示截断名称和 Role               | 24px padding；无 sidebar 重复                   |
+| 768–1023px | 与 Mobile 相同的 drawer；不显示 Sidebar，避免两项 nav + account + 长名称争宽                         | drawer Account section 显示完整名称与 Role          | 24px padding；无 sidebar 重复                   |
 | `>=1024px` | Sidebar 显示两项 primary nav；Header 显示 Product/page context/account，不重复 links                 | name max width 8–12rem，ellipsis；menu 展示完整值   | 32px padding；main width 维持 `max-w-screen-xl` |
 
 Header 顶/左右/抽屉底部使用 `env(safe-area-inset-*)`；不可只用 viewport 高度而忽略
@@ -566,3 +570,62 @@ P1-08F 记录为 `Cross-Surface Account Identity`：未来 Reader、Author Studi
 显示 Role，而不是全站永远显示最高权限。该要求本阶段仅记录，未修改 Web 或 Author Studio。
 
 下一授权边界仅为：`P1-08D — Mobile Navigation`。
+
+## 22. P1-08D implementation closure（2026-10-12）
+
+状态：`ADMIN MOBILE NAVIGATION READY / MOBILE PAGE CONTEXT + BACK BEHAVIOR READY`
+
+### Mobile Header and breakpoint
+
+- `<=1023px` 使用 Mobile/Tablet Header + drawer：左侧 Back/产品 context、中间 canonical
+  page title、右侧唯一 Menu trigger。`>=1024px` 保持 P1-08C Sidebar 与 Desktop Account
+  Menu，不显示 Mobile leading 或 drawer navigation。
+- `/` 标题为“站点文案”且不显示 Back；`/access` 及所有 query/detail variant 标题始终为
+  “身份与权限”，不会把 query 值当标题。
+- Admin 不再渲染 shared native `<details>` fallback；Reader/Docs 的通用 fallback 未改变。
+
+### Deterministic back hierarchy
+
+- `/access` 与 `/access?q=...` 返回 `/`。
+- `/access?...&subject=<id>` 只删除 `subject`，保留 `q` 与其他现有 query，返回同一
+  list/search context。
+- 未知 `/access/*` fail-safe 到 canonical `/access` context；其他未知 route 返回 `/`。
+  实现不使用 `router.back()`，也不参与 authorization。
+
+### Drawer, account and accessibility
+
+- `AdminMobileNavigation` 直接映射 `adminNavigationConfig`，复用 P1-08C active matcher；
+  current link 有 `aria-current="page"`、字重、背景与实体 marker。
+- Drawer 是 `aria-modal` dialog，支持 backdrop/Escape/导航关闭、打开后 focus 到 Close、
+  Tab/Shift+Tab trap、关闭后 focus 返回 trigger。打开期间 body scroll lock，main/footer/
+  Header 背景 targets 使用 `inert`，backdrop 阻断误触。
+- Menu、Back、Close、navigation links 与 Logout 均至少 44px。panel 使用 `100dvh` 与
+  `env(safe-area-inset-top/right/bottom)`；长 registration name 在 drawer 内完整换行。
+- Drawer Account section 只展示 registration name 与 contextual Admin Role，并直接复用
+  既有 `signOut` Server Action。全 shell 只有一个 Logout form、一个 Mobile trigger 与一个
+  Mobile navigation surface。
+
+### Security and regression
+
+- Client 只负责 pathname presentation、query-based back target 与 drawer interaction。
+  Session、identity、Role、capability 与 authorization 仍由既有 server boundary 所有。
+- `TrustedAccessContext`、page/Action/Service authorization、request-scoped React cache、
+  Auth、Role、capability、DB schema、Migration 与 governance contract 均未改变；无
+  cross-request identity cache。
+- Dashboard 业务主体、cards、metrics 与 IA 未触碰，继续 `HOLD`。P1-08F 仍仅记录未来
+  Reader/Author/Admin surface-contextual identity/Role，不在本阶段实现。
+
+### Validation
+
+- Full Admin targeted tests：16 files / 146 tests PASS。
+- Admin typecheck、lint、production build：PASS。
+- Google Chrome + production compiled CSS：320/375/390/430/768/834/1024/1280 全部
+  PASS；确认 breakpoint、Header/title/Back、drawer、Account/Role、active marker、44px、
+  safe-area CSS、长名称与零横向 overflow。
+- Focus trap、focus return、Escape、backdrop、body lock/inert 与 navigation-close 由真实
+  component tests 覆盖；P1-08B Desktop Account Menu 与 P1-08C Sidebar regression PASS。
+- 未访问或修改 Production/QA/Vercel；未新增 dependency。
+
+`P1-08D SECURITY BOUNDARY = PASS`
+
+下一授权边界仅为：`P1-08E — Responsive / Accessibility / Regression Closure`。

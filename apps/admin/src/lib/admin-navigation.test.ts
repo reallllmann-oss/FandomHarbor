@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   adminNavigationConfig,
+  getAdminMobileBackHref,
   getActiveAdminNavigationItem,
 } from "./admin-navigation";
 
@@ -40,6 +41,25 @@ describe("Admin navigation config", () => {
     "does not activate an unrelated route: %s",
     (location) => {
       expect(getActiveAdminNavigationItem(location)).toBeNull();
+    },
+  );
+
+  it.each([
+    ["/", null],
+    ["/access", "/"],
+    ["/access?q=akumie", "/"],
+    ["/access?subject=subject-id", "/access"],
+    ["/access?q=akumie&subject=subject-id", "/access?q=akumie"],
+    [
+      "/access?q=akumie&subject=subject-id&cursor=next&auditCursor=audit-next",
+      "/access?q=akumie&cursor=next&auditCursor=audit-next",
+    ],
+    ["/access/history?q=akumie", "/access?q=akumie"],
+    ["/missing", "/"],
+  ])(
+    "derives the deterministic mobile back target for %s",
+    (location, href) => {
+      expect(getAdminMobileBackHref(location)).toBe(href);
     },
   );
 });

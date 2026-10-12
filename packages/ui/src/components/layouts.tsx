@@ -14,6 +14,7 @@ interface SharedLayoutProps extends PropsWithChildren {
   footerLinks?: NavigationItem[];
   headerActions?: ReactNode;
   headerContext?: ReactNode;
+  mobileLeading?: ReactNode;
   navigation: readonly NavigationItem[];
   showDesktopNavigation?: boolean;
   showMobileNavigation?: boolean;
@@ -28,6 +29,7 @@ export function SharedLayout({
   footerLinks,
   headerActions,
   headerContext,
+  mobileLeading,
   navigation,
   showDesktopNavigation = true,
   showMobileNavigation = true,
@@ -56,6 +58,14 @@ export function SharedLayout({
               {title}
             </a>
           </div>
+          {mobileLeading ? (
+            <div
+              className="site-header-mobile-leading"
+              data-header-region="mobile-leading"
+            >
+              {mobileLeading}
+            </div>
+          ) : null}
           {showDesktopNavigation ? (
             <nav
               aria-label="主要导航"
@@ -185,12 +195,14 @@ export function AdminLayout({
   activeNavigationHref,
   children,
   headerActions,
+  mobileLeading,
   navigation,
   pageContext,
   showNavigation = true,
 }: PropsWithChildren<{
   activeNavigationHref?: string;
   headerActions?: ReactNode;
+  mobileLeading?: ReactNode;
   navigation: readonly NavigationItem[];
   pageContext?: string;
   showNavigation?: boolean;
@@ -202,13 +214,15 @@ export function AdminLayout({
       headerContext={
         pageContext ? (
           <p aria-label={`当前页面：${pageContext}`}>
-            当前页面：<strong>{pageContext}</strong>
+            <span className="site-header-context-prefix">当前页面：</span>
+            <strong>{pageContext}</strong>
           </p>
         ) : null
       }
+      mobileLeading={pageContext ? mobileLeading : undefined}
       navigation={navigation}
       showDesktopNavigation={false}
-      showMobileNavigation={showNavigation}
+      showMobileNavigation={false}
       sidebar={
         showNavigation ? (
           <nav aria-label="后台主要导航" className="admin-primary-navigation">

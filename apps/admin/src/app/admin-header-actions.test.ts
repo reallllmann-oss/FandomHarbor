@@ -13,7 +13,7 @@ describe("Admin authenticated header actions", () => {
     expect(header).toContain("await getAdminCurrentIdentity()");
     expect(header).toContain("catch");
     expect(header).toContain("return null");
-    expect(header).toContain("<AdminAccountMenu identity={identity} />");
+    expect(header).toContain("<AdminMobileNavigation identity={identity} />");
   });
 
   it("mounts the action in the global Header after the theme control", async () => {
@@ -38,7 +38,7 @@ describe("Admin authenticated header actions", () => {
     );
     expect(styles).toContain("max-width: 100%");
     expect(styles).toContain("min-width: 0");
-    expect(header).toContain("AdminAccountMenu");
+    expect(header).toContain("AdminMobileNavigation");
   });
 
   it("keeps the sign-in route free of account-menu identity or logout UI", async () => {

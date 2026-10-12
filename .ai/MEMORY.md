@@ -1,5 +1,22 @@
 # Project Memory
 
+- 2026-10-12: P1-08D replaced the Admin native `<details>` fallback with one
+  `AdminMobileNavigation` drawer for `<=1023px`; `>=1024px` retains the P1-08C
+  Sidebar and Desktop Account Menu. The compact Header is Back/product context,
+  canonical page title and one Menu trigger. Root has no Back; `/access` list/
+  search returns to `/`; Detail removes only `subject` while preserving the
+  current query context. The drawer reuses `adminNavigationConfig`, active
+  matching, trusted registration-name/Admin-Role presentation and the canonical
+  `signOut` Server Action. It provides dialog semantics, backdrop/Escape/nav
+  close, focus trap/return, body scroll lock, background inert, 44px targets,
+  `100dvh`, safe-area padding and full long-name wrapping. Admin 16 files / 146
+  tests, typecheck, lint, build and production compiled-CSS Chrome smoke at
+  320/375/390/430/768/834/1024/1280 pass. TrustedAccessContext, authorization,
+  request-scoped React cache, Auth, Role, capability, DB, Migration, governance,
+  Dashboard and Production are unchanged. `P1-08D SECURITY BOUNDARY = PASS`.
+  P1-08F remains record-only; the only next authorization boundary is
+  `P1-08E — Responsive / Accessibility / Regression Closure`.
+
 - 2026-10-12: P1-08C unified Desktop Admin navigation around one typed
   `adminNavigationConfig`: `/` is `站点文案`, `/access` is `身份与权限`, root is
   exact-only and access query/detail variants remain active. Sidebar is the

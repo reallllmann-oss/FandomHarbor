@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08C COMPLETE / P1-08D AUTHORIZATION REQUIRED`
+状态：`P1-08D COMPLETE / P1-08E AUTHORIZATION REQUIRED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -24,6 +24,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-08A | Unified Account Navigation audit / IA / plan | Complete — docs-only plan ready        |
 | P1-08B | Identity + Account Menu foundation           | Complete — security boundary PASS      |
 | P1-08C | Unified Desktop Navigation                   | Complete — security boundary PASS      |
+| P1-08D | Mobile Navigation / Page Context / Back      | Complete — security boundary PASS      |
 
 权威合同：
 
@@ -66,6 +67,23 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
+
+## 当前 P1-08D 权威状态（2026-10-12）
+
+- `<=1023px` 使用三分区 Mobile Header 与唯一 `AdminMobileNavigation` drawer；
+  `>=1024px` 继续使用 P1-08C Desktop Sidebar。Admin 原生 `<details>` fallback 已退出。
+- `/` 无 Back；`/access` 与 search list 返回 `/`；Detail 只移除 `subject` 并保留现有
+  search/pagination query。页面 title 始终来自 canonical navigation config。
+- Drawer 复用同一 config、active matcher、trusted identity presentation 与 canonical
+  `signOut`；提供 modal semantics、focus trap/return、Escape/backdrop/navigation close、
+  body lock/inert、44px targets、safe-area 与长名称完整展示。
+- Admin 16 files / 146 tests、typecheck、lint、build PASS；production compiled-CSS Chrome
+  320/375/390/430/768/834/1024/1280 PASS。P1-08B Account Menu 与 P1-08C Desktop
+  regression PASS。
+- `P1-08D SECURITY BOUNDARY = PASS`；TrustedAccessContext、authorization、Auth、Role、
+  capability、DB、Migration、Dashboard 与 Production 均未改变。
+- P1-08F Cross-Surface Account Identity 仍仅记录。下一授权边界仅为
+  `P1-08E — Responsive / Accessibility / Regression Closure`。
 
 ## 当前 P1-08C 权威状态（2026-10-12）
 

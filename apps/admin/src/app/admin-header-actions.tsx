@@ -1,5 +1,5 @@
 import { getAdminCurrentIdentity } from "../lib/identity-access";
-import { AdminAccountMenu } from "./admin-account-menu";
+import { AdminMobileNavigation } from "./admin-mobile-navigation";
 
 export async function AdminHeaderActions() {
   let identity;
@@ -8,5 +8,5 @@ export async function AdminHeaderActions() {
   } catch {
     return null;
   }
-  return identity ? <AdminAccountMenu identity={identity} /> : null;
+  return identity ? <AdminMobileNavigation identity={identity} /> : null;
 }

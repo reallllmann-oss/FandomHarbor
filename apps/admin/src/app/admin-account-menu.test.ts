@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createElement, Fragment } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AdminAccountMenu } from "./admin-account-menu";
 
@@ -8,7 +8,24 @@ vi.mock("./auth/actions", () => ({
   signOut: vi.fn(),
 }));
 
+vi.mock("next/navigation", () => ({
+  usePathname: vi.fn(() => "/"),
+}));
+
 afterEach(cleanup);
+
+beforeEach(() => {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn((query: string) => ({
+      addEventListener: vi.fn(),
+      matches: false,
+      media: query,
+      removeEventListener: vi.fn(),
+    })),
+    writable: true,
+  });
+});
 
 const identity = {
   displayRole: "超级管理员" as const,
