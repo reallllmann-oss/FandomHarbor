@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C POST-CUTOVER PRODUCTION RELEASE PASS / PR MERGE AUTHORIZATION REQUIRED`
+状态：`P1-08A PLAN READY / P1-08B AUTHORIZATION REQUIRED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -21,6 +21,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
 | P1-07  | Production Release Review                    | Complete — Production release PASS     |
+| P1-08A | Unified Account Navigation audit / IA / plan | Complete — docs-only plan ready        |
 
 权威合同：
 
@@ -46,6 +47,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A Final Pre-Cutover Rerun Acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
 - [P1-07C Migration D Cutover Acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
 - [P1-07C Post-Cutover Production Release Acceptance](P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)
+- [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -63,7 +65,23 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-10-11）
+## 当前 P1-08A 权威状态（2026-10-12）
+
+- 基于 remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d` 完成
+  `apps/admin`、shared UI 与 trusted identity/access chain 的只读审计。
+- 当前 Admin 真实 route 只有 `/`（站点文案）、`/access` 与
+  `/auth/sign-in`；Header、sidebar 与 mobile `<details>` 重复导航，账号区只有
+  Logout，没有 registration name、Role 或 current-route context。
+- 已冻结 server-owned identity projection、真实 Desktop/Mobile IA、
+  Admin-specific component boundary、320–1440 responsive/accessibility matrix 与
+  P1-08B–E 实施切片。Client presentation 不承担 authorization；既有 page/Service
+  live-access checks 保持权威。
+- Product code、Auth、DB、config、Production/QA/Vercel 均未改变；Dashboard redesign
+  保持 `HOLD`。完整方案见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08B — Identity + Account Menu Foundation`。
+
+## P1-07C 权威状态（2026-10-11）
 
 - Exact canonical Product RC
   `f42217d913d44517b53935a68488100610bdff0f` 已作为 Production deployment

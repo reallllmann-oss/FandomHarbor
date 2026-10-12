@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P1-08A Unified Account Navigation Plan（2026-10-12）
+
+| Item               | Current authority                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Base               | remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`                                                                   |
+| Current routes     | `/` Site Copy; `/access` identity governance; `/auth/sign-in`                                                              |
+| Audit finding      | Header/sidebar/mobile navigation duplicated; account area is Logout-only; no current-route context                         |
+| Identity boundary  | Session, Membership, Role and capability remain trusted server data; registration name is a server-read display projection |
+| IA                 | one typed config; two real Admin sections; separate cross-surface and account areas; no placeholder routes                 |
+| Responsive         | 320/375/390/430, tablet and desktop strategy frozen; touch/focus/safe-area contracts included                              |
+| Dashboard          | `HOLD`; no cards, metrics or Dashboard IA designed                                                                         |
+| Product/Production | Product code `NO CHANGE`; Auth/DB/config/Production/QA/Vercel `NO CHANGE`                                                  |
+| Final verdict      | `P1-08A UNIFIED ACCOUNT NAVIGATION PLAN = PASS`                                                                            |
+| Next authorization | `P1-08B — Identity + Account Menu Foundation` only                                                                         |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+P1-08 implementation has not started.
+
 ## Admin P1-07C Post-Cutover Production Release（2026-10-11）
 
 | Item               | Current authority                                                                         |

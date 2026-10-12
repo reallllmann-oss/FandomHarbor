@@ -1,5 +1,19 @@
 # Project Memory
 
+- 2026-10-12: P1-08A completed a docs-only baseline audit and froze the scope,
+  Desktop/Mobile IA, identity data flow, component architecture,
+  server/client boundary, responsive/accessibility matrix, B–E implementation
+  stages and test gates for Unified Account Navigation. The audit ran from
+  remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d` in a new clean
+  worktree. Current Admin routes remain `/` (Site Copy), `/access` and
+  `/auth/sign-in`; navigation is duplicated across Header/sidebar/mobile
+  `<details>`, and the account area is Logout-only. The plan keeps Session,
+  Membership, Role, capability and all authorization server-side; only a
+  minimal registration-name/Role presentation model may cross to interactive
+  client components. No Product code, Auth, DB, config, deployment, QA or
+  Production state changed. Dashboard redesign remains `HOLD`. The only next
+  authorization boundary is `P1-08B — Identity + Account Menu Foundation`.
+
 - 2026-10-11: P1-07C Post-Cutover Production Release passed. Vercel Project
   `fandom-harbor-admin` is active and Production deployment
   `dpl_BUPHP53EPYXEE7pyoqXKDHHoWcsX` is `READY` from exact canonical Product RC

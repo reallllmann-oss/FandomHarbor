@@ -1,7 +1,24 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C post-cutover Production release PASS; PR merge authorization is next
+Status: Active — Admin P1-08A scope / IA / architecture ready; P1-08B authorization is next
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08 gate（2026-10-12）
+
+P1-08A completed a docs-only baseline audit on remote `main`
+`0991f5ea7f13bb57902bc9065283c61ad2a03a2d`. The current Admin surface has
+only `/` (Site Copy), `/access` and `/auth/sign-in`; its Header, sidebar and
+mobile `<details>` duplicate navigation, while the account area exposes only
+Logout and no registration name, Role or current-route context.
+
+The accepted plan keeps identity, Membership, Role and capability resolution
+server-side; client components may own only route highlighting and menu/drawer
+interaction. Desktop and Mobile IA use one typed navigation config and create no
+placeholder product routes. Dashboard redesign remains `HOLD`; Product code,
+Auth, DB, config and Production are unchanged. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08B — Identity + Account Menu Foundation`.
 
 ## Current Admin P1-07C gate（2026-10-11）
 
