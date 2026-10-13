@@ -1,7 +1,26 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-08D mobile navigation complete; P1-08E authorization is next
+Status: Active — P1-08 Admin Navigation complete; P1-08F remains pending
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08E gate（2026-10-13）
+
+P1-08 Admin Navigation is implementation-acceptance complete. Chrome production
+compiled-CSS smoke passes 320/375/390/430/768/834/1024/1280/1440, long
+identity/query stress, 390/1280 light/dark, focus, reduced motion and the
+Accessibility Tree. A scoped modal-background defect was fixed: skip link and
+trigger now become inert with the background, the backdrop is hidden from the
+AX tree, and focus returns only after inert cleanup.
+
+Shared UI 5/5, Admin 146/146, Typecheck, Lint and production Build pass.
+`P1-08 AUTHORIZATION BOUNDARY = PASS`; no TrustedAccessContext, Auth, Role,
+capability, DB, Migration, Dashboard or Production change occurred. VoiceOver
+and physical-device smoke were not automated and remain non-blocking spot-checks.
+P1-08F remains the future cross-surface identity/Role slice; Web/Author Studio
+were not changed. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08F — Cross-Surface Account Identity`.
 
 ## Current Admin P1-08D gate（2026-10-12）
 

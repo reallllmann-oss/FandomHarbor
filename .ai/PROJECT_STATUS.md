@@ -1,5 +1,23 @@
 # Project Status
 
+## Admin P1-08E Responsive / Accessibility / Regression Closure（2026-10-13）
+
+| Item               | Current authority                                                                       |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| Project status     | `P1-08 ADMIN NAVIGATION = COMPLETE`; P1-08F cross-surface identity remains pending      |
+| Responsive         | Chrome compiled CSS 320/375/390/430/768/834/1024/1280/1440 PASS                         |
+| Stress/theme       | long username/query, 390/1280 light/dark, reduced motion PASS                           |
+| Accessibility      | keyboard/focus/semantics/AX tree PASS; modal background inert gap fixed                 |
+| Manual evidence    | VoiceOver spot-check required; physical device not executed; neither is a known blocker |
+| Validation         | Shared UI 5/5; Admin 146/146; Typecheck, Lint, production Build PASS                    |
+| Security           | `P1-08 AUTHORIZATION BOUNDARY = PASS`; no cross-request identity cache                  |
+| Product boundary   | no Auth/Role/capability/DB/Migration/Dashboard/Production change                        |
+| Final verdict      | `P1-08E RESPONSIVE / ACCESSIBILITY / REGRESSION CLOSURE = PASS`                         |
+| Next authorization | `P1-08F — Cross-Surface Account Identity` only                                          |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
 ## Admin P1-08D Mobile Navigation（2026-10-12）
 
 | Item               | Current authority                                                                                   |

@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08D COMPLETE / P1-08E AUTHORIZATION REQUIRED`
+状态：`P1-08 ADMIN NAVIGATION COMPLETE / P1-08F PENDING`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -25,6 +25,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-08B | Identity + Account Menu foundation           | Complete — security boundary PASS      |
 | P1-08C | Unified Desktop Navigation                   | Complete — security boundary PASS      |
 | P1-08D | Mobile Navigation / Page Context / Back      | Complete — security boundary PASS      |
+| P1-08E | Responsive / Accessibility / Regression      | Complete — final acceptance PASS       |
 
 权威合同：
 
@@ -67,6 +68,19 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-022 — Reauth Trust Boundary](../../17_Architecture_Decisions/ADR-022.md)
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
+
+## 当前 P1-08E 权威状态（2026-10-13）
+
+- P1-08B/C/D 的 Account identity/Menu、Desktop Sidebar、Mobile drawer、page context 与
+  deterministic Back 已完成 final acceptance；`P1-08 ADMIN NAVIGATION = COMPLETE`。
+- production compiled-CSS Chrome 320/375/390/430/768/834/1024/1280/1440、390/1280
+  light/dark、长 username/query、focus、reduced motion 与 Accessibility Tree 均 PASS。
+- 最小修复 drawer modal background：skip link/trigger 随背景 inert、backdrop 从 AX tree
+  隐藏、focus 在 inert cleanup 后返回；无 Auth/Role/DB/业务行为变化。
+- Shared UI 5/5、Admin 146/146、Typecheck、Lint、Build 与 security boundary PASS。
+  VoiceOver/physical device 未自动执行，保留非阻塞人工 spot-check。
+- Dashboard 继续 `HOLD`；P1-08F Cross-Surface Account Identity 仍为 pending，未修改
+  Web/Author Studio。下一授权边界仅为 `P1-08F — Cross-Surface Account Identity`。
 
 ## 当前 P1-08D 权威状态（2026-10-12）
 

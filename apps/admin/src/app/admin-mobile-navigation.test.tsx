@@ -25,6 +25,7 @@ function renderMobileNavigation(pathname = "/access") {
   mockedUsePathname.mockReturnValue(pathname);
   return render(
     <div data-surface="admin">
+      <a href="#main-content">跳到主要内容</a>
       <header>
         <div data-header-region="brand">Brand</div>
         <div data-header-region="mobile-leading">Back</div>
@@ -92,7 +93,12 @@ describe("AdminMobileNavigation", () => {
     renderMobileNavigation();
     let menuTrigger = trigger();
     fireEvent.click(menuTrigger);
-    fireEvent.click(screen.getByRole("button", { name: "关闭导航遮罩" }));
+    expect(screen.queryByRole("button", { name: "关闭导航遮罩" })).toBeNull();
+    fireEvent.click(
+      document.querySelector<HTMLButtonElement>(
+        ".admin-mobile-navigation-backdrop",
+      )!,
+    );
     expect(screen.queryByRole("dialog", { name: "管理导航和账号" })).toBeNull();
     expect(document.activeElement).toBe(menuTrigger);
 
@@ -105,11 +111,15 @@ describe("AdminMobileNavigation", () => {
 
   it("traps focus and restores body interaction state", () => {
     renderMobileNavigation();
-    fireEvent.click(trigger());
+    const menuTrigger = trigger();
+    const skipLink = screen.getByRole("link", { name: "跳到主要内容" });
+    fireEvent.click(menuTrigger);
 
     const close = screen.getByRole("button", { name: "关闭管理导航" });
     const logout = screen.getByRole("button", { name: "退出登录" });
     expect(document.body.style.overflow).toBe("hidden");
+    expect(menuTrigger.inert).toBe(true);
+    expect(skipLink.inert).toBe(true);
     expect(document.querySelector<HTMLElement>("#main-content")?.inert).toBe(
       true,
     );
@@ -122,6 +132,7 @@ describe("AdminMobileNavigation", () => {
 
     fireEvent.click(close);
     expect(document.body.style.overflow).toBe("");
+    expect(menuTrigger.inert).toBe(false);
     expect(document.querySelector<HTMLElement>("#main-content")?.inert).toBe(
       false,
     );

@@ -57,6 +57,7 @@ export function AdminMobileNavigation({
   const containerRef = useRef<HTMLDivElement>(null);
   const logoutRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelId = useId();
 
@@ -68,8 +69,8 @@ export function AdminMobileNavigation({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
+        returnFocusRef.current = true;
         setOpen(false);
-        triggerRef.current?.focus();
         return;
       }
 
@@ -115,6 +116,7 @@ export function AdminMobileNavigation({
     const backgroundTargets = Array.from(
       document.querySelectorAll<HTMLElement>(
         [
+          'a[href="#main-content"]',
           "#main-content",
           ".site-footer",
           '[data-header-region="brand"]',
@@ -124,6 +126,7 @@ export function AdminMobileNavigation({
         ].join(","),
       ),
     );
+    if (triggerRef.current) backgroundTargets.push(triggerRef.current);
     const previousInert = backgroundTargets.map((target) => target.inert);
 
     document.body.style.overflow = "hidden";
@@ -139,9 +142,15 @@ export function AdminMobileNavigation({
     };
   }, [isMobileNavigation, open]);
 
-  const closeAndReturnFocus = () => {
-    setOpen(false);
+  useEffect(() => {
+    if (open || !returnFocusRef.current) return;
+    returnFocusRef.current = false;
     triggerRef.current?.focus();
+  }, [open]);
+
+  const closeAndReturnFocus = () => {
+    returnFocusRef.current = true;
+    setOpen(false);
   };
 
   return (
@@ -180,12 +189,11 @@ export function AdminMobileNavigation({
       </button>
 
       {open && isMobileNavigation ? (
-        <button
-          aria-label="关闭导航遮罩"
+        <div
+          aria-hidden="true"
           className="admin-mobile-navigation-backdrop"
           onClick={closeAndReturnFocus}
-          tabIndex={-1}
-          type="button"
+          role="presentation"
         />
       ) : null}
 

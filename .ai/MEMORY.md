@@ -1,5 +1,21 @@
 # Project Memory
 
+- 2026-10-13: P1-08E closed Admin navigation responsive, accessibility and
+  regression acceptance. Chrome production compiled-CSS smoke passes
+  320/375/390/430/768/834/1024/1280/1440, long registration-name/query stress,
+  390/1280 light/dark, visible focus, reduced motion and Accessibility Tree
+  semantics. The audit found and minimally fixed one modal-background gap:
+  global skip link and the drawer trigger now join background `inert`, the visual
+  backdrop is hidden from the AX tree, and trigger focus returns only after inert
+  cleanup. Shared UI 5/5, Admin 146/146, Typecheck, Lint and production Build
+  pass. Session/identity/Role/authorization remain server-side; pathname and
+  client Role remain presentation-only; canonical Logout and redirects are
+  unchanged; no cross-request cache, Auth/Role/capability/DB/Migration/
+  Dashboard/Production change occurred. VoiceOver and physical-device smoke were
+  not automated and remain non-blocking spot-checks. `P1-08 AUTHORIZATION
+BOUNDARY = PASS`; `P1-08 ADMIN NAVIGATION = COMPLETE`. P1-08F cross-surface
+  identity remains pending and is the only next authorization boundary.
+
 - 2026-10-12: P1-08D replaced the Admin native `<details>` fallback with one
   `AdminMobileNavigation` drawer for `<=1023px`; `>=1024px` retains the P1-08C
   Sidebar and Desktop Account Menu. The compact Header is Back/product context,

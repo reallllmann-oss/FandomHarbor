@@ -1,6 +1,6 @@
 # Admin P1-08 — Unified Account Navigation Plan
 
-状态：`P1-08D MOBILE NAVIGATION READY — P1-08E AUTHORIZATION REQUIRED`
+状态：`P1-08 ADMIN NAVIGATION COMPLETE — P1-08F AUTHORIZATION REQUIRED`
 
 基线：remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`
 
@@ -629,3 +629,62 @@ P1-08F 记录为 `Cross-Surface Account Identity`：未来 Reader、Author Studi
 `P1-08D SECURITY BOUNDARY = PASS`
 
 下一授权边界仅为：`P1-08E — Responsive / Accessibility / Regression Closure`。
+
+## 23. P1-08E responsive / accessibility / regression closure（2026-10-13）
+
+状态：`P1-08 ADMIN NAVIGATION = COMPLETE / P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PENDING`
+
+### Final responsive and content stress matrix
+
+- Google Chrome 使用 Admin production build 的 real compiled CSS，通过
+  320/375/390/430、768/834、1024 boundary、1280/1440 九个 viewport。
+- Mobile/Tablet `<=1023px` 与 Desktop `>=1024px` boundary准确；无 horizontal overflow、
+  vertical clipping、Header overlap、Sidebar/content collision、drawer/account panel viewport
+  collision、double scrollbar 或 fixed/sticky overlap。
+- 超长 registration name 在 compact trigger 截断、Account surface 内完整换行；超长 query
+  不进入 canonical page title，也不挤压 Back/title/Menu，Detail Back 仍只删除 `subject` 并
+  保留其余 query context。
+- 390 Mobile 与 1280 Desktop 的 light/dark theme 均保持 active state、Role、focus ring、
+  drawer backdrop、Account Menu 与正文可读。当前没有 material drawer/menu animation；
+  reduced-motion smoke PASS。
+
+### Keyboard, semantics and accessibility tree
+
+- Desktop Account Menu 保持原生 button keyboard、Enter/Space activation、outside/Escape
+  close 与 focus return。Mobile drawer trigger、nav links、Close 与 Logout 均为原生可聚焦
+  controls；Tab/Shift+Tab trap、Escape、backdrop、navigation close 与 focus return PASS。
+- `nav` labels、single page `h1` hierarchy、trigger accessible names、`aria-expanded`、
+  `aria-controls`、`aria-current="page"` 与 modal dialog name/state 均通过。
+- P1-08E 发现并最小修复一项 accessibility defect：drawer 打开后，将全局 skip link 与
+  drawer trigger 一并纳入 background `inert`，将纯视觉 backdrop 从 accessibility tree
+  隐藏，并在 inert cleanup 后恢复 trigger focus。Chrome Accessibility Tree 复验只暴露
+  dialog、Mobile nav、Close、active link、账号/Role 与 Logout，不再暴露被覆盖背景。
+- macOS VoiceOver 未自动控制；`Manual VoiceOver spot-check required = YES`，作为非阻塞
+  最小人工确认。Physical device smoke = `NOT EXECUTED`，未将 browser viewport 模拟冒充
+  物理设备，且当前无已知 device-specific blocker。
+
+### Security, cache and regression boundary
+
+- verified Session → trusted access context → self `profiles.registration_name` 仍为 server-only
+  display path；Role/capability/authorization 仍由 server page/Action/Service检查。Client Role
+  与 pathname 只做 presentation；canonical `signOut` 与 unauthorized/sign-in redirects不变。
+- `React cache` 仍只进行同一 RSC request reuse；没有 module/global mutable identity cache、
+  cross-request cache 或 cross-session identity leakage。
+- 唯一 `adminNavigationConfig` 仍只含 `/` → `站点文案`、`/access` → `身份与权限`，由
+  Desktop/Mobile 共同消费；没有 duplicate href、`概览`、phantom route 或 hardcoded Mobile
+  config。
+- `TrustedAccessContext`、Auth/Role/capability contract、DB schema、Migration、governance、
+  Dashboard 与 Production 均未改变。Dashboard redesign 继续 `HOLD`。
+
+### Final gates
+
+- Shared UI：2 test files / 5 tests PASS。
+- Admin：16 test files / 146 tests PASS；focused interaction regression 4 files / 30 tests PASS。
+- Typecheck、lint、Admin production build、`git diff --check` 与 sensitive scan PASS。
+- 未新增 dependency、temporary helper、runtime secret；未访问或修改 Production/QA/Vercel。
+- P1-08F 继续记录 future Reader/Author/Admin surface-contextual identity + Role；本阶段未修改
+  Web 或 Author Studio。
+
+`P1-08 AUTHORIZATION BOUNDARY = PASS`
+
+下一授权边界仅为：`P1-08F — Cross-Surface Account Identity`。
