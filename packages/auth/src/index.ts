@@ -26,6 +26,14 @@ export {
   type TrustedIdentity,
   type TrustedSession,
 } from "./identity";
+export {
+  createCurrentAccountIdentity,
+  resolveSurfaceDisplayRole,
+  type AccountSurface,
+  type CurrentAccountIdentity,
+  type CurrentAccountIdentityFor,
+  type SurfaceDisplayRole,
+} from "./account-identity";
 export { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from "./password-policy";
 export {
   isValidRegistrationName,

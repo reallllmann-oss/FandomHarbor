@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08 ADMIN NAVIGATION COMPLETE / P1-08F PENDING`
+状态：`P1-08 IMPLEMENTATION COMPLETE / FINAL ACCEPTANCE + PR PREPARATION PENDING`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -26,6 +26,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-08C | Unified Desktop Navigation                   | Complete — security boundary PASS      |
 | P1-08D | Mobile Navigation / Page Context / Back      | Complete — security boundary PASS      |
 | P1-08E | Responsive / Accessibility / Regression      | Complete — final acceptance PASS       |
+| P1-08F | Cross-Surface Account Identity               | Complete — security boundary PASS      |
 
 权威合同：
 
@@ -69,7 +70,25 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-08E 权威状态（2026-10-13）
+## 当前 P1-08F 权威状态（2026-10-13）
+
+- Reader 的 canonical identity 是 active membership 派生的 Reader capability；Author 与
+  Admin 来自 active membership 下未撤销的 `role_grants`。presentation policy 为 Reader
+  `author > reader`、Studio `author`、Admin `super_admin > admin`。
+- 共享 `CurrentAccountIdentity` / `resolveSurfaceDisplayRole` 仅传递 surface、registration
+  name 和 display Role。Reader/Studio Client 不接收 Admin role、UUID、email、session、MFA
+  或 capability；authorization 仍由各 surface 既有 server capability gate 所有。
+- Reader/Studio 使用唯一 `WebAccountMenu` 与 canonical Web `signOut`；Desktop 显示完整
+  identity，Mobile 使用 compact trigger 并在 panel 显示完整身份。Admin P1-08B～E 无回归。
+- Reader、Studio、Admin 在 320/375/390/430/1024/1280 的 18 组 production compiled-CSS
+  Chrome smoke PASS。Auth 41、Web 105、Admin 146、Shared UI 5 tests，以及 typecheck、lint、
+  Web/Admin production builds PASS。
+- `P1-08F SECURITY BOUNDARY = PASS`；无 Auth/Role/authorization/DB/Migration/Dashboard/
+  Production change，无 cross-user profile read 或 cross-request identity cache。
+- `P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`；`P1-08 = IMPLEMENTATION COMPLETE`。
+  下一授权边界仅为 `P1-08 FINAL ACCEPTANCE / PR PREPARATION`。
+
+## P1-08E 权威状态（2026-10-13）
 
 - P1-08B/C/D 的 Account identity/Menu、Desktop Sidebar、Mobile drawer、page context 与
   deterministic Back 已完成 final acceptance；`P1-08 ADMIN NAVIGATION = COMPLETE`。

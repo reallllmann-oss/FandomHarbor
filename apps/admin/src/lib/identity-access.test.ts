@@ -68,6 +68,7 @@ describe("Admin current identity trusted lookup", () => {
     await expect(getAdminCurrentIdentity()).resolves.toEqual({
       displayRole: "超级管理员",
       registrationName: "akumie",
+      surface: "admin",
     });
 
     expect(mocks.accessForIdentity).toHaveBeenCalledWith(identity);

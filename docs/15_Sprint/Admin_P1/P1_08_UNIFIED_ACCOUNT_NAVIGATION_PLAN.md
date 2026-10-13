@@ -1,6 +1,6 @@
 # Admin P1-08 — Unified Account Navigation Plan
 
-状态：`P1-08 ADMIN NAVIGATION COMPLETE — P1-08F AUTHORIZATION REQUIRED`
+状态：`P1-08 = IMPLEMENTATION COMPLETE — FINAL ACCEPTANCE / PR PREPARATION REQUIRED`
 
 基线：remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`
 
@@ -688,3 +688,71 @@ P1-08F 记录为 `Cross-Surface Account Identity`：未来 Reader、Author Studi
 `P1-08 AUTHORIZATION BOUNDARY = PASS`
 
 下一授权边界仅为：`P1-08F — Cross-Surface Account Identity`。
+
+## 24. P1-08F Cross-Surface Account Identity（2026-10-13）
+
+状态：`READER IDENTITY VISIBLE / AUTHOR IDENTITY VISIBLE / ADMIN IDENTITY VISIBLE / P1-08 IMPLEMENTATION COMPLETE`
+
+### Canonical role model and surface policy
+
+- Reader 不是 `role_grants` 中的显式 role。权威 Migration contract 明确规定 active
+  membership 提供 Reader capability，Reader 由 `memberships.state = active` 派生。
+- Author 由 active membership + 未撤销的 `role_grants.role = author` 构成，并产生既有
+  `work:author` capability。Author Studio 的入口仍只检查该 capability。
+- Admin 由 active membership + 未撤销的 `admin` / `super_admin` grant 构成；授权继续由
+  `admin:operate` / `super_admin:operate` capability 与既有 server boundary 执行。
+- presentation policy 是 surface-aware：Reader 为 `author > reader`，Author Studio 只接受
+  `author`，Admin 为 `super_admin > admin`。`author + super_admin` 分别显示“作者 / 作者 /
+  超级管理员”；Admin-only active member 在 Reader 显示“读者”，不暴露内部 Admin grant。
+- 未知、不活跃、无当前 surface 合法身份或无有效 registration name 时 fail closed，不猜测
+  role。Display label 只用于 presentation，不能授予 route、Action、capability 或 governance
+  权限。
+
+### Shared identity architecture
+
+- `CurrentAccountIdentity` 是 discriminated display-safe model，仅包含 `surface`、canonical
+  `registrationName` 与 `displayRole`；不包含 UUID、email、JWT、session、MFA/AMR 或
+  capability 详情。
+- `resolveSurfaceDisplayRole` 与 `createCurrentAccountIdentity` 共享三个 surface 的映射与
+  fail-closed 规则。Admin 的 `AdminCurrentIdentity` 复用 `admin` variant，既有 Account Menu
+  和授权判断不变。
+- Web 使用 verified Session identity → trusted access repository → self-only
+  `public.profiles.registration_name`。Client 只能收到预先映射的 Reader/Author display-safe
+  variants，不能传 subject ID、读取其他 profile 或看到 Admin role。
+- Web identity access 使用 React request-scoped `cache` 复用同一请求内的 Auth/access/profile
+  读取；没有 module mutable/global cache、cross-request 或 cross-session leakage。
+
+### Reader Web and Author Studio account experience
+
+- Reader/Studio 共用唯一 `WebAccountMenu` 与现有 canonical Web `signOut` Server Action。
+  Reader route 选择 Reader variant；`/studio` route 选择 Author variant。每个 surface 只有一个
+  Logout，不新增 Auth sign-out 语义。
+- Desktop trigger 显示 `registration name · role`；Mobile 使用 44px compact“账号”trigger，
+  展开 panel 后完整显示长 registration name、Role 与 Logout，避免挤压 Reader navigation。
+- Account trigger 支持原生 keyboard activation、`aria-expanded` / `aria-controls`、Escape、
+  outside close、focus return；Role 有独立文本，不只依赖颜色。身份不可用时明确 fail closed，
+  不合成“读者”。
+- Author Studio 没有第二套 Account/Logout；全局 Header 在 Studio route 显示“作者”，既有
+  Studio navigation、作品/文章编辑、发布与 invitation workflow 均未修改。
+
+### Responsive, accessibility and security closure
+
+- Google Chrome + Web/Admin production compiled CSS 对 Reader、Author Studio、Admin 在
+  320/375/390/430/1024/1280 共 18 个组合 PASS：无 horizontal overflow、Header collision、
+  panel viewport overflow；trigger/Logout >=44px，长名称在 panel 完整，role 可读，Reader/
+  Studio 无 Admin privilege 泄漏。
+- Shared Auth 5 files / 41 tests、Web 23/105、Admin 16/146、Shared UI 2/5 PASS；三处
+  typecheck/lint、Shared UI gate 与 Web/Admin production builds PASS。
+- Reader、Author、Admin authorization 均未改变；没有 client authorization、cross-user
+  profile read、role escalation、Auth mutation、DB schema、Migration、Dashboard 或 Production
+  change。Dashboard redesign 继续 `HOLD`。
+- Manual VoiceOver/physical-device smoke 未自动执行，继续作为 non-blocking spot-check；当前
+  keyboard/component/compiled-CSS evidence 未发现 blocker。
+
+`P1-08F SECURITY BOUNDARY = PASS`
+
+`P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`
+
+`P1-08 = IMPLEMENTATION COMPLETE`
+
+下一授权边界仅为：`P1-08 FINAL ACCEPTANCE / PR PREPARATION`。

@@ -1,5 +1,8 @@
 import {
+  createCurrentAccountIdentity,
   isValidRegistrationName,
+  resolveSurfaceDisplayRole,
+  type CurrentAccountIdentityFor,
   type ElevatedRole,
   type TrustedAccessContext,
   type TrustedIdentity,
@@ -7,10 +10,7 @@ import {
 
 export type AdminDisplayRole = "管理员" | "超级管理员";
 
-export interface AdminCurrentIdentity {
-  displayRole: AdminDisplayRole;
-  registrationName: string;
-}
+export type AdminCurrentIdentity = CurrentAccountIdentityFor<"admin">;
 
 interface AdminCurrentIdentityDependencies {
   getAccessContext(): Promise<TrustedAccessContext | null>;
@@ -20,9 +20,13 @@ interface AdminCurrentIdentityDependencies {
 export function adminAccountRoleLabel(
   roles: ReadonlySet<ElevatedRole>,
 ): AdminDisplayRole | null {
-  if (roles.has("super_admin")) return "超级管理员";
-  if (roles.has("admin")) return "管理员";
-  return null;
+  const displayRole = resolveSurfaceDisplayRole(
+    { membershipState: "active", roles },
+    "admin",
+  );
+  return displayRole === "管理员" || displayRole === "超级管理员"
+    ? displayRole
+    : null;
 }
 
 export function createAdminCurrentIdentity(
@@ -38,10 +42,15 @@ export function createAdminCurrentIdentity(
     return null;
   }
 
-  const displayRole = adminAccountRoleLabel(access.roles);
-  if (displayRole === null) return null;
-
-  return { displayRole, registrationName };
+  const identity = createCurrentAccountIdentity(
+    access,
+    registrationName,
+    "admin",
+  );
+  return identity?.displayRole === "管理员" ||
+    identity?.displayRole === "超级管理员"
+    ? { ...identity, displayRole: identity.displayRole, surface: "admin" }
+    : null;
 }
 
 export async function loadAdminCurrentIdentity(

@@ -1,5 +1,25 @@
 # Project Memory
 
+- 2026-10-13: P1-08F completed cross-surface account identity. The role-model
+  audit confirmed that active membership canonically provides Reader capability;
+  `author`, `admin` and `super_admin` remain elevated `role_grants` whose
+  capabilities require active membership. The presentation-only shared
+  `CurrentAccountIdentity` maps Reader `author > reader`, Studio `author`, and
+  Admin `super_admin > admin`; Reader/Studio never receive or display Admin
+  privilege. Reader and Studio now use one responsive `WebAccountMenu` with the
+  existing Web `signOut`; Admin retains its accepted Account Menu. The only
+  profile read is canonical `public.profiles.registration_name`, keyed from the
+  trusted Session identity. React cache reuse is request-scoped; no client
+  authorization, cross-user read, cross-request cache, UUID/email/session/MFA/
+  capability exposure, Auth mutation, DB/Migration, Dashboard or Production
+  change occurred. Auth 41/41, Web 105/105, Admin 146/146, Shared UI 5/5,
+  typecheck, lint, Web/Admin production builds, and three-surface compiled-CSS
+  Chrome smoke at 320/375/390/430/1024/1280 pass. Manual VoiceOver and physical
+  device checks remain non-blocking spot-checks. `P1-08F SECURITY BOUNDARY =
+PASS`; `P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`; `P1-08 = IMPLEMENTATION
+COMPLETE`. The only next authorization boundary is
+  `P1-08 FINAL ACCEPTANCE / PR PREPARATION`.
+
 - 2026-10-13: P1-08E closed Admin navigation responsive, accessibility and
   regression acceptance. Chrome production compiled-CSS smoke passes
   320/375/390/430/768/834/1024/1280/1440, long registration-name/query stress,

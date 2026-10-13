@@ -1,6 +1,7 @@
 import {
   createServerAuthProvider,
   type AuthCookieMutation,
+  type TrustedIdentity,
 } from "@fandom-harbor/auth";
 import { readPublicRuntimeConfig } from "@fandom-harbor/config";
 import {
@@ -10,6 +11,9 @@ import {
 } from "@fandom-harbor/database";
 import { createIdentityAccessService } from "@fandom-harbor/services";
 import { cookies } from "next/headers";
+import { cache } from "react";
+
+import { loadWebCurrentIdentities } from "./web-current-identity";
 
 export async function createWebIdentityAccess() {
   const cookieStore = await cookies();
@@ -43,29 +47,49 @@ export async function createWebIdentityAccess() {
   };
 }
 
-export async function getWebAccessContext() {
-  const { accessRepository, auth } = await createWebIdentityAccess();
+const getWebIdentityAccessForRequest = cache(createWebIdentityAccess);
+
+const getWebAccessContextForRequest = cache(async () => {
+  const { accessRepository, auth } = await getWebIdentityAccessForRequest();
   const session = await auth.getSession();
   return session ? accessRepository.getForIdentity(session.identity) : null;
+});
+
+const getWebRegistrationNameForRequest = cache(
+  async (identity: TrustedIdentity) => {
+    const { cookieAdapter, runtime } = await getWebIdentityAccessForRequest();
+    const { data, error } = await createServerSupabaseClient(
+      runtime,
+      cookieAdapter,
+    )
+      .from("profiles")
+      .select("registration_name")
+      .eq("user_id", identity.id)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error("Unable to load the current Web profile", {
+        cause: error,
+      });
+    }
+    return typeof data?.registration_name === "string"
+      ? data.registration_name
+      : null;
+  },
+);
+
+export async function getWebAccessContext() {
+  return getWebAccessContextForRequest();
 }
 
 export async function getWebSessionSummary() {
-  const dependencies = await createWebIdentityAccess();
-  const session = await dependencies.auth.getSession();
-  if (!session) return null;
-  const [access, profileResult] = await Promise.all([
-    dependencies.accessRepository.getForIdentity(session.identity),
-    createServerSupabaseClient(dependencies.runtime, dependencies.cookieAdapter)
-      .from("profiles")
-      .select("registration_name")
-      .eq("user_id", session.identity.id)
-      .maybeSingle(),
-  ]);
+  const access = await getWebAccessContext();
+  if (!access) return null;
   return {
     access,
-    displayName:
-      typeof profileResult.data?.registration_name === "string"
-        ? profileResult.data.registration_name
-        : "已登录用户",
+    identities: await loadWebCurrentIdentities({
+      getAccessContext: async () => access,
+      getRegistrationName: getWebRegistrationNameForRequest,
+    }),
   };
 }

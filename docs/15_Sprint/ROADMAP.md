@@ -1,7 +1,28 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — P1-08 Admin Navigation complete; P1-08F remains pending
+Status: Active — P1-08 implementation complete; final acceptance / PR preparation pending
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08F gate（2026-10-13）
+
+P1-08F completes cross-surface account identity. Active membership is the
+canonical Reader model; `author`, `admin` and `super_admin` remain elevated
+`role_grants` whose capabilities require active membership. Presentation is
+surface-aware: Reader `author > reader`, Studio `author`, Admin
+`super_admin > admin`. Admin privilege is never exposed on Reader/Studio.
+
+The shared discriminated `CurrentAccountIdentity` contains only surface,
+canonical registration name and display Role. Reader/Studio use one
+`WebAccountMenu` and the existing Web `signOut`; Admin retains its accepted
+Account Menu. Authorization stays in existing server capability gates. React
+cache reuse is request-scoped; no cross-user read or cross-request cache exists.
+
+Auth 41/41, Web 105/105, Admin 146/146 and Shared UI 5/5 pass with typecheck,
+lint and Web/Admin production builds. Reader, Studio and Admin compiled-CSS
+Chrome smoke passes 320/375/390/430/1024/1280. No Auth model, DB, Migration,
+Dashboard or Production change occurred. `P1-08F SECURITY BOUNDARY = PASS` and
+`P1-08 = IMPLEMENTATION COMPLETE`. The only next authorization boundary is
+`P1-08 FINAL ACCEPTANCE / PR PREPARATION`.
 
 ## Current Admin P1-08E gate（2026-10-13）
 

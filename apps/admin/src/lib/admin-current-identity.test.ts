@@ -34,6 +34,7 @@ describe("Admin current identity presentation", () => {
     ).resolves.toEqual({
       displayRole: "超级管理员",
       registrationName: "akumie",
+      surface: "admin",
     });
 
     expect(getRegistrationName).toHaveBeenCalledTimes(1);

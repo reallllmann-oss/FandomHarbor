@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P1-08F Cross-Surface Account Identity（2026-10-13）
+
+| Item               | Current authority                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| Project status     | `P1-08 = IMPLEMENTATION COMPLETE`; final acceptance / PR preparation pending                        |
+| Canonical model    | active membership = Reader; active `author/admin/super_admin` grants remain elevated roles          |
+| Surface policy     | Reader `author > reader`; Studio `author`; Admin `super_admin > admin`                              |
+| Privacy isolation  | Admin privilege hidden from Reader/Studio; display model excludes UUID/email/session/MFA/capability |
+| Account experience | one Web Account Menu for Reader/Studio; accepted Admin Menu retained; canonical Logout reused       |
+| Responsive         | three surfaces × 320/375/390/430/1024/1280 compiled-CSS Chrome PASS                                 |
+| Validation         | Auth 41; Web 105; Admin 146; Shared UI 5; typecheck, lint and Web/Admin builds PASS                 |
+| Security           | `P1-08F SECURITY BOUNDARY = PASS`; authorization unchanged; no cross-user/cache leakage             |
+| Product boundary   | no Auth model/DB/Migration/Dashboard/Production change; Dashboard remains `HOLD`                    |
+| Final verdict      | `P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`                                                      |
+| Next authorization | `P1-08 FINAL ACCEPTANCE / PR PREPARATION` only                                                      |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
 ## Admin P1-08E Responsive / Accessibility / Regression Closure（2026-10-13）
 
 | Item               | Current authority                                                                       |

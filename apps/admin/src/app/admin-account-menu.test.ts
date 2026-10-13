@@ -30,6 +30,7 @@ beforeEach(() => {
 const identity = {
   displayRole: "超级管理员" as const,
   registrationName: "akumie-with-a-long-registration-name",
+  surface: "admin" as const,
 };
 
 function accountMenu() {

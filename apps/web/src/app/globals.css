@@ -2,6 +2,163 @@
 @import "@fandom-harbor/ui/styles.css";
 @source "../../../../packages/ui/src";
 
+.web-account-menu {
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.web-account-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  gap: 0.375rem;
+  justify-content: center;
+  max-width: min(18rem, calc(100vw - 13rem));
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+}
+
+.web-account-trigger:hover,
+.web-account-trigger[aria-expanded="true"] {
+  background: var(--surface-muted);
+}
+
+.web-account-trigger:focus-visible,
+.web-account-logout:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.web-account-trigger-copy {
+  align-items: center;
+  display: flex;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.web-account-trigger-name {
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.web-account-trigger-role {
+  color: var(--muted-foreground);
+  flex: none;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.web-account-trigger-compact {
+  display: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.web-account-trigger-indicator {
+  flex: none;
+  font-size: 0.75rem;
+}
+
+.web-account-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1rem 2.5rem
+    color-mix(in oklch, var(--foreground) 14%, transparent);
+  max-width: calc(100vw - 2rem);
+  padding: 1rem;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: 18rem;
+  z-index: 40;
+}
+
+.web-account-panel-label,
+.web-account-panel-role,
+.web-account-panel-unavailable {
+  color: var(--muted-foreground);
+}
+
+.web-account-panel-label {
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.web-account-panel-name {
+  font-weight: 600;
+  margin: 0.375rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.web-account-panel-role,
+.web-account-panel-unavailable {
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+.web-account-panel-action {
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+}
+
+.web-account-logout {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  justify-content: flex-start;
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+  width: 100%;
+}
+
+.web-account-logout:hover {
+  background: var(--surface-muted);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .web-account-trigger-name {
+    max-width: 6rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .web-account-trigger {
+    max-width: none;
+    min-width: 2.75rem;
+    padding-inline: 0.625rem;
+  }
+
+  .web-account-trigger-copy,
+  .web-account-trigger-indicator {
+    display: none;
+  }
+
+  .web-account-trigger-compact {
+    align-items: center;
+    display: flex;
+    min-height: 2.75rem;
+  }
+
+  .web-account-panel {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    top: calc(4.5rem + env(safe-area-inset-top));
+    width: min(18rem, calc(100vw - 2rem));
+  }
+}
+
 .homepage-shell {
   display: grid;
   gap: 0;
