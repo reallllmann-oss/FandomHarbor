@@ -1,5 +1,24 @@
 # Project Memory
 
+- 2026-10-13: P1-08 final acceptance and PR preparation passed. P1-08A/B/C/D/E/F
+  are PASS and `P1-08 IMPLEMENTATION = COMPLETE`. Remote `main`
+  `0991f5ea7f13bb57902bc9065283c61ad2a03a2d` is the exact merge-base and
+  ancestor of the six-commit branch, with 0 main-only commits and no divergence.
+  The complete 36-file diff contains only approved Account Identity, Desktop/
+  Mobile Navigation, responsive/accessibility, Reader/Studio identity,
+  surface-role presentation, tests and docs. Dashboard changes are limited to
+  duplicate Logout removal, shell integration and the canonical Site Copy label;
+  redesign remains `HOLD`. Reader/Author/Admin authorization, Auth/Role model,
+  DB schema, Migration and Production are unchanged; trusted self profile read,
+  surface isolation and request-scoped cache safety pass. Final targeted gates
+  pass: Auth 41/41, Web 105/105, Admin 146/146, UI 5/5, all affected typechecks/
+  lints, Web/Admin production builds, sensitive scan and diff check. P1-08E/F
+  responsive/accessibility evidence remains current. VoiceOver is a non-blocking
+  manual spot-check; physical-device smoke is not executed/non-blocking.
+  `P1-08 FULL DIFF AUDIT = PASS`; `P1-08 SECURITY BOUNDARY = PASS`;
+  `P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`. The only next action is PR
+  creation, followed by a separate Product Owner Merge authorization.
+
 - 2026-10-13: P1-08F completed cross-surface account identity. The role-model
   audit confirmed that active membership canonically provides Reader capability;
   `author`, `admin` and `super_admin` remain elevated `role_grants` whose

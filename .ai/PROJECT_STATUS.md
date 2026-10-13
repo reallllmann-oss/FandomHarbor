@@ -1,5 +1,24 @@
 # Project Status
 
+## Admin P1-08 Final Acceptance / PR Preparation（2026-10-13）
+
+| Item                     | Current authority                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| Slice status             | P1-08A/B/C/D/E/F PASS; `P1-08 IMPLEMENTATION = COMPLETE`                                         |
+| Branch relationship      | remote `main` is exact merge-base/ancestor; 0 main-only / 6 branch commits; no divergence        |
+| Full diff                | 36 approved P1-08 files; `P1-08 FULL DIFF AUDIT = PASS`                                          |
+| Dashboard                | duplicate Logout/shell/label only; `DASHBOARD REDESIGN INTRODUCED = NO`; redesign remains `HOLD` |
+| Role/self-read/cache     | surface isolation + trusted self profile read PASS; cross-user/cache leakage NO                  |
+| Validation               | Auth 41, Web 105, Admin 146, UI 5; typecheck/lint/build/sensitive/diff gates PASS                |
+| Responsive/accessibility | P1-08E/F evidence current; VoiceOver non-blocking; physical device not executed/non-blocking     |
+| Security                 | `P1-08 SECURITY BOUNDARY = PASS`; no authorization/Auth/Role/DB/Migration change                 |
+| Production               | `UNCHANGED`                                                                                      |
+| Final verdict            | `P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`                                                 |
+| Next authorization       | create P1-08 PR, then wait for independent Product Owner Merge authorization                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
 ## Admin P1-08F Cross-Surface Account Identity（2026-10-13）
 
 | Item               | Current authority                                                                                   |

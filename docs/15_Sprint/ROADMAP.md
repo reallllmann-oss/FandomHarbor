@@ -1,7 +1,27 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — P1-08 implementation complete; final acceptance / PR preparation pending
+Status: Active — P1-08 final acceptance pass; PR creation authorized; merge authorization pending
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08 final acceptance gate（2026-10-13）
+
+P1-08A/B/C/D/E/F all pass and `P1-08 IMPLEMENTATION = COMPLETE`. Remote
+`main` is the exact merge-base and ancestor of the six-commit branch; there is
+no main-only advancement or divergence. The full 36-file diff contains only
+approved P1-08 identity, navigation, responsive/accessibility, tests and docs.
+Dashboard changes are limited to duplicate Logout removal, shell integration
+and the canonical Site Copy label; Dashboard redesign remains `HOLD`.
+
+Final targeted gates pass: Auth 41/41, Web 105/105, Admin 146/146, Shared UI
+5/5, all affected typechecks/lints, Web/Admin production builds, sensitive scan
+and diff check. P1-08E/F responsive and accessibility evidence remains current
+because no product code changed after P1-08F. Manual VoiceOver remains a
+non-blocking spot-check; physical-device smoke remains not executed/non-blocking.
+
+`P1-08 FULL DIFF AUDIT = PASS`; `P1-08 SECURITY BOUNDARY = PASS`;
+`P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`. Production is unchanged. The
+only next action is PR creation followed by a separate Product Owner merge
+authorization.
 
 ## Current Admin P1-08F gate（2026-10-13）
 

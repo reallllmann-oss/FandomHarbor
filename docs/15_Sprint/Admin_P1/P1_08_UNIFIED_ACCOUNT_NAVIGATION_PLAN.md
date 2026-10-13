@@ -1,6 +1,6 @@
 # Admin P1-08 — Unified Account Navigation Plan
 
-状态：`P1-08 = IMPLEMENTATION COMPLETE — FINAL ACCEPTANCE / PR PREPARATION REQUIRED`
+状态：`P1-08 IMPLEMENTATION = COMPLETE / FINAL ACCEPTANCE = PASS / PR CREATION AUTHORIZED`
 
 基线：remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`
 
@@ -756,3 +756,51 @@ P1-08F 记录为 `Cross-Surface Account Identity`：未来 Reader、Author Studi
 `P1-08 = IMPLEMENTATION COMPLETE`
 
 下一授权边界仅为：`P1-08 FINAL ACCEPTANCE / PR PREPARATION`。
+
+## 25. P1-08 final acceptance / PR preparation（2026-10-13）
+
+状态：`P1-08A/B/C/D/E/F = PASS / P1-08 IMPLEMENTATION ACCEPTED`
+
+### Final branch and diff audit
+
+- final implementation baseline `86d9fcb262e9904e187e4511ba4c12f0040e7e68` 与 remote branch
+  精确一致；remote `main` 为 `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`，同时也是
+  merge-base。`main...branch = 0/6`，无 main-only advancement、divergence 或 history rewrite。
+- `origin/main...branch` 完整 diff 为 6 个 P1-08 commits、36 个文件；范围仅含 Admin identity/
+  Account Menu、Desktop/Mobile navigation、responsive/accessibility closure、Reader/Studio
+  identity、surface-aware presentation helper、targeted tests 与 P1-08 docs。
+- Dashboard 改动仅为移除重复 Logout、Admin shell 外围适配及旧“概览”label 修正为“站点文案”；
+  没有 cards、metrics、主体 layout、visual refresh 或新 IA。`DASHBOARD REDESIGN INTRODUCED = NO`。
+- 未发现 unknown route/Migration、DB schema、Auth/Role model redesign、credential/secret、backup、
+  temporary harness、debug-only code、disposable artifact 或 unrelated feature。
+
+### Final security and acceptance gates
+
+- Reader canonical identity 继续是 active membership → Reader capability；Author 是 active
+  membership + `author` grant；Admin 是 active membership + `admin/super_admin` grant。
+  presentation policy 保持 Reader `author > reader`、Studio `author`、Admin
+  `super_admin > admin`；unknown state fail closed，displayRole 不参与 authorization。
+- verified authenticated self identity → server-side self profile read →
+  `public.profiles.registration_name` 是三个 surface 唯一 current-account name path。不存在
+  client user ID、arbitrary subject、email/UUID/localStorage/unverified metadata fallback。
+- Reader、Author、Admin authorization 均 unchanged；无 client authorization、presentation
+  Role赋权、cross-user profile read、cross-request/cache leakage、Auth/Role mutation、DB schema
+  或 Migration。`P1-08 SECURITY BOUNDARY = PASS`。
+- Final targeted regression：Auth 41/41、Web 105/105、Admin 146/146、Shared UI 5/5 PASS；
+  Auth/Web/Admin/Shared UI typecheck 与 lint、Web/Admin production builds、sensitive scan 和
+  `git diff --check` PASS。
+- Responsive final gate 复用未发生代码变化的 P1-08E/F production compiled-CSS evidence：390
+  Reader/Studio/Admin、1024 Admin boundary、1280 Reader/Studio/Admin PASS。Accessibility 复用
+  focus trap/return、inert/skip-link fix、ARIA/nav/heading/keyboard/Escape/44px evidence；P1-08F
+  Web menu interaction tests同样 PASS。
+- Manual VoiceOver：`NON-BLOCKING MANUAL SPOT-CHECK`。Physical device：
+  `NOT EXECUTED / NON-BLOCKING`。Dashboard redesign：`HOLD / OUT OF SCOPE`。Production：
+  `UNCHANGED`。
+
+`P1-08 FULL DIFF AUDIT = PASS`
+
+`P1-08 IMPLEMENTATION = COMPLETE`
+
+`P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`
+
+下一授权边界仅为：创建 P1-08 PR 后等待 Product Owner 的独立 Merge 授权。

@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-08 IMPLEMENTATION COMPLETE / FINAL ACCEPTANCE + PR PREPARATION PENDING`
+状态：`P1-08 IMPLEMENTATION COMPLETE / FINAL ACCEPTANCE PASS / PR CREATION AUTHORIZED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -70,7 +70,22 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-08F 权威状态（2026-10-13）
+## 当前 P1-08 final acceptance 权威状态（2026-10-13）
+
+- P1-08A/B/C/D/E/F 全部 PASS；`P1-08 IMPLEMENTATION = COMPLETE`。
+- remote `main` 是 branch ancestor 与精确 merge-base；完整 6-commit / 36-file diff audit PASS，
+  无 main-only advancement、divergence、unknown Product diff、Migration、DB/Auth/Role model
+  change、secret、backup 或 temporary artifact。
+- Dashboard 只包含已接受的 duplicate Logout removal、Admin shell 外围适配与“站点文案”
+  label；`DASHBOARD REDESIGN INTRODUCED = NO`，redesign 继续 `HOLD / OUT OF SCOPE`。
+- Auth 41、Web 105、Admin 146、Shared UI 5 tests，四处 typecheck/lint、Web/Admin production
+  builds、sensitive scan 与 diff check PASS。P1-08E/F responsive/accessibility evidence保持有效。
+- `P1-08 SECURITY BOUNDARY = PASS`；Production `UNCHANGED`。Manual VoiceOver 为
+  `NON-BLOCKING MANUAL SPOT-CHECK`；physical device 为 `NOT EXECUTED / NON-BLOCKING`。
+- `P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`；下一步仅创建 P1-08 PR，并在 Merge 前
+  等待 Product Owner 的新授权。
+
+## P1-08F 权威状态（2026-10-13）
 
 - Reader 的 canonical identity 是 active membership 派生的 Reader capability；Author 与
   Admin 来自 active membership 下未撤销的 `role_grants`。presentation policy 为 Reader
