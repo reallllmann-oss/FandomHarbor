@@ -2,7 +2,6 @@ import type {
   IdentityAccessEffectiveRole,
   IdentityAccessMembershipState,
 } from "@fandom-harbor/services";
-import type { TrustedAccessContext } from "@fandom-harbor/auth";
 
 export const ADMIN_MEMBERSHIP_LABELS: Readonly<
   Record<IdentityAccessMembershipState, string>
@@ -43,10 +42,4 @@ export function formatAdminTimestamp(value: Date | string): string {
     parts.find((item) => item.type === type)?.value ?? "";
 
   return `${part("year")}-${part("month")}-${part("day")} ${part("hour")}:${part("minute")}（北京时间）`;
-}
-
-export function shouldShowAdminHeaderAction(
-  access: Pick<TrustedAccessContext, "capabilities"> | null,
-): boolean {
-  return access?.capabilities.has("admin:operate") ?? false;
 }

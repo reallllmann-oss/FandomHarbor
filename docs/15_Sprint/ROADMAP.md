@@ -1,7 +1,155 @@
 # Fandom Harbor Product Phase Roadmap
 
-Status: Active — Admin P1-07C post-cutover Production release PASS; PR merge authorization is next
+Status: Active — P1-08 final acceptance pass; PR creation authorized; merge authorization pending
 Roadmap type: Product Phase Roadmap
+
+## Current Admin P1-08 final acceptance gate（2026-10-13）
+
+P1-08A/B/C/D/E/F all pass and `P1-08 IMPLEMENTATION = COMPLETE`. Remote
+`main` is the exact merge-base and ancestor of the six-commit branch; there is
+no main-only advancement or divergence. The full 36-file diff contains only
+approved P1-08 identity, navigation, responsive/accessibility, tests and docs.
+Dashboard changes are limited to duplicate Logout removal, shell integration
+and the canonical Site Copy label; Dashboard redesign remains `HOLD`.
+
+Final targeted gates pass: Auth 41/41, Web 105/105, Admin 146/146, Shared UI
+5/5, all affected typechecks/lints, Web/Admin production builds, sensitive scan
+and diff check. P1-08E/F responsive and accessibility evidence remains current
+because no product code changed after P1-08F. Manual VoiceOver remains a
+non-blocking spot-check; physical-device smoke remains not executed/non-blocking.
+
+`P1-08 FULL DIFF AUDIT = PASS`; `P1-08 SECURITY BOUNDARY = PASS`;
+`P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`. Production is unchanged. The
+only next action is PR creation followed by a separate Product Owner merge
+authorization.
+
+## Current Admin P1-08F gate（2026-10-13）
+
+P1-08F completes cross-surface account identity. Active membership is the
+canonical Reader model; `author`, `admin` and `super_admin` remain elevated
+`role_grants` whose capabilities require active membership. Presentation is
+surface-aware: Reader `author > reader`, Studio `author`, Admin
+`super_admin > admin`. Admin privilege is never exposed on Reader/Studio.
+
+The shared discriminated `CurrentAccountIdentity` contains only surface,
+canonical registration name and display Role. Reader/Studio use one
+`WebAccountMenu` and the existing Web `signOut`; Admin retains its accepted
+Account Menu. Authorization stays in existing server capability gates. React
+cache reuse is request-scoped; no cross-user read or cross-request cache exists.
+
+Auth 41/41, Web 105/105, Admin 146/146 and Shared UI 5/5 pass with typecheck,
+lint and Web/Admin production builds. Reader, Studio and Admin compiled-CSS
+Chrome smoke passes 320/375/390/430/1024/1280. No Auth model, DB, Migration,
+Dashboard or Production change occurred. `P1-08F SECURITY BOUNDARY = PASS` and
+`P1-08 = IMPLEMENTATION COMPLETE`. The only next authorization boundary is
+`P1-08 FINAL ACCEPTANCE / PR PREPARATION`.
+
+## Current Admin P1-08E gate（2026-10-13）
+
+P1-08 Admin Navigation is implementation-acceptance complete. Chrome production
+compiled-CSS smoke passes 320/375/390/430/768/834/1024/1280/1440, long
+identity/query stress, 390/1280 light/dark, focus, reduced motion and the
+Accessibility Tree. A scoped modal-background defect was fixed: skip link and
+trigger now become inert with the background, the backdrop is hidden from the
+AX tree, and focus returns only after inert cleanup.
+
+Shared UI 5/5, Admin 146/146, Typecheck, Lint and production Build pass.
+`P1-08 AUTHORIZATION BOUNDARY = PASS`; no TrustedAccessContext, Auth, Role,
+capability, DB, Migration, Dashboard or Production change occurred. VoiceOver
+and physical-device smoke were not automated and remain non-blocking spot-checks.
+P1-08F remains the future cross-surface identity/Role slice; Web/Author Studio
+were not changed. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08F — Cross-Surface Account Identity`.
+
+## Current Admin P1-08D gate（2026-10-12）
+
+P1-08D replaces the Admin native `<details>` fallback with one real
+`AdminMobileNavigation` drawer for `<=1023px`; `>=1024px` retains the P1-08C
+Sidebar. The compact Header now owns deterministic Back/product context,
+canonical page title and one Menu trigger. `/access` list/search returns to `/`;
+Detail removes only `subject` and preserves its list/search query context.
+
+The drawer reuses `adminNavigationConfig`, active matching, trusted Admin identity
+projection and the canonical `signOut` Server Action. Modal semantics, focus
+trap/return, Escape/backdrop/navigation close, body scroll lock/background inert,
+44px targets, `100dvh`, safe-area padding and complete long-name presentation are
+covered. Admin 16 files / 146 tests, typecheck, lint and production build pass;
+compiled-CSS Chrome smoke passes 320/375/390/430/768/834/1024/1280.
+
+`P1-08D SECURITY BOUNDARY = PASS`: TrustedAccessContext, authorization,
+request-scoped caching, Auth, Role, capability, DB, Migration, governance,
+Dashboard and Production are unchanged. P1-08F remains future-only. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08E — Responsive / Accessibility / Regression Closure`.
+
+## Current Admin P1-08C gate（2026-10-12）
+
+P1-08C establishes one typed `adminNavigationConfig` for `/` → `站点文案` and
+`/access` → `身份与权限`. Root matching is exact; access query/detail variants
+stay active. Sidebar is the only Desktop primary navigation; Header now owns
+Product identity, page context, Theme and the P1-08B Account Menu without
+duplicating links. Active state uses `aria-current="page"`, weight and a shape
+marker rather than color alone.
+
+Tablet/Mobile retain the native `<details>` fallback while reusing the same
+config; full Mobile interaction remains P1-08D. Cross-surface links fail closed
+because Admin does not yet have a complete canonical URL + trusted capability
+presentation source. Account identity, Role, Logout, server authorization and
+request-scoped React cache remain unchanged; no DB, Migration, Auth, Role,
+governance, Dashboard or Production change occurred.
+
+Admin 15 files / 133 tests, typecheck, lint and build pass. Production-build
+compiled-CSS Chrome smoke passes `/` and `/access` at 1024/1280/1440 and
+768/834. Temporary component harness was not used because the dependency tree
+has no `vite` executable; no dependency was added. Future
+`P1-08F — Cross-Surface Account Identity` is recorded for surface-contextual
+Reader/Author/Admin Role presentation only. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only `P1-08D — Mobile Navigation`.
+
+## Current Admin P1-08B gate（2026-10-12）
+
+P1-08B implements a server-owned `AdminCurrentIdentity` presentation model
+without changing `TrustedAccessContext`. A verified Session identity keys the
+existing trusted Membership/Role lookup and a self-only
+`profiles.registration_name` read. Client code receives only registration name
+and the selected Admin display label; authorization remains in existing server
+page, Action and Service contracts.
+
+The Header now exposes one Account Menu with registration name, Admin Role and
+the existing sign-out Server Action. Role display is `super_admin > admin`,
+never a synthesized Reader role. The former Home-page Logout was removed.
+Keyboard, Escape/outside close, focus return, ARIA, 44px targets and long-name
+responsive contracts pass targeted validation. Sign-in remains free of account
+identity; no route-group or Navigation IA rewrite occurred.
+
+Focused tests, all Admin targeted tests, typecheck, lint, build and
+375/390/430/1024 Chrome smoke pass. `P1-08B SECURITY BOUNDARY = PASS`.
+Dashboard remains `HOLD`; Auth, DB, Migration, governance and Production are
+unchanged. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08C — Unified Desktop Navigation`.
+
+## Current Admin P1-08 gate（2026-10-12）
+
+P1-08A completed a docs-only baseline audit on remote `main`
+`0991f5ea7f13bb57902bc9065283c61ad2a03a2d`. The current Admin surface has
+only `/` (Site Copy), `/access` and `/auth/sign-in`; its Header, sidebar and
+mobile `<details>` duplicate navigation, while the account area exposes only
+Logout and no registration name, Role or current-route context.
+
+The accepted plan keeps identity, Membership, Role and capability resolution
+server-side; client components may own only route highlighting and menu/drawer
+interaction. Desktop and Mobile IA use one typed navigation config and create no
+placeholder product routes. Dashboard redesign remains `HOLD`; Product code,
+Auth, DB, config and Production are unchanged. Authority:
+[P1-08 Unified Account Navigation Plan](Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md).
+The next authorization boundary is only
+`P1-08B — Identity + Account Menu Foundation`.
 
 ## Current Admin P1-07C gate（2026-10-11）
 

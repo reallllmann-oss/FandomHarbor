@@ -1,5 +1,141 @@
 # Project Status
 
+## Admin P1-08 Final Acceptance / PR Preparation（2026-10-13）
+
+| Item                     | Current authority                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| Slice status             | P1-08A/B/C/D/E/F PASS; `P1-08 IMPLEMENTATION = COMPLETE`                                         |
+| Branch relationship      | remote `main` is exact merge-base/ancestor; 0 main-only / 6 branch commits; no divergence        |
+| Full diff                | 36 approved P1-08 files; `P1-08 FULL DIFF AUDIT = PASS`                                          |
+| Dashboard                | duplicate Logout/shell/label only; `DASHBOARD REDESIGN INTRODUCED = NO`; redesign remains `HOLD` |
+| Role/self-read/cache     | surface isolation + trusted self profile read PASS; cross-user/cache leakage NO                  |
+| Validation               | Auth 41, Web 105, Admin 146, UI 5; typecheck/lint/build/sensitive/diff gates PASS                |
+| Responsive/accessibility | P1-08E/F evidence current; VoiceOver non-blocking; physical device not executed/non-blocking     |
+| Security                 | `P1-08 SECURITY BOUNDARY = PASS`; no authorization/Auth/Role/DB/Migration change                 |
+| Production               | `UNCHANGED`                                                                                      |
+| Final verdict            | `P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`                                                 |
+| Next authorization       | create P1-08 PR, then wait for independent Product Owner Merge authorization                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
+## Admin P1-08F Cross-Surface Account Identity（2026-10-13）
+
+| Item               | Current authority                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| Project status     | `P1-08 = IMPLEMENTATION COMPLETE`; final acceptance / PR preparation pending                        |
+| Canonical model    | active membership = Reader; active `author/admin/super_admin` grants remain elevated roles          |
+| Surface policy     | Reader `author > reader`; Studio `author`; Admin `super_admin > admin`                              |
+| Privacy isolation  | Admin privilege hidden from Reader/Studio; display model excludes UUID/email/session/MFA/capability |
+| Account experience | one Web Account Menu for Reader/Studio; accepted Admin Menu retained; canonical Logout reused       |
+| Responsive         | three surfaces × 320/375/390/430/1024/1280 compiled-CSS Chrome PASS                                 |
+| Validation         | Auth 41; Web 105; Admin 146; Shared UI 5; typecheck, lint and Web/Admin builds PASS                 |
+| Security           | `P1-08F SECURITY BOUNDARY = PASS`; authorization unchanged; no cross-user/cache leakage             |
+| Product boundary   | no Auth model/DB/Migration/Dashboard/Production change; Dashboard remains `HOLD`                    |
+| Final verdict      | `P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`                                                      |
+| Next authorization | `P1-08 FINAL ACCEPTANCE / PR PREPARATION` only                                                      |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
+## Admin P1-08E Responsive / Accessibility / Regression Closure（2026-10-13）
+
+| Item               | Current authority                                                                       |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| Project status     | `P1-08 ADMIN NAVIGATION = COMPLETE`; P1-08F cross-surface identity remains pending      |
+| Responsive         | Chrome compiled CSS 320/375/390/430/768/834/1024/1280/1440 PASS                         |
+| Stress/theme       | long username/query, 390/1280 light/dark, reduced motion PASS                           |
+| Accessibility      | keyboard/focus/semantics/AX tree PASS; modal background inert gap fixed                 |
+| Manual evidence    | VoiceOver spot-check required; physical device not executed; neither is a known blocker |
+| Validation         | Shared UI 5/5; Admin 146/146; Typecheck, Lint, production Build PASS                    |
+| Security           | `P1-08 AUTHORIZATION BOUNDARY = PASS`; no cross-request identity cache                  |
+| Product boundary   | no Auth/Role/capability/DB/Migration/Dashboard/Production change                        |
+| Final verdict      | `P1-08E RESPONSIVE / ACCESSIBILITY / REGRESSION CLOSURE = PASS`                         |
+| Next authorization | `P1-08F — Cross-Surface Account Identity` only                                          |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
+## Admin P1-08D Mobile Navigation（2026-10-12）
+
+| Item               | Current authority                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------- |
+| Mobile surface     | `<=1023px` three-region Header + one `AdminMobileNavigation` drawer; Admin `<details>` retired      |
+| Desktop boundary   | `>=1024px` P1-08C Sidebar and Account Menu unchanged                                                |
+| Page/back context  | canonical title; root no Back; access list → `/`; Detail removes only `subject` and preserves query |
+| Drawer lifecycle   | dialog, backdrop/Escape/nav close, focus trap/return, body lock, background inert                   |
+| Account/logout     | trusted registration name + Admin Role; one existing canonical `signOut` form                       |
+| Responsive         | 320/375/390/430/768/834/1024/1280 compiled-CSS Chrome PASS; 44px/safe-area/zero overflow            |
+| Validation         | Admin 16 files / 146 tests, typecheck, lint and production build PASS                               |
+| Security           | `P1-08D SECURITY BOUNDARY = PASS`; no TrustedAccessContext/Auth/Role/capability/DB/Migration change |
+| Product boundary   | Dashboard `HOLD`; P1-08F recorded only; Production/QA/Vercel unchanged                              |
+| Final verdict      | `P1-08D MOBILE NAVIGATION = PASS`                                                                   |
+| Next authorization | `P1-08E — Responsive / Accessibility / Regression Closure` only                                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+
+## Admin P1-08C Unified Desktop Navigation（2026-10-12）
+
+| Item               | Current authority                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Navigation source  | one typed `adminNavigationConfig`; `/` = `站点文案`, `/access` = `身份与权限`                             |
+| Desktop surface    | Sidebar only; Header = Product identity + page context + Theme + Account Menu                             |
+| Active state       | root exact; access query/detail variants active; `aria-current`, 700 weight and shape marker              |
+| Tablet/Mobile      | existing native `<details>` reuses canonical config; full Mobile remains P1-08D                           |
+| Cross-surface      | links omitted fail-closed; no complete canonical URL + trusted capability presentation source             |
+| P1-08B regression  | identity, contextual Admin Role, Account Menu and unique Logout PASS                                      |
+| Validation         | Admin 15/133, typecheck, lint, build; Chrome 1024/1280/1440 and 768/834 across both routes PASS           |
+| Harness            | temporary component harness not used: no `vite` executable; no dependency added                           |
+| Security           | `P1-08C SECURITY BOUNDARY = PASS`; server authorization/request cache unchanged; no Auth/DB/Role mutation |
+| Future recorded    | P1-08F Cross-Surface Account Identity with Role selected by current surface context                       |
+| Final verdict      | `P1-08C UNIFIED DESKTOP NAVIGATION = PASS`                                                                |
+| Next authorization | `P1-08D — Mobile Navigation` only                                                                         |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+Dashboard remains `HOLD`; Production is unchanged.
+
+## Admin P1-08B Identity + Account Menu Foundation（2026-10-12）
+
+| Item               | Current authority                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| Identity model     | separate `AdminCurrentIdentity`; `TrustedAccessContext` unchanged                              |
+| Registration name  | server self-read from `profiles.registration_name`, keyed only by verified Session identity    |
+| Role display       | `super_admin → 超级管理员`; `admin → 管理员`; mixed Author role does not override Admin label  |
+| Account Menu       | registration name, Role, canonical Logout; long-name truncation and full panel value           |
+| Interaction        | native keyboard, Escape/outside close, focus return, ARIA and 44px targets                     |
+| Logout             | existing Server Action/Auth contract retained; duplicate Home Logout removed                   |
+| Shell boundary     | sign-in has no Account Menu; no route-group or Navigation IA migration                         |
+| Validation         | focused 6/33 and full Admin 13/119 tests, typecheck, lint, build, 375/390/430/1024 Chrome PASS |
+| Security           | `P1-08B SECURITY BOUNDARY = PASS`; authorization remains server-side                           |
+| Product/Production | no DB/Migration/Auth/governance/Dashboard/Production change                                    |
+| Final verdict      | `P1-08B IDENTITY + ACCOUNT MENU FOUNDATION = PASS`                                             |
+| Next authorization | `P1-08C — Unified Desktop Navigation` only                                                     |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+Desktop and Mobile navigation remain incomplete by design.
+
+## Admin P1-08A Unified Account Navigation Plan（2026-10-12）
+
+| Item               | Current authority                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Base               | remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d`                                                                   |
+| Current routes     | `/` Site Copy; `/access` identity governance; `/auth/sign-in`                                                              |
+| Audit finding      | Header/sidebar/mobile navigation duplicated; account area is Logout-only; no current-route context                         |
+| Identity boundary  | Session, Membership, Role and capability remain trusted server data; registration name is a server-read display projection |
+| IA                 | one typed config; two real Admin sections; separate cross-surface and account areas; no placeholder routes                 |
+| Responsive         | 320/375/390/430, tablet and desktop strategy frozen; touch/focus/safe-area contracts included                              |
+| Dashboard          | `HOLD`; no cards, metrics or Dashboard IA designed                                                                         |
+| Product/Production | Product code `NO CHANGE`; Auth/DB/config/Production/QA/Vercel `NO CHANGE`                                                  |
+| Final verdict      | `P1-08A UNIFIED ACCOUNT NAVIGATION PLAN = PASS`                                                                            |
+| Next authorization | `P1-08B — Identity + Account Menu Foundation` only                                                                         |
+
+Authority:
+`docs/15_Sprint/Admin_P1/P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md`.
+P1-08 implementation has not started.
+
 ## Admin P1-07C Post-Cutover Production Release（2026-10-11）
 
 | Item               | Current authority                                                                         |

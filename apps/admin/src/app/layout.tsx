@@ -1,8 +1,9 @@
-import { AdminLayout, AppProviders } from "@fandom-harbor/ui";
+import { AppProviders } from "@fandom-harbor/ui";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
 import { AdminHeaderActions } from "./admin-header-actions";
+import { AdminShell } from "./admin-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,9 +16,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <AppProviders>
-          <AdminLayout headerActions={<AdminHeaderActions />}>
+          <AdminShell headerActions={<AdminHeaderActions />}>
             {children}
-          </AdminLayout>
+          </AdminShell>
         </AppProviders>
       </body>
     </html>

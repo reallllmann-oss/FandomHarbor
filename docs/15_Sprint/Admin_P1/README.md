@@ -1,6 +1,6 @@
 # Admin P1 — Identity & Access Governance Console
 
-状态：`P1-07C POST-CUTOVER PRODUCTION RELEASE PASS / PR MERGE AUTHORIZATION REQUIRED`
+状态：`P1-08 IMPLEMENTATION COMPLETE / FINAL ACCEPTANCE PASS / PR CREATION AUTHORIZED`
 P1-00 Product Owner 决策日期：2026-08-16；ADR-022/023 决策日期：2026-08-17；ADR-024 决策日期：2026-09-19
 
 Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现有 `/access` 身份访问操作，不扩展角色或 capability。
@@ -21,6 +21,12 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-06B | Manual Preview Acceptance                    | Complete — Product Owner PASS          |
 | P1-06C | Admin UI Polish                              | Complete — committed by closure        |
 | P1-07  | Production Release Review                    | Complete — Production release PASS     |
+| P1-08A | Unified Account Navigation audit / IA / plan | Complete — docs-only plan ready        |
+| P1-08B | Identity + Account Menu foundation           | Complete — security boundary PASS      |
+| P1-08C | Unified Desktop Navigation                   | Complete — security boundary PASS      |
+| P1-08D | Mobile Navigation / Page Context / Back      | Complete — security boundary PASS      |
+| P1-08E | Responsive / Accessibility / Regression      | Complete — final acceptance PASS       |
+| P1-08F | Cross-Surface Account Identity               | Complete — security boundary PASS      |
 
 权威合同：
 
@@ -46,6 +52,7 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [P1-07C-4A Final Pre-Cutover Rerun Acceptance](P1_07C_4A_FINAL_RERUN_ACCEPTANCE.md)
 - [P1-07C Migration D Cutover Acceptance](P1_07C_MIGRATION_D_CUTOVER_ACCEPTANCE.md)
 - [P1-07C Post-Cutover Production Release Acceptance](P1_07C_POST_CUTOVER_PRODUCTION_RELEASE_ACCEPTANCE.md)
+- [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)
 - [P1-02 Implementation Plan and Engineering Gate Freeze](P1_02_IMPLEMENTATION_PLAN.md)
 - [P1-02A Local Acceptance Evidence](P1_02A_ACCEPTANCE_EVIDENCE.md)
 - [P1-02B Local Acceptance Evidence](P1_02B_ACCEPTANCE_EVIDENCE.md)
@@ -63,7 +70,126 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 - [ADR-023 — Read RPC Authority Boundary](../../17_Architecture_Decisions/ADR-023.md)
 - [ADR-024 — TOTP/AAL2 Super Admin Commissioning](../../17_Architecture_Decisions/ADR-024.md)
 
-## 当前 P1-07C 权威状态（2026-10-11）
+## 当前 P1-08 final acceptance 权威状态（2026-10-13）
+
+- P1-08A/B/C/D/E/F 全部 PASS；`P1-08 IMPLEMENTATION = COMPLETE`。
+- remote `main` 是 branch ancestor 与精确 merge-base；完整 6-commit / 36-file diff audit PASS，
+  无 main-only advancement、divergence、unknown Product diff、Migration、DB/Auth/Role model
+  change、secret、backup 或 temporary artifact。
+- Dashboard 只包含已接受的 duplicate Logout removal、Admin shell 外围适配与“站点文案”
+  label；`DASHBOARD REDESIGN INTRODUCED = NO`，redesign 继续 `HOLD / OUT OF SCOPE`。
+- Auth 41、Web 105、Admin 146、Shared UI 5 tests，四处 typecheck/lint、Web/Admin production
+  builds、sensitive scan 与 diff check PASS。P1-08E/F responsive/accessibility evidence保持有效。
+- `P1-08 SECURITY BOUNDARY = PASS`；Production `UNCHANGED`。Manual VoiceOver 为
+  `NON-BLOCKING MANUAL SPOT-CHECK`；physical device 为 `NOT EXECUTED / NON-BLOCKING`。
+- `P1-08 FINAL ACCEPTANCE / PR PREPARATION = PASS`；下一步仅创建 P1-08 PR，并在 Merge 前
+  等待 Product Owner 的新授权。
+
+## P1-08F 权威状态（2026-10-13）
+
+- Reader 的 canonical identity 是 active membership 派生的 Reader capability；Author 与
+  Admin 来自 active membership 下未撤销的 `role_grants`。presentation policy 为 Reader
+  `author > reader`、Studio `author`、Admin `super_admin > admin`。
+- 共享 `CurrentAccountIdentity` / `resolveSurfaceDisplayRole` 仅传递 surface、registration
+  name 和 display Role。Reader/Studio Client 不接收 Admin role、UUID、email、session、MFA
+  或 capability；authorization 仍由各 surface 既有 server capability gate 所有。
+- Reader/Studio 使用唯一 `WebAccountMenu` 与 canonical Web `signOut`；Desktop 显示完整
+  identity，Mobile 使用 compact trigger 并在 panel 显示完整身份。Admin P1-08B～E 无回归。
+- Reader、Studio、Admin 在 320/375/390/430/1024/1280 的 18 组 production compiled-CSS
+  Chrome smoke PASS。Auth 41、Web 105、Admin 146、Shared UI 5 tests，以及 typecheck、lint、
+  Web/Admin production builds PASS。
+- `P1-08F SECURITY BOUNDARY = PASS`；无 Auth/Role/authorization/DB/Migration/Dashboard/
+  Production change，无 cross-user profile read 或 cross-request identity cache。
+- `P1-08F CROSS-SURFACE ACCOUNT IDENTITY = PASS`；`P1-08 = IMPLEMENTATION COMPLETE`。
+  下一授权边界仅为 `P1-08 FINAL ACCEPTANCE / PR PREPARATION`。
+
+## P1-08E 权威状态（2026-10-13）
+
+- P1-08B/C/D 的 Account identity/Menu、Desktop Sidebar、Mobile drawer、page context 与
+  deterministic Back 已完成 final acceptance；`P1-08 ADMIN NAVIGATION = COMPLETE`。
+- production compiled-CSS Chrome 320/375/390/430/768/834/1024/1280/1440、390/1280
+  light/dark、长 username/query、focus、reduced motion 与 Accessibility Tree 均 PASS。
+- 最小修复 drawer modal background：skip link/trigger 随背景 inert、backdrop 从 AX tree
+  隐藏、focus 在 inert cleanup 后返回；无 Auth/Role/DB/业务行为变化。
+- Shared UI 5/5、Admin 146/146、Typecheck、Lint、Build 与 security boundary PASS。
+  VoiceOver/physical device 未自动执行，保留非阻塞人工 spot-check。
+- Dashboard 继续 `HOLD`；P1-08F Cross-Surface Account Identity 仍为 pending，未修改
+  Web/Author Studio。下一授权边界仅为 `P1-08F — Cross-Surface Account Identity`。
+
+## 当前 P1-08D 权威状态（2026-10-12）
+
+- `<=1023px` 使用三分区 Mobile Header 与唯一 `AdminMobileNavigation` drawer；
+  `>=1024px` 继续使用 P1-08C Desktop Sidebar。Admin 原生 `<details>` fallback 已退出。
+- `/` 无 Back；`/access` 与 search list 返回 `/`；Detail 只移除 `subject` 并保留现有
+  search/pagination query。页面 title 始终来自 canonical navigation config。
+- Drawer 复用同一 config、active matcher、trusted identity presentation 与 canonical
+  `signOut`；提供 modal semantics、focus trap/return、Escape/backdrop/navigation close、
+  body lock/inert、44px targets、safe-area 与长名称完整展示。
+- Admin 16 files / 146 tests、typecheck、lint、build PASS；production compiled-CSS Chrome
+  320/375/390/430/768/834/1024/1280 PASS。P1-08B Account Menu 与 P1-08C Desktop
+  regression PASS。
+- `P1-08D SECURITY BOUNDARY = PASS`；TrustedAccessContext、authorization、Auth、Role、
+  capability、DB、Migration、Dashboard 与 Production 均未改变。
+- P1-08F Cross-Surface Account Identity 仍仅记录。下一授权边界仅为
+  `P1-08E — Responsive / Accessibility / Regression Closure`。
+
+## 当前 P1-08C 权威状态（2026-10-12）
+
+- `apps/admin/src/lib/admin-navigation.ts` 是唯一 navigation config，只包含 `/` →
+  `站点文案` 与 `/access` → `身份与权限`。root exact match；`/access` query/detail
+  variants 保持 active，unrelated route 不误激活。
+- Sidebar 是 `>=1024px` 唯一 Desktop primary navigation。Header 只承担 Product identity、
+  page context、Theme 与 Account Menu；active link 使用 `aria-current="page"`、字重与实体
+  marker。重复 Header links 已移除。
+- Tablet/Mobile 现有 `<details>` fallback 复用同一 config；完整 drawer/sheet/back system
+  留给 P1-08D。cross-surface links 因缺少完整安全 URL + trusted capability presentation
+  source 而 fail closed 未加入。
+- P1-08B identity/Role/Account Menu/Logout 与 server authorization 均未改变；无跨请求 identity
+  cache、DB、Migration、Auth、Role、governance、Dashboard 或 Production 变化。
+- Admin 15 files / 133 tests、typecheck、lint、build PASS；production-build compiled-CSS
+  smoke 在 Desktop 1024/1280/1440 与 Tablet 768/834 对 `/`、`/access` 共 10 项 PASS。
+  Temporary component harness 因无 `vite` executable 而未使用，也未新增 dependency。
+- 已记录未来 `P1-08F — Cross-Surface Account Identity`：Role 按 Reader/Author/Admin 当前
+  surface context 展示，本阶段未修改 Web/Studio。
+- 完整 closure 见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08D — Mobile Navigation`。
+
+## 当前 P1-08B 权威状态（2026-10-12）
+
+- P1-08B 采用独立 `AdminCurrentIdentity` presentation model；
+  `TrustedAccessContext` 未改变。verified Session identity → trusted Membership/Role →
+  self `profiles.registration_name` 是唯一 identity display path，client 不提供 user id。
+- Header Account Trigger 显示 registration name 与最高真实 Admin Role；
+  `super_admin > admin`，mixed Author Role 不覆盖 Admin label，也不合成 Reader Role。
+  Account panel 展示完整账号、Role 与唯一 canonical Logout；首页重复 Logout 已移除。
+- Menu 支持 native keyboard activation、Escape、outside close、focus return、
+  `aria-expanded`/`aria-controls`、44px targets 与长名称响应式处理。sign-in 不显示
+  Account Menu；未进行 route-group 或 Navigation IA 重构。
+- focused tests、Admin targeted tests、typecheck、lint、build 与 375/390/430/1024
+  responsive smoke 均 PASS。`P1-08B SECURITY BOUNDARY = PASS`；Auth、DB、Migration、
+  governance、Dashboard 与 Production 均未改变。
+- 完整架构与 closure 见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08C — Unified Desktop Navigation`。
+
+## P1-08A 规划基线（2026-10-12）
+
+- 基于 remote `main` `0991f5ea7f13bb57902bc9065283c61ad2a03a2d` 完成
+  `apps/admin`、shared UI 与 trusted identity/access chain 的只读审计。
+- 当前 Admin 真实 route 只有 `/`（站点文案）、`/access` 与
+  `/auth/sign-in`；Header、sidebar 与 mobile `<details>` 重复导航，账号区只有
+  Logout，没有 registration name、Role 或 current-route context。
+- 已冻结 server-owned identity projection、真实 Desktop/Mobile IA、
+  Admin-specific component boundary、320–1440 responsive/accessibility matrix 与
+  P1-08B–E 实施切片。Client presentation 不承担 authorization；既有 page/Service
+  live-access checks 保持权威。
+- Product code、Auth、DB、config、Production/QA/Vercel 均未改变；Dashboard redesign
+  保持 `HOLD`。完整方案见
+  [P1-08 Unified Account Navigation Plan](P1_08_UNIFIED_ACCOUNT_NAVIGATION_PLAN.md)。
+  下一授权边界仅为 `P1-08B — Identity + Account Menu Foundation`。
+
+## P1-07C 权威状态（2026-10-11）
 
 - Exact canonical Product RC
   `f42217d913d44517b53935a68488100610bdff0f` 已作为 Production deployment

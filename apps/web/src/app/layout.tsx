@@ -8,8 +8,8 @@ import { createGlobalShellNavigation } from "../lib/global-shell-navigation";
 import { getWebSessionSummary } from "../lib/identity-access";
 import { readWebPublicSiteCopy } from "../lib/public-site-copy";
 import { resolveSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "../lib/seo";
-import { signOut } from "./auth/actions";
 import { ReaderSiteLayout } from "./reader-site-layout";
+import { WebAccountMenu } from "./web-account-menu";
 
 export const dynamic = "force-dynamic";
 
@@ -52,19 +52,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             navigation={navigation}
             headerActions={
               session ? (
-                <div className="site-header-account text-sm">
-                  <span className="site-header-account-name">
-                    {session.displayName}
-                  </span>
-                  <form action={signOut}>
-                    <button
-                      className="site-header-account-action rounded-control"
-                      type="submit"
-                    >
-                      退出
-                    </button>
-                  </form>
-                </div>
+                <WebAccountMenu
+                  authorIdentity={session.identities?.author ?? null}
+                  readerIdentity={session.identities?.reader ?? null}
+                />
               ) : (
                 <div className="site-header-account text-sm">
                   <Link

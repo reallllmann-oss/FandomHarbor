@@ -4,24 +4,35 @@ import { cn } from "../lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 
 export interface NavigationItem {
+  accessibilityLabel?: string;
   href: string;
   label: string;
 }
 
 interface SharedLayoutProps extends PropsWithChildren {
+  activeNavigationHref?: string;
   footerLinks?: NavigationItem[];
   headerActions?: ReactNode;
-  navigation: NavigationItem[];
+  headerContext?: ReactNode;
+  mobileLeading?: ReactNode;
+  navigation: readonly NavigationItem[];
+  showDesktopNavigation?: boolean;
+  showMobileNavigation?: boolean;
   sidebar?: ReactNode;
   surface: "reader" | "admin" | "docs";
   title: string;
 }
 
 export function SharedLayout({
+  activeNavigationHref,
   children,
   footerLinks,
   headerActions,
+  headerContext,
+  mobileLeading,
   navigation,
+  showDesktopNavigation = true,
+  showMobileNavigation = true,
   sidebar,
   surface,
   title,
@@ -47,21 +58,42 @@ export function SharedLayout({
               {title}
             </a>
           </div>
-          <nav
-            aria-label="主要导航"
-            className="site-header-navigation site-header-navigation-desktop"
-            data-header-region="navigation"
-          >
-            {navigation.map((item) => (
-              <a
-                className="site-header-navigation-link rounded-control text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-                href={item.href}
-                key={item.href}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
+          {mobileLeading ? (
+            <div
+              className="site-header-mobile-leading"
+              data-header-region="mobile-leading"
+            >
+              {mobileLeading}
+            </div>
+          ) : null}
+          {showDesktopNavigation ? (
+            <nav
+              aria-label="主要导航"
+              className="site-header-navigation site-header-navigation-desktop"
+              data-header-region="navigation"
+            >
+              {navigation.map((item) => (
+                <a
+                  aria-label={item.accessibilityLabel}
+                  aria-current={
+                    activeNavigationHref === item.href ? "page" : undefined
+                  }
+                  className="site-header-navigation-link rounded-control text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          ) : (
+            <div
+              className="site-header-context"
+              data-header-region="page-context"
+            >
+              {headerContext}
+            </div>
+          )}
           <div
             aria-label="显示与账号"
             className="site-header-utilities"
@@ -71,25 +103,31 @@ export function SharedLayout({
             <ThemeToggle />
             {headerActions}
           </div>
-          <details className="site-header-mobile-navigation">
-            <summary className="site-header-mobile-navigation-trigger rounded-control text-sm">
-              浏览站点
-            </summary>
-            <nav
-              aria-label="移动端主要导航"
-              className="site-header-mobile-navigation-links"
-            >
-              {navigation.map((item) => (
-                <a
-                  className="site-header-navigation-link rounded-control text-sm"
-                  href={item.href}
-                  key={item.href}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </details>
+          {showMobileNavigation && navigation.length > 0 ? (
+            <details className="site-header-mobile-navigation">
+              <summary className="site-header-mobile-navigation-trigger rounded-control text-sm">
+                浏览站点
+              </summary>
+              <nav
+                aria-label="移动端主要导航"
+                className="site-header-mobile-navigation-links"
+              >
+                {navigation.map((item) => (
+                  <a
+                    aria-label={item.accessibilityLabel}
+                    aria-current={
+                      activeNavigationHref === item.href ? "page" : undefined
+                    }
+                    className="site-header-navigation-link rounded-control text-sm"
+                    href={item.href}
+                    key={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          ) : null}
         </div>
       </header>
       <div
@@ -129,7 +167,7 @@ export function ReaderLayout({
   navigation,
 }: PropsWithChildren<{
   headerActions?: ReactNode;
-  navigation?: NavigationItem[];
+  navigation?: readonly NavigationItem[];
 }>) {
   return (
     <SharedLayout
@@ -154,30 +192,55 @@ export function ReaderLayout({
 }
 
 export function AdminLayout({
+  activeNavigationHref,
   children,
   headerActions,
-}: PropsWithChildren<{ headerActions?: ReactNode }>) {
-  const navigation = [
-    { href: "/", label: "概览" },
-    { href: "/access", label: "身份与权限" },
-  ];
-
+  mobileLeading,
+  navigation,
+  pageContext,
+  showNavigation = true,
+}: PropsWithChildren<{
+  activeNavigationHref?: string;
+  headerActions?: ReactNode;
+  mobileLeading?: ReactNode;
+  navigation: readonly NavigationItem[];
+  pageContext?: string;
+  showNavigation?: boolean;
+}>) {
   return (
     <SharedLayout
+      activeNavigationHref={activeNavigationHref}
       headerActions={headerActions}
+      headerContext={
+        pageContext ? (
+          <p aria-label={`当前页面：${pageContext}`}>
+            <span className="site-header-context-prefix">当前页面：</span>
+            <strong>{pageContext}</strong>
+          </p>
+        ) : null
+      }
+      mobileLeading={pageContext ? mobileLeading : undefined}
       navigation={navigation}
+      showDesktopNavigation={false}
+      showMobileNavigation={false}
       sidebar={
-        <nav aria-label="后台分区" className="space-y-2">
-          {navigation.map((item) => (
-            <a
-              className="block rounded-control px-3 py-2 text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        showNavigation ? (
+          <nav aria-label="后台主要导航" className="admin-primary-navigation">
+            {navigation.map((item) => (
+              <a
+                aria-label={item.accessibilityLabel}
+                aria-current={
+                  activeNavigationHref === item.href ? "page" : undefined
+                }
+                className="admin-primary-navigation-link rounded-control text-sm hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+                href={item.href}
+                key={item.href}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        ) : undefined
       }
       surface="admin"
       title="Fandom Harbor"
