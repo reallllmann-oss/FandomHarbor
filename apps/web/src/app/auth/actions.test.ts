@@ -3,10 +3,14 @@ import {
   createTrustedAccessContext,
 } from "@fandom-harbor/auth";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createWebIdentityAccess } from "../../lib/identity-access";
+import { createWebTrustedRegistrationBroker } from "../../lib/server-registration";
 import { signIn, signUp } from "./actions";
+
+vi.mock("server-only", () => ({}));
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {
@@ -16,6 +20,44 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("../../lib/identity-access", () => ({
   createWebIdentityAccess: vi.fn(),
+}));
+
+const cookieStore = {
+  delete: vi.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
+};
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(async () => cookieStore),
+  headers: vi.fn(
+    async () =>
+      new Headers({ host: "localhost:3000", origin: "http://localhost:3000" }),
+  ),
+}));
+
+const securityBroker = {
+  consumeRateLimit: vi.fn(async () => undefined),
+  getRegistrationMode: vi.fn(
+    async (): Promise<"email_required" | "legacy"> => "legacy",
+  ),
+  resolveLoginName: vi.fn(
+    async (): Promise<{
+      email: string;
+      isLegacyEmail: boolean;
+      userId: string;
+    } | null> => null,
+  ),
+};
+
+vi.mock("../../lib/server-auth-security", () => ({
+  ServerAuthSecurityError: class extends Error {},
+  createWebServerAuthSecurityBroker: vi.fn(() => securityBroker),
+}));
+
+vi.mock("../../lib/server-registration", () => ({
+  TrustedRegistrationError: class extends Error {},
+  createWebTrustedRegistrationBroker: vi.fn(),
 }));
 
 const identity = {
@@ -28,6 +70,7 @@ function createCredentialsFormData(
 ) {
   const formData = new FormData();
   formData.set("registrationName", "HarborReader");
+  formData.set("email", "reader@example.test");
   formData.set("password", password);
   formData.set("invitationCode", invitationCode);
   return formData;
@@ -36,6 +79,8 @@ function createCredentialsFormData(
 describe("web auth actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    securityBroker.getRegistrationMode.mockResolvedValue("legacy");
+    securityBroker.resolveLoginName.mockResolvedValue(null);
   });
 
   it("rejects sign-up passwords shorter than 8 characters", async () => {
@@ -68,6 +113,44 @@ describe("web auth actions", () => {
       registrationName: "HarborReader",
     });
     expect(signOut).toHaveBeenCalledOnce();
+  });
+
+  it("uses the trusted email broker and stores only the opaque attempt cookie", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    const register = vi.fn(async () => ({
+      attemptHandle: "a".repeat(64),
+      reservationExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      status: "confirmation_pending" as const,
+    }));
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=confirmation_pending",
+    );
+    expect(register).toHaveBeenCalledWith(
+      {
+        email: "reader@example.test",
+        invitationCode: "AbC123xYz90",
+        password: "12345678",
+        registrationName: "HarborReader",
+      },
+      undefined,
+    );
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      "fh_registration_attempt",
+      "a".repeat(64),
+      expect.objectContaining({
+        httpOnly: true,
+        path: "/auth",
+        sameSite: "lax",
+      }),
+    );
+    expect(JSON.stringify(cookieStore.set.mock.calls)).not.toContain(
+      "reader@example.test",
+    );
+    expect(cookies).toHaveBeenCalled();
   });
 
   it("keeps valid legacy invitation lengths eligible for database validation", async () => {
@@ -201,6 +284,31 @@ describe("web auth actions", () => {
       registrationName: "HarborReader",
     });
     expect(redirect).toHaveBeenCalledWith("/archive");
+  });
+
+  it("resolves a real-email account on the server before password login", async () => {
+    securityBroker.resolveLoginName.mockResolvedValueOnce({
+      email: "reader@example.test",
+      isLegacyEmail: false,
+      userId: identity.id,
+    });
+    const signInWithResolvedEmail = vi.fn(async () => ({ identity }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      accessRepository: {
+        getForIdentity: vi.fn(async () =>
+          createTrustedAccessContext({ identity, membershipState: "active" }),
+        ),
+      },
+      auth: { signInWithResolvedEmail },
+    } as never);
+
+    await expect(signIn(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/archive",
+    );
+    expect(signInWithResolvedEmail).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      password: "12345678",
+    });
   });
 
   it("returns a Reader to a safe local page after sign-in", async () => {
