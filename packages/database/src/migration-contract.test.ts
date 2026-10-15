@@ -215,6 +215,43 @@ describe("V1 Package B1 trusted registration migration contract", () => {
   });
 });
 
+describe("V1 Preview SECURITY DEFINER ACL closure", () => {
+  it("removes anonymous execution only from authenticated workflows", async () => {
+    const sql = await migration(
+      "20261015152535_tighten_security_definer_rpc_acl.sql",
+    );
+
+    for (const signature of [
+      "public.create_invitation(\n  text,\n  integer,\n  timestamp with time zone\n)",
+      "public.redeem_invitation(text)",
+      "public.revoke_invitation(uuid, text)",
+      "public.follow_author(uuid)",
+      "public.unfollow_author(uuid)",
+      "public.get_my_invitation_relationships()",
+      "public.get_admin_site_copy()",
+    ]) {
+      expect(sql).toContain(`revoke execute on function ${signature}`);
+    }
+
+    expect(sql).toContain("public.save_site_copy(");
+    expect(sql.match(/from public, anon;/g)).toHaveLength(8);
+    expect(sql.match(/to authenticated;/g)).toHaveLength(8);
+    expect(sql).not.toContain("to service_role;");
+
+    for (const publicRpc of [
+      "browse_public_works",
+      "get_public_author_profile",
+      "get_public_site_copy",
+      "get_published_work_authors",
+      "registration_invitation_status",
+      "search_public_catalog",
+      "validate_registration_invitation",
+    ]) {
+      expect(sql).not.toContain(`public.${publicRpc}(`);
+    }
+  });
+});
+
 describe("Mission 3B social relationship migration contract", () => {
   it("keeps public author data narrow and direct table access closed", async () => {
     const sql = await migration(
