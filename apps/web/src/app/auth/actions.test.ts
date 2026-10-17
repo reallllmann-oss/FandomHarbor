@@ -2,13 +2,14 @@ import {
   AuthProviderError,
   createTrustedAccessContext,
 } from "@fandom-harbor/auth";
+import { createServerSupabaseClient } from "@fandom-harbor/database";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createWebIdentityAccess } from "../../lib/identity-access";
 import { createWebTrustedRegistrationBroker } from "../../lib/server-registration";
-import { signIn, signUp } from "./actions";
+import { confirmEmailChange, signIn, signUp } from "./actions";
 
 vi.mock("server-only", () => ({}));
 
@@ -20,6 +21,11 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("../../lib/identity-access", () => ({
   createWebIdentityAccess: vi.fn(),
+}));
+
+vi.mock("@fandom-harbor/database", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@fandom-harbor/database")>()),
+  createServerSupabaseClient: vi.fn(),
 }));
 
 const cookieStore = {
@@ -77,6 +83,13 @@ function createCredentialsFormData(
   formData.set("email", "reader@example.test");
   formData.set("password", password);
   formData.set("invitationCode", invitationCode);
+  return formData;
+}
+
+function createEmailChangeConfirmationFormData() {
+  const formData = new FormData();
+  formData.set("email", "reader-new@example.test");
+  formData.set("token", "123456");
   return formData;
 }
 
@@ -436,5 +449,153 @@ describe("web auth actions", () => {
     } as never);
 
     await expect(signIn(formData)).rejects.toThrow("REDIRECT:/archive");
+  });
+
+  it("reports the first email-change confirmation as pending when the trusted email is unchanged", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null });
+    const verifyOtp = vi.fn(async () => ({
+      data: { session: null, user: null },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: { getUser, verifyOtp },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-pending",
+    );
+    expect(verifyOtp).toHaveBeenCalledOnce();
+    expect(getUser).toHaveBeenCalledTimes(2);
+  });
+
+  it("reports final email-change success only after the trusted Auth email changes", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const verifiedUser = {
+      email: "reader-new@example.test",
+      id: identity.id,
+    };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({ data: { user: verifiedUser }, error: null });
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: verifiedUser },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-complete",
+    );
+  });
+
+  it("does not show email-change success when OTP verification fails", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi.fn(async () => ({
+      data: { user: currentUser },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: null },
+          error: new Error("invalid OTP"),
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow("REDIRECT:/account/security?error=email-code");
+    expect(getUser).toHaveBeenCalledOnce();
+  });
+
+  it("uses a conservative status when the refreshed Auth state is unavailable", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({
+        data: { user: null },
+        error: new Error("Auth state unavailable"),
+      });
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: currentUser },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-status-unknown",
+    );
+  });
+
+  it("uses a conservative status when verification returns another Auth UID", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi.fn(async () => ({
+      data: { user: currentUser },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: {
+            session: null,
+            user: {
+              email: "reader-new@example.test",
+              id: "30000000-0000-4000-8000-000000000010",
+            },
+          },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-status-unknown",
+    );
+    expect(getUser).toHaveBeenCalledOnce();
   });
 });

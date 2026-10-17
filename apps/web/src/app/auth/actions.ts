@@ -581,15 +581,38 @@ export async function confirmEmailChange(formData: FormData) {
     );
     const { cookieAdapter, runtime } = await createWebIdentityAccess();
     const client = createServerSupabaseClient(runtime, cookieAdapter);
-    const { data: current } = await client.auth.getUser();
-    if (!current.user) redirect("/auth/sign-in");
-    const { error } = await client.auth.verifyOtp({
+    const { data: current, error: currentUserError } =
+      await client.auth.getUser();
+    if (currentUserError || !current.user) redirect("/auth/sign-in");
+    const { data: verified, error } = await client.auth.verifyOtp({
       email: parsed.data.email,
       token: parsed.data.token,
       type: "email_change",
     });
     if (error) redirect("/account/security?error=email-code");
-    redirect("/account/security?status=email-confirmed");
+    // Secure email change may return no user for the first-side confirmation.
+    // A returned user is still required to match the already authenticated UID.
+    if (verified.user && verified.user.id !== current.user.id) {
+      redirect("/account/security?status=email-change-status-unknown");
+    }
+
+    const { data: refreshed, error: refreshedUserError } =
+      await client.auth.getUser();
+    if (
+      refreshedUserError ||
+      !refreshed.user ||
+      refreshed.user.id !== current.user.id
+    ) {
+      redirect("/account/security?status=email-change-status-unknown");
+    }
+
+    const previousEmail = current.user.email?.trim().toLowerCase();
+    const currentEmail = refreshed.user.email?.trim().toLowerCase();
+    redirect(
+      previousEmail && currentEmail && previousEmail !== currentEmail
+        ? "/account/security?status=email-change-complete"
+        : "/account/security?status=email-change-pending",
+    );
   } catch (error) {
     rethrowRedirect(error);
     redirect("/account/security?error=email-code");

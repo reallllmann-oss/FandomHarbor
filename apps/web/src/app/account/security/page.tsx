@@ -47,13 +47,36 @@ export default async function AccountSecurityPage({
         </p>
       ) : null}
       {query.status === "email-change-sent" ? (
-        <p className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm">
-          邮箱变更验证已发送。请按邮件提示完成双重确认。
+        <p
+          className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm"
+          role="status"
+        >
+          邮箱变更请求已受理。如果邮件正常发送，请分别检查旧邮箱和新邮箱（含垃圾邮件），并按提示完成双重确认。
         </p>
       ) : null}
-      {query.status === "email-confirmed" ? (
-        <p className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm">
-          本次邮箱确认已完成。如果启用了双重确认，请继续完成另一封邮件中的验证码。
+      {query.status === "email-change-pending" ||
+      query.status === "email-confirmed" ? (
+        <p
+          className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm"
+          role="status"
+        >
+          当前邮箱已验证，请继续完成另一封邮件中的验证码。
+        </p>
+      ) : null}
+      {query.status === "email-change-complete" ? (
+        <p
+          className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm"
+          role="status"
+        >
+          邮箱变更成功，新邮箱已生效。
+        </p>
+      ) : null}
+      {query.status === "email-change-status-unknown" ? (
+        <p
+          className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm"
+          role="status"
+        >
+          本次邮箱确认已被认证服务受理，但暂时无法确认整体变更状态。请刷新页面并检查当前邮箱，避免重复提交。
         </p>
       ) : null}
 

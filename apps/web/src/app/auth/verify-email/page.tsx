@@ -32,6 +32,11 @@ export default async function VerifyEmailPage({
           已有未完成的邮箱验证。请使用此前收到的验证码，或在冷却结束后明确选择重新发送。
         </p>
       ) : null}
+      {query.status === "confirmation_request_accepted" ? (
+        <p className="mt-4 text-sm text-muted-foreground" role="status">
+          验证码请求已受理。如果邮件正常发送，请检查收件箱及垃圾邮件。请勿连续点击重发。
+        </p>
+      ) : null}
       {query.status === "confirmation_delivery_deferred" ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
           账号已创建，但验证码请求暂时无法完成。请稍后使用下方按钮明确重发。

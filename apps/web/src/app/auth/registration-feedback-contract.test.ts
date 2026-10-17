@@ -18,6 +18,22 @@ describe("registration feedback and cookie contract", () => {
     expect(source).toContain('href="/auth/forgot-password"');
   });
 
+  it("renders an accepted resend request as a neutral accessible status", async () => {
+    const source = await readFile(
+      path.join(authDirectory, "verify-email/page.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain('query.status === "confirmation_request_accepted"');
+    expect(source).toContain(
+      "验证码请求已受理。如果邮件正常发送，请检查收件箱及垃圾邮件。请勿连续点击重发。",
+    );
+    expect(source).toMatch(
+      /confirmation_request_accepted[\s\S]{0,300}role="status"/,
+    );
+    expect(source).not.toContain("验证码已成功送达");
+  });
+
   it("scopes registration cookies consistently and clears the same path", async () => {
     const source = await readFile(
       path.join(authDirectory, "actions.ts"),
