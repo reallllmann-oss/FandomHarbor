@@ -10,12 +10,15 @@ begin
     or has_function_privilege('authenticated', 'public.get_registration_mode()', 'EXECUTE')
     or has_function_privilege('anon', 'public.registration_context_by_proof(text)', 'EXECUTE')
     or has_function_privilege('authenticated', 'public.resolve_login_name_user_id(text)', 'EXECUTE')
+    or has_function_privilege('anon', 'public.registration_resume_context(text,text,text,text)', 'EXECUTE')
+    or has_function_privilege('authenticated', 'public.registration_resume_context(text,text,text,text)', 'EXECUTE')
     or has_function_privilege('anon', 'public.consume_auth_rate_limit(text,text,integer,integer)', 'EXECUTE') then
     raise exception 'B2 server-only functions leaked to browser roles';
   end if;
 
   if not has_function_privilege('service_role', 'public.get_registration_mode()', 'EXECUTE')
     or not has_function_privilege('service_role', 'public.registration_context_by_proof(text)', 'EXECUTE')
+    or not has_function_privilege('service_role', 'public.registration_resume_context(text,text,text,text)', 'EXECUTE')
     or not has_function_privilege('service_role', 'public.resolve_login_name_user_id(text)', 'EXECUTE')
     or not has_function_privilege('service_role', 'public.consume_auth_rate_limit(text,text,integer,integer)', 'EXECUTE') then
     raise exception 'B2 service role grants are incomplete';

@@ -73,6 +73,12 @@ function secureCookie() {
   return process.env.NODE_ENV === "production";
 }
 
+type MutableCookieStore = Awaited<ReturnType<typeof cookies>>;
+
+function clearRegistrationAttemptCookie(cookieStore: MutableCookieStore) {
+  cookieStore.delete({ name: REGISTRATION_ATTEMPT_COOKIE, path: "/auth" });
+}
+
 function rethrowRedirect(error: unknown): void {
   const digest =
     typeof error === "object" && error !== null && "digest" in error
@@ -217,21 +223,28 @@ export async function signUp(formData: FormData) {
 
     const cookieStore = await cookies();
     const existingHandle = cookieStore.get(REGISTRATION_ATTEMPT_COOKIE)?.value;
-    const result = await createWebTrustedRegistrationBroker().register(
-      {
-        email: credentials.data.email,
-        invitationCode: credentials.data.invitationCode,
-        password: credentials.data.password,
-        registrationName,
-      },
-      existingHandle,
-    );
-    await security.consumeRateLimit(
-      "auth.resend_signup.subject",
-      result.attemptHandle,
-      1,
-      60,
-    );
+    const registrationInput = {
+      email: credentials.data.email,
+      invitationCode: credentials.data.invitationCode,
+      password: credentials.data.password,
+      registrationName,
+    };
+    const broker = createWebTrustedRegistrationBroker();
+    let result = existingHandle
+      ? await broker.resume(registrationInput, existingHandle)
+      : null;
+    if (!result) {
+      if (existingHandle) clearRegistrationAttemptCookie(cookieStore);
+      result = await broker.register(registrationInput);
+    }
+    if (result.status !== "verification_pending") {
+      await security.consumeRateLimit(
+        "auth.resend_signup.subject",
+        result.attemptHandle,
+        1,
+        60,
+      );
+    }
     cookieStore.set(REGISTRATION_ATTEMPT_COOKIE, result.attemptHandle, {
       httpOnly: true,
       maxAge: Math.max(
@@ -303,7 +316,7 @@ export async function verifyRegistrationOtp(formData: FormData) {
       type: "email",
     });
     if (error) redirect("/auth/verify-email?error=invalid-code");
-    cookieStore.delete(REGISTRATION_ATTEMPT_COOKIE);
+    clearRegistrationAttemptCookie(cookieStore);
     redirect("/access?status=email-verified");
   } catch (error) {
     rethrowRedirect(error);
@@ -313,6 +326,13 @@ export async function verifyRegistrationOtp(formData: FormData) {
     ) {
       redirect("/auth/verify-email?error=rate-limited");
     }
+    if (
+      error instanceof TrustedRegistrationError &&
+      error.code === "ATTEMPT_UNAVAILABLE"
+    ) {
+      clearRegistrationAttemptCookie(await cookies());
+      redirect("/auth/verify-email?error=attempt-expired");
+    }
     redirect("/auth/verify-email?error=verification-failed");
   }
 }
@@ -320,9 +340,8 @@ export async function verifyRegistrationOtp(formData: FormData) {
 export async function resendRegistrationOtp() {
   try {
     const requestHeaders = await trustedRequestHeaders();
-    const attemptHandle = (await cookies()).get(
-      REGISTRATION_ATTEMPT_COOKIE,
-    )?.value;
+    const cookieStore = await cookies();
+    const attemptHandle = cookieStore.get(REGISTRATION_ATTEMPT_COOKIE)?.value;
     if (!attemptHandle) redirect("/auth/verify-email?error=attempt-expired");
     await enforceRateLimits(
       "auth.resend_signup",
@@ -341,6 +360,13 @@ export async function resendRegistrationOtp() {
       error.code === "RATE_LIMITED"
     ) {
       redirect("/auth/verify-email?error=resend-cooldown");
+    }
+    if (
+      error instanceof TrustedRegistrationError &&
+      error.code === "ATTEMPT_UNAVAILABLE"
+    ) {
+      clearRegistrationAttemptCookie(await cookies());
+      redirect("/auth/verify-email?error=attempt-expired");
     }
     redirect("/auth/verify-email?error=resend-failed");
   }

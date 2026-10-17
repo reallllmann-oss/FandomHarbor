@@ -24,12 +24,17 @@ export default async function VerifyEmailPage({
       <p className="text-sm font-medium text-primary">邮箱验证</p>
       <h1 className="mt-3 text-3xl font-semibold">输入 6 位验证码</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        验证码已发送到你的注册邮箱，15 分钟内有效。重复发送不会延长邀请码的 2
-        小时预留期限。
+        注册请求已处理。如果该邮箱符合注册条件，验证码将发送至邮箱，请检查收件箱及垃圾邮件。验证码
+        15 分钟内有效，明确重发不会延长邀请码的 2 小时预留期限。
       </p>
+      {query.status === "verification_pending" ? (
+        <p className="mt-4 text-sm text-muted-foreground" role="status">
+          已有未完成的邮箱验证。请使用此前收到的验证码，或在冷却结束后明确选择重新发送。
+        </p>
+      ) : null}
       {query.status === "confirmation_delivery_deferred" ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
-          账号已创建，但邮件暂未送达。请稍后使用下方按钮重发。
+          账号已创建，但验证码请求暂时无法完成。请稍后使用下方按钮明确重发。
         </p>
       ) : null}
       {query.error ? (
@@ -66,12 +71,26 @@ export default async function VerifyEmailPage({
           重新发送验证码
         </button>
       </form>
-      <Link
-        className="mt-4 inline-flex min-h-11 items-center rounded-control px-2 text-primary"
-        href="/auth/sign-up"
-      >
-        返回注册
-      </Link>
+      <nav aria-label="账号帮助" className="mt-4 flex flex-wrap gap-2">
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/sign-up"
+        >
+          返回注册
+        </Link>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/sign-in"
+        >
+          前往登录
+        </Link>
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/forgot-password"
+        >
+          找回密码
+        </Link>
+      </nav>
     </section>
   );
 }

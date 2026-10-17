@@ -367,6 +367,35 @@ describe("V1 Package B2 server auth boundary migration contract", () => {
     expect(sql).not.toContain("email text");
   });
 
+  it("makes attempt resumption exact-match, non-terminal, and service-only", async () => {
+    const sql = await migration(
+      "20261016165027_tighten_registration_attempt_resume_context.sql",
+    );
+
+    expect(sql).toContain("function public.registration_resume_context");
+    expect(sql.match(/security definer/g)).toHaveLength(2);
+    expect(sql.match(/set search_path = ''/g)).toHaveLength(2);
+    expect(sql).toContain("ra.status = 'auth_created'");
+    expect(sql).toContain("ra.auth_user_id = ra.expected_auth_user_id");
+    expect(sql).toContain("ir.expires_at > statement_timestamp()");
+    expect(sql).toContain("i.revoked_at is null");
+    expect(sql).toContain("u.email_confirmed_at is null");
+    expect(sql).toContain("u.confirmed_at is null");
+    expect(sql).toContain("u.banned_until");
+    expect(sql).toContain("ra.email_binding_hash");
+    expect(sql).toContain("ra.login_name_key");
+    expect(sql).toContain("i.code_hash = p_code_hash");
+    expect(sql).toContain("m.state = 'pending'");
+    expect(sql).toContain("not exists (");
+    expect(sql).toContain("from public.invitation_redemptions");
+    expect(sql.match(/to service_role;/g)).toHaveLength(2);
+    expect(sql).not.toContain("to anon;");
+    expect(sql).not.toContain("to authenticated;");
+    expect(sql).not.toMatch(/\binsert\s+into\b/i);
+    expect(sql).not.toMatch(/\bupdate\s+(?:public|private|auth)\./i);
+    expect(sql).not.toMatch(/\bdelete\s+from\b/i);
+  });
+
   it("stores only application-HMAC rate-limit subjects", async () => {
     const sql = await migration(
       "20261014112425_b2_auth_flow_server_boundaries.sql",

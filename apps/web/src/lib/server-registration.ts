@@ -65,13 +65,17 @@ const adminUserSchema = z.object({
 export type TrustedRegistrationResult = {
   attemptHandle: string;
   reservationExpiresAt: Date;
-  status: "confirmation_delivery_deferred" | "confirmation_pending";
+  status:
+    | "confirmation_delivery_deferred"
+    | "confirmation_request_accepted"
+    | "verification_pending";
 };
 
 export class TrustedRegistrationError extends Error {
   constructor(
     public readonly code:
       | "INVALID_INPUT"
+      | "ATTEMPT_UNAVAILABLE"
       | "PROVIDER_CONFIGURATION_ERROR"
       | "REGISTRATION_UNAVAILABLE",
   ) {
@@ -122,25 +126,82 @@ export function createTrustedRegistrationBroker(
         body: JSON.stringify({ p_attempt_proof: attemptProof }),
       },
     );
-    if (!response.ok) return null;
+    if (!response.ok) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
     const parsed = z
       .array(attemptContextSchema)
       .safeParse(await responseJson(response));
-    return parsed.success ? (parsed.data[0] ?? null) : null;
+    if (!parsed.success) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
+    return parsed.data[0] ?? null;
   }
 
-  async function adminUserEmail(userId: string) {
+  async function resumeContextBySubmission(
+    trustedInput: z.infer<typeof trustedRegistrationInputSchema>,
+    attemptProof: string,
+  ) {
+    const response = await transport(
+      `${config.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/registration_resume_context`,
+      {
+        method: "POST",
+        headers: serviceHeaders,
+        body: JSON.stringify({
+          p_attempt_proof: attemptProof,
+          p_code_hash: await invitationSecretHash(trustedInput.invitationCode),
+          p_email: trustedInput.email,
+          p_registration_name: trustedInput.registrationName,
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
+    const parsed = z
+      .array(attemptContextSchema)
+      .safeParse(await responseJson(response));
+    if (!parsed.success) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
+    return parsed.data[0] ?? null;
+  }
+
+  async function eligibleUnconfirmedUserEmail(
+    userId: string,
+    expectedEmail?: string,
+  ) {
     const response = await transport(
       `${config.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/admin/users/${userId}`,
       { headers: serviceHeaders },
     );
-    if (!response.ok) return null;
+    if (response.status === 404) return null;
+    if (!response.ok) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
     const parsed = z
-      .object({ email: z.string().pipe(z.email()), id: z.uuid() })
+      .object({
+        banned_until: z.string().nullable().optional(),
+        confirmed_at: z.string().nullable().optional(),
+        email: z.string().pipe(z.email()),
+        email_confirmed_at: z.string().nullable().optional(),
+        id: z.uuid(),
+      })
       .safeParse(await responseJson(response));
-    return parsed.success && parsed.data.id === userId
-      ? parsed.data.email.toLowerCase()
-      : null;
+    if (!parsed.success) {
+      throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+    }
+    if (parsed.data.id !== userId) return null;
+    const email = parsed.data.email.toLowerCase();
+    if (expectedEmail && email !== expectedEmail.toLowerCase()) return null;
+    if (parsed.data.email_confirmed_at || parsed.data.confirmed_at) return null;
+    if (
+      parsed.data.banned_until &&
+      new Date(parsed.data.banned_until).getTime() > Date.now()
+    ) {
+      return null;
+    }
+    return email;
   }
 
   async function attemptStatus(attemptId: string, attemptProof: string) {
@@ -198,55 +259,39 @@ export function createTrustedRegistrationBroker(
 
   async function confirmationResult(
     attemptHandle: string,
-    email: string,
+    authUserId: string,
+    expectedEmail: string | undefined,
     reservationExpiresAt: string,
   ): Promise<TrustedRegistrationResult> {
-    const sent = await sendConfirmation(email).catch(() => false);
+    const eligibleEmail = await eligibleUnconfirmedUserEmail(
+      authUserId,
+      expectedEmail,
+    );
+    if (!eligibleEmail) {
+      throw new TrustedRegistrationError("ATTEMPT_UNAVAILABLE");
+    }
+    const accepted = await sendConfirmation(eligibleEmail).catch(() => false);
     return {
       attemptHandle,
       reservationExpiresAt: new Date(reservationExpiresAt),
-      status: sent ? "confirmation_pending" : "confirmation_delivery_deferred",
+      status: accepted
+        ? "confirmation_request_accepted"
+        : "confirmation_delivery_deferred",
     };
   }
 
   return {
-    async register(
-      input: {
-        email: string;
-        invitationCode: string;
-        password: string;
-        registrationName: string;
-      },
-      existingAttemptHandle?: string,
-    ): Promise<TrustedRegistrationResult> {
+    async register(input: {
+      email: string;
+      invitationCode: string;
+      password: string;
+      registrationName: string;
+    }): Promise<TrustedRegistrationResult> {
       const inputResult = trustedRegistrationInputSchema.safeParse(input);
       if (!inputResult.success) {
         throw new TrustedRegistrationError("INVALID_INPUT");
       }
       const trustedInput = inputResult.data;
-
-      let existingContext = null;
-      if (existingAttemptHandle) {
-        existingContext = await contextByProof(existingAttemptHandle).catch(
-          () => null,
-        );
-        if (
-          existingContext?.auth_user_id &&
-          ["auth_created", "verified_pending", "activated"].includes(
-            existingContext.attempt_status,
-          )
-        ) {
-          const email = await adminUserEmail(existingContext.auth_user_id);
-          if (!email) {
-            throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
-          }
-          return confirmationResult(
-            existingAttemptHandle,
-            email,
-            existingContext.reservation_expires_at,
-          );
-        }
-      }
 
       const prepareResponse = await transport(
         `${config.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/prepare_email_registration`,
@@ -258,14 +303,8 @@ export function createTrustedRegistrationBroker(
               trustedInput.invitationCode,
             ),
             p_email: trustedInput.email,
-            p_existing_attempt_id:
-              existingContext?.attempt_status === "prepared"
-                ? existingContext.attempt_id
-                : null,
-            p_existing_proof:
-              existingContext?.attempt_status === "prepared"
-                ? existingAttemptHandle
-                : null,
+            p_existing_attempt_id: null,
+            p_existing_proof: null,
             p_registration_name: trustedInput.registrationName,
           }),
         },
@@ -309,6 +348,7 @@ export function createTrustedRegistrationBroker(
         if (status?.auth_user_created) {
           return confirmationResult(
             prepared.attempt_proof,
+            prepared.expected_auth_user_id,
             trustedInput.email,
             prepared.reservation_expires_at,
           );
@@ -343,41 +383,65 @@ export function createTrustedRegistrationBroker(
 
       return confirmationResult(
         prepared.attempt_proof,
+        prepared.expected_auth_user_id,
         trustedInput.email,
         prepared.reservation_expires_at,
       );
     },
 
+    async resume(
+      input: {
+        email: string;
+        invitationCode: string;
+        password: string;
+        registrationName: string;
+      },
+      attemptHandle: string,
+    ): Promise<TrustedRegistrationResult | null> {
+      const inputResult = trustedRegistrationInputSchema.safeParse(input);
+      if (!inputResult.success) {
+        throw new TrustedRegistrationError("INVALID_INPUT");
+      }
+      const context = await resumeContextBySubmission(
+        inputResult.data,
+        attemptHandle,
+      );
+      if (!context?.auth_user_id || context.attempt_status !== "auth_created") {
+        return null;
+      }
+      const email = await eligibleUnconfirmedUserEmail(
+        context.auth_user_id,
+        inputResult.data.email,
+      );
+      if (!email) return null;
+      return {
+        attemptHandle,
+        reservationExpiresAt: new Date(context.reservation_expires_at),
+        status: "verification_pending",
+      };
+    },
+
     async resend(attemptHandle: string): Promise<TrustedRegistrationResult> {
       const context = await contextByProof(attemptHandle);
-      if (
-        !context?.auth_user_id ||
-        !["auth_created", "verified_pending"].includes(context.attempt_status)
-      ) {
-        throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
-      }
-      const email = await adminUserEmail(context.auth_user_id);
-      if (!email) {
-        throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+      if (!context?.auth_user_id || context.attempt_status !== "auth_created") {
+        throw new TrustedRegistrationError("ATTEMPT_UNAVAILABLE");
       }
       return confirmationResult(
         attemptHandle,
-        email,
+        context.auth_user_id,
+        undefined,
         context.reservation_expires_at,
       );
     },
 
     async verificationContext(attemptHandle: string) {
       const context = await contextByProof(attemptHandle);
-      if (
-        !context?.auth_user_id ||
-        !["auth_created", "verified_pending"].includes(context.attempt_status)
-      ) {
-        throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+      if (!context?.auth_user_id || context.attempt_status !== "auth_created") {
+        throw new TrustedRegistrationError("ATTEMPT_UNAVAILABLE");
       }
-      const email = await adminUserEmail(context.auth_user_id);
+      const email = await eligibleUnconfirmedUserEmail(context.auth_user_id);
       if (!email) {
-        throw new TrustedRegistrationError("REGISTRATION_UNAVAILABLE");
+        throw new TrustedRegistrationError("ATTEMPT_UNAVAILABLE");
       }
       return {
         email,

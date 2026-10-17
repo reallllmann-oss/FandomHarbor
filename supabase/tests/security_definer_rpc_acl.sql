@@ -69,6 +69,7 @@ begin
   foreach v_function in array array[
     'public.prepare_email_registration(text,text,text,uuid,text)'::regprocedure,
     'public.registration_context_by_proof(text)'::regprocedure,
+    'public.registration_resume_context(text,text,text,text)'::regprocedure,
     'public.resolve_login_name_user_id(text)'::regprocedure,
     'public.consume_auth_rate_limit(text,text,integer,integer)'::regprocedure
   ] loop

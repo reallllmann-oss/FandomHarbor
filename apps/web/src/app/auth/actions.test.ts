@@ -56,7 +56,11 @@ vi.mock("../../lib/server-auth-security", () => ({
 }));
 
 vi.mock("../../lib/server-registration", () => ({
-  TrustedRegistrationError: class extends Error {},
+  TrustedRegistrationError: class extends Error {
+    constructor(public readonly code: string) {
+      super(code);
+    }
+  },
   createWebTrustedRegistrationBroker: vi.fn(),
 }));
 
@@ -79,6 +83,7 @@ function createCredentialsFormData(
 describe("web auth actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    cookieStore.get.mockReturnValue(undefined);
     securityBroker.getRegistrationMode.mockResolvedValue("legacy");
     securityBroker.resolveLoginName.mockResolvedValue(null);
   });
@@ -117,27 +122,27 @@ describe("web auth actions", () => {
 
   it("uses the trusted email broker and stores only the opaque attempt cookie", async () => {
     securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    const resume = vi.fn();
     const register = vi.fn(async () => ({
       attemptHandle: "a".repeat(64),
       reservationExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
-      status: "confirmation_pending" as const,
+      status: "confirmation_request_accepted" as const,
     }));
     vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
       register,
+      resume,
     } as never);
 
     await expect(signUp(createCredentialsFormData())).rejects.toThrow(
-      "REDIRECT:/auth/verify-email?status=confirmation_pending",
+      "REDIRECT:/auth/verify-email?status=confirmation_request_accepted",
     );
-    expect(register).toHaveBeenCalledWith(
-      {
-        email: "reader@example.test",
-        invitationCode: "AbC123xYz90",
-        password: "12345678",
-        registrationName: "HarborReader",
-      },
-      undefined,
-    );
+    expect(resume).not.toHaveBeenCalled();
+    expect(register).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      invitationCode: "AbC123xYz90",
+      password: "12345678",
+      registrationName: "HarborReader",
+    });
     expect(cookieStore.set).toHaveBeenCalledWith(
       "fh_registration_attempt",
       "a".repeat(64),
@@ -145,12 +150,102 @@ describe("web auth actions", () => {
         httpOnly: true,
         path: "/auth",
         sameSite: "lax",
+        secure: false,
       }),
     );
+    expect(cookieStore.set.mock.calls[0]?.[2]).not.toHaveProperty("domain");
     expect(JSON.stringify(cookieStore.set.mock.calls)).not.toContain(
       "reader@example.test",
     );
     expect(cookies).toHaveBeenCalled();
+  });
+
+  it("deletes a stale scoped cookie and creates a fresh attempt for the current form", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "b".repeat(64) });
+    const resume = vi.fn(async () => null);
+    const register = vi.fn(async () => ({
+      attemptHandle: "c".repeat(64),
+      reservationExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      status: "confirmation_request_accepted" as const,
+    }));
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=confirmation_request_accepted",
+    );
+    expect(resume).toHaveBeenCalledWith(
+      {
+        email: "reader@example.test",
+        invitationCode: "AbC123xYz90",
+        password: "12345678",
+        registrationName: "HarborReader",
+      },
+      "b".repeat(64),
+    );
+    expect(cookieStore.delete).toHaveBeenCalledWith({
+      name: "fh_registration_attempt",
+      path: "/auth",
+    });
+    expect(register).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      invitationCode: "AbC123xYz90",
+      password: "12345678",
+      registrationName: "HarborReader",
+    });
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      "fh_registration_attempt",
+      "c".repeat(64),
+      expect.objectContaining({ path: "/auth" }),
+    );
+  });
+
+  it("continues an exactly-bound pending attempt without registering or implicitly resending", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "d".repeat(64) });
+    const resume = vi.fn(async () => ({
+      attemptHandle: "d".repeat(64),
+      reservationExpiresAt: new Date("2026-10-17T12:00:00.000Z"),
+      status: "verification_pending" as const,
+    }));
+    const register = vi.fn();
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=verification_pending",
+    );
+    expect(resume).toHaveBeenCalledOnce();
+    expect(register).not.toHaveBeenCalled();
+    expect(cookieStore.delete).not.toHaveBeenCalled();
+    expect(
+      JSON.stringify(securityBroker.consumeRateLimit.mock.calls),
+    ).not.toContain("auth.resend_signup.subject");
+  });
+
+  it("keeps the pending cookie when server-side resume validation is unavailable", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "e".repeat(64) });
+    const resume = vi.fn(async () => {
+      throw new Error("temporary database outage");
+    });
+    const register = vi.fn();
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/sign-up?error=service-unavailable",
+    );
+    expect(register).not.toHaveBeenCalled();
+    expect(cookieStore.delete).not.toHaveBeenCalled();
+    expect(cookieStore.set).not.toHaveBeenCalled();
   });
 
   it("keeps valid legacy invitation lengths eligible for database validation", async () => {
