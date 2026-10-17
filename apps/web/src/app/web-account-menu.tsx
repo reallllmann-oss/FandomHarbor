@@ -4,6 +4,7 @@ import type {
   CurrentAccountIdentity,
   CurrentAccountIdentityFor,
 } from "@fandom-harbor/auth";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
@@ -130,6 +131,13 @@ export function WebAccountMenu({
           ) : (
             <p className="web-account-panel-unavailable">账号信息不可用</p>
           )}
+          <Link
+            className="web-account-logout rounded-control"
+            href="/account/security"
+            onClick={() => setOpen(false)}
+          >
+            账号安全
+          </Link>
           <form action={signOut} className="web-account-panel-action">
             <button
               className="web-account-logout rounded-control"

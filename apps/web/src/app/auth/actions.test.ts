@@ -2,11 +2,16 @@ import {
   AuthProviderError,
   createTrustedAccessContext,
 } from "@fandom-harbor/auth";
+import { createServerSupabaseClient } from "@fandom-harbor/database";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createWebIdentityAccess } from "../../lib/identity-access";
-import { signIn, signUp } from "./actions";
+import { createWebTrustedRegistrationBroker } from "../../lib/server-registration";
+import { confirmEmailChange, signIn, signUp } from "./actions";
+
+vi.mock("server-only", () => ({}));
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {
@@ -16,6 +21,53 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("../../lib/identity-access", () => ({
   createWebIdentityAccess: vi.fn(),
+}));
+
+vi.mock("@fandom-harbor/database", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@fandom-harbor/database")>()),
+  createServerSupabaseClient: vi.fn(),
+}));
+
+const cookieStore = {
+  delete: vi.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
+};
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(async () => cookieStore),
+  headers: vi.fn(
+    async () =>
+      new Headers({ host: "localhost:3000", origin: "http://localhost:3000" }),
+  ),
+}));
+
+const securityBroker = {
+  consumeRateLimit: vi.fn(async () => undefined),
+  getRegistrationMode: vi.fn(
+    async (): Promise<"email_required" | "legacy"> => "legacy",
+  ),
+  resolveLoginName: vi.fn(
+    async (): Promise<{
+      email: string;
+      isLegacyEmail: boolean;
+      userId: string;
+    } | null> => null,
+  ),
+};
+
+vi.mock("../../lib/server-auth-security", () => ({
+  ServerAuthSecurityError: class extends Error {},
+  createWebServerAuthSecurityBroker: vi.fn(() => securityBroker),
+}));
+
+vi.mock("../../lib/server-registration", () => ({
+  TrustedRegistrationError: class extends Error {
+    constructor(public readonly code: string) {
+      super(code);
+    }
+  },
+  createWebTrustedRegistrationBroker: vi.fn(),
 }));
 
 const identity = {
@@ -28,14 +80,25 @@ function createCredentialsFormData(
 ) {
   const formData = new FormData();
   formData.set("registrationName", "HarborReader");
+  formData.set("email", "reader@example.test");
   formData.set("password", password);
   formData.set("invitationCode", invitationCode);
+  return formData;
+}
+
+function createEmailChangeConfirmationFormData() {
+  const formData = new FormData();
+  formData.set("email", "reader-new@example.test");
+  formData.set("token", "123456");
   return formData;
 }
 
 describe("web auth actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    cookieStore.get.mockReturnValue(undefined);
+    securityBroker.getRegistrationMode.mockResolvedValue("legacy");
+    securityBroker.resolveLoginName.mockResolvedValue(null);
   });
 
   it("rejects sign-up passwords shorter than 8 characters", async () => {
@@ -68,6 +131,134 @@ describe("web auth actions", () => {
       registrationName: "HarborReader",
     });
     expect(signOut).toHaveBeenCalledOnce();
+  });
+
+  it("uses the trusted email broker and stores only the opaque attempt cookie", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    const resume = vi.fn();
+    const register = vi.fn(async () => ({
+      attemptHandle: "a".repeat(64),
+      reservationExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      status: "confirmation_request_accepted" as const,
+    }));
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=confirmation_request_accepted",
+    );
+    expect(resume).not.toHaveBeenCalled();
+    expect(register).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      invitationCode: "AbC123xYz90",
+      password: "12345678",
+      registrationName: "HarborReader",
+    });
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      "fh_registration_attempt",
+      "a".repeat(64),
+      expect.objectContaining({
+        httpOnly: true,
+        path: "/auth",
+        sameSite: "lax",
+        secure: false,
+      }),
+    );
+    expect(cookieStore.set.mock.calls[0]?.[2]).not.toHaveProperty("domain");
+    expect(JSON.stringify(cookieStore.set.mock.calls)).not.toContain(
+      "reader@example.test",
+    );
+    expect(cookies).toHaveBeenCalled();
+  });
+
+  it("deletes a stale scoped cookie and creates a fresh attempt for the current form", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "b".repeat(64) });
+    const resume = vi.fn(async () => null);
+    const register = vi.fn(async () => ({
+      attemptHandle: "c".repeat(64),
+      reservationExpiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      status: "confirmation_request_accepted" as const,
+    }));
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=confirmation_request_accepted",
+    );
+    expect(resume).toHaveBeenCalledWith(
+      {
+        email: "reader@example.test",
+        invitationCode: "AbC123xYz90",
+        password: "12345678",
+        registrationName: "HarborReader",
+      },
+      "b".repeat(64),
+    );
+    expect(cookieStore.delete).toHaveBeenCalledWith({
+      name: "fh_registration_attempt",
+      path: "/auth",
+    });
+    expect(register).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      invitationCode: "AbC123xYz90",
+      password: "12345678",
+      registrationName: "HarborReader",
+    });
+    expect(cookieStore.set).toHaveBeenCalledWith(
+      "fh_registration_attempt",
+      "c".repeat(64),
+      expect.objectContaining({ path: "/auth" }),
+    );
+  });
+
+  it("continues an exactly-bound pending attempt without registering or implicitly resending", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "d".repeat(64) });
+    const resume = vi.fn(async () => ({
+      attemptHandle: "d".repeat(64),
+      reservationExpiresAt: new Date("2026-10-17T12:00:00.000Z"),
+      status: "verification_pending" as const,
+    }));
+    const register = vi.fn();
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/verify-email?status=verification_pending",
+    );
+    expect(resume).toHaveBeenCalledOnce();
+    expect(register).not.toHaveBeenCalled();
+    expect(cookieStore.delete).not.toHaveBeenCalled();
+    expect(
+      JSON.stringify(securityBroker.consumeRateLimit.mock.calls),
+    ).not.toContain("auth.resend_signup.subject");
+  });
+
+  it("keeps the pending cookie when server-side resume validation is unavailable", async () => {
+    securityBroker.getRegistrationMode.mockResolvedValueOnce("email_required");
+    cookieStore.get.mockReturnValueOnce({ value: "e".repeat(64) });
+    const resume = vi.fn(async () => {
+      throw new Error("temporary database outage");
+    });
+    const register = vi.fn();
+    vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+      register,
+      resume,
+    } as never);
+
+    await expect(signUp(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/sign-up?error=service-unavailable",
+    );
+    expect(register).not.toHaveBeenCalled();
+    expect(cookieStore.delete).not.toHaveBeenCalled();
+    expect(cookieStore.set).not.toHaveBeenCalled();
   });
 
   it("keeps valid legacy invitation lengths eligible for database validation", async () => {
@@ -203,6 +394,31 @@ describe("web auth actions", () => {
     expect(redirect).toHaveBeenCalledWith("/archive");
   });
 
+  it("resolves a real-email account on the server before password login", async () => {
+    securityBroker.resolveLoginName.mockResolvedValueOnce({
+      email: "reader@example.test",
+      isLegacyEmail: false,
+      userId: identity.id,
+    });
+    const signInWithResolvedEmail = vi.fn(async () => ({ identity }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      accessRepository: {
+        getForIdentity: vi.fn(async () =>
+          createTrustedAccessContext({ identity, membershipState: "active" }),
+        ),
+      },
+      auth: { signInWithResolvedEmail },
+    } as never);
+
+    await expect(signIn(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/archive",
+    );
+    expect(signInWithResolvedEmail).toHaveBeenCalledWith({
+      email: "reader@example.test",
+      password: "12345678",
+    });
+  });
+
   it("returns a Reader to a safe local page after sign-in", async () => {
     const formData = createCredentialsFormData();
     formData.set("next", "/author/harbor-author");
@@ -233,5 +449,153 @@ describe("web auth actions", () => {
     } as never);
 
     await expect(signIn(formData)).rejects.toThrow("REDIRECT:/archive");
+  });
+
+  it("reports the first email-change confirmation as pending when the trusted email is unchanged", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null });
+    const verifyOtp = vi.fn(async () => ({
+      data: { session: null, user: null },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: { getUser, verifyOtp },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-pending",
+    );
+    expect(verifyOtp).toHaveBeenCalledOnce();
+    expect(getUser).toHaveBeenCalledTimes(2);
+  });
+
+  it("reports final email-change success only after the trusted Auth email changes", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const verifiedUser = {
+      email: "reader-new@example.test",
+      id: identity.id,
+    };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({ data: { user: verifiedUser }, error: null });
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: verifiedUser },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-complete",
+    );
+  });
+
+  it("does not show email-change success when OTP verification fails", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi.fn(async () => ({
+      data: { user: currentUser },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: null },
+          error: new Error("invalid OTP"),
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow("REDIRECT:/account/security?error=email-code");
+    expect(getUser).toHaveBeenCalledOnce();
+  });
+
+  it("uses a conservative status when the refreshed Auth state is unavailable", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+      .mockResolvedValueOnce({
+        data: { user: null },
+        error: new Error("Auth state unavailable"),
+      });
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: { session: null, user: currentUser },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-status-unknown",
+    );
+  });
+
+  it("uses a conservative status when verification returns another Auth UID", async () => {
+    const currentUser = { email: "reader@example.test", id: identity.id };
+    const getUser = vi.fn(async () => ({
+      data: { user: currentUser },
+      error: null,
+    }));
+    vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      cookieAdapter: {},
+      runtime: {},
+    } as never);
+    vi.mocked(createServerSupabaseClient).mockReturnValue({
+      auth: {
+        getUser,
+        verifyOtp: vi.fn(async () => ({
+          data: {
+            session: null,
+            user: {
+              email: "reader-new@example.test",
+              id: "30000000-0000-4000-8000-000000000010",
+            },
+          },
+          error: null,
+        })),
+      },
+    } as never);
+
+    await expect(
+      confirmEmailChange(createEmailChangeConfirmationFormData()),
+    ).rejects.toThrow(
+      "REDIRECT:/account/security?status=email-change-status-unknown",
+    );
+    expect(getUser).toHaveBeenCalledOnce();
   });
 });
