@@ -114,6 +114,26 @@ export {
   type ValidatedElevatedCommissioningPolicy,
 } from "./elevated-access-governance";
 export {
+  createSuperAdminEmailBindingService,
+  SUPER_ADMIN_EMAIL_BINDING_MAX_TTL_SECONDS,
+  SUPER_ADMIN_EMAIL_BINDING_MIN_TTL_SECONDS,
+  SuperAdminEmailBindingError,
+  type AdvanceSuperAdminEmailBindingCommand,
+  type BeginSuperAdminEmailBindingReauthCommand,
+  type BindSuperAdminEmailBindingCommand,
+  type CompleteSuperAdminEmailBindingCommand,
+  type MarkSuperAdminEmailBindingRecoveryCommand,
+  type PasswordReauthenticationEvidence,
+  type PrepareSuperAdminEmailBindingCommand,
+  type SuperAdminEmailBindingErrorCode,
+  type SuperAdminEmailBindingOperation,
+  type SuperAdminEmailBindingPort,
+  type SuperAdminEmailBindingService,
+  type SuperAdminEmailBindingServiceDependencies,
+  type SuperAdminEmailBindingStatus,
+  type TerminateSuperAdminEmailBindingCommand,
+} from "./super-admin-email-binding";
+export {
   generateInvitationCode,
   INVITATION_CODE_LENGTH,
   INVITATION_CODE_PATTERN,
