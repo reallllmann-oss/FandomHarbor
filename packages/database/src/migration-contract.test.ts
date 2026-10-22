@@ -136,6 +136,122 @@ describe("Phase 1C migration contract", () => {
   });
 });
 
+describe("V1 Package B1 trusted registration migration contract", () => {
+  it("keeps trusted email registration additive and disabled by default", async () => {
+    const sql = await migration(
+      "20261013170940_v1_email_identity_reservations.sql",
+    );
+
+    expect(sql).toContain("default 'legacy'");
+    expect(sql).toContain("'email_required'");
+    expect(sql).toContain("create table private.registration_attempts");
+    expect(sql).toContain("create table private.invitation_reservations");
+    expect(sql).toContain("create table private.login_name_claims");
+    expect(sql).toContain("interval '2 hours'");
+    expect(sql).toContain("for update");
+  });
+
+  it("uses a server-only prepare RPC and a least-privilege Auth Hook", async () => {
+    const sql = await migration(
+      "20261013170940_v1_email_identity_reservations.sql",
+    );
+
+    expect(sql).toContain("function public.prepare_email_registration");
+    expect(sql).toContain("extensions.gen_random_bytes(32)");
+    expect(sql).toContain("expected_auth_user_id uuid not null unique");
+    expect(sql).toContain(
+      "function private.registration_auth_email_binding_hash",
+    );
+    expect(sql).toContain(
+      "revoke all on function private.registration_auth_email_binding_hash(text, uuid)",
+    );
+    expect(sql).toContain(
+      "function private.before_user_created_email_registration",
+    );
+    expect(sql).toContain("to supabase_auth_admin");
+    expect(sql).toContain("to service_role");
+    expect(sql).toContain("from public, anon, authenticated, service_role;");
+    expect(sql).not.toContain(
+      "grant execute on function public.prepare_email_registration(text, text, text, uuid, text)\n  to anon",
+    );
+    expect(sql).not.toContain(
+      "grant select on private.registration_attempts to supabase_auth_admin",
+    );
+    expect(sql).not.toContain(
+      "grant select on private.invitation_reservations to supabase_auth_admin",
+    );
+  });
+
+  it("creates pending membership before atomic email-confirm activation", async () => {
+    const sql = await migration(
+      "20261013170940_v1_email_identity_reservations.sql",
+    );
+
+    expect(sql).toContain("values (new.id, 'pending', null)");
+    expect(sql).toContain("function private.activate_email_registration_at");
+    expect(sql).toContain("after update of email_confirmed_at on auth.users");
+    expect(sql).toContain("insert into public.invitation_redemptions");
+    expect(sql).toContain("set use_count = use_count + 1");
+    expect(sql).toContain("set state = 'active'");
+  });
+
+  it("binds server-created Auth users without transporting proof metadata", async () => {
+    const sql = await migration(
+      "20261013170940_v1_email_identity_reservations.sql",
+    );
+
+    expect(sql).toContain("before insert on auth.users");
+    expect(sql).toContain("where ra.expected_auth_user_id = new.id");
+    expect(sql).toContain(
+      "private.registration_auth_email_binding_hash(new.email, new.id)",
+    );
+    expect(sql).toContain("'_fh_registration_attempt'");
+    expect(sql).toContain("'_fh_registration_proof'");
+    expect(sql).not.toContain(
+      "function private.strip_email_registration_transport_metadata",
+    );
+    expect(sql).not.toContain("before update on auth.users");
+    expect(sql).not.toContain("attempt_proof text not null");
+  });
+});
+
+describe("V1 Preview SECURITY DEFINER ACL closure", () => {
+  it("removes anonymous execution only from authenticated workflows", async () => {
+    const sql = await migration(
+      "20261015152535_tighten_security_definer_rpc_acl.sql",
+    );
+
+    for (const signature of [
+      "public.create_invitation(\n  text,\n  integer,\n  timestamp with time zone\n)",
+      "public.redeem_invitation(text)",
+      "public.revoke_invitation(uuid, text)",
+      "public.follow_author(uuid)",
+      "public.unfollow_author(uuid)",
+      "public.get_my_invitation_relationships()",
+      "public.get_admin_site_copy()",
+    ]) {
+      expect(sql).toContain(`revoke execute on function ${signature}`);
+    }
+
+    expect(sql).toContain("public.save_site_copy(");
+    expect(sql.match(/from public, anon;/g)).toHaveLength(8);
+    expect(sql.match(/to authenticated;/g)).toHaveLength(8);
+    expect(sql).not.toContain("to service_role;");
+
+    for (const publicRpc of [
+      "browse_public_works",
+      "get_public_author_profile",
+      "get_public_site_copy",
+      "get_published_work_authors",
+      "registration_invitation_status",
+      "search_public_catalog",
+      "validate_registration_invitation",
+    ]) {
+      expect(sql).not.toContain(`public.${publicRpc}(`);
+    }
+  });
+});
+
 describe("Mission 3B social relationship migration contract", () => {
   it("keeps public author data narrow and direct table access closed", async () => {
     const sql = await migration(
@@ -227,5 +343,69 @@ describe("Phase 3 Studio owner read RPC migration contract", () => {
     expect(sql).not.toContain("'owner_user_id'");
     expect(sql).not.toContain("alter table");
     expect(sql).not.toContain("create policy");
+  });
+});
+
+describe("V1 Package B2 server auth boundary migration contract", () => {
+  it("keeps login resolution, attempt context, and rate limits server-only", async () => {
+    const sql = await migration(
+      "20261014112425_b2_auth_flow_server_boundaries.sql",
+    );
+
+    expect(sql).toContain("create table private.auth_rate_limits");
+    expect(sql).toContain(
+      "alter table private.auth_rate_limits enable row level security",
+    );
+    expect(sql).toContain("function public.registration_context_by_proof");
+    expect(sql).toContain("function public.resolve_login_name_user_id");
+    expect(sql).toContain("function public.consume_auth_rate_limit");
+    expect(sql.match(/security definer/g)).toHaveLength(4);
+    expect(sql.match(/set search_path = ''/g)).toHaveLength(4);
+    expect(sql).toContain("to service_role");
+    expect(sql).not.toContain("to anon;");
+    expect(sql).not.toContain("to authenticated;");
+    expect(sql).not.toContain("email text");
+  });
+
+  it("makes attempt resumption exact-match, non-terminal, and service-only", async () => {
+    const sql = await migration(
+      "20261016165027_tighten_registration_attempt_resume_context.sql",
+    );
+
+    expect(sql).toContain("function public.registration_resume_context");
+    expect(sql.match(/security definer/g)).toHaveLength(2);
+    expect(sql.match(/set search_path = ''/g)).toHaveLength(2);
+    expect(sql).toContain("ra.status = 'auth_created'");
+    expect(sql).toContain("ra.auth_user_id = ra.expected_auth_user_id");
+    expect(sql).toContain("ir.expires_at > statement_timestamp()");
+    expect(sql).toContain("i.revoked_at is null");
+    expect(sql).toContain("u.email_confirmed_at is null");
+    expect(sql).toContain("u.confirmed_at is null");
+    expect(sql).toContain("u.banned_until");
+    expect(sql).toContain("ra.email_binding_hash");
+    expect(sql).toContain("ra.login_name_key");
+    expect(sql).toContain("i.code_hash = p_code_hash");
+    expect(sql).toContain("m.state = 'pending'");
+    expect(sql).toContain("not exists (");
+    expect(sql).toContain("from public.invitation_redemptions");
+    expect(sql.match(/to service_role;/g)).toHaveLength(2);
+    expect(sql).not.toContain("to anon;");
+    expect(sql).not.toContain("to authenticated;");
+    expect(sql).not.toMatch(/\binsert\s+into\b/i);
+    expect(sql).not.toMatch(/\bupdate\s+(?:public|private|auth)\./i);
+    expect(sql).not.toMatch(/\bdelete\s+from\b/i);
+  });
+
+  it("stores only application-HMAC rate-limit subjects", async () => {
+    const sql = await migration(
+      "20261014112425_b2_auth_flow_server_boundaries.sql",
+    );
+
+    expect(sql).toContain("subject_hash text not null");
+    expect(sql).toContain("subject_hash ~ '^[0-9a-f]{64}$'");
+    expect(sql).not.toContain("ip_address");
+    expect(sql).not.toContain(
+      "create table private.auth_rate_limits (\n  registration_name",
+    );
   });
 });
