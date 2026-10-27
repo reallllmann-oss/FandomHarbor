@@ -10,6 +10,7 @@ import {
   createSuperAdminEmailBindingOrchestrator,
   type AuthoritativeBindingUser,
   type SuperAdminEmailBindingAuthGateway,
+  type VerifiedEmailChange,
 } from "./super-admin-email-binding-orchestrator";
 
 const UID = "10000000-0000-4000-8000-000000000001";
@@ -91,11 +92,14 @@ function auth() {
     revokeAllSessions: vi.fn(async () => undefined),
     verifyEmailChangeOtp: vi.fn(
       async ({ email, retainAccessTokenForGlobalRevocation }) => {
+        if (!retainAccessTokenForGlobalRevocation) {
+          user = { ...user, emailChangeConfirmStatus: 1, newEmail: NEW_EMAIL };
+          return { kind: "first_confirmation_accepted" as const };
+        }
         if (email === NEW_EMAIL) user = authoritative(NEW_EMAIL);
         return {
-          accessToken: retainAccessTokenForGlobalRevocation
-            ? "memory-token"
-            : "",
+          kind: "session" as const,
+          accessToken: "memory-token",
           userId: UID,
         };
       },
@@ -172,9 +176,16 @@ describe("B3-SA2 server-only binding orchestrator", () => {
     vi.mocked(gateway.verifyEmailChangeOtp).mockImplementation(
       async ({ email }) => {
         events.push(`verify:${email}`);
-        return { accessToken: "", userId: UID };
+        return { kind: "first_confirmation_accepted" };
       },
     );
+    vi.mocked(gateway.getUser)
+      .mockResolvedValueOnce(authoritative())
+      .mockResolvedValueOnce({
+        ...authoritative(),
+        emailChangeConfirmStatus: 1,
+        newEmail: NEW_EMAIL,
+      });
     const sender = {
       sendNewEmailOtp: vi.fn(async ({ otp }) => {
         events.push(`send:${otp}`);
@@ -197,6 +208,7 @@ describe("B3-SA2 server-only binding orchestrator", () => {
     expect(sender.sendNewEmailOtp).not.toHaveBeenCalledWith(
       expect.objectContaining({ otp: "111111" }),
     );
+    expect(target.binding.markRecoveryRequired).not.toHaveBeenCalled();
   });
 
   it("rejects password evidence for a different Auth UID before generating arms", async () => {
@@ -277,6 +289,144 @@ describe("B3-SA2 server-only binding orchestrator", () => {
         reasonCode: "LEDGER_ADVANCE_AFTER_CURRENT_CONFIRMATION",
       }),
     );
+    expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+    expect(service.complete).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["wrong UID", { userId: OTHER_UID }],
+    ["premature primary email change", { email: NEW_EMAIL }],
+    ["missing pending email", { newEmail: null }],
+    ["different pending email", { newEmail: "replacement@example.com" }],
+    ["contradictory confirmation status", { emailChangeConfirmStatus: 0 }],
+    ["missing identity", { identities: [] }],
+    [
+      "replaced identity",
+      {
+        identities: [
+          {
+            email: CURRENT_EMAIL,
+            identityId: "other",
+            provider: "email" as const,
+          },
+        ],
+      },
+    ],
+    [
+      "changed identity email",
+      {
+        identities: [
+          {
+            email: NEW_EMAIL,
+            identityId: "identity-1",
+            provider: "email" as const,
+          },
+        ],
+      },
+    ],
+  ])(
+    "does not send after a first-arm acknowledgement with %s",
+    async (_label, changes) => {
+      const gateway = auth();
+      vi.mocked(gateway.getUser)
+        .mockResolvedValueOnce(authoritative())
+        .mockResolvedValueOnce({
+          ...authoritative(),
+          emailChangeConfirmStatus: 1,
+          newEmail: NEW_EMAIL,
+          ...changes,
+        });
+      const target = orchestrator({ auth: gateway });
+      await expect(
+        target.subject.start({
+          operationId: OPERATION,
+          password: "password",
+          targetEmail: NEW_EMAIL,
+        }),
+      ).rejects.toMatchObject({ code: "RECOVERY_REQUIRED" });
+      expect(target.binding.advance).not.toHaveBeenCalled();
+      expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+      expect(target.binding.complete).not.toHaveBeenCalled();
+    },
+  );
+
+  it("stops before native credentials if the initial authoritative UID differs", async () => {
+    const gateway = auth();
+    vi.mocked(gateway.getUser).mockResolvedValue({
+      ...authoritative(),
+      userId: OTHER_UID,
+    });
+    const target = orchestrator({ auth: gateway });
+    await expect(
+      target.subject.start({
+        operationId: OPERATION,
+        password: "password",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).rejects.toMatchObject({ code: "IDENTITY_MISMATCH" });
+    expect(gateway.verifyPassword).not.toHaveBeenCalled();
+    expect(gateway.generateEmailChangeCredential).not.toHaveBeenCalled();
+    expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+  });
+
+  it("does not send or advance if first-arm authoritative read is unavailable", async () => {
+    const gateway = auth();
+    vi.mocked(gateway.getUser)
+      .mockResolvedValueOnce(authoritative())
+      .mockRejectedValueOnce(new Error("connection reset"));
+    const target = orchestrator({ auth: gateway });
+    await expect(
+      target.subject.start({
+        operationId: OPERATION,
+        password: "password",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).rejects.toMatchObject({ code: "RECOVERY_REQUIRED" });
+    expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+    expect(target.binding.advance).not.toHaveBeenCalled();
+  });
+
+  it("accepts an omitted internal status only with the exact first-arm acknowledgement and matching authoritative identity", async () => {
+    const gateway = auth();
+    vi.mocked(gateway.getUser)
+      .mockResolvedValueOnce({
+        ...authoritative(),
+        emailChangeConfirmStatus: null,
+      })
+      .mockResolvedValueOnce({
+        ...authoritative(),
+        emailChangeConfirmStatus: null,
+        newEmail: NEW_EMAIL,
+      });
+    const target = orchestrator({ auth: gateway });
+    await expect(
+      target.subject.start({
+        operationId: OPERATION,
+        password: "password",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).resolves.toMatchObject({ status: "new_email_sent" });
+    expect(target.sender.sendNewEmailOtp).toHaveBeenCalledOnce();
+    expect(target.binding.markRecoveryRequired).not.toHaveBeenCalled();
+  });
+
+  it("rejects a Session in place of the first-arm acknowledgement", async () => {
+    const gateway = auth();
+    vi.mocked(gateway.verifyEmailChangeOtp).mockResolvedValue({
+      kind: "session",
+      accessToken: "unexpected-token",
+      userId: UID,
+    });
+    const target = orchestrator({ auth: gateway });
+    await expect(
+      target.subject.start({
+        operationId: OPERATION,
+        password: "password",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).rejects.toMatchObject({ code: "RECOVERY_REQUIRED" });
+    expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+    expect(target.binding.advance).not.toHaveBeenCalled();
   });
 
   it("moves to recovery when delivery succeeds but its ledger advance fails", async () => {
@@ -400,6 +550,62 @@ describe("B3-SA2 server-only binding orchestrator", () => {
     });
     expect(target.auth.revokeAllSessions).toHaveBeenCalledWith("memory-token");
     expect(target.binding.beginReauth).toHaveBeenCalledOnce();
+    expect(target.binding.markRecoveryRequired).not.toHaveBeenCalled();
+    expect(target.binding.complete).not.toHaveBeenCalled();
+    expect(target.sender.sendNewEmailOtp).not.toHaveBeenCalled();
+  });
+
+  it("rejects a second-arm Session with a different UID", async () => {
+    const gateway = auth();
+    vi.mocked(gateway.verifyEmailChangeOtp).mockResolvedValue({
+      kind: "session",
+      accessToken: "memory-token",
+      userId: OTHER_UID,
+    });
+    const target = orchestrator({
+      auth: gateway,
+      binding: binding("new_email_sent"),
+    });
+    await expect(
+      target.subject.verifyNewEmail({
+        operationId: OPERATION,
+        otp: "222222",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).rejects.toMatchObject({ code: "RECOVERY_REQUIRED" });
+    expect(target.binding.markRecoveryRequired).toHaveBeenCalledWith(
+      expect.objectContaining({ reasonCode: "VERIFIED_UID_MISMATCH" }),
+    );
+    expect(target.binding.beginReauth).not.toHaveBeenCalled();
+    expect(target.binding.complete).not.toHaveBeenCalled();
+  });
+
+  it("clears the final Session token after global revocation and waits for reauth", async () => {
+    const gateway = auth();
+    const verified: VerifiedEmailChange = {
+      kind: "session",
+      accessToken: "memory-token",
+      userId: UID,
+    };
+    vi.mocked(gateway.verifyEmailChangeOtp).mockResolvedValue(verified);
+    vi.mocked(gateway.getUser).mockResolvedValue({
+      ...authoritative(NEW_EMAIL),
+      emailChangeConfirmStatus: null,
+    });
+    const target = orchestrator({
+      auth: gateway,
+      binding: binding("new_email_sent"),
+    });
+    await expect(
+      target.subject.verifyNewEmail({
+        operationId: OPERATION,
+        otp: "222222",
+        targetEmail: NEW_EMAIL,
+      }),
+    ).resolves.toMatchObject({ status: "awaiting_reauth" });
+    expect(gateway.revokeAllSessions).toHaveBeenCalledWith("memory-token");
+    expect(verified.accessToken).toBe("");
+    expect(target.binding.complete).not.toHaveBeenCalled();
   });
 
   it("requires a different post-revocation session through the ledger completion contract", async () => {

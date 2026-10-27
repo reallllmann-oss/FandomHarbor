@@ -56,14 +56,25 @@ const authIdentitySchema = z.object({
 });
 const adminUserSchema = z.object({
   email: z.email(),
-  email_change_confirm_status: z.number().int().min(0).default(0),
+  email_change_confirm_status: z.number().int().min(0).optional(),
   id: z.uuid(),
   identities: z.array(authIdentitySchema).default([]),
   new_email: z.email().nullable().optional(),
 });
 const sessionResponseSchema = z.object({
   access_token: z.string().min(1),
+  code: z.never().optional(),
+  error: z.never().optional(),
+  error_code: z.never().optional(),
+  msg: z.never().optional(),
   user: z.object({ id: z.uuid() }),
+});
+// GoTrue v2.197.0 internal/api/verify.go: singleConfirmationAccepted.
+const firstConfirmationSchema = z.strictObject({
+  code: z.literal("200"),
+  msg: z.literal(
+    "Confirmation link accepted. Please proceed to confirm link sent to the other email",
+  ),
 });
 const generatedLinkSchema = z.object({
   properties: z.object({ email_otp: z.string().min(1) }),
@@ -134,7 +145,7 @@ function createDataSource(input: {
   };
 }
 
-function createAuthGateway(input: {
+export function createB3SaEmailBindingAuthGateway(input: {
   publishableKey: string;
   secret: string;
   transport: typeof fetch;
@@ -185,7 +196,7 @@ function createAuthGateway(input: {
         { headers: serviceHeaders },
       );
       const parsed = adminUserSchema.safeParse(await json(response));
-      if (!response.ok || !parsed.success) {
+      if (!response.ok || !parsed.success || parsed.data.id !== parsedUserId) {
         throw new Error("Authoritative Auth user read failed");
       }
       const identities = parsed.data.identities
@@ -204,7 +215,9 @@ function createAuthGateway(input: {
         });
       return {
         email: parsed.data.email.toLowerCase(),
-        emailChangeConfirmStatus: parsed.data.email_change_confirm_status,
+        // GoTrue's official User JSON omits this internal field (json:"-").
+        emailChangeConfirmStatus:
+          parsed.data.email_change_confirm_status ?? null,
         identities,
         newEmail: parsed.data.new_email?.toLowerCase() ?? null,
         userId: parsed.data.id,
@@ -233,15 +246,28 @@ function createAuthGateway(input: {
         headers: publicHeaders,
         method: "POST",
       });
-      const parsed = sessionResponseSchema.safeParse(await json(response));
-      if (!response.ok || !parsed.success) {
+      const body = await json(response);
+      if (!parameters.retainAccessTokenForGlobalRevocation) {
+        if (
+          response.status === 200 &&
+          firstConfirmationSchema.safeParse(body).success
+        ) {
+          // This acknowledgement contains no UID or Session; the orchestrator
+          // must bind it to an authoritative read of the frozen target UID.
+          return { kind: "first_confirmation_accepted" };
+        }
+        const unexpectedSession = sessionResponseSchema.safeParse(body);
+        if (unexpectedSession.success) {
+          await localSignOut(unexpectedSession.data.access_token);
+        }
+        throw new Error("First email-change confirmation was not accepted");
+      }
+      const parsed = sessionResponseSchema.safeParse(body);
+      if (response.status !== 200 || !parsed.success) {
         throw new Error("Email-change OTP verification failed");
       }
-      if (!parameters.retainAccessTokenForGlobalRevocation) {
-        await localSignOut(parsed.data.access_token);
-        return { accessToken: "", userId: parsed.data.user.id };
-      }
       return {
+        kind: "session",
         accessToken: parsed.data.access_token,
         userId: parsed.data.user.id,
       };
@@ -367,7 +393,7 @@ export async function createB3Sa2Runtime(
     clock: { now: () => new Date() },
     operations,
   });
-  const auth = createAuthGateway({
+  const auth = createB3SaEmailBindingAuthGateway({
     publishableKey: config.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     secret: config.SUPABASE_SECRET_KEY,
     transport,

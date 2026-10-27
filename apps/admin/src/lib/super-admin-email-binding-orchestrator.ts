@@ -20,7 +20,7 @@ export interface AuthoritativeEmailIdentity {
 
 export interface AuthoritativeBindingUser {
   email: string;
-  emailChangeConfirmStatus: number;
+  emailChangeConfirmStatus: number | null;
   identities: readonly AuthoritativeEmailIdentity[];
   newEmail: string | null;
   userId: string;
@@ -32,6 +32,7 @@ export interface EmailChangeCredential {
 }
 
 export interface VerifiedEmailChange {
+  kind: "session";
   accessToken: string;
   userId: string;
 }
@@ -48,7 +49,7 @@ export interface SuperAdminEmailBindingAuthGateway {
     email: string;
     otp: string;
     retainAccessTokenForGlobalRevocation: boolean;
-  }): Promise<VerifiedEmailChange>;
+  }): Promise<VerifiedEmailChange | { kind: "first_confirmation_accepted" }>;
   verifyPassword(input: {
     email: string;
     password: string;
@@ -146,7 +147,10 @@ function finalIdentityMatches(
     user.userId === expectedUserId &&
     user.email === expectedEmail &&
     user.newEmail === null &&
-    user.emailChangeConfirmStatus === 0 &&
+    // Public GoTrue User JSON omits confirm_status. A final Session (or the
+    // recovery read), cleared pending email and matching identity prove completion.
+    (user.emailChangeConfirmStatus === null ||
+      user.emailChangeConfirmStatus === 0) &&
     emailIdentities.length === 1 &&
     emailIdentities[0]?.email === expectedEmail
   );
@@ -202,6 +206,9 @@ export function createSuperAdminEmailBindingOrchestrator(
       const currentUser = await dependencies.auth.getUser(
         operation.targetUserId,
       );
+      if (currentUser.userId !== operation.targetUserId) {
+        throw fail("IDENTITY_MISMATCH");
+      }
       let passwordEvidence;
       try {
         passwordEvidence = await dependencies.auth.verifyPassword({
@@ -268,10 +275,32 @@ export function createSuperAdminEmailBindingOrchestrator(
             otp: currentCredential.emailOtp,
             retainAccessTokenForGlobalRevocation: false,
           });
-        if (currentVerification.userId !== operation.targetUserId) {
+        if (currentVerification.kind !== "first_confirmation_accepted") {
+          throw fail("IDENTITY_MISMATCH");
+        }
+        const authoritative = await dependencies.auth.getUser(
+          operation.targetUserId,
+        );
+        const originalIdentity = currentUser.identities[0];
+        const confirmedIdentity = authoritative.identities[0];
+        if (
+          authoritative.userId !== operation.targetUserId ||
+          authoritative.email !== currentUser.email ||
+          authoritative.newEmail !== targetEmail ||
+          (authoritative.emailChangeConfirmStatus !== null &&
+            authoritative.emailChangeConfirmStatus !== 1) ||
+          currentUser.identities.length !== 1 ||
+          authoritative.identities.length !== 1 ||
+          !originalIdentity ||
+          !confirmedIdentity ||
+          originalIdentity.email !== currentUser.email ||
+          confirmedIdentity.email !== currentUser.email ||
+          confirmedIdentity.identityId !== originalIdentity.identityId
+        ) {
           throw fail("IDENTITY_MISMATCH");
         }
       } catch {
+        newCredential.emailOtp = "";
         return recovery(
           bound,
           evidence,
@@ -361,11 +390,13 @@ export function createSuperAdminEmailBindingOrchestrator(
 
       let verified: VerifiedEmailChange | null = null;
       try {
-        verified = await dependencies.auth.verifyEmailChangeOtp({
+        const result = await dependencies.auth.verifyEmailChangeOtp({
           email: targetEmail,
           otp: otp(input.otp),
           retainAccessTokenForGlobalRevocation: true,
         });
+        if (result.kind !== "session") throw fail("OTP_REJECTED");
+        verified = result;
       } catch {
         let authoritative: AuthoritativeBindingUser;
         try {
