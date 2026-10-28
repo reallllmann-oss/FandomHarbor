@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminSignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; session_status?: string }>;
 }) {
   const query = await searchParams;
 
@@ -18,6 +18,14 @@ export default async function AdminSignInPage({
         仅成员资格正常的管理员与超级管理员可以进入。读者和作者凭据不会获得后台
         访问权。
       </p>
+      {query.session_status === "ended" ? (
+        <p role="status">本次会话已退出。</p>
+      ) : null}
+      {query.session_status === "logout-unconfirmed" ? (
+        <p role="alert">
+          当前会话退出结果尚待核验。请停止后续操作，保留页面并联系验收负责人。
+        </p>
+      ) : null}
       {query.error ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
           {query.error === "forbidden"
