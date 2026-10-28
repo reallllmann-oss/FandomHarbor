@@ -1,7 +1,10 @@
 // @vitest-environment node
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createAdminLoginResolver } from "./admin-login-resolver";
+import {
+  createAdminLoginResolver,
+  runAdminPreviewLoginPreflight,
+} from "./admin-login-resolver";
 
 vi.mock("server-only", () => ({}));
 
@@ -9,7 +12,7 @@ const UID = "10000000-0000-4000-8000-000000000001";
 const OTHER_UID = "10000000-0000-4000-8000-000000000002";
 const environment = {
   NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321",
-  SUPABASE_SECRET_KEY: "synthetic-server-key",
+  SUPABASE_SECRET_KEY: "sb_secret_" + "synthetic-test-only".repeat(2),
 };
 
 function fixture(
@@ -34,7 +37,7 @@ function fixture(
   );
   return {
     transport,
-    subject: createAdminLoginResolver(environment, transport),
+    subject: createAdminLoginResolver(environment, transport, vi.fn()),
   };
 }
 
@@ -80,6 +83,11 @@ describe("Admin canonical-name/current-email resolver", () => {
     expect(target.transport.mock.calls[1]?.[1]?.headers).toMatchObject({
       apikey: environment.SUPABASE_SECRET_KEY,
     });
+    for (const [, init] of target.transport.mock.calls) {
+      const headers = new Headers(init?.headers);
+      expect(headers.get("apikey")).toBe(environment.SUPABASE_SECRET_KEY);
+      expect(headers.has("authorization")).toBe(false);
+    }
   });
 
   it("re-reads Auth on each login rather than caching the old .invalid email", async () => {
@@ -161,5 +169,156 @@ describe("Admin canonical-name/current-email resolver", () => {
       ),
     ).toThrow("Admin login could not be completed");
     expect(transport).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "public-key",
+    "sb_secret_short",
+    " " + environment.SUPABASE_SECRET_KEY,
+  ])("rejects malformed server credentials before transport", (key) => {
+    const transport = vi.fn<typeof fetch>();
+    expect(() =>
+      createAdminLoginResolver(
+        { ...environment, SUPABASE_SECRET_KEY: key },
+        transport,
+      ),
+    ).toThrow();
+    expect(transport).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ message: "Invalid API key" }, "INVALID_API_KEY"],
+    [{ code: "PGRST301" }, "PGRST301"],
+    [
+      { code: "private-material", message: "private-material" },
+      "UNCLASSIFIED_ERROR",
+    ],
+  ])(
+    "attributes RPC rejection without exposing provider bodies",
+    async (body, code) => {
+      const target = fixture({ rpcBody: body, rpcStatus: 401 });
+      await expect(
+        target.subject.resolve("Phase2RemoteInviter"),
+      ).rejects.toMatchObject({
+        diagnostic: {
+          stage: "NAME_UID_RPC",
+          http_status: 401,
+          error_code: code,
+        },
+      });
+      expect(target.transport).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("attributes the second HTTP failure to Auth lookup rather than password authentication", async () => {
+    const target = fixture({
+      userStatus: 403,
+      userBody: { code: "not_admin" },
+    });
+    await expect(target.subject.resolve("akumie")).rejects.toMatchObject({
+      diagnostic: {
+        stage: "AUTH_USER_LOOKUP",
+        http_status: 403,
+        error_code: "not_admin",
+      },
+    });
+  });
+});
+
+describe("protected Preview read-only login preflight", () => {
+  const preview = {
+    ...environment,
+    NEXT_PUBLIC_SUPABASE_URL: "https://bniqsjnjqesnpcfkpqcz.supabase.co",
+    VERCEL: "1",
+    VERCEL_ENV: "preview",
+    VERCEL_TARGET_ENV: "preview",
+    VERCEL_PROJECT_ID: "synthetic-preview-project",
+    VERCEL_GIT_COMMIT_REF: "codex/v1-package-b0-auth-architecture",
+    B3_SA_DEPLOYMENT_TARGET: "preview",
+    B3_SA_EXPECTED_VERCEL_PROJECT_ID: "synthetic-preview-project",
+    B3_SA_EXPECTED_GIT_BRANCH: "codex/v1-package-b0-auth-architecture",
+    B3_SA_EXPECTED_SUPABASE_PROJECT_REF: "bniqsjnjqesnpcfkpqcz",
+    B3_SA_ALLOWED_TARGET_UIDS:
+      "cb1e6693-876d-4c4c-8153-3d0fbac6da17,5fa18bad-6a32-41c3-87e3-e761b00ef8f1",
+    B3_SA_EMAIL_BINDING_ENABLED: "false",
+  };
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+  function setup(userId = "cb1e6693-876d-4c4c-8153-3d0fbac6da17") {
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const transport = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json(userId))
+      .mockResolvedValueOnce(
+        Response.json({ id: userId, email: "synthetic@preview.invalid" }),
+      );
+    vi.stubGlobal("fetch", transport);
+    return transport;
+  }
+  it("checks fixed UID continuity with read-only requests and no password/Session call", async () => {
+    const transport = setup();
+    const result = await runAdminPreviewLoginPreflight(preview);
+    expect(result.passed).toBe(true);
+    expect(result.rows.map((row) => row.stage)).toEqual([
+      "NAME_UID_RPC",
+      "AUTH_USER_LOOKUP",
+      "RESOLVED_UID_CHECK",
+    ]);
+    expect(JSON.stringify(result)).not.toMatch(
+      /synthetic@|sb_secret_|password|access_token/u,
+    );
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(transport.mock.calls.map(([url]) => String(url))).toEqual([
+      preview.NEXT_PUBLIC_SUPABASE_URL +
+        "/rest/v1/rpc/resolve_login_name_user_id",
+      preview.NEXT_PUBLIC_SUPABASE_URL +
+        "/auth/v1/admin/users/cb1e6693-876d-4c4c-8153-3d0fbac6da17",
+    ]);
+  });
+  it.each([
+    { VERCEL_ENV: "production" },
+    { VERCEL_GIT_COMMIT_REF: "main" },
+    { NEXT_PUBLIC_SUPABASE_URL: "https://wrong-project.supabase.co" },
+    { B3_SA_ALLOWED_TARGET_UIDS: UID },
+  ])("refuses wrong environment before any request (%j)", async (change) => {
+    const transport = setup();
+    expect(
+      (await runAdminPreviewLoginPreflight({ ...preview, ...change })).passed,
+    ).toBe(false);
+    expect(transport).not.toHaveBeenCalled();
+  });
+  it("rejects an unexpected canonical UID", async () => {
+    setup(OTHER_UID);
+    expect(await runAdminPreviewLoginPreflight(preview)).toMatchObject({
+      passed: false,
+      rows: expect.arrayContaining([
+        {
+          stage: "RESOLVED_UID_CHECK",
+          http_status: null,
+          error_code: "UID_MISMATCH",
+        },
+      ]),
+    });
+  });
+  it("exposes only the safe failing stage on actual gateway rejection", async () => {
+    const transport = setup();
+    transport
+      .mockReset()
+      .mockResolvedValueOnce(
+        Response.json({ message: "Invalid API key" }, { status: 401 }),
+      );
+    expect(await runAdminPreviewLoginPreflight(preview)).toEqual({
+      passed: false,
+      rows: [
+        {
+          stage: "NAME_UID_RPC",
+          http_status: 401,
+          error_code: "INVALID_API_KEY",
+        },
+      ],
+    });
+    expect(transport).toHaveBeenCalledTimes(1);
   });
 });

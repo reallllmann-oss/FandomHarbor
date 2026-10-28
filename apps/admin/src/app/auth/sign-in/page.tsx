@@ -1,14 +1,26 @@
 import { MIN_PASSWORD_LENGTH } from "@fandom-harbor/auth";
 import { signIn } from "../actions";
+import { runAdminPreviewLoginPreflight } from "../../../lib/admin-login-resolver";
+import { previewSessionEnvironmentAllowed } from "../../../lib/preview-session-acceptance";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; session_status?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    session_status?: string;
+    check?: string;
+  }>;
 }) {
   const query = await searchParams;
+  // Fixed synthetic subject, no password authentication or Session writes.
+  // Never expose this diagnostic outside the exact protected Preview boundary.
+  const preflight =
+    query.check === "preview" && previewSessionEnvironmentAllowed(process.env)
+      ? await runAdminPreviewLoginPreflight()
+      : null;
 
   return (
     <section className="mx-auto max-w-lg rounded-card border border-border bg-surface p-6">
@@ -33,35 +45,56 @@ export default async function AdminSignInPage({
             : "登录失败，请检查注册名和密码。"}
         </p>
       ) : null}
-      <form action={signIn} className="mt-6 space-y-5">
-        <label className="block text-sm font-medium">
-          注册名
-          <input
-            autoComplete="username"
-            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
-            name="registrationName"
-            required
-            type="text"
-          />
-        </label>
-        <label className="block text-sm font-medium">
-          密码
-          <input
-            autoComplete="current-password"
-            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
-            minLength={MIN_PASSWORD_LENGTH}
-            name="password"
-            required
-            type="password"
-          />
-        </label>
-        <button
-          className="min-h-11 w-full rounded-control bg-primary px-4 text-primary-foreground"
-          type="submit"
+      {preflight ? (
+        <div
+          role={preflight.passed ? "status" : "alert"}
+          className="mt-4 text-sm"
         >
-          进入后台
-        </button>
-      </form>
+          <p>
+            {preflight.passed
+              ? "Preview 登录服务只读自检通过。"
+              : "Preview 登录服务自检未通过，请停止输入密码并保留检查结果。"}
+          </p>
+          <ul>
+            {preflight.rows.map((row, index) => (
+              <li key={index}>
+                {row.stage} · {row.http_status ?? "—"} · {row.error_code}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {preflight?.passed !== false ? (
+        <form action={signIn} className="mt-6 space-y-5">
+          <label className="block text-sm font-medium">
+            注册名
+            <input
+              autoComplete="username"
+              className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+              name="registrationName"
+              required
+              type="text"
+            />
+          </label>
+          <label className="block text-sm font-medium">
+            密码
+            <input
+              autoComplete="current-password"
+              className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+              minLength={MIN_PASSWORD_LENGTH}
+              name="password"
+              required
+              type="password"
+            />
+          </label>
+          <button
+            className="min-h-11 w-full rounded-control bg-primary px-4 text-primary-foreground"
+            type="submit"
+          >
+            进入后台
+          </button>
+        </form>
+      ) : null}
     </section>
   );
 }

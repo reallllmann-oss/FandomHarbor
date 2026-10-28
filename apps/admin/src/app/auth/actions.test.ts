@@ -4,6 +4,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createAdminIdentityAccess } from "../../lib/identity-access";
 import { signIn, signOut } from "./actions";
+import {
+  AdminLoginStageError,
+  reportAdminLoginDiagnostic,
+} from "../../lib/admin-login-diagnostics";
+
+vi.mock("../../lib/admin-login-diagnostics", async (importOriginal) => ({
+  ...(await importOriginal<
+    typeof import("../../lib/admin-login-diagnostics")
+  >()),
+  reportAdminLoginDiagnostic: vi.fn(),
+}));
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {
@@ -159,6 +170,42 @@ describe("admin auth sign-in", () => {
       "REDIRECT:/auth/sign-in?error=invalid",
     );
     expect(auth.signInWithPassword).not.toHaveBeenCalled();
+    expect(reportAdminLoginDiagnostic).toHaveBeenLastCalledWith({
+      stage: "PASSWORD_AUTHENTICATION",
+      http_status: null,
+      error_code: "UNCLASSIFIED_ERROR",
+    });
+  });
+
+  it("identifies RPC authentication failure before any password request", async () => {
+    const { auth } = mockAccess();
+    resolver.resolve.mockRejectedValueOnce(
+      new AdminLoginStageError("NAME_UID_RPC", 401, "PGRST301"),
+    );
+    await expect(signIn(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/sign-in?error=invalid",
+    );
+    expect(auth.signInWithResolvedEmail).not.toHaveBeenCalled();
+    expect(reportAdminLoginDiagnostic).toHaveBeenLastCalledWith({
+      stage: "NAME_UID_RPC",
+      http_status: 401,
+      error_code: "PGRST301",
+    });
+  });
+
+  it("keeps capability read errors fail-closed and separately attributed", async () => {
+    const { accessRepository } = mockAccess();
+    accessRepository.getForIdentity.mockRejectedValueOnce(
+      new Error("private-provider-body"),
+    );
+    await expect(signIn(createCredentialsFormData())).rejects.toThrow(
+      "REDIRECT:/auth/sign-in?error=invalid",
+    );
+    expect(reportAdminLoginDiagnostic).toHaveBeenLastCalledWith({
+      stage: "ADMIN_ACCESS_CHECK",
+      http_status: null,
+      error_code: "UNCLASSIFIED_ERROR",
+    });
   });
 
   it.each(["resolver", "password"])(
@@ -186,6 +233,9 @@ describe("admin auth sign-in", () => {
         );
         expect(consoleError).not.toHaveBeenCalled();
         expect(consoleLog).not.toHaveBeenCalled();
+        expect(
+          JSON.stringify(vi.mocked(reportAdminLoginDiagnostic).mock.calls),
+        ).not.toMatch(/synthetic@|synthetic-private|12345678/u);
       } finally {
         consoleError.mockRestore();
         consoleLog.mockRestore();
