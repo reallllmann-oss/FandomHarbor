@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 const registrationErrorMessages: Record<string, string> = {
   configuration:
     "注册服务尚未完成配置，请联系管理员检查数据库 Migration 与 Auth 设置。",
+  email: "请输入可正常收信的真实邮箱。该邮箱只用于验证、找回密码和账号安全。",
   invitation: "邀请码无效，请检查后重新输入。",
   "invitation-exhausted": "邀请码已用完，请向邀请人申请新的邀请码。",
   "invitation-expired": "邀请码已过期，请向邀请人申请新的邀请码。",
@@ -35,8 +36,9 @@ export default async function SignUpPage({
       <p className="text-sm font-medium text-primary">门禁注册</p>
       <h1 className="mt-3 text-3xl font-semibold">创建门禁账号</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        使用注册名、密码和有效邀请码创建账号。邀请码只开放 Reader 门禁，不会授予
-        Author 或管理员权限。Fandom Harbor 仅面向年满 18 周岁的受邀用户。
+        使用注册名、真实邮箱、密码和有效邀请码创建账号。验证码发送后，邀请码最多为你保留
+        2 小时；邮箱验证完成前不会开放 Reader、Author 或管理员权限。Fandom
+        Harbor 仅面向年满 18 周岁的受邀用户。
       </p>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         完成注册即表示你同意
@@ -79,6 +81,20 @@ export default async function SignUpPage({
             required
             type="text"
           />
+        </label>
+        <label className="block text-sm font-medium">
+          邮箱
+          <input
+            autoComplete="email"
+            className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3"
+            inputMode="email"
+            name="email"
+            required
+            type="email"
+          />
+          <span className="mt-2 block text-xs font-normal text-muted-foreground">
+            邮箱不会公开展示，用于验证、密码恢复和安全通知。
+          </span>
         </label>
         <div>
           <label

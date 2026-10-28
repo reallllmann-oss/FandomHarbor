@@ -7,7 +7,12 @@ import "./globals.css";
 import { createGlobalShellNavigation } from "../lib/global-shell-navigation";
 import { getWebSessionSummary } from "../lib/identity-access";
 import { readWebPublicSiteCopy } from "../lib/public-site-copy";
-import { resolveSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "../lib/seo";
+import {
+  isPreviewDeployment,
+  resolveSiteUrl,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+} from "../lib/seo";
 import { ReaderSiteLayout } from "./reader-site-layout";
 import { WebAccountMenu } from "./web-account-menu";
 
@@ -25,7 +30,9 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
   },
-  robots: { follow: true, index: true },
+  robots: isPreviewDeployment()
+    ? { follow: false, index: false }
+    : { follow: true, index: true },
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
 };
 
