@@ -1,4 +1,8 @@
 import { notFound, redirect } from "next/navigation";
+import { BindingOrchestratorError } from "../../../../lib/super-admin-email-binding-orchestrator";
+import { reportBindingEntryFailure } from "../../../../lib/super-admin-email-binding-diagnostics";
+import { getAdminAccessContext } from "../../../../lib/identity-access";
+import { resolveB3SaRuntimeBoundary } from "../../../../lib/super-admin-email-binding-boundary";
 
 import {
   createB3Sa2Runtime,
@@ -62,11 +66,39 @@ export default async function SuperAdminEmailBindingPage({
   const result = (await searchParams).status;
   let runtime;
   let operation;
+  let authenticatedTarget = false;
   try {
-    runtime = await createB3Sa2Runtime();
+    const access = await getAdminAccessContext();
+    const boundary = resolveB3SaRuntimeBoundary();
+    if (
+      !access?.capabilities.has("super_admin:operate") ||
+      !boundary?.allowedTargetUserIds.includes(access.identity.id)
+    ) {
+      throw new BindingOrchestratorError("IDENTITY_MISMATCH");
+    }
+    authenticatedTarget = true;
+    runtime = await createB3Sa2Runtime(process.env, fetch, {
+      cookieWrites: "read-only",
+    });
     operation = await runtime.orchestrator.getRedactedOperation(operationId);
-  } catch {
-    redirect("/auth/sign-in?error=forbidden");
+  } catch (error) {
+    if (
+      !authenticatedTarget ||
+      (error instanceof BindingOrchestratorError &&
+        error.code === "IDENTITY_MISMATCH")
+    ) {
+      redirect("/auth/sign-in?error=forbidden");
+    }
+    reportBindingEntryFailure(error);
+    return (
+      <section
+        role="alert"
+        className="rounded-card border border-border bg-surface p-5"
+      >
+        <h1>绑定服务暂时无法核验</h1>
+        <p>未执行本次绑定。请停止提交，由验收负责人核对服务端检查结果。</p>
+      </section>
+    );
   }
   const { data: factorData } = await runtime.supabase.auth.mfa.listFactors();
   const factors = (factorData?.totp ?? []).filter(

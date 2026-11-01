@@ -12,6 +12,13 @@ import {
 import { createSuperAdminEmailBindingService } from "@fandom-harbor/services";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { previewSessionEnvironmentAllowed } from "./preview-session-acceptance";
+import {
+  BindingEntryStageError,
+  type BindingEntryCode,
+  type BindingEntryDiagnostic,
+  type BindingEntryStage,
+} from "./super-admin-email-binding-diagnostics";
 
 import {
   BindingOrchestratorError,
@@ -41,6 +48,32 @@ const localConfigSchema = commonConfigSchema.extend({
 const previewConfigSchema = commonConfigSchema.extend({
   B3_SA_PREVIEW_SENDER_API_KEY: z.string().min(20),
 });
+
+function configurationDiagnostics(error: z.ZodError): BindingEntryDiagnostic[] {
+  const codes: Readonly<Record<string, BindingEntryCode>> = {
+    B3_SA_EMAIL_BINDING_ENABLED: "FEATURE_GATE_REJECTED",
+    B3_SA_EMAIL_HMAC_SECRET: "EMAIL_HMAC_REJECTED",
+    B3_SA_PREVIEW_SENDER_API_KEY: "SENDER_KEY_REJECTED",
+    SUPABASE_SECRET_KEY: "SERVER_KEY_REJECTED",
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "PUBLIC_AUTH_CONFIGURATION_REJECTED",
+    NEXT_PUBLIC_SUPABASE_URL: "PUBLIC_AUTH_CONFIGURATION_REJECTED",
+    NODE_ENV: "NODE_ENV_REJECTED",
+  };
+  return [
+    ...new Set(
+      error.issues.map((issue) => {
+        const field = issue.path[0];
+        return typeof field === "string"
+          ? (codes[field] ?? "CONFIGURATION_REJECTED")
+          : "CONFIGURATION_REJECTED";
+      }),
+    ),
+  ].map((error_code) => ({
+    stage: "SERVER_CONFIGURATION",
+    http_status: null,
+    error_code,
+  }));
+}
 
 const uuidSchema = z.uuid();
 const operationIdSchema = z.uuid();
@@ -112,13 +145,35 @@ function createDataSource(input: {
   url: string;
 }): SuperAdminEmailBindingDataSource {
   async function rpc(name: string, parameters: Record<string, unknown>) {
-    const response = await input.transport(`${input.url}/rest/v1/rpc/${name}`, {
-      body: JSON.stringify(parameters),
-      headers: secretHeaders(input.secret),
-      method: "POST",
-    });
+    const stage: BindingEntryStage =
+      name === "get_super_admin_email_binding_targets_v1"
+        ? "TARGETS_READ"
+        : name === "get_super_admin_email_binding_operation_v1"
+          ? "OPERATION_READ"
+          : "LEDGER_RPC";
+    let response: Response;
+    try {
+      response = await input.transport(`${input.url}/rest/v1/rpc/${name}`, {
+        body: JSON.stringify(parameters),
+        headers: secretHeaders(input.secret),
+        method: "POST",
+        cache: "no-store",
+        redirect: "error",
+      });
+    } catch {
+      throw new BindingEntryStageError({
+        stage,
+        http_status: null,
+        error_code: "TRANSPORT_ERROR",
+      });
+    }
     const body = await json(response);
-    if (!response.ok) throw new Error(`B3-SA RPC unavailable: ${name}`);
+    if (!response.ok || body === null)
+      throw new BindingEntryStageError({
+        stage,
+        http_status: response.status,
+        error_code: response.ok ? "MALFORMED_RESPONSE" : "PROVIDER_REJECTED",
+      });
     return body;
   }
 
@@ -352,22 +407,34 @@ export { isB3SaEmailBindingFeatureEnabled };
 export async function createB3Sa2Runtime(
   environment: Record<string, string | undefined> = process.env,
   transport: typeof fetch = fetch,
+  options: { cookieWrites: "required" | "read-only" } = {
+    cookieWrites: "required",
+  },
 ) {
   const boundary = resolveB3SaRuntimeBoundary(environment);
   if (!boundary) {
-    throw new BindingOrchestratorError("AUTH_STATE_UNAVAILABLE");
+    throw new BindingEntryStageError({
+      stage: "PREVIEW_BOUNDARY",
+      http_status: null,
+      error_code: "BOUNDARY_REJECTED",
+    });
   }
   const parsed = (
     boundary.mode === "local" ? localConfigSchema : previewConfigSchema
   ).safeParse(environment);
   if (!parsed.success) {
-    throw new BindingOrchestratorError("AUTH_STATE_UNAVAILABLE");
+    throw new BindingEntryStageError(
+      configurationDiagnostics(parsed.error)[0]!,
+    );
   }
   const config = parsed.data;
   const cookieStore = await cookies();
   const cookieAdapter = {
     getAll: () => cookieStore.getAll(),
     setAll(mutations: AuthCookieMutation[]) {
+      // Rendering cannot set cookies. Proxy owns refresh persistence; Actions
+      // retain the default required writes, including MFA Session updates.
+      if (options.cookieWrites === "read-only") return;
       for (const { name, options, value } of mutations) {
         cookieStore.set(name, value, options);
       }
@@ -386,7 +453,11 @@ export async function createB3Sa2Runtime(
   if (
     !b3SaTargetSetsMatch(boundary.allowedTargetUserIds, databaseTargetUserIds)
   ) {
-    throw new BindingOrchestratorError("AUTH_STATE_UNAVAILABLE");
+    throw new BindingEntryStageError({
+      stage: "TARGET_SET",
+      http_status: null,
+      error_code: "TARGET_SET_MISMATCH",
+    });
   }
   const binding = createSuperAdminEmailBindingService({
     auth: serverAuth,
@@ -437,4 +508,82 @@ export async function createB3Sa2Runtime(
 
 export function parseOperationId(value: string) {
   return operationIdSchema.parse(value);
+}
+
+// Configuration/target diagnostics only. This never constructs an enabled
+// binding runtime, an orchestrator, Auth Session, or sender, and never changes
+// the Feature Gate. It is allowed only inside the exact existing Preview QA
+// boundary, including both fixed synthetic UIDs.
+export async function runB3SaPreviewReadiness(
+  environment: Record<string, string | undefined> = process.env,
+  transport: typeof fetch = fetch,
+) {
+  const rows: BindingEntryDiagnostic[] = [];
+  try {
+    if (!previewSessionEnvironmentAllowed(environment))
+      throw new BindingEntryStageError({
+        stage: "PREVIEW_BOUNDARY",
+        http_status: null,
+        error_code: "BOUNDARY_REJECTED",
+      });
+    rows.push({
+      stage: "PREVIEW_BOUNDARY",
+      http_status: null,
+      error_code: "OK",
+    });
+    const parsed = previewConfigSchema
+      .omit({ B3_SA_EMAIL_BINDING_ENABLED: true })
+      .safeParse(environment);
+    if (!parsed.success) {
+      rows.push(...configurationDiagnostics(parsed.error));
+      return { passed: false, rows };
+    }
+    rows.push({
+      stage: "SERVER_CONFIGURATION",
+      http_status: null,
+      error_code: "OK",
+    });
+    const config = parsed.data;
+    const allowedUrl = `https://bniqsjnjqesnpcfkpqcz.supabase.co/rest/v1/rpc/get_super_admin_email_binding_targets_v1`;
+    const readOnlyTransport: typeof fetch = async (url, init) => {
+      if (
+        String(url) !== allowedUrl ||
+        init?.method !== "POST" ||
+        init.body !== "{}"
+      )
+        throw new Error("READ_ONLY_DIAGNOSTIC_BOUNDARY");
+      return transport(url, init);
+    };
+    const operations = createSuperAdminEmailBindingRepository(
+      createDataSource({
+        secret: config.SUPABASE_SECRET_KEY,
+        url: config.NEXT_PUBLIC_SUPABASE_URL,
+        transport: readOnlyTransport,
+      }),
+    );
+    const targets = await operations.getAllowedTargetUserIds();
+    rows.push({ stage: "TARGETS_READ", http_status: 200, error_code: "OK" });
+    const configured = environment
+      .B3_SA_ALLOWED_TARGET_UIDS!.split(",")
+      .map((id) => id.trim().toLowerCase());
+    if (!b3SaTargetSetsMatch(configured, targets))
+      throw new BindingEntryStageError({
+        stage: "TARGET_SET",
+        http_status: null,
+        error_code: "TARGET_SET_MISMATCH",
+      });
+    rows.push({ stage: "TARGET_SET", http_status: null, error_code: "OK" });
+    return { passed: true, rows };
+  } catch (error) {
+    rows.push(
+      error instanceof BindingEntryStageError
+        ? error.diagnostic
+        : {
+            stage: "ENTRY_READ",
+            http_status: null,
+            error_code: "MALFORMED_RESPONSE",
+          },
+    );
+    return { passed: false, rows };
+  }
 }

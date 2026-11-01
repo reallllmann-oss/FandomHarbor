@@ -2,6 +2,7 @@ import { MIN_PASSWORD_LENGTH } from "@fandom-harbor/auth";
 import { signIn } from "../actions";
 import { runAdminPreviewLoginPreflight } from "../../../lib/admin-login-resolver";
 import { previewSessionEnvironmentAllowed } from "../../../lib/preview-session-acceptance";
+import { runB3SaPreviewReadiness } from "../../../lib/super-admin-email-binding-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,10 @@ export default async function AdminSignInPage({
   const preflight =
     query.check === "preview" && previewSessionEnvironmentAllowed(process.env)
       ? await runAdminPreviewLoginPreflight()
+      : null;
+  const bindingPreflight =
+    query.check === "binding" && previewSessionEnvironmentAllowed(process.env)
+      ? await runB3SaPreviewReadiness()
       : null;
 
   return (
@@ -57,6 +62,26 @@ export default async function AdminSignInPage({
           </p>
           <ul>
             {preflight.rows.map((row, index) => (
+              <li key={index}>
+                {row.stage} · {row.http_status ?? "—"} · {row.error_code}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {bindingPreflight ? (
+        <div
+          role={bindingPreflight.passed ? "status" : "alert"}
+          className="mt-4 text-sm"
+        >
+          <p>
+            {bindingPreflight.passed
+              ? "Preview 绑定配置只读自检通过；尚未执行邮箱绑定。"
+              : "Preview 绑定配置只读自检未通过；请保持功能关闭。"}
+          </p>
+          <p>仅核对配置格式与目标集合，不代表登录、MFA 或邮件投递验收。</p>
+          <ul>
+            {bindingPreflight.rows.map((row, index) => (
               <li key={index}>
                 {row.stage} · {row.http_status ?? "—"} · {row.error_code}
               </li>
