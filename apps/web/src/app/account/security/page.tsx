@@ -20,6 +20,7 @@ const errors: Record<string, string> = {
     "该账号仍使用旧版内部邮箱，需要在 Package B3 完成安全迁移后再绑定真实邮箱。",
   password: "两次输入的新密码不一致或不符合密码要求。",
   "password-update": "密码暂时无法更新，请稍后再试。",
+  "session-identity": "身份验证结果不一致，请停止操作并重新登录。",
 };
 
 export default async function AccountSecurityPage({
@@ -44,6 +45,11 @@ export default async function AccountSecurityPage({
       {query.status === "password-updated" ? (
         <p className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm">
           密码已更新，其他设备的会话已退出。
+        </p>
+      ) : null}
+      {query.status === "password-updated-sessions-unconfirmed" ? (
+        <p className="mt-4 text-sm text-destructive" role="alert">
+          密码已更新，但其他会话的退出结果尚未确认。请勿重复改密，请联系验收负责人核对会话状态。
         </p>
       ) : null}
       {query.status === "email-change-sent" ? (

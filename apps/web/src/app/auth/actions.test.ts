@@ -371,6 +371,7 @@ describe("web auth actions", () => {
   it("allows an 8-character sign-in password and routes Readers to archive", async () => {
     const signInWithPassword = vi.fn(async () => ({ identity }));
     vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      commitAuthCookies: vi.fn(async () => undefined),
       accessRepository: {
         getForIdentity: vi.fn(async () =>
           createTrustedAccessContext({
@@ -402,6 +403,7 @@ describe("web auth actions", () => {
     });
     const signInWithResolvedEmail = vi.fn(async () => ({ identity }));
     vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      commitAuthCookies: vi.fn(async () => undefined),
       accessRepository: {
         getForIdentity: vi.fn(async () =>
           createTrustedAccessContext({ identity, membershipState: "active" }),
@@ -423,6 +425,7 @@ describe("web auth actions", () => {
     const formData = createCredentialsFormData();
     formData.set("next", "/author/harbor-author");
     vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      commitAuthCookies: vi.fn(async () => undefined),
       accessRepository: {
         getForIdentity: vi.fn(async () =>
           createTrustedAccessContext({ identity, membershipState: "active" }),
@@ -440,6 +443,7 @@ describe("web auth actions", () => {
     const formData = createCredentialsFormData();
     formData.set("next", "//example.test/phishing");
     vi.mocked(createWebIdentityAccess).mockResolvedValue({
+      commitAuthCookies: vi.fn(async () => undefined),
       accessRepository: {
         getForIdentity: vi.fn(async () =>
           createTrustedAccessContext({ identity, membershipState: "active" }),
@@ -471,9 +475,7 @@ describe("web auth actions", () => {
 
     await expect(
       confirmEmailChange(createEmailChangeConfirmationFormData()),
-    ).rejects.toThrow(
-      "REDIRECT:/account/security?status=email-change-pending",
-    );
+    ).rejects.toThrow("REDIRECT:/account/security?status=email-change-pending");
     expect(verifyOtp).toHaveBeenCalledOnce();
     expect(getUser).toHaveBeenCalledTimes(2);
   });

@@ -139,7 +139,8 @@ export async function signIn(formData: FormData) {
   const registrationName = normalizeRegistrationName(
     credentials.data.registrationName,
   );
-  const { accessRepository, auth } = await createWebIdentityAccess();
+  const { accessRepository, auth, cookieAdapter, runtime, commitAuthCookies } =
+    await createWebIdentityAccess({ stageAuthCookies: true });
   let session;
   try {
     const security = await enforceRateLimits(
@@ -159,11 +160,19 @@ export async function signIn(formData: FormData) {
           password: credentials.data.password,
           registrationName,
         });
+    if (resolved && session.identity.id !== resolved.userId) {
+      // Revoke only this newly issued session; rejected cookies stay staged.
+      await createServerSupabaseClient(runtime, cookieAdapter).auth.signOut({
+        scope: "local",
+      });
+      redirect("/auth/sign-in?error=invalid");
+    }
   } catch {
     redirect("/auth/sign-in?error=invalid");
   }
 
   const access = await accessRepository.getForIdentity(session.identity);
+  await commitAuthCookies();
   redirect(
     access.capabilities.has("archive:read")
       ? (requestedPath.data ?? "/archive")
@@ -433,20 +442,39 @@ export async function verifyPasswordRecovery(formData: FormData) {
       resolved && !resolved.isLegacyEmail
         ? resolved.email
         : await registrationNameEmail(registrationName);
-    const { cookieAdapter, runtime } = await createWebIdentityAccess();
-    const { data, error } = await createServerSupabaseClient(
-      runtime,
-      cookieAdapter,
-    ).auth.verifyOtp({
+    const { cookieAdapter, runtime, commitAuthCookies } =
+      await createWebIdentityAccess({ stageAuthCookies: true });
+    const client = createServerSupabaseClient(runtime, cookieAdapter);
+    const { data, error } = await client.auth.verifyOtp({
       email,
       token: parsed.data.token,
       type: "recovery",
     });
-    if (error || !data.user || !resolved || resolved.isLegacyEmail)
+    if (
+      error ||
+      !resolved ||
+      resolved.isLegacyEmail ||
+      !data.session ||
+      data.user?.id !== resolved.userId ||
+      data.session.user.id !== resolved.userId
+    ) {
+      if (data.session) await client.auth.signOut({ scope: "local" });
       redirect("/auth/reset-password?error=invalid");
+    }
+    const { data: current, error: currentUserError } =
+      await client.auth.getUser();
+    if (
+      currentUserError ||
+      current.user?.id !== resolved.userId ||
+      current.user.email?.toLowerCase() !== resolved.email.toLowerCase()
+    ) {
+      await client.auth.signOut({ scope: "local" });
+      redirect("/auth/reset-password?error=invalid");
+    }
+    await commitAuthCookies();
     (await cookies()).set(
       PASSWORD_RECOVERY_COOKIE,
-      security.issuePasswordRecoveryGrant(data.user.id),
+      security.issuePasswordRecoveryGrant(resolved.userId),
       {
         httpOnly: true,
         maxAge: PASSWORD_RECOVERY_GRANT_TTL_SECONDS,
@@ -479,7 +507,8 @@ export async function updatePassword(formData: FormData) {
       900,
     );
     const cookieStore = await cookies();
-    const { cookieAdapter, runtime } = await createWebIdentityAccess();
+    const { cookieAdapter, runtime, commitAuthCookies } =
+      await createWebIdentityAccess({ stageAuthCookies: true });
     const client = createServerSupabaseClient(runtime, cookieAdapter);
     const { data, error: userError } = await client.auth.getUser();
     if (userError || !data.user?.email) redirect("/auth/sign-in");
@@ -490,19 +519,41 @@ export async function updatePassword(formData: FormData) {
     if (!recovery) {
       if (!parsed.data.currentPassword)
         redirect("/account/security?error=current-password");
-      const { error } = await client.auth.signInWithPassword({
-        email: data.user.email,
-        password: parsed.data.currentPassword,
-      });
+      const { data: authenticated, error } =
+        await client.auth.signInWithPassword({
+          email: data.user.email,
+          password: parsed.data.currentPassword,
+        });
       if (error) redirect("/account/security?error=current-password");
+      if (
+        authenticated.user?.id !== data.user.id ||
+        authenticated.session?.user.id !== data.user.id
+      ) {
+        if (authenticated.session)
+          await client.auth.signOut({ scope: "local" });
+        redirect("/account/security?error=session-identity");
+      }
     }
+    await commitAuthCookies();
     const { error } = await client.auth.updateUser({
       password: parsed.data.password,
     });
     if (error) redirect("/account/security?error=password-update");
-    await client.auth.signOut({ scope: "others" });
     cookieStore.delete(PASSWORD_RECOVERY_COOKIE);
-    redirect("/account/security?status=password-updated");
+    let sessionsRevoked = false;
+    try {
+      const { error: signOutError } = await client.auth.signOut({
+        scope: "others",
+      });
+      sessionsRevoked = !signOutError;
+    } catch {
+      // The password update already succeeded: never suggest resubmitting it.
+    }
+    redirect(
+      sessionsRevoked
+        ? "/account/security?status=password-updated"
+        : "/account/security?status=password-updated-sessions-unconfirmed",
+    );
   } catch (error) {
     rethrowRedirect(error);
     redirect("/account/security?error=password-update");
@@ -536,17 +587,27 @@ export async function requestEmailChange(formData: FormData) {
       3,
       3600,
     );
-    const { cookieAdapter, runtime } = await createWebIdentityAccess();
+    const { cookieAdapter, runtime, commitAuthCookies } =
+      await createWebIdentityAccess({ stageAuthCookies: true });
     const client = createServerSupabaseClient(runtime, cookieAdapter);
     const { data, error: userError } = await client.auth.getUser();
     if (userError || !data.user?.email) redirect("/auth/sign-in");
     if (data.user.email.endsWith("@accounts.fandom-harbor.invalid"))
       redirect("/account/security?error=legacy-email");
-    const { error: passwordError } = await client.auth.signInWithPassword({
-      email: data.user.email,
-      password: parsed.data.currentPassword,
-    });
+    const { data: authenticated, error: passwordError } =
+      await client.auth.signInWithPassword({
+        email: data.user.email,
+        password: parsed.data.currentPassword,
+      });
     if (passwordError) redirect("/account/security?error=current-password");
+    if (
+      authenticated.user?.id !== data.user.id ||
+      authenticated.session?.user.id !== data.user.id
+    ) {
+      if (authenticated.session) await client.auth.signOut({ scope: "local" });
+      redirect("/account/security?error=session-identity");
+    }
+    await commitAuthCookies();
     const { error } = await client.auth.updateUser({
       email: parsed.data.email,
     });
