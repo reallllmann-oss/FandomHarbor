@@ -72,6 +72,14 @@ export default async function SignInPage({
           创建账号
         </Link>
       </p>
+      <p className="mt-2 text-sm">
+        <Link
+          className="inline-flex min-h-11 items-center rounded-control px-2 text-primary"
+          href="/auth/forgot-password"
+        >
+          忘记密码？
+        </Link>
+      </p>
     </section>
   );
 }

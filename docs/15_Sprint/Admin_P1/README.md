@@ -28,6 +28,16 @@ Admin P1 是独立于 Phase 7 Admin Intelligence 的治理计划。它升级现�
 | P1-08E | Responsive / Accessibility / Regression      | Complete — final acceptance PASS       |
 | P1-08F | Cross-Surface Account Identity               | Complete — security boundary PASS      |
 
+## 后续账号安全待办（2026-11-06）
+
+| 待办                      | 范围                                                                    | 状态与安全边界                                                                                                |
+| ------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Admin 登录页「忘记密码」  | 提供管理员恢复入口，并与原生 recovery OTP、同 UID 的现有 TOTP/AAL2 衔接 | 已记录，待单独实施授权；Reader 恢复 PASS 不等于高权限恢复 PASS，不允许绕过 MFA 或隐式重置因子。               |
+| 「账号与安全 → 修改密码」 | 当前账号的密码修改、本人重新验证及 Session 撤销结果反馈                 | 已记录，待单独实施授权；保留 UID、Membership、Role、MFA；高权限操作保留可信 Session/AAL2 与 fresh TOTP 要求。 |
+
+B4b 本轮只记录需求，不开发上述 Admin 功能，也不重置两个合成 Super Admin
+的密码。现有 `/auth/preview-session` 验收页不是通用账号安全或恢复功能。
+
 权威合同：
 
 - [P1-00 Scope and Security Contract](P1_00_SCOPE_AND_SECURITY_CONTRACT.md)

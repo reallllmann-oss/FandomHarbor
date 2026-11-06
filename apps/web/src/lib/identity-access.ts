@@ -14,12 +14,22 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 import { loadWebCurrentIdentities } from "./web-current-identity";
+import { createStagedAuthCookies } from "./staged-auth-cookies";
 
-export async function createWebIdentityAccess() {
+export async function createWebIdentityAccess(options?: {
+  stageAuthCookies?: boolean;
+}) {
   const cookieStore = await cookies();
-  const cookieAdapter = {
+  const destination = {
     getAll: () => cookieStore.getAll(),
     setAll(mutations: AuthCookieMutation[]) {
+      if (options?.stageAuthCookies) {
+        // Server Actions must not swallow a failed identity-cookie commit.
+        for (const { name, options, value } of mutations) {
+          cookieStore.set(name, value, options);
+        }
+        return;
+      }
       try {
         for (const { name, options, value } of mutations) {
           cookieStore.set(name, value, options);
@@ -29,6 +39,10 @@ export async function createWebIdentityAccess() {
       }
     },
   };
+  const staged = options?.stageAuthCookies
+    ? createStagedAuthCookies(destination)
+    : null;
+  const cookieAdapter = staged?.cookieAdapter ?? destination;
   const runtime = readPublicRuntimeConfig();
   const auth = createServerAuthProvider(runtime, cookieAdapter);
   const accessRepository = createSupabaseAccessContextRepository(
@@ -40,6 +54,7 @@ export async function createWebIdentityAccess() {
     accessRepository,
     auth,
     cookieAdapter,
+    commitAuthCookies: async () => staged?.commit(),
     identityAccess: createIdentityAccessService(
       createSupabaseIdentityAccessStore(runtime, cookieAdapter),
     ),

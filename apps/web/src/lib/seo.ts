@@ -4,14 +4,78 @@ import type { Metadata, MetadataRoute } from "next";
 export const SITE_NAME = "Fandom Harbor";
 export const SITE_DESCRIPTION = "阅读优先的邀请制作品归档平台。";
 
+function httpsVercelOrigin(host: string) {
+  if (
+    host.includes("://") ||
+    host.includes("/") ||
+    host.includes("@") ||
+    host.includes("?") ||
+    host.includes("#")
+  ) {
+    throw new Error("Invalid Vercel deployment host");
+  }
+  const url = new URL(`https://${host}`);
+  if (!url.hostname || url.host !== host) {
+    throw new Error("Invalid Vercel deployment host");
+  }
+  return url.origin;
+}
+
+function configuredSiteOrigin(value: string, requireHttps: boolean) {
+  const url = new URL(value);
+  if (
+    !["http:", "https:"].includes(url.protocol) ||
+    (requireHttps && url.protocol !== "https:")
+  ) {
+    throw new Error("Invalid site URL");
+  }
+  return url.origin;
+}
+
+export function isPreviewDeployment(
+  environment: Record<string, string | undefined> = process.env,
+) {
+  return (
+    environment.VERCEL_TARGET_ENV === "preview" ||
+    environment.VERCEL_ENV === "preview"
+  );
+}
+
 export function resolveSiteUrl(
   environment: Record<string, string | undefined> = process.env,
 ) {
   const configured = environment.NEXT_PUBLIC_SITE_URL;
-  const vercelHost =
-    environment.VERCEL_PROJECT_PRODUCTION_URL ?? environment.VERCEL_URL;
-  const value = configured ?? (vercelHost ? `https://${vercelHost}` : null);
-  return new URL(value ?? "http://localhost:3000").origin;
+  const target = environment.VERCEL_TARGET_ENV ?? environment.VERCEL_ENV;
+
+  if (configured) {
+    return configuredSiteOrigin(
+      configured,
+      target === "preview" || target === "production",
+    );
+  }
+
+  if (target === "preview") {
+    const previewHost = environment.VERCEL_BRANCH_URL ?? environment.VERCEL_URL;
+    if (!previewHost) {
+      throw new Error("Preview site URL is unavailable");
+    }
+    return httpsVercelOrigin(previewHost);
+  }
+
+  if (target === "production") {
+    const productionHost =
+      environment.VERCEL_PROJECT_PRODUCTION_URL ?? environment.VERCEL_URL;
+    if (!productionHost) {
+      throw new Error("Production site URL is unavailable");
+    }
+    return httpsVercelOrigin(productionHost);
+  }
+
+  if (environment.VERCEL === "1") {
+    throw new Error("Vercel deployment environment is unavailable");
+  }
+
+  return "http://localhost:3000";
 }
 
 export function absolutePublicUrl(pathname: string) {
@@ -25,7 +89,7 @@ export function pageMetadata(input: {
   title: string;
   type?: "article" | "website";
 }): Metadata {
-  const index = input.index ?? true;
+  const index = (input.index ?? true) && !isPreviewDeployment();
   const canonical = absolutePublicUrl(input.pathname);
   return {
     alternates: { canonical },

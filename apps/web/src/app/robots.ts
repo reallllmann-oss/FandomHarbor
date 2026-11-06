@@ -1,8 +1,14 @@
 import type { MetadataRoute } from "next";
 
-import { absolutePublicUrl } from "../lib/seo";
+import { absolutePublicUrl, isPreviewDeployment } from "../lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
+  if (isPreviewDeployment()) {
+    return {
+      rules: { disallow: "/", userAgent: "*" },
+    };
+  }
+
   return {
     rules: {
       allow: "/",

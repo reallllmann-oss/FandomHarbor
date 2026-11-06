@@ -14,6 +14,10 @@ export {
   createSupabaseElevatedAccessDatabaseAdapters,
   type ElevatedAccessDatabaseAdapters,
 } from "./elevated-access-governance-repository";
+export {
+  createSuperAdminEmailBindingRepository,
+  type SuperAdminEmailBindingDataSource,
+} from "./super-admin-email-binding-repository";
 export { createServerSupabaseClient } from "./server-client";
 export {
   createAuthorWorkDraftRepository,
