@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { emailOtpField } from "../../../lib/email-otp";
 import { resendRegistrationOtp, verifyRegistrationOtp } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -22,10 +23,10 @@ export default async function VerifyEmailPage({
   return (
     <section className="reading-card mx-auto max-w-lg">
       <p className="text-sm font-medium text-primary">邮箱验证</p>
-      <h1 className="mt-3 text-3xl font-semibold">输入 6 位验证码</h1>
+      <h1 className="mt-3 text-3xl font-semibold">输入邮箱验证码</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        注册请求已处理。如果该邮箱符合注册条件，验证码将发送至邮箱，请检查收件箱及垃圾邮件。验证码
-        15 分钟内有效，明确重发不会延长邀请码的 2 小时预留期限。
+        注册请求已处理。如果该邮箱符合注册条件，验证码将发送至邮箱，请检查收件箱及垃圾邮件。请在验证码失效前完成验证。明确重发不会延长邀请码的
+        2 小时预留期限。
       </p>
       {query.status === "verification_pending" ? (
         <p className="mt-4 text-sm text-muted-foreground" role="status">
@@ -54,10 +55,8 @@ export default async function VerifyEmailPage({
             autoComplete="one-time-code"
             className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3 font-mono tracking-[0.3em]"
             inputMode="numeric"
-            maxLength={6}
-            minLength={6}
             name="token"
-            pattern="[0-9]{6}"
+            {...emailOtpField}
             required
           />
         </label>

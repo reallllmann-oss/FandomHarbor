@@ -9,7 +9,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createWebIdentityAccess } from "../../lib/identity-access";
 import { createWebTrustedRegistrationBroker } from "../../lib/server-registration";
-import { confirmEmailChange, signIn, signUp } from "./actions";
+import {
+  confirmEmailChange,
+  signIn,
+  signUp,
+  verifyRegistrationOtp,
+} from "./actions";
 
 vi.mock("server-only", () => ({}));
 
@@ -86,10 +91,10 @@ function createCredentialsFormData(
   return formData;
 }
 
-function createEmailChangeConfirmationFormData() {
+function createEmailChangeConfirmationFormData(token = "123456") {
   const formData = new FormData();
   formData.set("email", "reader-new@example.test");
-  formData.set("token", "123456");
+  formData.set("token", token);
   return formData;
 }
 
@@ -455,30 +460,69 @@ describe("web auth actions", () => {
     await expect(signIn(formData)).rejects.toThrow("REDIRECT:/archive");
   });
 
-  it("reports the first email-change confirmation as pending when the trusted email is unchanged", async () => {
-    const currentUser = { email: "reader@example.test", id: identity.id };
-    const getUser = vi
-      .fn()
-      .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
-      .mockResolvedValueOnce({ data: { user: currentUser }, error: null });
-    const verifyOtp = vi.fn(async () => ({
-      data: { session: null, user: null },
-      error: null,
-    }));
-    vi.mocked(createWebIdentityAccess).mockResolvedValue({
-      cookieAdapter: {},
-      runtime: {},
-    } as never);
-    vi.mocked(createServerSupabaseClient).mockReturnValue({
-      auth: { getUser, verifyOtp },
-    } as never);
+  it.each(["012345", "01234567", "0123456789"])(
+    "passes the full registration code to Supabase: %s",
+    async (token) => {
+      const email = "reader@example.test";
+      cookieStore.get.mockReturnValue({ value: "test-attempt" });
+      vi.mocked(createWebTrustedRegistrationBroker).mockReturnValue({
+        verificationContext: vi.fn().mockResolvedValue({ email }),
+      } as never);
+      vi.mocked(createWebIdentityAccess).mockResolvedValue({
+        cookieAdapter: {},
+        runtime: {},
+      } as never);
+      const verifyOtp = vi.fn().mockResolvedValue({ error: null });
+      vi.mocked(createServerSupabaseClient).mockReturnValue({
+        auth: { verifyOtp },
+      } as never);
 
-    await expect(
-      confirmEmailChange(createEmailChangeConfirmationFormData()),
-    ).rejects.toThrow("REDIRECT:/account/security?status=email-change-pending");
-    expect(verifyOtp).toHaveBeenCalledOnce();
-    expect(getUser).toHaveBeenCalledTimes(2);
-  });
+      const formData = new FormData();
+      formData.set("token", token);
+      await expect(verifyRegistrationOtp(formData)).rejects.toThrow(
+        "REDIRECT:/access?status=email-verified",
+      );
+      expect(verifyOtp).toHaveBeenCalledExactlyOnceWith({
+        email,
+        token,
+        type: "email",
+      });
+    },
+  );
+
+  it.each(["012345", "01234567"])(
+    "reports first-side email confirmation as pending with code %s",
+    async (token) => {
+      const currentUser = { email: "reader@example.test", id: identity.id };
+      const getUser = vi
+        .fn()
+        .mockResolvedValueOnce({ data: { user: currentUser }, error: null })
+        .mockResolvedValueOnce({ data: { user: currentUser }, error: null });
+      const verifyOtp = vi.fn(async () => ({
+        data: { session: null, user: null },
+        error: null,
+      }));
+      vi.mocked(createWebIdentityAccess).mockResolvedValue({
+        cookieAdapter: {},
+        runtime: {},
+      } as never);
+      vi.mocked(createServerSupabaseClient).mockReturnValue({
+        auth: { getUser, verifyOtp },
+      } as never);
+
+      await expect(
+        confirmEmailChange(createEmailChangeConfirmationFormData(token)),
+      ).rejects.toThrow(
+        "REDIRECT:/account/security?status=email-change-pending",
+      );
+      expect(verifyOtp).toHaveBeenCalledExactlyOnceWith({
+        email: "reader-new@example.test",
+        token,
+        type: "email_change",
+      });
+      expect(getUser).toHaveBeenCalledTimes(2);
+    },
+  );
 
   it("reports final email-change success only after the trusted Auth email changes", async () => {
     const currentUser = { email: "reader@example.test", id: identity.id };

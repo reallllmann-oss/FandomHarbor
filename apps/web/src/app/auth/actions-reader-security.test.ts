@@ -78,8 +78,8 @@ function form(values: Record<string, string>) {
 }
 const credentials = () =>
   form({ registrationName: "HarborReader", password: "test-password" });
-const recovery = () =>
-  form({ registrationName: "HarborReader", token: "123456" });
+const recovery = (token = "123456") =>
+  form({ registrationName: "HarborReader", token });
 const password = () =>
   form({
     currentPassword: "test-password",
@@ -206,31 +206,45 @@ describe("Reader identity and recovery boundaries", () => {
     },
   );
 
-  it("issues a short-lived grant only after OTP, session and current Auth UID agree", async () => {
-    await expect(verifyPasswordRecovery(recovery())).rejects.toThrow(
-      "REDIRECT:/account/security?status=recovery",
-    );
-    expect(client.auth.verifyOtp).toHaveBeenCalledExactlyOnceWith({
-      email,
-      token: "123456",
-      type: "recovery",
-    });
-    expect(client.auth.getUser).toHaveBeenCalledOnce();
-    expect(security.issuePasswordRecoveryGrant).toHaveBeenCalledExactlyOnceWith(
-      UID,
-    );
-    expect(cookieStore.set).toHaveBeenCalledWith(
-      "fh_password_recovery",
-      "test-only-grant",
-      expect.objectContaining({
-        httpOnly: true,
-        path: "/account/security",
-        maxAge: 600,
-        sameSite: "lax",
-      }),
-    );
-    expect(destination.setAll).toHaveBeenCalledOnce();
-  });
+  it.each(["012345", "01234567"])(
+    "issues a short-lived grant only after OTP %s, session and current Auth UID agree",
+    async (token) => {
+      await expect(verifyPasswordRecovery(recovery(token))).rejects.toThrow(
+        "REDIRECT:/account/security?status=recovery",
+      );
+      expect(client.auth.verifyOtp).toHaveBeenCalledExactlyOnceWith({
+        email,
+        token,
+        type: "recovery",
+      });
+      expect(client.auth.getUser).toHaveBeenCalledOnce();
+      expect(
+        security.issuePasswordRecoveryGrant,
+      ).toHaveBeenCalledExactlyOnceWith(UID);
+      expect(cookieStore.set).toHaveBeenCalledWith(
+        "fh_password_recovery",
+        "test-only-grant",
+        expect.objectContaining({
+          httpOnly: true,
+          path: "/account/security",
+          maxAge: 600,
+          sameSite: "lax",
+        }),
+      );
+      expect(destination.setAll).toHaveBeenCalledOnce();
+    },
+  );
+
+  it.each(["01234", "01234567890", "0123a567", "１２３４５６", "0123 4567"])(
+    "rejects out-of-contract OTP input before calling Supabase: %s",
+    async (token) => {
+      await expect(verifyPasswordRecovery(recovery(token))).rejects.toThrow(
+        "REDIRECT:/auth/reset-password?error=invalid",
+      );
+      expect(client.auth.verifyOtp).not.toHaveBeenCalled();
+      expect(cookieStore.set).not.toHaveBeenCalled();
+    },
+  );
 
   it.each([
     "otp-uid",

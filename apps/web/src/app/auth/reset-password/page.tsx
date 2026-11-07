@@ -1,3 +1,4 @@
+import { emailOtpField } from "../../../lib/email-otp";
 import { verifyPasswordRecovery } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -33,15 +34,13 @@ export default async function ResetPasswordPage({
           />
         </label>
         <label className="block text-sm font-medium">
-          6 位验证码
+          邮箱验证码
           <input
             autoComplete="one-time-code"
             className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3 font-mono tracking-[0.3em]"
             inputMode="numeric"
-            maxLength={6}
-            minLength={6}
             name="token"
-            pattern="[0-9]{6}"
+            {...emailOtpField}
             required
           />
         </label>

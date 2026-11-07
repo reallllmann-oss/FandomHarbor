@@ -18,6 +18,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { emailOtpPattern } from "../../lib/email-otp";
 import { createWebIdentityAccess } from "../../lib/identity-access";
 import {
   assertTrustedActionRequest,
@@ -51,10 +52,7 @@ const registrationSchema = credentialsSchema.extend({
     .transform((value) => value.toLowerCase()),
   invitationCode: z.string().trim().min(INVITATION_CODE_LENGTH).max(256),
 });
-const otpSchema = z
-  .string()
-  .trim()
-  .regex(/^\d{6}$/);
+const otpSchema = z.string().trim().regex(emailOtpPattern);
 const passwordUpdateSchema = z
   .object({
     currentPassword: z.string().max(MAX_PASSWORD_LENGTH).optional(),

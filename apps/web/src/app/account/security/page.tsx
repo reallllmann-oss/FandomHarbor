@@ -2,6 +2,7 @@ import { MIN_PASSWORD_LENGTH } from "@fandom-harbor/auth";
 import { PasswordInput } from "@fandom-harbor/ui";
 import { redirect } from "next/navigation";
 
+import { emailOtpField } from "../../../lib/email-otp";
 import { getWebAccessContext } from "../../../lib/identity-access";
 import {
   confirmEmailChange,
@@ -201,15 +202,13 @@ export default async function AccountSecurityPage({
           />
         </label>
         <label className="block text-sm font-medium">
-          6 位验证码
+          邮箱验证码
           <input
             autoComplete="one-time-code"
             className="mt-2 min-h-11 w-full rounded-control border border-border bg-background px-3 font-mono tracking-[0.3em]"
             inputMode="numeric"
-            maxLength={6}
-            minLength={6}
             name="token"
-            pattern="[0-9]{6}"
+            {...emailOtpField}
             required
           />
         </label>
