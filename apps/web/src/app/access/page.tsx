@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function AccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; status?: string }>;
 }) {
   const access = await getWebAccessContext();
   if (!access) redirect("/auth/sign-in");
@@ -23,6 +23,11 @@ export default async function AccessPage({
         邀请码只授予 Reader 门禁资格，不会自动授予 Author、Admin 或 Super
         Admin。
       </p>
+      {query.status === "email-verified" ? (
+        <p className="mt-4 rounded-control border border-border bg-surface-muted p-3 text-sm">
+          邮箱已验证。如果原邀请码预留仍有效，账号会自动激活；否则请在下方提交新的有效邀请码。
+        </p>
+      ) : null}
       {query.error ? (
         <p className="mt-4 text-sm text-destructive" role="alert">
           邀请码无效、已过期、已撤销、已耗尽或已被兑换。

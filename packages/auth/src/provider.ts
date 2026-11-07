@@ -58,6 +58,10 @@ export interface AuthProvider {
 
 export interface ServerAuthProvider extends AuthProvider {
   getTrustedAuthEvidence(): Promise<TrustedAuthEvidence | null>;
+  signInWithResolvedEmail(input: {
+    email: string;
+    password: string;
+  }): Promise<TrustedSession>;
 }
 
 export class AuthProviderError extends Error {
@@ -313,6 +317,31 @@ function provider(client: SupabaseClient): AuthProvider {
 function serverProvider(client: SupabaseClient): ServerAuthProvider {
   return {
     ...provider(client),
+
+    async signInWithResolvedEmail(input) {
+      const email = input.email.trim().toLowerCase();
+      if (!email.includes("@")) {
+        throw new AuthProviderError(
+          "INVALID_CREDENTIALS",
+          "Registration name or password is invalid",
+        );
+      }
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password: input.password,
+      });
+      if (error || !data.session) {
+        throw new AuthProviderError(
+          "INVALID_CREDENTIALS",
+          "Registration name or password is invalid",
+        );
+      }
+      const session = trustedSession(data.session);
+      if (!session) {
+        throw new AuthProviderError("PROVIDER_ERROR", "Session is incomplete");
+      }
+      return session;
+    },
 
     async getTrustedAuthEvidence() {
       const { data, error } = await client.auth.getClaims();
